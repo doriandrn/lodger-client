@@ -1,0 +1,26 @@
+icons = send server settings
+
+[data-icon]
+  position relative
+  padding-left 36px
+  
+  &:before
+    content ''
+    size 20px
+    display block
+    background-size 16px
+    background-position 50%
+    position absolute
+    left: config.spacings.inBoxes
+    top 50%
+    transform translateY(-50%)
+    background-repeat no-repeat
+
+header[data-icon]
+  .widget__title
+    font-size 0
+
+for i in icons
+  [data-icon={i}]
+    &:before
+      background-image embedurl('~static/icons/ui/' + i + '.svg')

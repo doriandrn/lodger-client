@@ -1,0 +1,36 @@
+nav
+  list-style-type none
+  display flex
+
+  &[data-orientation="horizontal"]
+    flex-flow row wrap
+
+    li
+      &:not(:last-child)
+        margin-right 24px
+
+      &:hover
+        a:not(.active)
+          &:before
+            opacity 1
+
+        a.active
+          cursor default
+
+    a
+      padding: 0 baseSpacingUnit
+
+  a
+    position relative
+    display block
+
+    &.active
+      color: config.palette.primary
+
+    &:before
+      content ''
+      height 2px
+      position absolute auto 0 0
+      background: config.palette.primary
+      opacity 0
+      transition opacity .15s ease

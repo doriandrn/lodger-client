@@ -1,0 +1,59 @@
+baseSpacingUnit = 4px
+fallbackTypography = 'Helvetica'\, Arial\, sans-serif
+
+config = {
+  sizes: {
+    maxContainerWidth: 1200px
+  }
+  palette: {
+    bgs: {
+      body: #F5F9F9
+      ui: white
+    }
+    borders: rgba(black, .075)
+    
+    primary: blue
+    secondary: purple
+    tertiary: green
+
+    warn: red
+  },
+  typography: {
+    fams: {
+      headings: 'Fira Sans'\, fallbackTypography
+      body: 'Open Sans'\, fallbackTypography
+      ui: 'Roboto Condensed'\, fallbackTypography
+    },
+    sizes: {
+      baseLineHeight: baseSpacingUnit*4
+      default: {
+        body: baseSpacingUnit*3
+        headings: {
+          h1: baseSpacingUnit*6
+          h2: baseSpacingUnit*5.5
+          h3: baseSpacingUnit*4.5
+          h4: baseSpacingUnit*4
+          h5: baseSpacingUnit*3.5
+          h6: baseSpacingUnit*3
+        }
+      }
+    },
+    palette: {
+      ui: #666666
+      headings: #202020
+      paragraphs: #777
+    }
+  },
+  spacings: {
+    inBoxes: baseSpacingUnit*4
+    betweenBoxes: baseSpacingUnit*8
+  },
+  radiuses: {
+    boxes: 2px
+  }
+  shadows: {
+    boxes: 0px 0px 20px rgba(black, .025)\, 0 20px 32px -16px rgba(black, .05)
+    header: 0px 2px 5px rgba(black, .05)
+  }
+  lightning: 'top-right'
+}

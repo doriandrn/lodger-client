@@ -1,13 +1,13 @@
 <template lang="pug">
-.modal()
+.modal
   .modal__backdrop(@click="inchide")
   .modal__container
     header.modal__header(v-if="$slots.header || title")
       slot(name="header")
       h2.modal__title(v-if="title") {{ title }}
     .modal__content(
-      v-if=   "$slots.default"
-      :class= "{prompt: modalContent}"
+      v-if=   "$slots.default",
+      :class= "{ prompt: modalContent === 'prompt' }"
     )
       slot
     .modal__footer(v-if="$slots.footer")
@@ -15,11 +15,13 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   methods: mapActions({
-    inchide: 'modal/close',
+    inchide: 'modal/close'
+  }),
+  computed: mapGetters({
     modalContent: 'modal/content'
   }),
   props: {
@@ -68,6 +70,13 @@ export default {
     padding-top: config.spacings.betweenBoxes
     padding-bottom: config.spacings.betweenBoxes
     position relative
+
+    form
+      .actions
+        margin-top: config.spacings.betweenBoxes
+
+        input[type="submit"]
+          min-width 120px
 
   &__content
   &__footer

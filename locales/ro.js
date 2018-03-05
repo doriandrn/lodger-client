@@ -24,6 +24,16 @@ export default {
       title: 'Asociație nouă',
       name: 'Denumire',
       idN: 'CIF'
+    },
+    init: {
+      title: 'Inițializare'
+    },
+    adminZone: {
+      title: 'Zonă administrativă',
+      modify: 'Modifică datele asociației',
+      delete: 'Șterge asociația',
+      deletePrompt: 'Ești sigur că dorești să ștergi asociația X?',
+      dangerZone: 'Zona periculoasă'
     }
   },
   blocs: {
@@ -31,11 +41,20 @@ export default {
       heading: 'Structura asociației nu e definită',
       CTA: 'nu-mi vine',
       actions: ['Definește structura manual', 'Importă din altă aplicație']
+    },
+    new: {
+      title: 'Adaugă un bloc nou / o clădire',
+      name: 'Identificator'
     }
   },
   defaults: {
     prompt: {
-      message: 'Ești sigur?'
+      message: 'Ești sigur?',
+      confirm: 'Da',
+      cancel: 'Nu chiar'
+    },
+    forms: {
+      add: 'Adaugă'
     }
   }
 }

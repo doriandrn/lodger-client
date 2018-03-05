@@ -6,8 +6,10 @@
     
     slect(
       v-if=     "idsAsociatii.length"
+      id=       "asociatieSwitch"
       v-model=  "idAsociatieActiva",
       :options= "optiuniSwitcherAsociatie"
+      label=    "Asociația de locatari"
     )
 
     nav(
@@ -17,6 +19,9 @@
         v-for="item in navItems"
       )
         nuxt-link(:to="item.url") {{ item.title }}
+
+    p(slot="right") ceva
+  
   main
     nuxt
     modal(
@@ -48,12 +53,38 @@ fullflex()
   flex-flow column nowrap
   min-height 100vh
 
+  .actions
+    width 100%
+    display flex
+
   > header
     position fixed 0 0 auto 0
     z-index 99
 
     &+main
       padding-top 48px
+
+    .select
+      position relative
+      display flex
+      flex-flow column wrap
+      padding-top 8px
+      padding-bottom 8px
+      
+      label
+        font-size 9px
+        text-transform uppercase
+        font-weight 100
+        line-height 12px
+        letter-spacing 1px
+        white-space nowrap
+
+      select
+        padding 0
+        box-shadow none
+        margin-top 4px
+        text-transform capitalize
+        font-weight 500
 
   > main
     fullflex()
@@ -124,6 +155,24 @@ export default {
               label: this.$t('asocs.new.idN')
             }
           ]
+        },
+        'blocs.new': {
+          campuri: [
+            {
+              id: 'nume',
+              type: 'text',
+              label: this.$t('blocs.new.name'),
+              required: true,
+              focus: true
+            },
+            {
+              id: 'asociatieId',
+              value: () => this.asociatieActiva
+            }
+          ],
+          actiuni: {
+            confirm: this.adaugaBloc
+          }
         }
       }
     }
@@ -131,6 +180,7 @@ export default {
   methods: {
     ...mapActions({
       adaugaAsociatie: 'asociatie/adauga',
+      adaugaBloc: 'bloc/adauga',
       schimbaAsociatieActiva: 'asociatie/schimba',
       modalClose: 'modal/close'
     })

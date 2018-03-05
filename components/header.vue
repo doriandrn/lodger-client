@@ -40,9 +40,9 @@ header
     text-decoration none
 
   .logo
-    font-size: baseSpacingUnit*5
     margin-bottom 0
     white-space nowrap
+    font-weight 700
 
     a
       color: config.typography.palette.headings

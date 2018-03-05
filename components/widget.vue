@@ -1,12 +1,15 @@
 <template lang="pug">
-.widget(:class="{boxed, full}")
+.widget(:class="{boxed, full, expand, hasSidebar: $slots.sidebar }")
   header.widget__header(
     v-if= "boxed"
     :data-icon= "icon"
   )
-    h4.widget__title {{ title }}
+    h5.widget__title {{ title }}
+    button.control(v-for="control in controls") {{ control }}
   .widget__content
     slot
+    .sidebar.widget__sidebar(v-if="$slots.sidebar")
+      slot(name="sidebar")
 </template>
 
 <script>
@@ -27,6 +30,16 @@ export default {
     icon: {
       type: String,
       default: null
+    },
+    expand: {
+      type: Boolean,
+      default: false
+    },
+    controls: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   }
 }
@@ -40,6 +53,14 @@ export default {
 
   &__content
     min-height 300px
+    display flex
+    flex-flow column wrap
+
+    .danger
+      margin-top auto
+
+  &__sidebar
+    background: config.palette.borders
 
   &__title
     text-transform uppercase
@@ -49,6 +70,9 @@ export default {
 
   &.full
     flex 1 1 100%
+
+  &.expand
+    flex-basis 65%
 
   &.boxed
     background white
@@ -62,5 +86,20 @@ export default {
       &__title
         padding: 0 config.spacings.inBoxes
 
+  &.hasSidebar
+    .widget
+      &__content
+        flex-flow row nowrap
+
+        > div
+          flex 1 1 50%
+
+          &:not(:last-child)
+            margin-right: config.spacings.betweenBoxes
+
+          &.sidebar
+            flex-basis 33%
+            margin: -(config.spacings.inBoxes)
+            padding: config.spacings.inBoxes
 
 </style>

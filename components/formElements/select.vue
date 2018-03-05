@@ -8,7 +8,7 @@ span.select(:class="{error}")
   )
   select(
     :id=        "id",
-    @change=    "$emit('input', $event.target.value)"
+    @change=    "$emit('input', $event.target.value); debug($event.target.value)"
   )
     option(
       v-for=    "option, key in options",
@@ -100,7 +100,7 @@ select
 		border-radius 0
 	
 	option
-		display block
+		// display block
 		border 0
 		padding 14px 24px
 		background white

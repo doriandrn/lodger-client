@@ -23,7 +23,6 @@ button(
 input(
   v-else-if=    "type === 'submit'",
   type=         "submit",
-
   :value=       "$slots.default[0].text",
   :data-size=   "size",
   :disabled=    "disabled"
@@ -41,12 +40,21 @@ button
   border-radius: config.radiuses.boxes
   color white
   cursor pointer
+  transition all .15s ease-in-out
+  display flex
+  flex-flow row nowrap
+  align-items center
+  justify-content center
+  line-height 20px
+
+  &:hover
+    background-color: darken(config.palette.primary, 15%)
 
   &[data-size="large"]
     padding: config.spacings.inBoxes
 
   &[data-size="medium"]
-    padding: (config.spacings.inBoxes/2)
+    padding: (config.spacings.inBoxes/2) config.spacings.inBoxes
   
   &[data-size="small"]
     padding: (config.spacings.inBoxes/4)

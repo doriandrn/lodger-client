@@ -45,7 +45,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      openModal: 'modal/open'
+      openModal: 'modal/open',
+      definesteStructura: 'asociatie/definesteStructura'
     }),
     newAsoc () {
       this.openModal('asocs.new')
@@ -72,4 +73,7 @@ export default {
 
   &__heading + p
     margin-bottom: config.spacings.betweenBoxes
+
+  > .actions
+    justify-content center
 </style>

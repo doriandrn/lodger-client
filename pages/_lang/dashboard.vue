@@ -28,26 +28,40 @@ sction#dash
       //- widget.joaca(title="joaca", full)
         p ccucuuc
 
-      widget(title="structura")
-        h4(v-if="structura.length")
+      widget(
+        :title=  "$t('asocs.init.title')",
+        expand
+      )
+        div(v-if="defineste")
+          frm(title="Adaugă bloc")
+
+        div(slot="sidebar", v-if="defineste || idsBlocuri.length")
+          h6 Previzualizare
+          ul
+            li(v-for="idBloc in idsBlocuri") {{ blocuri[idBloc].nume }}
+            li #[buton(@click="openModal('blocs.new')") bloc nou]
+
         empty(
-          v-else,
+          v-else-if=  "!defineste && !idsBlocuri.length",
           :title=   "$t('blocs.none.heading')",
           :CTA=     "$t('blocs.none.CTA')",
           :actions= "{ definesteStructura: $t('blocs.none.actions[0]'), importaDate: $t('blocs.none.actions[1]') }"
-        ) gol
-
+        )
 
       widget(
-        title="zona administrativa"
-        icon= "settings"
+        title=  "$t('asocs.adminZone.title')"
+        icon=   "settings"
       )
-        h2 danger zon
-        buton(
-          dangerous,
-          @click= "stergeAsociatie(activaId)",
-          :prompt= "{ type: 'warning', message: 'da ma?'}"
-        ) sterge asociatia
+        ul.actions
+          li caca
+        .danger
+          h4 {{ $t('asocs.adminZone.dangerZone') }}
+          buton(
+            dangerous,
+            icon=     "trash"
+            @click=   "stergeAsociatie(activaId)",
+            :prompt=  "{ type: 'warning', message: $t('asocs.adminZone.deletePrompt') }"
+          ) {{ $t('asocs.adminZone.delete') }}
   empty(
     v-else
     size=   "large"
@@ -80,6 +94,7 @@ sction#dash
 import sction from '~components/section'
 import widget from '~components/widget'
 import buton from 'form/button'
+import frm from '~components/form.vue'
 import empty from '~components/empty'
 
 import { mapGetters, mapActions } from 'vuex'
@@ -94,13 +109,16 @@ export default {
     sction,
     widget,
     buton,
-    empty
+    empty,
+    frm
   },
   computed: mapGetters({
     asociatii: 'asociatie/ids',
     activaId: 'asociatie/activa',
     nrAsociatiiAdministrate: 'asociatie/nrTotal',
-    structura: 'asociatie/activaBlocuri'
+    idsBlocuri: 'asociatie/activaBlocuri',
+    blocuri: 'bloc/lista',
+    defineste: 'asociatie/defineste'
   }),
   methods: mapActions({
     openModal: 'modal/open',

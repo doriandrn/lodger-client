@@ -135,7 +135,7 @@ textarea
   font-size 14px
   line-height 18px
   border: 1px solid palette.borders
-  border-radius 6px
+  border-radius 3px
   transition all .15s ease-in-out
   background: palette.bgs.body
   padding 8px 12px

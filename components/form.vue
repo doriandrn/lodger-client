@@ -9,10 +9,13 @@ form(@submit.prevent="validate")
       :focus  = "field.focus"
     )
 
-  buton(
-    type= "submit",
-    size= "large"
-  ) trimite
+  .split.actions
+    .right
+      buton(
+        type= "submit",
+        size= "large"
+        icon= "plus-circle"
+      ) {{ $t('defaults.forms.add') }}
 </template>
 
 <script>
@@ -29,8 +32,10 @@ export default {
   data () {
     let dynamicFormData = {}
     const ids = this._fields.map(field => field.id)
-    ids.forEach(id => {
-      dynamicFormData[id] = null
+    ids.forEach(fid => {
+      const test = this._fields.filter(field => field.id === fid)[0]
+      console.log('test', test)
+      dynamicFormData[fid] = typeof test.value === 'function' ? test.value() : null
     })
     Object.assign(dynamicFormData, { id: shortid.generate() })
     return dynamicFormData

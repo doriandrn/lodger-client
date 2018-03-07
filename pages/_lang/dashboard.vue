@@ -35,11 +35,34 @@ sction#dash
         div(v-if="defineste")
           frm(title="Adaugă bloc")
 
-        div(slot="sidebar", v-if="defineste || idsBlocuri.length")
+        div(v-else-if="defineste || idsBlocuri.length")
           h6 Previzualizare
-          ul
-            li(v-for="idBloc in idsBlocuri") {{ blocuri[idBloc].nume }}
-            li #[buton(@click="openModal('blocs.new')") bloc nou]
+          ul.blocuri
+            li(v-for="idBloc in idsBlocuri")
+              split
+                label.nume {{ blocuri[idBloc].nume || 'Noname'}}
+                buton(
+                  slot=   "right"
+                  @click= "openModal({ id: 'blocs.edit', data: { idBloc }})"
+                ) modifica
+                buton(
+                  slot=     "right"
+                  icon=     "trash"
+                  dangerous
+                ) sterge
+              .bloc
+                ul.scari
+                  li(v-for="scara in blocuri[idBloc].scari")
+                    label.nume Scara {{ scara.id }}
+                    .scara
+                      ul.etaje
+                        li(v-for="i in Number(scara.etaje || 0)")
+                          p.etaj__nr etaj {{ i }}
+                          buton ad ap
+
+            li
+              span.nume nou
+              buton(@click="openModal('blocs.new')") bloc nou
 
         empty(
           v-else-if=  "!defineste && !idsBlocuri.length",
@@ -88,6 +111,64 @@ sction#dash
 
     +above(l)
       margin: config.spacings.inBoxes
+
+ul.blocuri
+  fullflex()
+  flex-flow row nowrap
+  list-style-type none
+  padding 0
+  margin -8px
+
+  ul
+    list-style-type none
+    padding 0
+
+  > li
+    margin 8px
+    flex 1 0 180px
+    display flex
+    flex-flow column nowrap
+
+    > .split > .left > label
+      text-transform uppercase
+      font-weight 700
+
+  .nume
+    margin-bottom 8px
+
+  .bloc
+    flex 1 1 100%
+    margin-top auto
+    
+    > .scari
+      display flex
+      flex-flow row nowrap
+      margin -4px
+
+      > li
+        // flex 1 0 160px
+        min-width 160px
+        flex-flow column nowrap
+        align-items flex-start
+        justify-content flex-start
+        margin 4px
+
+    .scara
+      width 100%
+
+  .etaj
+    margin-bottom auto
+    padding-bottom 16px
+
+    &e
+      background white
+
+    &__nr
+      flex 0 0 20px
+      border-bottom: 1px solid config.palette.borders
+      padding 0 4px
+      line-height 20px
+      
 </style>
 
 <script>
@@ -96,6 +177,7 @@ import widget from '~components/widget'
 import buton from 'form/button'
 import frm from '~components/form.vue'
 import empty from '~components/empty'
+import split from '~components/split'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -107,6 +189,7 @@ export default {
   },
   components: {
     sction,
+    split,
     widget,
     buton,
     empty,

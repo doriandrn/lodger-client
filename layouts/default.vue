@@ -28,12 +28,14 @@
       v-if= "modalOpen"
       :title= "modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
     )
-      frm(
+      frm#main(
         v-if=       "modalContent !== 'prompt'",
-        @submit=    "formulare[modalContent].actiuni.confirm"
-        :_fields=   "formulare[modalContent].campuri"
+        @submit=    "handleModalFormSubmit",
+        :_fields=   "modalFormFields"
       )
+
       prompt(v-else)
+      cale(slot="footer")
 
   footr
     p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
@@ -41,12 +43,6 @@
 
 <style lang="stylus">
 @require '~styles/config'
-
-fullflex()
-  display flex
-  flex 1 1 100%
-  width 100%
-  flex-flow column nowrap
 
 #layout
   display flex
@@ -109,6 +105,7 @@ import footr from '~components/footer'
 import modal from '~components/modal'
 import frm from '~components/form.vue'
 import prompt from '~components/prompt'
+import cale from '~components/cale'
 import slect from 'form/select'
 
 import { mapGetters, mapActions } from 'vuex'
@@ -160,16 +157,32 @@ export default {
           campuri: [
             {
               id: 'nume',
+              placeholder: 'ex. M11, COCOR-2, A3...',
               type: 'text',
               label: this.$t('blocs.new.name'),
               required: true,
               focus: true
             },
             {
+              id: 'scariCount',
+              type: 'number',
+              label: this.$t('blocs.scari'),
+              value: 1,
+              min: 0,
+              max: 20
+            },
+            {
+              id: 'scari',
+              type: 'scari'
+            },
+            {
               id: 'asociatieId',
               value: () => this.asociatieActiva
             }
           ],
+          cale: [{
+            id: 'asociatieId'
+          }],
           actiuni: {
             confirm: this.adaugaBloc
           }
@@ -183,7 +196,12 @@ export default {
       adaugaBloc: 'bloc/adauga',
       schimbaAsociatieActiva: 'asociatie/schimba',
       modalClose: 'modal/close'
-    })
+    }),
+    handleModalFormSubmit () {
+      const { modalContent, formulare } = this
+      formulare[modalContent].actiuni.confirm(arguments[0])
+      this.modalClose()
+    }
   },
   computed: {
     optiuniSwitcherAsociatie () {
@@ -196,6 +214,30 @@ export default {
       opts.new = this.$t('asocs.new.title')
       return opts
     },
+
+    modalFormFields () {
+      const { formulare, modalContent, modalData } = this
+      if (modalContent === 'prompt') {
+        return
+      }
+      const path = modalContent.split('.')
+      switch (path[1]) {
+        case 'new':
+          return formulare[modalContent].campuri
+        
+        case 'edit':
+          const x = formulare[`${path[0]}.new`].campuri
+
+          if (path[0] === 'blocs' && modalData.idBloc) {
+            const blocData = this.blocData(modalData.idBloc)
+            Object.values(x).forEach(item => {
+              item.value = blocData[item.id]
+            })
+            return x
+          }          
+      }
+
+    },
     idAsociatieActiva: {
       get () { return this.asociatieActiva },
       set (id) { this.schimbaAsociatieActiva(id) }
@@ -204,14 +246,17 @@ export default {
       asociatii: 'asociatie/lista',
       idsAsociatii: 'asociatie/ids',
       asociatieActiva: 'asociatie/activa',
+      blocData: 'bloc/data',
       modalOpen: 'modal/open',
-      modalContent: 'modal/content'
+      modalContent: 'modal/content',
+      modalData: 'modal/data'
     })
   },
   components: {
     headr,
     modal,
     footr,
+    cale,
     frm,
     prompt,
     slect

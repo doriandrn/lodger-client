@@ -55,12 +55,18 @@ export default {
     min-height 300px
     display flex
     flex-flow column wrap
+    overflow auto
 
     .danger
       margin-top auto
 
   &__sidebar
     background: config.palette.borders
+    display flex
+    flex-flow column nowrap
+
+    > div
+      fullflex()
 
   &__title
     text-transform uppercase
@@ -82,6 +88,10 @@ export default {
     .widget
       &__content
         padding: config.spacings.inBoxes
+        background: config.palette.borders
+
+        > div
+          fullflex()
       
       &__title
         padding: 0 config.spacings.inBoxes

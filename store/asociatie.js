@@ -43,6 +43,9 @@ export const actions = {
     }
   },
   sterge ({ commit }, id) {
+    // sterge incasari
+    // sterge apartamente
+    // sterge blocuri
     commit('STERGE_ASOCIATIE', id)
   },
   definesteStructura ({ commit }) {

@@ -12,7 +12,9 @@ span
     v-focus=      "focus",
     :autofocus=   "focus",
     @input=       "emit($event)",
-    :value=       "value"
+    :value=       "value",
+    :min=         "type === 'number' ? min : null"
+    :max=         "type === 'number' ? max : null"
   )
   p.input__info(v-if="info") {{ info }}
   p.input__message.field__desc(v-if="message") {{ message }}
@@ -38,10 +40,18 @@ export default {
   },
   props: {
     value: {
-      type: [Boolean, String],
+      type: [Boolean, String, Number],
       default () {
         return ''
       }
+    },
+    min: {
+      type: Number,
+      default: 1
+    },
+    max: {
+      type: Number,
+      default: null
     },
     name: {
       type: String,
@@ -51,9 +61,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default () {
-        return ''
-      }
+      default: null
     },
     required: {
       type: Boolean,
@@ -130,6 +138,7 @@ export default {
 palette = config.palette
 
 input[type="text"]
+input[type="number"]
 input[type="password"]
 textarea
   font-size 14px
@@ -144,4 +153,9 @@ textarea
   &:focus
     border-color: palette.primary
     color: palette.primary
+
+.input
+  &__req
+    color: palette.warn
+    margin-left 4px
 </style>

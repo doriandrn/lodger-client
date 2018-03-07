@@ -1,5 +1,5 @@
 <template lang="pug">
-.modal
+.modal(:class="{ 'modal--hasFooter': $slots.footer }")
   .modal__backdrop(@click="inchide")
   .modal__container
     header.modal__header(v-if="$slots.header || title")
@@ -48,6 +48,10 @@ export default {
   justify-content center
   transition all .15s ease-in-out
 
+  &__content
+    flex 0 1 50vh
+    overflow auto
+
   &__backdrop
     position absolute 0
     z-index 201
@@ -60,11 +64,15 @@ export default {
     background white
     width 85%
     max-width 540px
+    max-height 75vh
     transition all .15s ease-in-out
     border-radius 2px
     box-shadow 0 1px 3px 0 rgba(black, .2)
+    display flex
+    flex-flow column nowrap
+    
     +above(l)
-      margin-top -25%
+      margin-top -5%
 
   &__content
     padding-top: config.spacings.betweenBoxes
@@ -98,5 +106,12 @@ export default {
   &__footer
     lost-utility clearfix
     background: config.palette.bgs.body
+
+  &--hasFooter
+    .modal
+      &__content
+        > form#main
+          input[type="submit"]
+            position absolute
   
 </style>

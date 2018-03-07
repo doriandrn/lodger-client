@@ -24,4 +24,5 @@ export const actions = {
 export const getters = {
   lista: state => state.lista,
   ids: (state, getters) => Object.keys(getters.lista),
+  data: state => id => state.lista[id] || {}
 }

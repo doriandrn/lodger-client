@@ -32,7 +32,7 @@ export default {
       title: 'Zonă administrativă',
       modify: 'Modifică datele asociației',
       delete: 'Șterge asociația',
-      deletePrompt: 'Ești sigur că dorești să ștergi asociația X?',
+      deletePrompt: 'Ești sigur că dorești să ștergi asociația [X]?',
       dangerZone: 'Zona periculoasă'
     }
   },
@@ -44,8 +44,13 @@ export default {
     },
     new: {
       title: 'Adaugă un bloc nou / o clădire',
-      name: 'Identificator'
-    }
+      name: 'Identificator / Denumire'
+    },
+    edit: {
+      title: 'Modifică blocul [X]'
+    },
+    etaje: 'Etaje',
+    scari: 'Scări'
   },
   defaults: {
     prompt: {

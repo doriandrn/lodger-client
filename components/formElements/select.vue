@@ -57,7 +57,9 @@ export default {
     options: {
       type: Object,
       default () {
-        return []
+        return {
+          demo: 'Demo option'
+        }
       }
     },
     label: {

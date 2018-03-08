@@ -40,6 +40,9 @@ module.exports = {
     src: '~plugins/validate'
   },
   {
+    src: '~plugins/range'
+  },
+  {
     src: '~plugins/i18n'
   }],
   router: {
@@ -63,6 +66,7 @@ module.exports = {
         UI: resolve('components/UI'),
         widgets: resolve('components/widgets'),
         form: resolve('components/formElements'),
+        forms: resolve('forms'),
         helpers: resolve('helpers'),
         '~components': resolve('components')
       })

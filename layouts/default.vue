@@ -31,11 +31,12 @@
       frm#main(
         v-if=       "modalContent !== 'prompt'",
         @submit=    "handleModalFormSubmit",
-        :_fields=   "modalFormFields"
+        :_fields=   "formData(modalContent, $t).campuri",
+        :type=      "modalContent.split('.')[1]"
       )
 
       prompt(v-else)
-      cale(slot="footer")
+      //- cale(slot="footer")
 
   footr
     p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
@@ -153,28 +154,25 @@ export default {
             }
           ]
         },
-        'blocs.new': {
+        'aps.new': {
           campuri: [
             {
-              id: 'nume',
-              placeholder: 'ex. M11, COCOR-2, A3...',
+              id: 'nr',
               type: 'text',
-              label: this.$t('blocs.new.name'),
-              required: true,
-              focus: true
+              required: true
             },
             {
-              id: 'scariCount',
-              type: 'number',
-              label: this.$t('blocs.scari'),
-              value: 1,
-              min: 0,
-              max: 20
-            },
-            {
-              id: 'scari',
-              type: 'scari'
-            },
+              id: 'suprafata',
+              type: 'number'
+            }
+          ],
+          actiuni: {
+            confirm: this.adaugaAp
+          }
+        },
+        'blocs.new': {
+          campuri: [
+            
             {
               id: 'asociatieId',
               value: () => this.asociatieActiva
@@ -194,13 +192,29 @@ export default {
     ...mapActions({
       adaugaAsociatie: 'asociatie/adauga',
       adaugaBloc: 'bloc/adauga',
+      adaugaAp: 'apartament/adauga',
       schimbaAsociatieActiva: 'asociatie/schimba',
       modalClose: 'modal/close'
     }),
     handleModalFormSubmit () {
       const { modalContent, formulare } = this
-      formulare[modalContent].actiuni.confirm(arguments[0])
+      const path = modalContent.split('.')
+      formulare[`${path[0]}.new`].actiuni.confirm(arguments[0])
       this.modalClose()
+    },
+    get formData () {
+      return (id, $t) => {
+        const path = id.split('.')
+        const data = require(`forms/${path[0]}`)
+        const { campuri, actiuni } = data
+        
+        // translate
+        campuri.forEach(camp => {
+          camp.label = $t(camp.label)
+        })
+        console.log('form data', campuri)
+        return { campuri, actiuni }
+      }
     }
   },
   computed: {
@@ -228,13 +242,14 @@ export default {
         case 'edit':
           const x = formulare[`${path[0]}.new`].campuri
 
-          if (path[0] === 'blocs' && modalData.idBloc) {
-            const blocData = this.blocData(modalData.idBloc)
+          if (path[0] === 'blocs' && modalData.id) {
+            const blocData = this.blocData(modalData.id)
             Object.values(x).forEach(item => {
               item.value = blocData[item.id]
             })
             return x
-          }          
+          }
+          break
       }
 
     },

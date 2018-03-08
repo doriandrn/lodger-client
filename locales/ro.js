@@ -52,6 +52,11 @@ export default {
     etaje: 'Etaje',
     scari: 'Scări'
   },
+  aps: {
+    new: {
+      title: 'Adaugă apartament'
+    }
+  },
   defaults: {
     prompt: {
       message: 'Ești sigur?',
@@ -59,7 +64,8 @@ export default {
       cancel: 'Nu chiar'
     },
     forms: {
-      add: 'Adaugă'
+      add: 'Adaugă',
+      edit: 'Modifică'
     }
   }
 }

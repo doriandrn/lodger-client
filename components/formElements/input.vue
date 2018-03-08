@@ -41,9 +41,7 @@ export default {
   props: {
     value: {
       type: [Boolean, String, Number],
-      default () {
-        return ''
-      }
+      default: null
     },
     min: {
       type: Number,

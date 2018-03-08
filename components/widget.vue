@@ -4,8 +4,14 @@
     v-if= "boxed"
     :data-icon= "icon"
   )
-    h5.widget__title {{ title }}
-    button.control(v-for="control in controls") {{ control }}
+    split
+      h5.widget__title {{ title }}
+      button.control(
+        v-for="control in controls"
+        v-if= "control.type === 'buton'"
+        slot= "right"  
+      ) {{ control }}
+      slot(name="right" slot="right")
   .widget__content
     slot
     .sidebar.widget__sidebar(v-if="$slots.sidebar")
@@ -13,7 +19,12 @@
 </template>
 
 <script>
+import split from '~components/split'
+
 export default {
+  components: {
+    split
+  },
   props: {
     title: {
       type: String,
@@ -50,12 +61,17 @@ export default {
 .widget
   position relative
   overflow hidden
+  display flex
 
   &__content
     min-height 300px
     display flex
-    flex-flow column wrap
+    flex 1 1 100%
+    flex-flow column nowrap
     overflow auto
+
+    > ul.actions
+      margin-bottom: config.spacings.betweenBoxes
 
     .danger
       margin-top auto
@@ -73,6 +89,16 @@ export default {
     font-weight 500
     letter-spacing .5px
     margin-bottom 0
+
+  &__header
+    > .split
+      flex-flow column nowrap
+
+      .left
+        margin-right 0
+
+      .right
+        margin-left 0
 
   &.full
     flex 1 1 100%
@@ -92,9 +118,20 @@ export default {
 
         > div
           fullflex()
+          overflow hidden
       
       &__title
-        padding: 0 config.spacings.inBoxes
+        line-height 24px
+        text-align center
+
+      &__header
+        display flex
+        flex 0 0 52px
+        padding: config.spacings.inBoxes
+
+        > .split
+          .right
+            margin-top auto
 
   &.hasSidebar
     .widget

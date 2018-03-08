@@ -49,8 +49,8 @@ export default {
   transition all .15s ease-in-out
 
   &__content
-    flex 0 1 50vh
-    overflow auto
+    flex 1 1 50%
+    overflow-y auto
 
   &__backdrop
     position absolute 0
@@ -81,7 +81,9 @@ export default {
 
     form
       .actions
-        margin-top: config.spacings.betweenBoxes
+        margin: config.spacings.inBoxes -20px -20px
+        padding: config.spacings.inBoxes config.spacings.betweenBoxes
+        background: config.palette.borders
 
         input[type="submit"]
           min-width 120px
@@ -106,12 +108,5 @@ export default {
   &__footer
     lost-utility clearfix
     background: config.palette.bgs.body
-
-  &--hasFooter
-    .modal
-      &__content
-        > form#main
-          input[type="submit"]
-            position absolute
   
 </style>

@@ -30,8 +30,10 @@ sction#dash
 
       widget(
         :title=  "$t('asocs.init.title')",
+        :controls= "[{ type: 'progresInit' }]"
         expand
       )
+        p(slot="right") test
         div(v-if="defineste")
           frm(title="Adaugă bloc")
 
@@ -40,14 +42,20 @@ sction#dash
           ul.blocuri
             li(v-for="idBloc in idsBlocuri")
               split
-                label.nume {{ blocuri[idBloc].nume || 'Noname'}}
+                label.nume {{ blocuri[idBloc].nume || '~'}}
                 buton(
                   slot=   "right"
-                  @click= "openModal({ id: 'blocs.edit', data: { idBloc }})"
+                  styl=   "unstyled"
+                  icon=   "edit"
+                  icon-only
+                  @click= "openModal({ id: 'blocs.edit', data: { id: idBloc }})"
                 ) modifica
                 buton(
                   slot=     "right"
+                  styl=   "unstyled"
+                  @click=   "stergeBloc(idBloc)"
                   icon=     "trash"
+                  icon-only
                   dangerous
                 ) sterge
               .bloc
@@ -56,9 +64,16 @@ sction#dash
                     label.nume Scara {{ scara.id }}
                     .scara
                       ul.etaje
-                        li(v-for="i in Number(scara.etaje || 0)")
-                          p.etaj__nr etaj {{ i }}
-                          buton ad ap
+                        li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
+                          p.etaj__nr(v-if="i > 0") etaj {{ i }}
+                          p.etaj__nr(v-else) parter
+                          .etaj__content
+                            buton(
+                              @click= "openModal('aps.new')",
+                              styl=   "unstyled"
+                              icon=   "plus-circle"
+                              icon-only
+                            ) ad ap
 
             li
               span.nume nou
@@ -114,17 +129,18 @@ sction#dash
 
 ul.blocuri
   fullflex()
-  flex-flow row nowrap
+  flex-flow row-reverse nowrap
+  overflow auto
   list-style-type none
   padding 0
-  margin -8px
+  margin: -(config.spacings.inBoxes)
 
   ul
     list-style-type none
     padding 0
 
   > li
-    margin 8px
+    margin: config.spacings.inBoxes
     flex 1 0 180px
     display flex
     flex-flow column nowrap
@@ -133,25 +149,32 @@ ul.blocuri
       text-transform uppercase
       font-weight 700
 
-  .nume
-    margin-bottom 8px
+    > .bloc
+      padding-top 16px
+      margin-top 16px
+      border-top: 1px solid config.palette.borders
+
 
   .bloc
+    display flex
     flex 1 1 100%
     margin-top auto
-    
+
     > .scari
       display flex
       flex-flow row nowrap
       margin -4px
 
       > li
-        // flex 1 0 160px
         min-width 160px
         flex-flow column nowrap
         align-items flex-start
         justify-content flex-start
-        margin 4px
+        margin auto 4px 4px
+        display flex
+
+        > .nume
+          margin-bottom 8px
 
     .scara
       width 100%
@@ -162,12 +185,23 @@ ul.blocuri
 
     &e
       background white
+      display flex
+      flex-flow column-reverse nowrap
 
     &__nr
       flex 0 0 20px
       border-bottom: 1px solid config.palette.borders
       padding 0 4px
       line-height 20px
+      margin-bottom 0
+      text-transform capitalize
+
+    &__content
+      padding: config.spacings.inBoxes 4px
+      background: config.palette.bgs.body
+
+      > button
+        width 100%
       
 </style>
 
@@ -205,7 +239,8 @@ export default {
   }),
   methods: mapActions({
     openModal: 'modal/open',
-    stergeAsociatie: 'asociatie/sterge'
+    stergeAsociatie: 'asociatie/sterge',
+    stergeBloc: 'bloc/sterge'
   })
 }
 </script>

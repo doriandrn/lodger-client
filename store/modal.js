@@ -27,7 +27,6 @@ export const mutations = {
 
 export const actions = {
   open: ({ commit }, content) => {
-    console.log('typeof content', typeof content)
     if (typeof content === 'string') commit('OPEN', content)
     if (typeof content === 'object') {
       commit('OPEN', content.id)

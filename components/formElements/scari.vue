@@ -33,7 +33,19 @@ import inpt from 'form/input'
 
 export default {
   data () {
-    if (this.value) return { scari: this.value }
+    let data = []
+    const { value } = this
+    console.log('VAL', value)
+    if (value) {
+      value.forEach(scara => {
+        let x = {}
+        Object.keys(scara).forEach(cheie => {
+          x[cheie] = scara[cheie]
+        })
+        data.push(x)
+      })
+      return { scari: data }
+    }
     return {
       scari: [{
         id: '1',
@@ -58,17 +70,14 @@ export default {
     scariCount: function (newVal, old) {
       if (newVal < 0 || old < 0) return
       let dif = 0
-      console.log(this, old, newVal, this.scariCount)
+
       if (newVal > old) {
         dif = newVal - old
         for (let i = old; i < newVal; i++) {
-          console.log('I', i)
           if (i > 0) this.scari.push({ id: i+1, etaje: 1})
         }
-        console.log('mai mare')
       } else {
         dif = old - newVal
-        console.log('mai mic')
         for (let i = newVal; i < old; i++) {
           if (i > 0) this.scari.splice(this.scari.length-1, 1)
         }

@@ -7,14 +7,15 @@ nuxt-link(
 ) {{ text }}
 
 button(
-  v-else-if=    "type === 'button' && !to",
-  @click=       "!dangerous ? $emit('click') : newPrompt(prompt)"
-  :aria-label=  "$slots.default[0].text",
-  :data-tip=    "tooltip ? text : false",
-  :data-icon=   "icon",
-  :data-size=   "size",
-  :data-styl=   "styl",
+  v-else-if=        "type === 'button' && !to",
+  @click=           "!dangerous ? $emit('click', $event) : promptUser()"
+  :aria-label=      "$slots.default[0].text",
+  :data-tip=        "tooltip ? text : false",
+  :data-icon=       "icon",
+  :data-size=       "size",
+  :data-styl=       "styl",
   :data-dangerous=  "dangerous"
+  :class=           "{ iconOnly }"
   )
   slot
   span.badge(v-if="$slots.badge")
@@ -63,32 +64,69 @@ button
     background-color: config.palette.warn
     border-color: config.palette.warn
 
-  &[data-styl="outline"]
-    background-color transparent
-    color: config.palette.primary
-</style>
+    &[data-styl="outline"]
+      &[data-icon]
+        &:before
+          background-color: config.palette.warn
 
+
+  &[data-styl="outline"]
+  &[data-styl="unstyled"]
+    background-color transparent
+    color: config.typography.palette.ui
+
+    &[data-icon]
+      &:before
+        background-color: config.typography.palette.ui
+
+    &:hover
+      color: config.palette.primary
+
+      &[data-icon]:before
+        background-color: config.palette.primary
+  
+  &[data-styl="unstyled"]
+    border 0
+    padding 0
+
+</style>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
+  data () {
+    return {
+      prompted: false
+    }
+  },
   computed: {
     ...mapGetters({
-      prompted: 'prompt/prompted'
+      modalContent: 'modal/content'
     }),
   },
   methods: {
     ...mapActions({
       newPrompt: 'prompt/new'
-    })
-  },
-  watch: {
-    prompted: function (newVal) {
-      if (!this.dangerous) return
-      if (!newVal) this.$emit('click')
+    }),
+    async promptUser () {
+      this.prompted = true
+      const prompt = this.newPrompt(this.prompt)
+      this.debug('OMG')
+      const confirmed = await promptStatusChange
+      if (confirmed) {
+        this.$emit('click', this.$event)
+        this.prompted = false
+        this.debug('done')
+      }
     }
   },
+  // watch: {
+  //   prompted: function (newVal) {
+  //     if (!this.dangerous || this.modalContent !== 'prompt') return
+  //     if (!newVal) this.$emit('click', this.$event)
+  //   }
+  // },
   props: {
     /*  Button Size
         Parameters: small | medium | large;

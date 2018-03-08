@@ -1,4 +1,4 @@
-icons = send server settings trash 'plus-circle'
+icons = edit send server settings trash 'plus-circle'
 
 [data-icon]
   position relative
@@ -13,6 +13,12 @@ icons = send server settings trash 'plus-circle'
     mask-repeat no-repeat
     background-color white
     margin-right 8px
+
+  &.iconOnly
+    font-size 0
+
+    &:before
+      margin 0
 
 header[data-icon]
   .widget__title

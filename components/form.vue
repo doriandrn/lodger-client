@@ -1,28 +1,22 @@
 <template lang="pug">
 form(@submit.prevent="validate")
-  .field(
-    v-for=      "field in _fields"
-    v-if=       "field.type"
-    :data-type= "field.type"
-    :class=     "{ separator: field.type === 'separator' }"
+  field(
+    v-for=          "field in _fields"
+    v-if=           "field.type"
+    :key=           "`${field.type}-${field.id}`"
+    :id=            "field.id"
+    :type=          "field.type || null"
+    :label=         "field.label"
+    :placeholder=   "field.placeholder"
+    :focus=         "field.focus"
+    :required=      "field.required"
+    :min=           "field.min"
+    :max=           "field.max"
+
+    :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
+
+    v-model=        "$data[field.id]"
   )
-    inpt(
-      v-if=         "['text', 'number'].indexOf(field.type) > -1",
-      :type=        "field.type",
-      :label=       "field.label",
-      :placeholder= "field.placeholder",
-      :id=          "field.id",
-      v-model=      "$data[field.id]",
-      :focus  =     "field.focus",
-      :required=    "field.required",
-      :min=         "field.min",
-      :max=         "field.max"
-    )
-    scari(
-      v-if=         "field.type === 'scari'",
-      :scariCount=  "Number(scariCount)",
-      v-model=      "$data[field.id]",
-    )
 
   slot(name="formExtend")
 
@@ -32,18 +26,12 @@ form(@submit.prevent="validate")
       size= "large"
       icon= "plus-circle"
       slot= "right"
-    ) {{ $t('defaults.forms.add') }}
+    ) {{ this.type === 'new'? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
 </template>
 
 <script>
-import inpt from 'form/input'
-import slect from 'form/select'
-import txtarea from 'form/textarea'
 import buton from 'form/button'
-import cbox from 'form/checkbox'
-import file from 'form/file'
-import radios from 'form/radioGroup'
-import scari from 'form/scari'
+import field from 'form/field'
 
 import shortid from 'shortid'
 import frm from './form.vue'
@@ -56,15 +44,26 @@ export default {
   data () {
     let dynamicFormData = {}
     const ids = this._fields.map(field => field.id)
+
     ids.forEach(fid => {
       const test = this._fields.filter(field => field.id === fid)[0]
       dynamicFormData[fid] = typeof test.value === 'function' ? test.value() : test.value || null
     })
-    Object.assign(dynamicFormData, { id: shortid.generate() })
+    const modalData = this.$store.getters['modal/data']
+    if (typeof modalData === 'object' && modalData) {
+      console.log('PAMPAM')
+      dynamicFormData.id = modalData.id
+    }
+    // add generated id on new forms :)
+    else {
+      console.log(typeof modalData)
+      Object.assign(dynamicFormData, { id: shortid.generate() })
+    }
     return dynamicFormData
   },
   computed: mapGetters({
-    activeForm: 'modal/content'
+    activeForm: 'modal/content',
+    modalData: 'modal/data'
   }),
   props: {
     _fields: {
@@ -78,6 +77,10 @@ export default {
           required: true
         }]
       }
+    },
+    type: {
+      type: String,
+      default: 'new'
     }
   },
   methods: {
@@ -88,15 +91,9 @@ export default {
     }
   },
   components: {
-    inpt,
-    slect,
-    txtarea,
     buton,
-    cbox,
-    file,
-    radios,
     split,
-    scari
+    field
   }
 }
 </script>

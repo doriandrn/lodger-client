@@ -63,6 +63,10 @@ export default {
   overflow hidden
   display flex
 
+  .actions
+    list-style-type none
+    padding 0
+
   &__content
     min-height 300px
     display flex
@@ -123,6 +127,8 @@ export default {
       &__title
         line-height 24px
         text-align center
+        max-width 10px
+        margin 0 auto
 
       &__header
         display flex

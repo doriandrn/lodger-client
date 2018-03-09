@@ -11,8 +11,9 @@ span.select(:class="{error}")
     @change=    "$emit('input', $event.target.value); debug($event.target.value)"
   )
     option(
-      v-for=    "option, key in options",
-      :value=   "key"
+      v-for=      "option, key in options",
+      :value=     "key",
+      :selected=  "value === key"
     ) {{ option }}
   p.input__message(v-if="message") {{ message }}
 </template>
@@ -29,6 +30,10 @@ export default {
       default () {
         return 'demo::replace'
       }
+    },
+    value: {
+      type: String,
+      default: null
     },
     name: {
       type: String,

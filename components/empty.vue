@@ -76,4 +76,5 @@ export default {
 
   > .actions
     justify-content center
+    flex-basis auto !important
 </style>

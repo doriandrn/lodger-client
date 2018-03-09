@@ -2,10 +2,10 @@
 form(@submit.prevent="validate")
   field(
     v-for=          "field in formData.campuri"
-    v-if=           "field.type"
+
     :key=           "`${field.type}-${field.id}`"
     :id=            "field.id"
-    :type=          "field.type || null"
+    :type=          "field.type || 'text'"
     :label=         "field.label"
     :placeholder=   "field.placeholder"
     :focus=         "field.focus"
@@ -14,7 +14,7 @@ form(@submit.prevent="validate")
     :max=           "field.max"
     :options=       "field.options"
     :value=         "field.value"
-    :slot=          "field.slot"
+    :data-slot=     "field.slot"
 
     :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
 
@@ -24,7 +24,7 @@ form(@submit.prevent="validate")
   slot(name="formExtend")
 
   split.actions
-    slot(name="footer")
+    
     buton(
       type= "submit",
       size= "large"
@@ -45,6 +45,14 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'frm',
+  mounted () {
+    const footerEls = this.$el.querySelectorAll('span[data-slot]')
+    if (!footerEls) return
+    const footerActionsEl = this.$el.querySelector('.actions .left')
+    for (const el of footerEls) {
+      footerActionsEl.append(el)
+    }
+  },
   data () {
     let dynamicFormData = {}
     const { campuri } = this.formData

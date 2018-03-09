@@ -74,8 +74,11 @@ sction#dash
                             ) ad ap
 
             li
-              span.nume nou
-              buton(@click="openModal('blocs.new')") bloc nou
+              buton(
+                icon= "plus-circle",
+                icon-only
+                @click="openModal('blocs.new')"
+              ) {{ $t('blocs.new.title') }}
 
         empty(
           v-else-if=  "!defineste && !idsBlocuri.length",
@@ -89,7 +92,12 @@ sction#dash
         icon=   "settings"
       )
         ul.actions
-          li caca
+          li
+            buton(
+              icon=   "plus-circle"
+              @click= "openModal('asocs.new')", 
+              styl=   "unstyled"
+            ) {{ $t('asocs.noneAdmind.action') }}
         .danger
           h4 {{ $t('asocs.adminZone.dangerZone') }}
           buton(
@@ -131,7 +139,7 @@ ul.blocuri
   overflow auto
   list-style-type none
   padding 0
-  margin: -(config.spacings.inBoxes)
+  // margin: -(config.spacings.inBoxes)
 
   ul
     list-style-type none

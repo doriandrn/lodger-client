@@ -40,6 +40,9 @@ module.exports = {
     src: '~plugins/validate'
   },
   {
+    src: '~plugins/portal'
+  },
+  {
     src: '~plugins/range'
   },
   {

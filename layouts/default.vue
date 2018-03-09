@@ -58,6 +58,12 @@
     position fixed 0 0 auto 0
     z-index 99
 
+    nav
+      position fixed
+
+      +above(l)
+        position static
+
     &+main
       padding-top 48px
 
@@ -181,7 +187,7 @@ export default {
       idsAsociatii.forEach(id => {
         opts[id] = this.asociatii[id].name
       })
-      opts.new = this.$t('asocs.new.title')
+      // opts.new = this.$t('asocs.new.title')
       return opts
     },
     idAsociatieActiva: {

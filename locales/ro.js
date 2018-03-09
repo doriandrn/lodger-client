@@ -43,7 +43,7 @@ export default {
       actions: ['Definește structura manual', 'Importă din altă aplicație']
     },
     new: {
-      title: 'Adaugă un bloc nou / o clădire',
+      title: 'Adaugă un bloc/o clădire nou(ă)',
       name: 'Identificator / Denumire'
     },
     edit: {

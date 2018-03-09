@@ -1,7 +1,7 @@
 <template lang="pug">
 form(@submit.prevent="validate")
   field(
-    v-for=          "field in _fields"
+    v-for=          "field in formData.campuri"
     v-if=           "field.type"
     :key=           "`${field.type}-${field.id}`"
     :id=            "field.id"
@@ -12,6 +12,9 @@ form(@submit.prevent="validate")
     :required=      "field.required"
     :min=           "field.min"
     :max=           "field.max"
+    :options=       "field.options"
+    :value=         "field.value"
+    :slot=          "field.slot"
 
     :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
 
@@ -21,12 +24,13 @@ form(@submit.prevent="validate")
   slot(name="formExtend")
 
   split.actions
+    slot(name="footer")
     buton(
       type= "submit",
       size= "large"
       icon= "plus-circle"
       slot= "right"
-    ) {{ this.type === 'new'? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
+    ) {{ type === 'new' ? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
 </template>
 
 <script>
@@ -37,45 +41,56 @@ import shortid from 'shortid'
 import frm from './form.vue'
 import split from '~components/split'
 
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'frm',
   data () {
     let dynamicFormData = {}
-    const ids = this._fields.map(field => field.id)
+    const { campuri } = this.formData
+    const ids = campuri.map(field => field.id)
 
     ids.forEach(fid => {
-      const test = this._fields.filter(field => field.id === fid)[0]
+      const test = campuri.filter(field => field.id === fid)[0]
       dynamicFormData[fid] = typeof test.value === 'function' ? test.value() : test.value || null
     })
     const modalData = this.$store.getters['modal/data']
     if (typeof modalData === 'object' && modalData) {
-      console.log('PAMPAM')
       dynamicFormData.id = modalData.id
     }
     // add generated id on new forms :)
     else {
-      console.log(typeof modalData)
       Object.assign(dynamicFormData, { id: shortid.generate() })
     }
     return dynamicFormData
   },
-  computed: mapGetters({
-    activeForm: 'modal/content',
-    modalData: 'modal/data'
-  }),
+  computed: {
+    ...mapGetters({
+      modalContent: 'modal/content',
+      modalData: 'modal/data'
+    }),
+    path () {
+      return this.modalContent.split('.')[0]
+    }
+  },
   props: {
-    _fields: {
-      type: Array,
+    formData: {
+      type: Object,
       default () {
-        return [{
-          id: 'demoText',
-          type: 'text',
-          label: 'Demo Input',
-          focus: true,
-          required: true
-        }]
+        return {
+          campuri: [
+            {
+              id: 'demoText',
+              type: 'text',
+              label: 'Demo Input',
+              focus: true,
+              required: true
+            }
+          ],
+          actiuni: {
+            confirm: 'doNothing'
+          }
+        }
       }
     },
     type: {
@@ -84,10 +99,23 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      adaugaAsociatie: 'asociatie/adauga',
+      adaugaBloc: 'bloc/adauga',
+      adaugaAp: 'apartament/adauga',
+      modalClose: 'modal/close'
+    }),
     validate () {
       this.$validator.validateAll().then(valid => {
-        if (valid) this.$emit('submit', this.$data)
+        if (valid) this.handleSubmit()
       })
+    },
+    handleSubmit () {
+      const { formData: { actiuni: { confirm } } } = this
+
+      this[confirm](this.$data)
+      this.modalClose()
+      this.$emit('submit', this.$data)
     }
   },
   components: {
@@ -113,17 +141,16 @@ form
   label
     margin-bottom: baseSpacingUnit
 
-.field
   > span
     display flex
     flex-flow row wrap
 
-  &[data-type="number"]
-    flex-basis 80px
+    &[data-type="number"]
+      flex-basis 80px
 
-  &[data-type="separator"]
-    flex-basis 100%
-    flex-shrink 0
+    &[data-type="separator"]
+      flex-basis 100%
+      flex-shrink 0
 
   .separator
     margin-top 0

@@ -1,5 +1,5 @@
 <template lang="pug">
-.scariForm
+span(data-type="scari")
   inpt(
     v-if =  "Number(scariCount) < 2",
     type=   "number",

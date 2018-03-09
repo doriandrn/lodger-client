@@ -9,7 +9,7 @@ span
     :id=          "id",
     :placeholder= "noLabel ? label : placeholder",
     :autofocus=   "focus",
-    @input=       "emit($event)"
+    @input=       "$emit('input', $event.target.value)"
     :value=       "value"
   )
 </template>
@@ -63,3 +63,8 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+textarea
+  max-width 100%
+</style>

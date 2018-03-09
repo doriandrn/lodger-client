@@ -34,10 +34,8 @@ sction#dash
         expand
       )
         p(slot="right") test
-        div(v-if="defineste")
-          frm(title="Adaugă bloc")
 
-        div(v-else-if="defineste || idsBlocuri.length")
+        div(v-if="defineste || idsBlocuri.length")
           h6 Previzualizare
           ul.blocuri
             li(v-for="idBloc in idsBlocuri")

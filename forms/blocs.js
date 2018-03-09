@@ -12,18 +12,22 @@ export const campuri = [
     type: 'number',
     label: 'blocs.scari',
     required: true,
-    value: 1,
+    default: 1,
     min: 0,
     max: 20
   },
   {
-    id: 'adresa',
-    type: 'textarea',
-    label: 'blocs.adresa'
-  },
-  {
     id: 'scari',
     type: 'scari'
+  },
+  {
+    id: 'adresa',
+    type: 'textarea',
+    label: 'defaults.address'
+  },
+  {
+    id: 'asociatieId',
+    type: 'select'
   }
 ]
 

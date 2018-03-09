@@ -30,8 +30,7 @@
     )
       frm#main(
         v-if=       "modalContent !== 'prompt'",
-        @submit=    "handleModalFormSubmit",
-        :_fields=   "formData(modalContent, $t).campuri",
+        :formData=  "formData(modalContent, this)",
         :type=      "modalContent.split('.')[1]"
       )
 
@@ -53,6 +52,7 @@
   .actions
     width 100%
     display flex
+    flex-basis 100%
 
   > header
     position fixed 0 0 auto 0
@@ -133,84 +133,40 @@ export default {
           title: this.$t('navigation[2]'),
           url: '/community'
         }
-      ],
-      formulare: {
-        'asocs.new': {
-          actiuni: {
-            confirm: this.adaugaAsociatie
-          },
-          campuri: [
-            {
-              id: 'name',
-              type: 'text',
-              label: this.$t('asocs.new.name'),
-              required: true,
-              focus: true
-            },
-            {
-              id: 'idN',
-              type: 'text',
-              label: this.$t('asocs.new.idN')
-            }
-          ]
-        },
-        'aps.new': {
-          campuri: [
-            {
-              id: 'nr',
-              type: 'text',
-              required: true
-            },
-            {
-              id: 'suprafata',
-              type: 'number'
-            }
-          ],
-          actiuni: {
-            confirm: this.adaugaAp
-          }
-        },
-        'blocs.new': {
-          campuri: [
-            
-            {
-              id: 'asociatieId',
-              value: () => this.asociatieActiva
-            }
-          ],
-          cale: [{
-            id: 'asociatieId'
-          }],
-          actiuni: {
-            confirm: this.adaugaBloc
-          }
-        }
-      }
+      ]
     }
   },
   methods: {
     ...mapActions({
-      adaugaAsociatie: 'asociatie/adauga',
-      adaugaBloc: 'bloc/adauga',
-      adaugaAp: 'apartament/adauga',
       schimbaAsociatieActiva: 'asociatie/schimba',
       modalClose: 'modal/close'
     }),
-    handleModalFormSubmit () {
-      const { modalContent, formulare } = this
-      const path = modalContent.split('.')
-      formulare[`${path[0]}.new`].actiuni.confirm(arguments[0])
-      this.modalClose()
-    },
     get formData () {
-      return (id, $t) => {
+      return (id, ctx) => {
         const path = id.split('.')
         const data = require(`forms/${path[0]}`)
         const { campuri, actiuni } = data
-        
+        const { modalContent, modalData, $t, blocData } = ctx
         // translate
         campuri.forEach(camp => {
           camp.label = $t(camp.label)
+          if (path[1] === 'edit' && typeof modalData === 'object' && modalData.id) {
+            if (path[0] === 'blocs') {
+              camp.value = blocData(modalData.id)[camp.id]
+              console.log('vall', camp.value)
+            }
+          } else {
+            camp.value = camp.default || null
+          }
+
+          switch (camp.id) {
+            case 'asociatieId':
+              const { asociatieActiva, optiuniSwitcherAsociatie } = ctx
+              camp.options = optiuniSwitcherAsociatie
+              camp.value = asociatieActiva
+              camp.slot = 'footer'
+              break
+          }
         })
         console.log('form data', campuri)
         return { campuri, actiuni }
@@ -228,38 +184,13 @@ export default {
       opts.new = this.$t('asocs.new.title')
       return opts
     },
-
-    modalFormFields () {
-      const { formulare, modalContent, modalData } = this
-      if (modalContent === 'prompt') {
-        return
-      }
-      const path = modalContent.split('.')
-      switch (path[1]) {
-        case 'new':
-          return formulare[modalContent].campuri
-        
-        case 'edit':
-          const x = formulare[`${path[0]}.new`].campuri
-
-          if (path[0] === 'blocs' && modalData.id) {
-            const blocData = this.blocData(modalData.id)
-            Object.values(x).forEach(item => {
-              item.value = blocData[item.id]
-            })
-            return x
-          }
-          break
-      }
-
-    },
     idAsociatieActiva: {
       get () { return this.asociatieActiva },
       set (id) { this.schimbaAsociatieActiva(id) }
     },
     ...mapGetters({
       asociatii: 'asociatie/lista',
-      idsAsociatii: 'asociatie/ids',
+      idsAsociatii: 'asociatie/ids', 
       asociatieActiva: 'asociatie/activa',
       blocData: 'bloc/data',
       modalOpen: 'modal/open',

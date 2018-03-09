@@ -58,6 +58,7 @@ export default {
     }
   },
   defaults: {
+    address: 'Adresă',
     prompt: {
       message: 'Ești sigur?',
       confirm: 'Da',

@@ -16,10 +16,25 @@ txtarea(
   v-else-if=    "['textarea'].indexOf(type) > -1"
   :label=       "label",
   :placeholder= "placeholder",
+  :value=       "value",
+  @input=       "$emit('input', $event)"
+  :required=    "required",
+  :id=          "id",
+)
+slect(
+  v-else-if=    "type === 'select'"
+  :options=     "options"
+  :label=       "label",
+  :value=       "value",
+  :required=    "required",
+  @input=       "$emit('input', $event)"
+  :id=          "id"
 )
 scari(
   v-else-if=    "type === 'scari' && typeof scariCount !== 'undefined'",
-  :scariCount=  "scariCount"
+  :scariCount=  "scariCount" 
+  :value=       "value",
+  @input=       "$emit('input', $event)"
 )
 </template>
 
@@ -73,6 +88,13 @@ export default {
     value: {
       type: [Boolean, String, Array, Object, Number],
       default: null
+    },
+    // 4 selects
+    options: {
+      type: Object,
+      default () {
+        return {}
+      }
     }
   },
   components: {

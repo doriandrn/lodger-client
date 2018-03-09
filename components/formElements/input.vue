@@ -1,5 +1,5 @@
 <template lang="pug">
-span
+span(:data-type=  "type !== 'text' ? type : null")
   labl.field__label(
     :for= "id",
     :label= "label",

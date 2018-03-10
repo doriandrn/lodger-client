@@ -48,6 +48,7 @@ button
   justify-content center
   line-height 20px
   flex-basis 56px
+  white-space nowrap
 
   &:hover
     background-color: darken(config.palette.primary, 15%)
@@ -104,7 +105,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      modalContent: 'modal/content'
+      modalContent: 'modal/content',
+      _prompted: 'prompt/prompted'
     })
   },
   methods: {
@@ -114,22 +116,25 @@ export default {
     async promptUser () {
       this.prompted = true
       const prompt = this.newPrompt(this.prompt)
-      this.debug('OMG')
-      const confirmed = await this.promptStatusChange
-      if (confirmed) {
-        this.$emit('click', this.$event)
-        this.prompted = false
-        this.debug('done')
-      }
+      // this.debug('OMG')
+      // const confirmed = await this.promptStatusChange
+      // if (confirmed) {
+      //   this.$emit('click', this.$event)
+      //   this.prompted = false
+      //   this.debug('done')
+      // }
     },
     promptStatusChange () {
       
     }
   },
   watch: {
-    prompted: function (newVal) {
-      if (!this.dangerous) return
-      if (!newVal) this.$emit('click', this.$event)
+    _prompted: function (newVal) {
+      if (!this.prompted) return
+      if (!newVal) {
+        this.$emit('click', this.$event)
+        this.prompted = false
+      }
     }
   },
   props: {

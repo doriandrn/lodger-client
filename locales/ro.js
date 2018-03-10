@@ -38,9 +38,9 @@ export default {
   },
   blocs: {
     none: {
-      heading: 'Structura asociației nu e definită',
-      CTA: 'nu-mi vine',
-      actions: ['Definește structura manual', 'Importă din altă aplicație']
+      heading: 'Asociație neinițializată',
+      CTA: 'Începe prin a-ți inițializa și configura asociația pe care o administrezi.',
+      actions: ['Inițializează manual', 'Importă datele din altă aplicație']
     },
     new: {
       title: 'Adaugă un bloc/o clădire nou(ă)',

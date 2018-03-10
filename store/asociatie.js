@@ -1,11 +1,19 @@
 export const state = () => ({
-  lista: {},
-  activa: {
-    id: null,
-    structura: {
-      _defineste: false,
+  lista: {
+    xxx: {
+      id: null,
+      structura: {
+        _defineste: false,
+        blocuri: [],
+        apartamente: []
+      },
+      servicii: [],
+      _initializata: false,
+      balanta: 0,
+      incasari: []
     }
-  }
+  },
+  activa: null
 })
 
 export const mutations = {
@@ -13,24 +21,20 @@ export const mutations = {
     state.lista = { ...state.lista, [date.id]: date }
   },
   SCHIMBA_ACTIVA: (state, id) => {
-    state.activa.id = id
+    state.activa = id
   },
   STERGE_ASOCIATIE: (state, id) => {
-    const lista = state.lista
-    delete lista[id]
-    state.lista = { ...lista }
+    state.lista = { ...state.lista, [id]: { ...state.lista[id], _sters: true } }
   },
   DEFINESTE_STRUCTURA: (state) => {
-    state.activa.structura._defineste = true
-  },
-  INCHIDE_DEFINESTE_STRUCTURA: (state) => {
-    state.activa.structura._defineste = false
+    state.lista[state.activa]._initializata = 0
   }
 }
 
 export const actions = {
-  adauga ({ commit, dispatch }, dateAsociatie) {
+  adauga ({ commit, dispatch, $db }, dateAsociatie) {
     commit('ADAUGA_ASOCIATIE', dateAsociatie)
+
     dispatch('modal/close', true, { root: true })
     dispatch('schimba', dateAsociatie.id)
   },
@@ -39,7 +43,6 @@ export const actions = {
       dispatch('modal/open', 'asocs.new', { root: true })
     } else {
       commit('SCHIMBA_ACTIVA', id)
-      commit('INCHIDE_DEFINESTE_STRUCTURA')
     }
   },
   sterge ({ commit }, id) {
@@ -60,8 +63,9 @@ export const getters = {
   activaBlocuri: (state, getters, rootGetters) => {
     const id = state.activa.id
     if (!id) return []
-    return Object.keys(rootGetters.bloc.lista).filter(key => {
-      return rootGetters.bloc.lista[key].asociatieId === id
+    const lista = rootGetters.bloc.lista
+    return Object.keys(lista).filter(key => {
+      return lista[key].asociatieId === id && !lista[key]._sters
     })
     // return Object.values(rootGetters.bloc.lista).filter(bloc => bloc.asociatieId === id)
   },

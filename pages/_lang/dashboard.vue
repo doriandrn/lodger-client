@@ -33,11 +33,15 @@ sction#dash
         :controls= "[{ type: 'progresInit' }]"
         expand
       )
-        p(slot="right") test
+        field(
+          slot="right"
+          type="radios",
+          label="initprogrs"
+        )
 
         div(v-if="defineste || idsBlocuri.length")
           h6 Previzualizare
-          ul.blocuri
+          ul.blocuri(v-if="idsBlocuri.length > 0")
             li(v-for="idBloc in idsBlocuri")
               split
                 label.nume {{ blocuri[idBloc].nume || '~'}}
@@ -73,12 +77,13 @@ sction#dash
                               icon-only
                             ) ad ap
 
-            li
-              buton(
-                icon= "plus-circle",
-                icon-only
-                @click="openModal('blocs.new')"
-              ) {{ $t('blocs.new.title') }}
+
+          buton(
+            v-else
+            icon= "plus-circle",
+            icon-only
+            @click="openModal('blocs.new')"
+          ) {{ $t('blocs.new.title') }}
 
         empty(
           v-else-if=  "!defineste && !idsBlocuri.length",
@@ -218,6 +223,7 @@ import buton from 'form/button'
 import frm from '~components/form.vue'
 import empty from '~components/empty'
 import split from '~components/split'
+import field from 'form/field'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -233,6 +239,7 @@ export default {
     widget,
     buton,
     empty,
+    field,
     frm
   },
   computed: mapGetters({

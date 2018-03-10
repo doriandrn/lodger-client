@@ -36,6 +36,13 @@ scari(
   :value=       "value",
   @input=       "$emit('input', $event)"
 )
+radios(
+  v-else-if=    "type === 'radios'",
+  :value=       "value",
+  @input=       "$emit('input', $event)"
+  :options=     "options"
+  :label=       "label"
+)
 </template>
 
 <script>

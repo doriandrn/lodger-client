@@ -29,8 +29,8 @@ export default {
       default: -1
     },
     options: {
-      type: Array,
-      default: []
+      type: Object,
+      default: {}
     },
     id: {
       type: String,
@@ -40,9 +40,7 @@ export default {
     },
     label: {
       type: String,
-      default () {
-        return ''
-      }
+      default: ''
     }
   }
 }

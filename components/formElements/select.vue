@@ -82,7 +82,7 @@ select
 	display block
 	font-size 14px
 	line-height 16px
-	padding 14px 16px
+	padding 14px 46px 14px 16px
 	width 100%
 	border 0
 	position relative
@@ -91,7 +91,7 @@ select
 	background-color: config.palette.bgs.body
 	background-image embedurl('~static/icons/ui/dropdown.svg', 'utf8') 
 	background-repeat no-repeat
-	background-position calc(100% - 24px) 50%
+	background-position calc(100% - 16px) 50%
 	color: config.typography.palette.ui
 	text-overflow ''
 	transition all .15s ease

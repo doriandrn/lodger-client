@@ -47,6 +47,7 @@ button
   align-items center
   justify-content center
   line-height 20px
+  flex-basis 56px
 
   &:hover
     background-color: darken(config.palette.primary, 15%)
@@ -96,6 +97,7 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   data () {
+    if (!this.dangerous) return {}
     return {
       prompted: false
     }
@@ -103,7 +105,7 @@ export default {
   computed: {
     ...mapGetters({
       modalContent: 'modal/content'
-    }),
+    })
   },
   methods: {
     ...mapActions({
@@ -113,20 +115,23 @@ export default {
       this.prompted = true
       const prompt = this.newPrompt(this.prompt)
       this.debug('OMG')
-      const confirmed = await promptStatusChange
+      const confirmed = await this.promptStatusChange
       if (confirmed) {
         this.$emit('click', this.$event)
         this.prompted = false
         this.debug('done')
       }
+    },
+    promptStatusChange () {
+      
     }
   },
-  // watch: {
-  //   prompted: function (newVal) {
-  //     if (!this.dangerous || this.modalContent !== 'prompt') return
-  //     if (!newVal) this.$emit('click', this.$event)
-  //   }
-  // },
+  watch: {
+    prompted: function (newVal) {
+      if (!this.dangerous) return
+      if (!newVal) this.$emit('click', this.$event)
+    }
+  },
   props: {
     /*  Button Size
         Parameters: small | medium | large;

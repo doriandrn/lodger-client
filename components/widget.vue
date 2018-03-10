@@ -122,6 +122,7 @@ export default {
 
         > div
           fullflex()
+          flex-basis auto
           overflow hidden
       
       &__title

@@ -152,14 +152,13 @@ export default {
         const path = id.split('.')
         const data = require(`forms/${path[0]}`)
         const { campuri, actiuni } = data
-        const { modalContent, modalData, $t, blocData } = ctx
+        const { modalContent, modalData, $t, blocData, debug } = ctx
         // translate
         campuri.forEach(camp => {
           camp.label = $t(camp.label)
           if (path[1] === 'edit' && typeof modalData === 'object' && modalData.id) {
             if (path[0] === 'blocs') {
               camp.value = blocData(modalData.id)[camp.id]
-              console.log('vall', camp.value)
             }
           } else {
             camp.value = camp.default || null
@@ -168,13 +167,16 @@ export default {
           switch (camp.id) {
             case 'asociatieId':
               const { asociatieActiva, optiuniSwitcherAsociatie } = ctx
-              camp.options = optiuniSwitcherAsociatie
-              camp.value = asociatieActiva
-              camp.slot = 'footer'
+              Object.assign(camp, {
+                options: optiuniSwitcherAsociatie,
+                value: asociatieActiva,
+                slot: 'footer',
+                size: 'small'
+              })
               break
           }
         })
-        console.log('form data', campuri)
+        debug('form data', campuri)
         return { campuri, actiuni }
       }
     }

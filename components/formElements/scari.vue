@@ -33,7 +33,7 @@ import inpt from 'form/input'
 
 export default {
   data () {
-    let data = []
+    let scari = []
     const { value } = this
     console.log('VAL', value)
     if (value) {
@@ -42,16 +42,10 @@ export default {
         Object.keys(scara).forEach(cheie => {
           x[cheie] = scara[cheie]
         })
-        data.push(x)
+        scari.push(x)
       })
-      return { scari: data }
     }
-    return {
-      scari: [{
-        id: '1',
-        etaje: 4
-      }]
-    }
+    return { scari }
   },
   props: {
     scariCount: {

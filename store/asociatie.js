@@ -18,7 +18,7 @@ export const state = () => ({
 
 export const mutations = {
   ADAUGA_ASOCIATIE: (state, date) => {
-    state.lista = { ...state.lista, [date.id]: date }
+    // state.lista = { ...state.lista, [date.id]: date }
   },
   SCHIMBA_ACTIVA: (state, id) => {
     state.activa = id
@@ -59,9 +59,9 @@ export const actions = {
 export const getters = {
   lista: state => state.lista,
   ids: (state, getters) => Object.keys(getters.lista),
-  activa: state => state.activa.id,
+  activa: state => state.activa,
   activaBlocuri: (state, getters, rootGetters) => {
-    const id = state.activa.id
+    const id = state.activa
     if (!id) return []
     const lista = rootGetters.bloc.lista
     return Object.keys(lista).filter(key => {
@@ -69,6 +69,6 @@ export const getters = {
     })
     // return Object.values(rootGetters.bloc.lista).filter(bloc => bloc.asociatieId === id)
   },
-  structura: state => state.activa.structura,
-  defineste: state => state.activa.structura._defineste
+  structura: state => state.lista[state.activa].structura,
+  defineste: state => state.lista[state.activa]._initializata > -1
 }

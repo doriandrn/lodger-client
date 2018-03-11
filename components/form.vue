@@ -16,7 +16,7 @@ form(@submit.prevent="validate")
     :value=         "field.value"
     :data-slot=     "field.slot"
 
-    :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
+    :scariCount=    "field.type === 'array' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
 
     v-model=        "$data[field.id]"
   )
@@ -62,14 +62,14 @@ export default {
       const test = campuri.filter(field => field.id === fid)[0]
       dynamicFormData[fid] = typeof test.value === 'function' ? test.value() : test.value || null
     })
-    const modalData = this.$store.getters['modal/data']
-    if (typeof modalData === 'object' && modalData) {
-      dynamicFormData.id = modalData.id
-    }
+    // const modalData = this.$store.getters['modal/data']
+    // if (typeof modalData === 'object' && modalData) {
+    //   dynamicFormData.id = modalData.id
+    // }
     // add generated id on new forms :)
-    else {
-      Object.assign(dynamicFormData, { id: shortid.generate() })
-    }
+    // else {
+    //   Object.assign(dynamicFormData, { id: shortid.generate() })
+    // }
     return dynamicFormData
   },
   computed: {

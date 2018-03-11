@@ -18,7 +18,11 @@ export const campuri = [
   },
   {
     id: 'scari',
-    type: 'scari'
+    type: 'array',
+    default: [{
+      id: 1,
+      etaje: 4
+    }]
   },
   {
     id: 'adresa',

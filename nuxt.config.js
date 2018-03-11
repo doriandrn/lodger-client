@@ -70,6 +70,7 @@ module.exports = {
         widgets: resolve('components/widgets'),
         form: resolve('components/formElements'),
         forms: resolve('forms'),
+        db: resolve('db'),
         helpers: resolve('helpers'),
         '~components': resolve('components')
       })

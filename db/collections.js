@@ -1,7 +1,7 @@
 import Debug from 'debug'
 import { defs } from 'db/_defs'
 
-const debug = Debug('db:collections')
+const debug = Debug('lodger:db:collections')
 
 const cols = []
 
@@ -37,7 +37,7 @@ Object.keys(defs).forEach(def => {
       case 'apartament': return 'ap'
     }
   })()
-  console.log('shortname', shortname)
+
   cols.push({
     name: defs[def],
     schema: makeSchemaFromForm({ name: def, shortname }),

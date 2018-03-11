@@ -1,18 +1,18 @@
 export const state = () => ({
-  lista: {
-    xxx: {
-      id: null,
-      structura: {
-        _defineste: false,
-        blocuri: [],
-        apartamente: []
-      },
-      servicii: [],
-      _initializata: false,
-      balanta: 0,
-      incasari: []
-    }
-  },
+  // lista: {
+  //   xxx: {
+  //     id: null,
+  //     structura: {
+  //       _defineste: false,
+  //       blocuri: [],
+  //       apartamente: []
+  //     },
+  //     servicii: [],
+  //     _initializata: false,
+  //     balanta: 0,
+  //     incasari: []
+  //   }
+  // },
   activa: null
 })
 
@@ -36,14 +36,10 @@ export const actions = {
     commit('ADAUGA_ASOCIATIE', dateAsociatie)
 
     dispatch('modal/close', true, { root: true })
-    dispatch('schimba', dateAsociatie.id)
+    dispatch('schimba', dateAsociatie.name)
   },
   schimba ({ commit, dispatch }, id) {
-    if (id === 'new') {
-      dispatch('modal/open', 'asocs.new', { root: true })
-    } else {
-      commit('SCHIMBA_ACTIVA', id)
-    }
+    commit('SCHIMBA_ACTIVA', id)
   },
   sterge ({ commit }, id) {
     // sterge incasari
@@ -69,6 +65,6 @@ export const getters = {
     })
     // return Object.values(rootGetters.bloc.lista).filter(bloc => bloc.asociatieId === id)
   },
-  structura: state => state.lista[state.activa].structura,
-  defineste: state => state.lista[state.activa]._initializata > -1
+  // structura: state => state.lista[state.activa].structura,
+  defineste: state => state.activa
 }

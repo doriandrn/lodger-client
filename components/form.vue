@@ -62,14 +62,16 @@ export default {
       const test = campuri.filter(field => field.id === fid)[0]
       dynamicFormData[fid] = typeof test.value === 'function' ? test.value() : test.value || null
     })
+
+    // passed data in modal
     const modalData = this.$store.getters['modal/data']
     if (typeof modalData === 'object' && modalData) {
-      dynamicFormData._id = modalData.id
+      Object.keys(modalData).forEach(data => {
+        if (!modalData[data]) return
+        dynamicFormData[data] = modalData[data]
+      })
     }
-    // add generated id on new forms :)
-    // else {
-    //   Object.assign(dynamicFormData, { id: shortid.generate() })
-    // }
+
     return dynamicFormData
   },
   computed: {

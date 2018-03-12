@@ -8,12 +8,15 @@ export const campuri = [
   {
     id: 'suprafata',
     label: 'suprafata',
-    type: 'number'
+    type: 'number',
+    default: 0.01,
+    step: 0.01
   },
   {
     id: 'locatari',
     label: 'locatari',
     type: 'number',
+    default: 0,
     min: 0,
     max: 10,
   },
@@ -26,17 +29,21 @@ export const campuri = [
     id: 'etaj',
     type: 'number',
     label: 'etaj',
-    required: true
+    required: true,
+    slot: 'footer'
   },
   {
     id: 'bloc',
     label: 'bloc',
-    required: true
+    required: true,
+    slot: 'footer'
   },
   {
     id: 'scara',
     label: 'scara',
-    required: true
+    required: true,
+    type: 'select',
+    slot: 'footer'
   }
 ]
 

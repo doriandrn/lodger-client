@@ -156,9 +156,15 @@ export default {
         // translate
         campuri.forEach(camp => {
           camp.label = $t(camp.label)
-          if (path[1] === 'edit' && typeof modalData === 'object' && modalData.id) {
-            if (path[0] === 'blocs') {
-              camp.value = blocData(modalData.id)[camp.id]
+          if (path[1] === 'edit' && typeof modalData === 'object' && modalData._id) {
+            switch (path[0]) {
+              case 'blocs':
+                camp.value = blocData(modalData._id)[camp.id]
+                break
+
+              case 'aps':
+                camp.value = apData(modalData)[camp.id]
+                break
             }
           } else {
             camp.value = camp.default || null
@@ -201,6 +207,7 @@ export default {
       idsAsociatii: 'asociatii', 
       asociatieActiva: 'asociatie/activa',
       blocData: 'bloc/data',
+      apData: 'ap/data',
       modalOpen: 'modal/open',
       modalContent: 'modal/content',
       modalData: 'modal/data'

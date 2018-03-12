@@ -50,7 +50,7 @@ sction#dash
                   styl=   "unstyled"
                   icon=   "edit"
                   icon-only
-                  @click= "openModal({ id: 'blocs.edit', data: { id: bloc._id }})"
+                  @click= "openModal({ id: 'blocs.edit', data: { _id: bloc._id }})"
                 ) modifica
                 buton(
                   slot=     "right"

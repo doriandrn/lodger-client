@@ -28,12 +28,6 @@ sction#dash
       //- widget.joaca(title="joaca", full)
         p ccucuuc
 
-      ul asocs
-        li(v-for="asoc in asocs") {{ asoc }}
-
-      ul blocuri asoc activa
-        li(v-for="bloc in blocuri") {{ bloc.nume }}
-
       widget(
         :title=  "$t('asocs.init.title')",
         :controls= "[{ type: 'progresInit' }]"
@@ -77,7 +71,7 @@ sction#dash
                           p.etaj__nr(v-else) parter
                           .etaj__content
                             buton(
-                              @click= "openModal('aps.new')",
+                              @click= "openModal({ id: 'aps.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
                               styl=   "unstyled"
                               icon=   "plus-circle"
                               icon-only
@@ -250,8 +244,7 @@ export default {
   computed: mapGetters({
     db: 'db',
     blocuri: 'blocuri',
-    asociatii: 'asociatie/ids',
-    asocs: 'asociatii',
+    asociatii: 'asociatii',
     activaId: 'asociatie/activa',
     nrAsociatiiAdministrate: 'asociatie/nrTotal',
     idsBlocuri: 'asociatie/activaBlocuri',

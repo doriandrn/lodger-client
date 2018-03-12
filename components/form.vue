@@ -62,7 +62,7 @@ export default {
       const test = campuri.filter(field => field.id === fid)[0]
       dynamicFormData[fid] = typeof test.value === 'function' ? test.value() : test.value || null
     })
-    // const modalData = this.$store.getters['modal/data']
+    const modalData = this.$store.getters['modal/data']
     if (typeof modalData === 'object' && modalData) {
       dynamicFormData._id = modalData.id
     }

@@ -62,6 +62,7 @@ export default {
   position relative
   overflow hidden
   display flex
+  max-height 80vh
 
   .actions
     list-style-type none

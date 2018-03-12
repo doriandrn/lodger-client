@@ -4,7 +4,7 @@ import { defs } from 'db/_defs'
 let blocuri = []
 // let db
 const getters = {
-  asociatii: state => state.asociatii,
+  asociatii: state => Object.values(state.asociatii).map(asoc => asoc.name),
   blocuri: state => state.blocuri
 }
 // let asociatii
@@ -23,11 +23,18 @@ function rxdb () {
     const subs = []
     store.getters.db = () => {}
     const db = await Db
+    const asociatieId = store.getters['asociatie/activa']
+    console.log(asociatieId)
+    Object.keys(defs).forEach(def => {
+      subs.push(db[defs[def]].find(def === 'asociatie' ? null : { asociatieId }).$.subscribe(items => {
+        store.commit(`get_${defs[def]}`, Object.freeze(items))
+      }))
+    })
     
-    subs.push(db.asociatii.find().$.subscribe(asocs => {
-      store.commit('DB_INITED', asocs.map(asoc => asoc.name))
-      // store.getters.db = function () { return {...store.getters.db, asociatii: asocs } }
-    }))
+    // subs.push(db.asociatii.find().$.subscribe(asocs => {
+    //   store.commit('DB_INITED', asocs.map(asoc => asoc.name))
+    //   // store.getters.db = function () { return {...store.getters.db, asociatii: asocs } }
+    // }))
     // store.getters.asociatii = state => asociatii
     
     // store.$db = () => subs
@@ -40,9 +47,7 @@ function rxdb () {
 
       if (type.indexOf(['SCHIMBA_ACTIVA']) > -1) {
         subs.push(db.blocuri.find({ asociatieId: payload }).$.subscribe(blocs => {
-          store.commit('GOTNEWBLOCS', Object.freeze(blocs))
-          // store.getters.db = { ...store.getters.db, blocuri: blocs }
-          // store.getters.db = function () { return { ...store.getters.db, blocuri: blocs } }
+          store.commit('get_blocuri', Object.freeze(blocs))
         }))
       }
       
@@ -63,14 +68,11 @@ export const state = () => ({
 })
 
 export const mutations = {
-  DB_INITED: (state, data) => {
+  get_asociatii: (state, data) => {
     state.asociatii = data
-    console.log('data', data)
   },
-  GOTNEWBLOCS: (state, blocs) => {
-    console.log('GNB', blocs)
+  get_blocuri: (state, blocs) => {
     state.blocuri = blocs
-    // state.blocuri = { ...state.blocuri, blocs }
   }
 }
 

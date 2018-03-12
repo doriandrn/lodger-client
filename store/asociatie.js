@@ -1,18 +1,4 @@
 export const state = () => ({
-  // lista: {
-  //   xxx: {
-  //     id: null,
-  //     structura: {
-  //       _defineste: false,
-  //       blocuri: [],
-  //       apartamente: []
-  //     },
-  //     servicii: [],
-  //     _initializata: false,
-  //     balanta: 0,
-  //     incasari: []
-  //   }
-  // },
   activa: null
 })
 
@@ -53,18 +39,6 @@ export const actions = {
 }
 
 export const getters = {
-  lista: state => state.lista,
-  ids: (state, getters) => Object.keys(getters.lista),
   activa: state => state.activa,
-  activaBlocuri: (state, getters, rootGetters) => {
-    const id = state.activa
-    if (!id) return []
-    const lista = rootGetters.bloc.lista
-    return Object.keys(lista).filter(key => {
-      return lista[key].asociatieId === id && !lista[key]._sters
-    })
-    // return Object.values(rootGetters.bloc.lista).filter(bloc => bloc.asociatieId === id)
-  },
-  // structura: state => state.lista[state.activa].structura,
   defineste: state => state.activa
 }

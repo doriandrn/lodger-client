@@ -30,5 +30,5 @@ export const actions = {
 export const getters = {
   lista: state => state.lista,
   ids: (state, getters) => Object.keys(getters.lista),
-  data: (state, getters) => id => getters.blocuri.filter(bloc => bloc._id === id) || {}
+  data: (state, getters, rootGetters) => id => rootGetters.blocuri.filter(bloc => bloc._id === id)[0] || {}
 }

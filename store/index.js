@@ -1,11 +1,12 @@
 import createPersistedState from 'vuex-persistedstate'
 import Db from 'db'
 import { defs } from 'db/_defs'
-let blocuri = []
+
 // let db
 const getters = {
   asociatii: state => Object.values(state.asociatii).map(asoc => asoc.name),
-  blocuri: state => state.blocuri
+  blocuri: state => state.blocuri,
+  apartamente: state => state.apartamente
 }
 // let asociatii
 // Db().then(async rxdb => {
@@ -27,7 +28,7 @@ function rxdb () {
     console.log(asociatieId)
     Object.keys(defs).forEach(def => {
       subs.push(db[defs[def]].find(def === 'asociatie' ? null : { asociatieId }).$.subscribe(items => {
-        store.commit(`get_${defs[def]}`, Object.freeze(items))
+        store.commit(`set_${defs[def]}`, Object.freeze(items))
       }))
     })
     
@@ -47,13 +48,18 @@ function rxdb () {
 
       if (type.indexOf(['SCHIMBA_ACTIVA']) > -1) {
         subs.push(db.blocuri.find({ asociatieId: payload }).$.subscribe(blocs => {
-          store.commit('get_blocuri', Object.freeze(blocs))
+          store.commit('set_blocuri', Object.freeze(blocs))
         }))
       }
       
       if (type.indexOf('ADAUGA') > -1) {
         if (payload._id) await col.upsert({ ...payload })
         else await col.insert({ ...payload })
+      }
+
+      if (type.indexOf('STERGE') > -1) {
+        const tobedel = await col.findOne({ _id: payload }).exec()
+        await tobedel.remove()
       }
     })
   }
@@ -64,15 +70,19 @@ function rxdb () {
 //   console.log('bllblblb', blocuri)
 // })
 export const state = () => ({
-  blocuri: []
+  blocuri: [],
+  apartamente: []
 })
 
 export const mutations = {
-  get_asociatii: (state, data) => {
+  set_asociatii: (state, data) => {
     state.asociatii = data
   },
-  get_blocuri: (state, blocs) => {
+  set_blocuri: (state, blocs) => {
     state.blocuri = blocs
+  },
+  set_apartamente: (state, aps) => {
+    state.apartamente = aps
   }
 }
 

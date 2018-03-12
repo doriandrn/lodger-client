@@ -119,11 +119,14 @@ export default {
       })
     },
     handleSubmit () {
-      const { formData: { actiuni: { confirm } } } = this
-
-      this[confirm](this.$data)
+      const { formData: { actiuni: { confirm } }, $data } = this
+      const manipulatedData = {}
+      Object.keys($data).forEach(what => {
+        if ($data[what]) manipulatedData[what] = $data[what]
+      })
+      this[confirm](manipulatedData)
       this.modalClose()
-      this.$emit('submit', this.$data)
+      this.$emit('submit', manipulatedData)
     }
   },
   components: {

@@ -198,6 +198,10 @@ ul.blocuri
       display flex
       flex-flow column-reverse nowrap
 
+      > li
+        display flex
+        flex-flow column nowrap
+
     &__nr
       flex 0 0 20px
       border-bottom: 1px solid config.palette.borders

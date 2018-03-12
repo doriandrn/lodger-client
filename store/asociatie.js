@@ -1,5 +1,6 @@
 export const state = () => ({
-  activa: null
+  activa: null,
+  initializata: false
 })
 
 export const mutations = {
@@ -10,10 +11,10 @@ export const mutations = {
     state.activa = id
   },
   STERGE_ASOCIATIE: (state, id) => {
-    state.lista = { ...state.lista, [id]: { ...state.lista[id], _sters: true } }
+
   },
   DEFINESTE_STRUCTURA: (state) => {
-    state.lista[state.activa]._initializata = 0
+    state.initializata = 0
   }
 }
 
@@ -27,11 +28,14 @@ export const actions = {
   schimba ({ commit, dispatch }, id) {
     commit('SCHIMBA_ACTIVA', id)
   },
-  sterge ({ commit }, id) {
+  sterge ({ commit, rootGetters }, id) {
     // sterge incasari
     // sterge apartamente
     // sterge blocuri
     commit('STERGE_ASOCIATIE', id)
+    const oneExistingId = rootGetters.asociatii[0]
+    console.log('oneExistingId', oneExistingId)
+    if (oneExistingId) commit('SCHIMBA_ACTIVA', oneExistingId)
   },
   definesteStructura ({ commit }) {
     commit('DEFINESTE_STRUCTURA')

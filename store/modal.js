@@ -33,8 +33,9 @@ export const actions = {
       commit('DATA', content.data)
     }
   },
-  close: ({ commit, dispatch }) => {
+  close: ({ commit, dispatch, getters, rootGetters }) => {
+    const prompt = rootGetters['modal/content'] === 'prompt'
     commit('CLOSE')
-    dispatch('prompt/cancel', null, { root: true })
+    if (prompt) dispatch('prompt/cancel', null, { root: true })
   }
 }

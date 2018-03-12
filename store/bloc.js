@@ -1,20 +1,13 @@
 export const state = () => ({
-  lista: {
-    xxx: {
-      nume: 'M11',
-      etaje: 4,
-      eticheta: 7,
-      asociatieId: 'ryJ2DwtuG'
-    }
-  }
+  ultimul: ''
 })
 
 export const mutations = {
   ADAUGA_BLOC: (state, data) => {
-    state.lista = { ...state.lista, [data.id]: data }
+    state.ultimul = data
   },
   STERGE_BLOC: (state, id) => {
-    state.lista[id]._sters = true
+    console.log('stergeblocid', id)
   }
 }
 
@@ -28,7 +21,5 @@ export const actions = {
 }
 
 export const getters = {
-  lista: state => state.lista,
-  ids: (state, getters) => Object.keys(getters.lista),
   data: (state, getters, rootGetters) => id => rootGetters.blocuri.filter(bloc => bloc._id === id)[0] || {}
 }

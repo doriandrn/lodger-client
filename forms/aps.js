@@ -19,7 +19,8 @@ export const campuri = [
   },
   {
     id: 'proprietar',
-    label: 'proprietar'
+    label: 'proprietar',
+    placeholder: 'Ion Barbu'
   },
   {
     id: 'etaj',

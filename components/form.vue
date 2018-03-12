@@ -124,7 +124,9 @@ export default {
       const { formData: { actiuni: { confirm } }, $data } = this
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
-        if ($data[what]) manipulatedData[what] = $data[what]
+        const value = $data[what]
+        if (!value) return
+        manipulatedData[what] = what === 'scara' ? String(value) : value
       })
       this[confirm](manipulatedData)
       this.modalClose()

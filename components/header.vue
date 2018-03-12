@@ -1,14 +1,17 @@
 <template lang="pug">
 header.ui
-  .inner(:class="{ split }")
-    .left
-      slot
-    .right(v-if="$slots.right")
-      slot(name="right")
+  split.inner
+    slot
+    slot(name="right" slot="right")
 </template>
 
 <script>
+import split from '~components/split'
+
 export default {
+  components: {
+    split
+  },
   props: {
     split: {
       type: Boolean,

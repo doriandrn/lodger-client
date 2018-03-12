@@ -39,7 +39,7 @@ sction#dash
           label="initprogrs"
         )
 
-        div(v-if="defineste || blocuri.length")
+        div(v-if="defineste > -1 || blocuri.length")
           h6 Previzualizare
           ul.blocuri(v-if="blocuri.length > 0")
             li(v-for="bloc in blocuri")
@@ -85,7 +85,7 @@ sction#dash
           ) {{ $t('blocs.new.title') }}
 
         empty(
-          v-else-if=  "!defineste && !idsBlocuri.length",
+          v-else-if=  "defineste < 0 && !blocuri.length",
           :title=   "$t('blocs.none.heading')",
           :CTA=     "$t('blocs.none.CTA')",
           :actions= "{ definesteStructura: $t('blocs.none.actions[0]'), importaDate: $t('blocs.none.actions[1]') }"
@@ -246,13 +246,9 @@ export default {
     frm
   },
   computed: mapGetters({
-    db: 'db',
     blocuri: 'blocuri',
     asociatii: 'asociatii',
     activaId: 'asociatie/activa',
-    nrAsociatiiAdministrate: 'asociatie/nrTotal',
-    idsBlocuri: 'asociatie/activaBlocuri',
-    // blocuri: 'bloc/lista',
     defineste: 'asociatie/defineste'
   }),
   methods: mapActions({

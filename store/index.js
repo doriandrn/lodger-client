@@ -19,37 +19,58 @@ const getters = {
 // })
 
 
+// subscriberi actiuni db
+const subs = []
+const initAsoc = (db, store, asociatieId) => {
+  let findCriteria = null
+
+  Object.keys(defs).forEach(def => {
+    if (asociatieId) {
+      switch (def) {
+        case 'bloc':
+          findCriteria = { asociatieId }
+          break
+
+        case 'apartament':
+          findCriteria = { bloc: { $in: store.getters['bloc/ids'] } }
+          break
+      }
+    }
+
+    const col = db[defs[def]]
+
+    if (!col) return
+
+    subs.push(col.find(findCriteria).$.subscribe(items => {
+      store.commit(`set_${defs[def]}`, Object.freeze(items))
+    }))
+  })
+}
+
 function rxdb () {
   return async function (store) {
     const subs = []
-    store.getters.db = () => {}
     const db = await Db
+
     const asociatieId = store.getters['asociatie/activa']
-    console.log(asociatieId)
-    Object.keys(defs).forEach(def => {
-      subs.push(db[defs[def]].find(def === 'asociatie' ? null : { asociatieId }).$.subscribe(items => {
-        store.commit(`set_${defs[def]}`, Object.freeze(items))
-      }))
-    })
+    console.log('asociatieId', asociatieId)
+    if (asociatieId) {
+      initAsoc(db, store, asociatieId)
+    } else  {
+      const oneAsoc = await db.asociatii.findOne().exec()
+      if (oneAsoc && oneAsoc.name) {
+        store.dispatch('asociatie/schimba', oneAsoc.name)
+      }
+    }
     
-    // subs.push(db.asociatii.find().$.subscribe(asocs => {
-    //   store.commit('DB_INITED', asocs.map(asoc => asoc.name))
-    //   // store.getters.db = function () { return {...store.getters.db, asociatii: asocs } }
-    // }))
-    // store.getters.asociatii = state => asociatii
     
-    // store.$db = () => subs
-    
-    console.log('store', store)
     
     store.subscribe(async ({ type, payload }) => {
       const what = type.split('/')[0]
       const col = db[defs[what]]
 
       if (type.indexOf(['SCHIMBA_ACTIVA']) > -1) {
-        subs.push(db.blocuri.find({ asociatieId: payload }).$.subscribe(blocs => {
-          store.commit('set_blocuri', Object.freeze(blocs))
-        }))
+        initAsoc(db, store, payload)
       }
       
       if (type.indexOf('ADAUGA') > -1) {
@@ -70,6 +91,7 @@ function rxdb () {
 //   console.log('bllblblb', blocuri)
 // })
 export const state = () => ({
+  asociatii: [],
   blocuri: [],
   apartamente: []
 })
@@ -102,6 +124,6 @@ export const mutations = {
 export { getters }
 
 export const plugins = [
-  createPersistedState(),
+  // createPersistedState(),
   rxdb()
 ]

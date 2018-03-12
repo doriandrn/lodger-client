@@ -8,8 +8,7 @@ export const campuri = [
   },
   {
     id: 'idN',
-    label: 'asocs.new.idN',
-    default: 'undefined'
+    label: 'asocs.new.idN'
   }
 ]
 

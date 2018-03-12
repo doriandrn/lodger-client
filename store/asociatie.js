@@ -44,5 +44,5 @@ export const actions = {
 
 export const getters = {
   activa: state => state.activa,
-  defineste: state => state.activa
+  defineste: state => state.initializata
 }

@@ -42,7 +42,6 @@ export const campuri = [
     id: 'scara',
     label: 'scara',
     required: true,
-    type: 'select',
     slot: 'footer'
   }
 ]

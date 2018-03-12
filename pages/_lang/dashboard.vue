@@ -28,6 +28,12 @@ sction#dash
       //- widget.joaca(title="joaca", full)
         p ccucuuc
 
+      ul asocs
+        li(v-for="asoc in asocs") {{ asoc }}
+
+      ul blocuri asoc activa
+        li(v-for="bloc in blocuri") {{ bloc.nume }}
+
       widget(
         :title=  "$t('asocs.init.title')",
         :controls= "[{ type: 'progresInit' }]"
@@ -39,30 +45,30 @@ sction#dash
           label="initprogrs"
         )
 
-        div(v-if="defineste || idsBlocuri.length")
+        div(v-if="defineste || blocuri.length")
           h6 Previzualizare
-          ul.blocuri(v-if="idsBlocuri.length > 0")
-            li(v-for="idBloc in idsBlocuri")
+          ul.blocuri(v-if="blocuri.length > 0")
+            li(v-for="bloc in blocuri")
               split
-                label.nume {{ blocuri[idBloc].nume || '~'}}
+                label.nume {{ bloc.nume || '~'}}
                 buton(
                   slot=   "right"
                   styl=   "unstyled"
                   icon=   "edit"
                   icon-only
-                  @click= "openModal({ id: 'blocs.edit', data: { id: idBloc }})"
+                  @click= "openModal({ id: 'blocs.edit', data: { id: bloc._id }})"
                 ) modifica
                 buton(
                   slot=     "right"
-                  styl=   "unstyled"
-                  @click=   "stergeBloc(idBloc)"
+                  styl=     "unstyled"
+                  @click=   "stergeBloc(bloc._id)"
                   icon=     "trash"
                   icon-only
                   dangerous
                 ) sterge
               .bloc
                 ul.scari
-                  li(v-for="scara in blocuri[idBloc].scari")
+                  li(v-for="scara in bloc.scari")
                     label.nume Scara {{ scara.id }}
                     .scara
                       ul.etaje
@@ -79,7 +85,6 @@ sction#dash
 
 
           buton(
-            v-else
             icon= "plus-circle",
             icon-only
             @click="openModal('blocs.new')"
@@ -243,11 +248,14 @@ export default {
     frm
   },
   computed: mapGetters({
+    db: 'db',
+    blocuri: 'blocuri',
     asociatii: 'asociatie/ids',
+    asocs: 'asociatii',
     activaId: 'asociatie/activa',
     nrAsociatiiAdministrate: 'asociatie/nrTotal',
     idsBlocuri: 'asociatie/activaBlocuri',
-    blocuri: 'bloc/lista',
+    // blocuri: 'bloc/lista',
     defineste: 'asociatie/defineste'
   }),
   methods: mapActions({

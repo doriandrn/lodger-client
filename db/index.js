@@ -9,14 +9,14 @@ import collections from './collections'
 
 const syncURL = 'http://lodger.ro:10101/'
 
-export default async function (dbdata) {
+export default (async function (dbdata) {
   // console.log('DatabaseService: creating database..')
   const conInfo = {
     name: 'lodger',
     password: '10dg3rP@55',
     adapter: 'idb'
   }
-  Object.assign(conInfo, dbdata)
+  if (dbdata) Object.assign(conInfo, dbdata)
   
   const db = await RxDB.create(conInfo)
   console.log('DatabaseService: created database')
@@ -50,5 +50,4 @@ export default async function (dbdata) {
   // collections.filter(col => col.sync).map(col => col.name).map(colName => db[colName].sync(syncURL + colName + '/'))
 
   return db
-}
-
+})()

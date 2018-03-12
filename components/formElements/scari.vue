@@ -35,8 +35,12 @@ export default {
   data () {
     let scari = []
     const { value } = this
+    if (!value) scari.push({
+      id: '1',
+      etaje: 4
+    })
     console.log('VAL', value)
-    if (value) {
+    if (value && value.length) {
       value.forEach(scara => {
         let x = {}
         Object.keys(scara).forEach(cheie => {
@@ -54,7 +58,9 @@ export default {
     },
     value: {
       type: Array,
-      default: null
+      default () {
+        return []
+      }
     }
   },
   components: {

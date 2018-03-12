@@ -63,9 +63,9 @@ export default {
       dynamicFormData[fid] = typeof test.value === 'function' ? test.value() : test.value || null
     })
     // const modalData = this.$store.getters['modal/data']
-    // if (typeof modalData === 'object' && modalData) {
-    //   dynamicFormData.id = modalData.id
-    // }
+    if (typeof modalData === 'object' && modalData) {
+      dynamicFormData._id = modalData.id
+    }
     // add generated id on new forms :)
     // else {
     //   Object.assign(dynamicFormData, { id: shortid.generate() })

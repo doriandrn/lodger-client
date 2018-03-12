@@ -186,8 +186,8 @@ export default {
       const opts = {}
       const { idsAsociatii } = this
       if (!idsAsociatii.length) return opts
-      idsAsociatii.forEach(id => {
-        opts[id] = this.asociatii[id].name
+      idsAsociatii.forEach((id, i) => {
+        opts[id] = id
       })
       // opts.new = this.$t('asocs.new.title')
       return opts
@@ -197,8 +197,8 @@ export default {
       set (id) { this.schimbaAsociatieActiva(id) }
     },
     ...mapGetters({
-      asociatii: 'asociatie/lista',
-      idsAsociatii: 'asociatie/ids', 
+      // asociatii: 'asociatie/lista',
+      idsAsociatii: 'asociatii', 
       asociatieActiva: 'asociatie/activa',
       blocData: 'bloc/data',
       modalOpen: 'modal/open',

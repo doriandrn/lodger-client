@@ -10,7 +10,7 @@ inpt(
   :min=         "min",
   :max=         "max",
   :value=       "value",
-  @input=       "$emit('input', $event)"
+  @input=       "$emit('input', type === 'number' ? Number($event) : $event)"
 )
 txtarea(
   v-else-if=    "['textarea'].indexOf(type) > -1"

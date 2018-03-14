@@ -24,6 +24,12 @@ const initAsoc = async (db, store, asociatieId) => {
     return
   }
 
+  // cleanup subs from prev asoc
+  subs.forEach((sub, i) => {
+    console.log('sub', sub, i)
+    sub.unsubscribe()
+  })
+
   subs.push(db.blocuri.find(findCriteria('bloc')).$.subscribe(blocuri => {
     store.commit('set_blocuri', Object.freeze(blocuri))
 

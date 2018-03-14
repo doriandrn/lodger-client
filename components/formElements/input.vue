@@ -131,7 +131,9 @@ export default {
   },
   methods: {
     emit (e) {
-      this.$emit('input', e.target.value)
+      const { value } = e.target
+      if (!value) return
+      this.$emit('input', value)
     }
   }
 }

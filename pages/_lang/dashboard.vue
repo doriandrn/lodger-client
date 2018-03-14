@@ -34,16 +34,17 @@ sction#dash
         expand
       )
         field(
-          slot="right"
-          type="radios",
-          label="initprogrs"
+          slot=   "right"
+          type=   "radios",
+          :label=   "null"
+          :options= "{1: 1, 2: 2, 3: 3}"
         )
 
         div(v-if="defineste > -1 || blocuri.length")
           h5 Structură
 
           ul.blocuri
-            li
+            li.nou
               buton(
                 icon= "plus-circle",
                 icon-only
@@ -134,6 +135,53 @@ sction#dash
 
 </template>
 
+<script>
+import sction from '~components/section'
+import widget from '~components/widget'
+import buton from 'form/button'
+import frm from '~components/form.vue'
+import empty from '~components/empty'
+import split from '~components/split'
+import field from 'form/field'
+
+import { mapGetters, mapActions } from 'vuex'
+
+export default {
+  data () {
+    return {
+      asociatieInitializata: false
+    }
+  },
+  components: {
+    sction,
+    split,
+    widget,
+    buton,
+    empty,
+    field,
+    frm
+  },
+  computed: {
+    ...mapGetters({
+      blocuri: 'blocuri',
+      asociatii: 'asociatii',
+      apartamente: 'apartamente',
+      apartamenteEtaj: 'apartament/localizeaza',
+      activaId: 'asociatie/activa',
+      defineste: 'asociatie/defineste',
+      ultimulApAdaugat: 'apartament/ultimulAdaugat'
+    })
+  },
+  methods: {
+    ...mapActions({
+      openModal: 'modal/open',
+      stergeAsociatie: 'asociatie/sterge',
+      stergeBloc: 'bloc/sterge'
+    })
+  }
+}
+</script>
+
 <style lang="stylus">
 @require '~styles/config'
 .widgets
@@ -177,6 +225,9 @@ ul.blocuri
       padding-top 16px
       margin-top 16px
       border-top: 1px solid config.palette.borders
+
+    &.nou
+      flex 0 1 160px
 
 
   .bloc
@@ -249,50 +300,3 @@ ul.blocuri
           border-color: config.palette.tertiary
       
 </style>
-
-<script>
-import sction from '~components/section'
-import widget from '~components/widget'
-import buton from 'form/button'
-import frm from '~components/form.vue'
-import empty from '~components/empty'
-import split from '~components/split'
-import field from 'form/field'
-
-import { mapGetters, mapActions } from 'vuex'
-
-export default {
-  data () {
-    return {
-      asociatieInitializata: false
-    }
-  },
-  components: {
-    sction,
-    split,
-    widget,
-    buton,
-    empty,
-    field,
-    frm
-  },
-  computed: {
-    ...mapGetters({
-      blocuri: 'blocuri',
-      asociatii: 'asociatii',
-      apartamente: 'apartamente',
-      apartamenteEtaj: 'apartament/localizeaza',
-      activaId: 'asociatie/activa',
-      defineste: 'asociatie/defineste',
-      ultimulApAdaugat: 'apartament/ultimulAdaugat'
-    })
-  },
-  methods: {
-    ...mapActions({
-      openModal: 'modal/open',
-      stergeAsociatie: 'asociatie/sterge',
-      stergeBloc: 'bloc/sterge'
-    })
-  }
-}
-</script>

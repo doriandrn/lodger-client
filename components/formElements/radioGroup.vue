@@ -1,6 +1,7 @@
 <template lang="pug">
 span(:id="id")
-  labl {{ label }}
+  labl(v-if="label"
+  :label="label") {{ label }}
   span.radios
     span.input__radio(
       v-for=      "option, index in options"
@@ -9,7 +10,7 @@ span(:id="id")
         type=     "radio",
         :value=   "option",
         :checked= "picked === index",
-        :id=      "`${id}-${option}`",
+        :name=     "id",
         @change=   "$emit('change', index)"
       )
       label.label(
@@ -40,7 +41,7 @@ export default {
     },
     label: {
       type: String,
-      default: ''
+      default: null
     }
   }
 }

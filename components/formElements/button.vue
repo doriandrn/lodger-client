@@ -54,7 +54,7 @@ button
   &[disabled]
     cursor default
     border-color: config.palette.bgs.gray
-    background-color transparent
+    background-color rgba(black, .05)
     color: config.typography.palette.ui
 
   &:not([disabled]):not([data-styl="unstyled"])

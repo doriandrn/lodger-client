@@ -4,6 +4,7 @@ span(:data-type=  "type !== 'text' ? type : null")
     :for= "id",
     :label= "label",
     :required= "required"
+    v-if="!noLabel"
   )
   input.field__input(
     :type=        "type", 
@@ -15,6 +16,7 @@ span(:data-type=  "type !== 'text' ? type : null")
     :value=       "value",
     :min=         "type === 'number' ? min : null"
     :max=         "type === 'number' ? max : null"
+    :step=         "type === 'number' ? step : null"
   )
   p.input__info(v-if="info") {{ info }}
   p.input__message.field__desc(v-if="message") {{ message }}
@@ -56,6 +58,10 @@ export default {
       default () {
         return ''
       }
+    },
+    step: {
+      type: Number,
+      default: null
     },
     placeholder: {
       type: String,

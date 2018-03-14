@@ -9,6 +9,12 @@ export const campuri = [
   {
     id: 'idN',
     label: 'asocs.new.idN'
+  },
+  {
+    id: 'balanta',
+    label: 'asocs.balance',
+    type: 'number',
+    notInAddForm: true
   }
 ]
 

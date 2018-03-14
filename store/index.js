@@ -1,95 +1,93 @@
 import createPersistedState from 'vuex-persistedstate'
 import Db from 'db'
+import Debug from 'debug'
 import { defs } from 'db/_defs'
 
+const debug = Debug('lodger:rxstore')
 // let db
 const getters = {
   asociatii: state => Object.values(state.asociatii).map(asoc => asoc.name),
   blocuri: state => state.blocuri,
   apartamente: state => state.apartamente
 }
-// let asociatii
-// Db().then(async rxdb => {
-//   db = rxdb
-//   db.asociatii.find().$.subscribe(asocs => {
-//     asociatii = asocs
-//   })
-//   // const collectionDoc = await rxdb.collectionsCollection.findOne({ name: 'asociatii' }).exec()
-//   // await collectionDoc.remove()
-// })
-
 
 // subscriberi actiuni db
 const subs = []
-const initAsoc = (db, store, asociatieId) => {
-  let findCriteria = null
 
-  Object.keys(defs).forEach(def => {
-    if (asociatieId) {
-      switch (def) {
-        case 'bloc':
-          findCriteria = { asociatieId }
-          break
-
-        case 'apartament':
-          findCriteria = { bloc: { $in: store.getters['bloc/ids'] } }
-          break
-      }
+const initAsoc = async (db, store, asociatieId) => {
+  const findCriteria = key => {
+    if (!asociatieId) return
+    switch (key) {
+      case 'bloc': return { asociatieId }
+      case 'apartament': return { bloc: { $in: store.getters['bloc/ids'] } }
     }
+    return
+  }
 
-    const col = db[defs[def]]
+  subs.push(db.blocuri.find(findCriteria('bloc')).$.subscribe(blocuri => {
+    store.commit('set_blocuri', Object.freeze(blocuri))
 
-    if (!col) return
-
-    subs.push(col.find(findCriteria).$.subscribe(items => {
-      store.commit(`set_${defs[def]}`, Object.freeze(items))
+    subs.push(db.apartamente.find(findCriteria('apartament')).$.subscribe(apartamente => {
+      store.commit('set_apartamente', Object.freeze(apartamente))
     }))
-  })
+  }))
 }
 
 function rxdb () {
   return async function (store) {
-    const subs = []
     const db = await Db
 
-    const asociatieId = store.getters['asociatie/activa']
-    console.log('asociatieId', asociatieId)
-    if (asociatieId) {
-      initAsoc(db, store, asociatieId)
-    } else  {
-      const oneAsoc = await db.asociatii.findOne().exec()
-      if (oneAsoc && oneAsoc.name) {
-        store.dispatch('asociatie/schimba', oneAsoc.name)
-      }
-    }
-    
-    
-    
+    let asociatieId = store.getters['asociatie/activa']
+    debug('aId', asociatieId)
+
     store.subscribe(async ({ type, payload }) => {
       const what = type.split('/')[0]
-      const col = db[defs[what]]
+      if (['set', 'modal'].indexOf(what) > -1) return
 
-      if (type.indexOf(['SCHIMBA_ACTIVA']) > -1) {
-        initAsoc(db, store, payload)
-      }
-      
-      if (type.indexOf('ADAUGA') > -1) {
-        if (payload._id) await col.upsert({ ...payload })
-        else await col.insert({ ...payload })
-      }
+      const col = db[defs.get(what)]
+      if (!col) return
 
-      if (type.indexOf('STERGE') > -1) {
-        const tobedel = await col.findOne({ _id: payload }).exec()
-        await tobedel.remove()
+      // debug('ARGUMENTS', arguments)
+      debug('type', type)
+      // debug('db', db)
+      const mutation = (t => {
+        if (t.indexOf(['SCHIMBA_ACTIVA']) > -1) return 'schimba'
+        if (t.indexOf('ADAUGA') > -1) return 'adauga'
+        if (t.indexOf('STERGE') > -1) return 'sterge'
+        return null
+      })(type)
+
+      switch (mutation) {
+        case 'schimba':
+          await initAsoc(db, store, payload)
+          debug('Asociatie initializata', payload)
+          break
+
+        case 'adauga':
+          const action = payload._id ? 'upsert' : 'insert'
+          const newItem = await col[action]({ ...payload })
+          store.commit(`${what}/set_ultimul_adaugat`, what === 'asociatie' ? newItem.name : newItem._id)
+          debug('Adaugat ', newItem)
+          break
+
+        case 'sterge':
+          const tobedel = await col.findOne({ _id: payload }).exec()
+          await tobedel.remove()
+          debug('Sters ', col)
+          break
       }
     })
+
+    subs.push(db.asociatii.find().$.subscribe(items => {
+      asociatieId = store.getters['asociatie/activa']
+      console.log('AID', store.getters)
+      store.commit(`set_asociatii`, Object.freeze(items))
+      if (asociatieId) initAsoc(db, store, asociatieId)
+      else if (items.length > 0) store.dispatch('asociatie/schimba', items[0].name)
+    }))
   }
 }
 
-// const subs = []
-// db.blocuri.find().$.filter(bloc => bloc !== null).subscribe(blocuri => {
-//   console.log('bllblblb', blocuri)
-// })
 export const state = () => ({
   asociatii: [],
   blocuri: [],
@@ -107,19 +105,6 @@ export const mutations = {
     state.apartamente = aps
   }
 }
-
-
-// const getters = {
-//   asociatii: async () => {
-//     if (!db) return
-//     const data = await db.asociatii.find().$.exec()
-//     console.log('da', data)
-//     return data
-//   },
-//   // blocuri: () => {
-//   //   db.blocuri.find({ asociatieId: 'buna' })
-//   // }
-// }
 
 export { getters }
 

@@ -9,6 +9,7 @@ inpt(
   :required=    "required",
   :min=         "min",
   :max=         "max",
+  :step=        "step"
   :value=       "value",
   @input=       "$emit('input', type === 'number' ? Number($event) : $event)"
 )
@@ -85,6 +86,10 @@ export default {
       default: null
     },
     max: {
+      type: Number,
+      default: null
+    },
+    step: {
       type: Number,
       default: null
     },

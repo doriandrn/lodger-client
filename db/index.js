@@ -12,7 +12,7 @@ const syncURL = 'http://lodger.ro:10101/'
 export default (async function (dbdata) {
   // console.log('DatabaseService: creating database..')
   const conInfo = {
-    name: 'lodger2',
+    name: 'lodger3',
     password: '10dg3rP@55',
     adapter: 'idb'
   }

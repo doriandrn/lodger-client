@@ -40,8 +40,15 @@ sction#dash
         )
 
         div(v-if="defineste > -1 || blocuri.length")
-          h6 Previzualizare
-          ul.blocuri(v-if="blocuri.length > 0")
+          h5 Structură
+
+          ul.blocuri
+            li
+              buton(
+                icon= "plus-circle",
+                icon-only
+                @click="openModal('blocs.new')"
+              ) {{ $t('blocs.new.title') }}
             li(v-for="bloc in blocuri")
               split
                 label.nume {{ bloc.nume || '~'}}
@@ -67,9 +74,15 @@ sction#dash
                     .scara
                       ul.etaje
                         li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-                          p.etaj__nr(v-if="i > 0") etaj {{ i }}
-                          p.etaj__nr(v-else) parter
+                          split.etaj__heading
+                            h6.etaj__nr {{ (i > 0 ? `${ $t('blocs.etaj') } ${i}` : $t('blocs.parter') ) }}
                           .etaj__content
+                            buton(
+                              v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
+                              @click= "openModal({ id: 'aps.edit', data: { _id: ap._id }})"
+                              :key=   "ap._id"
+                              :class= "{ ultim: ap._id === ultimulApAdaugat}"
+                            ) {{ ap.nr }}
                             buton(
                               @click= "openModal({ id: 'aps.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
                               styl=   "unstyled"
@@ -78,11 +91,12 @@ sction#dash
                             ) ad ap
 
 
+          
+
           buton(
-            icon= "plus-circle",
-            icon-only
-            @click="openModal('blocs.new')"
-          ) {{ $t('blocs.new.title') }}
+            v-if= "apartamente && apartamente.length > 2"
+            disabled
+          ) {{ $t('asocs.new.confirmStruct') }}
 
         empty(
           v-else-if=  "defineste < 0 && !blocuri.length",
@@ -139,7 +153,7 @@ sction#dash
 
 ul.blocuri
   fullflex()
-  flex-flow row-reverse nowrap
+  flex-flow row nowrap
   overflow auto
   list-style-type none
   padding 0
@@ -202,20 +216,37 @@ ul.blocuri
         display flex
         flex-flow column nowrap
 
+    &__header
+      flex-flow row nowrap
+
     &__nr
-      flex 0 0 20px
+      flex 1 1 100%
       border-bottom: 1px solid config.palette.borders
       padding 0 4px
+      pointer-events none
       line-height 20px
       margin-bottom 0
       text-transform capitalize
 
     &__content
-      padding: config.spacings.inBoxes 4px
+      padding: (config.spacings.inBoxes/2) 4px
       background: config.palette.bgs.body
+      display flex
+      flex-flow row-reverse nowrap
 
       > button
         width 100%
+        margin-left 4px
+        flex 1 1 100%
+        padding 8px
+
+        &:not([data-styl="unstyled"])
+          background-color: lighten(config.palette.tertiary, 85%)
+          color: darken(config.palette.tertiary, 40%)
+          border-color rgba(black, .05)
+
+        &.ultim
+          border-color: config.palette.tertiary
       
 </style>
 
@@ -245,16 +276,23 @@ export default {
     field,
     frm
   },
-  computed: mapGetters({
-    blocuri: 'blocuri',
-    asociatii: 'asociatii',
-    activaId: 'asociatie/activa',
-    defineste: 'asociatie/defineste'
-  }),
-  methods: mapActions({
-    openModal: 'modal/open',
-    stergeAsociatie: 'asociatie/sterge',
-    stergeBloc: 'bloc/sterge'
-  })
+  computed: {
+    ...mapGetters({
+      blocuri: 'blocuri',
+      asociatii: 'asociatii',
+      apartamente: 'apartamente',
+      apartamenteEtaj: 'apartament/localizeaza',
+      activaId: 'asociatie/activa',
+      defineste: 'asociatie/defineste',
+      ultimulApAdaugat: 'apartament/ultimulAdaugat'
+    })
+  },
+  methods: {
+    ...mapActions({
+      openModal: 'modal/open',
+      stergeAsociatie: 'asociatie/sterge',
+      stergeBloc: 'bloc/sterge'
+    })
+  }
 }
 </script>

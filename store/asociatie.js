@@ -1,5 +1,6 @@
 export const state = () => ({
   activa: null,
+  ultima: null,
   initializata: false
 })
 
@@ -15,6 +16,10 @@ export const mutations = {
   },
   DEFINESTE_STRUCTURA: (state) => {
     state.initializata = 0
+  },
+  set_ultimul_adaugat: (state, id) => {
+    state.ultima = id
+    // state.activa = id
   }
 }
 
@@ -44,5 +49,6 @@ export const actions = {
 
 export const getters = {
   activa: state => state.activa,
+  ultima: state => state.ultima,
   defineste: state => state.initializata
 }

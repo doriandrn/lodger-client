@@ -11,7 +11,8 @@ form(@submit.prevent="validate")
     :focus=         "field.focus"
     :required=      "field.required"
     :min=           "field.min"
-    :max=           "field.max"
+    :max=           "field.max",
+    :step=          "field.step",
     :options=       "field.options"
     :value=         "field.value"
     :data-slot=     "field.slot"
@@ -56,7 +57,8 @@ export default {
   data () {
     let dynamicFormData = {}
     const { campuri } = this.formData
-    const ids = campuri.map(field => field.id)
+    const ids = campuri.filter(field => !field.notInAddForm).map(field => field.id)
+    this.debug('ids', ids)
 
     ids.forEach(fid => {
       const test = campuri.filter(field => field.id === fid)[0]
@@ -67,7 +69,7 @@ export default {
     const modalData = this.$store.getters['modal/data']
     if (typeof modalData === 'object' && modalData) {
       Object.keys(modalData).forEach(data => {
-        if (!modalData[data]) return
+        if (modalData[data] === 'undefined' || modalData === null) return
         dynamicFormData[data] = modalData[data]
       })
     }
@@ -125,7 +127,7 @@ export default {
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
         const value = $data[what]
-        if (!value) return
+        if (value === null || value === 'undefined') return
         manipulatedData[what] = what === 'scara' ? String(value) : value
       })
       this[confirm](manipulatedData)

@@ -3,11 +3,10 @@ export const state = () => ({
 })
 
 export const mutations = {
-  ADAUGA_BLOC: (state, data) => {
-    state.ultimul = data
-  },
-  STERGE_BLOC: (state, id) => {
-    console.log('stergeblocid', id)
+  ADAUGA_BLOC: (state, data) => {/*db*/},
+  STERGE_BLOC: (state, id) => {},
+  set_ultimul_adaugat: (state, id) => {
+    state.ultimul = id
   }
 }
 

@@ -23,7 +23,8 @@ export default {
     new: {
       title: 'Asociație nouă',
       name: 'Denumire',
-      idN: 'CIF'
+      idN: 'CIF',
+      confirmStruct: 'Structura este finală'
     },
     init: {
       title: 'Inițializare'
@@ -50,11 +51,16 @@ export default {
       title: 'Modifică blocul [X]'
     },
     etaje: 'Etaje',
+    etaj: 'Etaj',
+    parter: 'Parter',
     scari: 'Scări'
   },
   aps: {
     new: {
       title: 'Adaugă apartament'
+    },
+    edit: {
+      title: 'Modifică apartamentul [X]'
     }
   },
   defaults: {
@@ -68,5 +74,6 @@ export default {
       add: 'Adaugă',
       edit: 'Modifică'
     }
-  }
+  },
+  search: 'Caută'
 }

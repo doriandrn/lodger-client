@@ -3,6 +3,7 @@ export const campuri = [
     id: 'nr',
     label: 'Nr',
     type: 'number',
+    default: 1,
     required: true
   },
   {

@@ -9,6 +9,7 @@ nuxt-link(
 button(
   v-else-if=        "type === 'button' && !to",
   @click=           "!dangerous ? $emit('click', $event) : promptUser()"
+  :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
   :data-tip=        "tooltip ? text : false",
   :data-icon=       "icon",
@@ -50,8 +51,15 @@ button
   flex-basis 56px
   white-space nowrap
 
-  &:hover
-    background-color: darken(config.palette.primary, 15%)
+  &[disabled]
+    cursor default
+    border-color: config.palette.bgs.gray
+    background-color transparent
+    color: config.typography.palette.ui
+
+  &:not([disabled]):not([data-styl="unstyled"])
+    &:hover
+      background-color: darken(config.palette.primary, 15%)
 
   &[data-size="large"]
     padding: config.spacings.inBoxes

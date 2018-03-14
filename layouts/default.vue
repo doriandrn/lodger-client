@@ -20,7 +20,7 @@
       )
         nuxt-link(:to="item.url") {{ item.title }}
 
-    p(slot="right") ceva
+    search(slot="right")
   
   main
     nuxt
@@ -113,6 +113,7 @@ import modal from '~components/modal'
 import frm from '~components/form.vue'
 import prompt from '~components/prompt'
 import cale from '~components/cale'
+import search from '~components/search'
 import slect from 'form/select'
 
 import { mapGetters, mapActions } from 'vuex'
@@ -151,9 +152,10 @@ export default {
       return (id, ctx) => {
         const path = id.split('.')
         const data = require(`forms/${path[0]}`)
-        const { campuri, actiuni } = data
-        const { modalContent, modalData, $t, blocData, debug } = ctx
+        let { campuri, actiuni } = data
+        const { modalContent, modalData, $t, blocData, apData, debug } = ctx
         // translate
+        campuri = campuri.filter(field => !field.notInAddForm)
         campuri.forEach(camp => {
           camp.label = $t(camp.label)
           if (path[1] === 'edit' && typeof modalData === 'object' && modalData._id) {
@@ -163,7 +165,7 @@ export default {
                 break
 
               case 'aps':
-                camp.value = apData(modalData)[camp.id]
+                camp.value = apData(modalData._id)[camp.id]
                 break
             }
           } else {
@@ -207,7 +209,7 @@ export default {
       idsAsociatii: 'asociatii', 
       asociatieActiva: 'asociatie/activa',
       blocData: 'bloc/data',
-      apData: 'ap/data',
+      apData: 'apartament/data',
       modalOpen: 'modal/open',
       modalContent: 'modal/content',
       modalData: 'modal/data'
@@ -220,7 +222,8 @@ export default {
     cale,
     frm,
     prompt,
-    slect
+    slect,
+    search
   }
 }
 </script>

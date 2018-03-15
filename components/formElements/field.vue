@@ -44,6 +44,11 @@ radios(
   :options=     "options"
   :label=       "label"
 )
+search(
+  v-else-if=    "type === 'search'",
+  :value=       "value",
+  @gasit=       "$emit('input', $event)"
+)
 </template>
 
 <script>
@@ -54,6 +59,7 @@ import cbox from 'form/checkbox'
 import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
+import search from '~components/search'
 
 export default {
   props: {
@@ -116,7 +122,8 @@ export default {
     cbox,
     file,
     radios,
-    scari
+    scari,
+    search
   }
 }
 </script>

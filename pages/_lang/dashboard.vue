@@ -4,14 +4,15 @@ sction#dash
     h1 {{ $t('dashboard.title') }}
 
     .widgets
-      widget.actions(
+      widget(
         :title="$t('dashboard.actions.title')"
         :boxed="false"
         v-if=   "asociatieInitializata"
       )
         p Typography check
         buton(
-          icon=   "add"
+          icon=   "trending-up"
+          @click= "openModal('incasare.new')"
         ) {{ $t('dashboard.actions.cashIn') }}
 
       widget(
@@ -80,13 +81,13 @@ sction#dash
                           .etaj__content
                             buton(
                               v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
-                              @click= "openModal({ id: 'aps.edit', data: { _id: ap._id }})"
                               :key=   "ap._id"
                               :class= "{ ultim: ap._id === ultimulApAdaugat}"
+                              @click= "openModal({ id: 'aps.edit', data: { _id: ap._id }})"
                             ) {{ ap.nr }}
                             buton(
-                              @click= "openModal({ id: 'aps.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
                               styl=   "unstyled"
+                              @click= "openModal({ id: 'aps.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
                               icon=   "plus-circle"
                               icon-only
                             ) ad ap
@@ -149,7 +150,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      asociatieInitializata: false
+      asociatieInitializata: true
     }
   },
   components: {

@@ -3,7 +3,14 @@
   data-icon=      "search",
   :data-results=  "!!results.apartamente.length"
 )
+  labl(
+    :for=       "id",
+    :label=     "label",
+    :required=  "required"
+    v-if=       "!noLabel"
+  )
   inpt(
+    :id=          "id"
     :placeholder= "$t('search')"
     :label=       "$t('search')"
     @input=       "search($event)"
@@ -26,6 +33,7 @@
 
 <script>
 import inpt from 'form/input'
+import labl from 'form/label'
 import fsearch from 'fuzzysearch'
 import { mapGetters } from 'vuex'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -85,7 +93,7 @@ export default {
       const iterator = this.searchMap.entries()
       const results = []
       for (let [ key, value ] of iterator) {
-        const relevance = string_similarity(input, value)
+        const relevance = string_similarity(String(input), value)
         results.push({
           id: key, relevance, value
         })
@@ -100,13 +108,13 @@ export default {
   computed: {
     ...mapGetters({
       apartamente: 'apartamente',
-      getBlocNume: 'bloc/nume'
+      blocData: 'bloc/data'
     }),
 
     searchMap () {
       const map = new Map()
       Object.values(this.aps).forEach(ap => {
-        map.set(ap.id, `${ this.getBlocNume(ap.bloc) } ${ ap.scara } ${ ap.nr } ${ ap.proprietar }`)
+        map.set(ap.id, `${ this.blocData(ap.bloc).nume } ${ ap.scara } ${ ap.nr } ${ ap.proprietar }`)
       })
       return map
     },
@@ -116,14 +124,18 @@ export default {
         return {
           id: ap._id,
           proprietar: ap.proprietar,
-          nr: ap.nr
+          nr: ap.nr,
+          scara: ap.scara,
+          bloc: ap.bloc
         }
       })
     }
   },
   components: {
-    inpt
-  }
+    inpt,
+    labl
+  },
+  props: ['id', 'required', 'label', 'noLabel']
 }
 </script>
 
@@ -139,7 +151,7 @@ spacings = 16px
   &:before
     position absolute
     top 50%
-    transform translateY(-50%)
+    transform translateY(-54%)
     left 12px
     background-color: config.typography.palette.meta
 
@@ -177,6 +189,7 @@ spacings = 16px
       flex 1 0 100%
       padding: (spacings/2) spacings
       text-transform capitalize
+      text-decoration none
 
       for i in 1 2 3 4 5
         &:nth-child({i}):not(.irelevant)

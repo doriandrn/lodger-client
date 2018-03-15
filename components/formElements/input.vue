@@ -1,5 +1,7 @@
 <template lang="pug">
-span(:data-type=  "type !== 'text' ? type : null")
+span(
+  :data-type=  "type !== 'text' ? type : null"
+)
   labl.field__label(
     :for= "id",
     :label= "label",
@@ -17,7 +19,8 @@ span(:data-type=  "type !== 'text' ? type : null")
     :min=         "type === 'number' ? min : null"
     :max=         "type === 'number' ? max : null"
     :step=         "type === 'number' ? step : null"
-    @keydown=     "$emit('keyDown')"
+    @keyup.down=   "$emit('keyDown')"
+    @keyup.up=    "$emit('keyUp')"
   )
   p.input__info(v-if="info") {{ info }}
   p.input__message.field__desc(v-if="message") {{ message }}
@@ -156,6 +159,11 @@ textarea
   background: palette.bgs.body
   padding 8px 12px
   width 100%
+
+  &::placeholder
+    color: config.typography.palette.meta
+    font-size 12px
+    font-weight 100
   
   &:focus
     border-color: palette.primary

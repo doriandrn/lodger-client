@@ -20,6 +20,7 @@
     "pouchdb-browser": "^6.4.3",
     "relational-pouch": "^3.0.1",
     "vue": "^2.5.15",
+    "vue-clickaway": "^2.1.0",
     "vue-i18n": "^7.5.0"
   },
   "devDependencies": {

@@ -5,10 +5,10 @@
       nuxt-link(to="/") Lodger
     
     slect(
-      v-if=     "idsAsociatii.length"
+      v-if=     "idsAsociatii.length > 1"
       id=       "asociatieSwitch"
       v-model=  "idAsociatieActiva",
-      :options= "optiuniSwitcherAsociatie"
+      :options= "idsAsociatii"
       label=    "Asociația de locatari"
     )
 
@@ -174,9 +174,9 @@ export default {
 
           switch (camp.id) {
             case 'asociatieId':
-              const { asociatieActiva, optiuniSwitcherAsociatie } = ctx
+              const { asociatieActiva, idsAsociatii } = ctx
               Object.assign(camp, {
-                options: optiuniSwitcherAsociatie,
+                options: idsAsociatii,
                 value: asociatieActiva,
                 slot: 'footer',
                 size: 'small'
@@ -190,22 +190,11 @@ export default {
     }
   },
   computed: {
-    optiuniSwitcherAsociatie () {
-      const opts = {}
-      const { idsAsociatii } = this
-      if (!idsAsociatii.length) return opts
-      idsAsociatii.forEach((id, i) => {
-        opts[id] = id
-      })
-      // opts.new = this.$t('asocs.new.title')
-      return opts
-    },
     idAsociatieActiva: {
-      get () { return this.asociatieActiva },
-      set (id) { this.schimbaAsociatieActiva(id) }
+      get () { return this.idsAsociatii.indexOf(this.asociatieActiva) },
+      set (index) { this.schimbaAsociatieActiva(this.idsAsociatii[index]) }
     },
     ...mapGetters({
-      // asociatii: 'asociatie/lista',
       idsAsociatii: 'asociatii', 
       asociatieActiva: 'asociatie/activa',
       blocData: 'bloc/data',

@@ -56,4 +56,8 @@ input[type="radio"]
     &+label
       > span
         background-image: embedurl('~static/icons/ui/circle.svg', 'utf8')
+
+.input__radio
+  display flex
+  flex-flow column nowrap
 </style>

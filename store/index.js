@@ -20,12 +20,14 @@ const initAsoc = async (db, store, asociatieId) => {
     switch (key) {
       case 'bloc': return { asociatieId }
       case 'apartament': return { bloc: { $in: store.getters['bloc/ids'] } }
+      case 'incasare': return { asociatieId }
     }
     return
   }
 
   // cleanup subs from prev asoc
   subs.forEach((sub, i) => {
+    if (i === 0) return // keep asocs sub
     console.log('sub', sub, i)
     sub.unsubscribe()
   })
@@ -85,11 +87,10 @@ function rxdb () {
     })
 
     subs.push(db.asociatii.find().$.subscribe(items => {
-      asociatieId = store.getters['asociatie/activa']
-      console.log('AID', store.getters)
+      asociatieId = store.getters['asociatie/ultima'] || items[0].name
+      debug('AID', asociatieId)
       store.commit(`set_asociatii`, Object.freeze(items))
-      if (asociatieId) initAsoc(db, store, asociatieId)
-      else if (items.length > 0) store.dispatch('asociatie/schimba', items[0].name)
+      store.dispatch('asociatie/schimba', asociatieId)
     }))
   }
 }

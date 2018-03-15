@@ -103,7 +103,7 @@ export default {
     },
     // 4 selects
     options: {
-      type: Object,
+      type: [Array, Object],
       default () {
         return {}
       }

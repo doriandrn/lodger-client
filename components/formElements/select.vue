@@ -32,7 +32,7 @@ export default {
       }
     },
     value: {
-      type: String,
+      type: [Number, String],
       default: null
     },
     name: {
@@ -60,7 +60,7 @@ export default {
       }
     },
     options: {
-      type: Object,
+      type: [Array, Object],
       default () {
         return {
           demo: 'Demo option'

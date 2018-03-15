@@ -17,6 +17,7 @@ span(:data-type=  "type !== 'text' ? type : null")
     :min=         "type === 'number' ? min : null"
     :max=         "type === 'number' ? max : null"
     :step=         "type === 'number' ? step : null"
+    @keydown=     "$emit('keyDown')"
   )
   p.input__info(v-if="info") {{ info }}
   p.input__message.field__desc(v-if="message") {{ message }}
@@ -131,8 +132,8 @@ export default {
   },
   methods: {
     emit (e) {
-      const { value } = e.target
-      if (!value) return
+      let { value } = e.target
+      if (!value) value = null
       this.$emit('input', value)
     }
   }

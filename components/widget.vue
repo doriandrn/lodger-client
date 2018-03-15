@@ -105,6 +105,11 @@ export default {
       .right
         margin-left 0
 
+    .radios
+      display inline-flex
+      flex-flow row wrap
+      justify-content center
+
   &.full
     flex 1 1 100%
 

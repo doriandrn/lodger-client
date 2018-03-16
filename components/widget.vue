@@ -131,6 +131,9 @@ export default {
           fullflex()
           flex-basis auto
           overflow hidden
+
+          > .split
+            margin-bottom 32px
       
       &__title
         text-align center
@@ -140,7 +143,7 @@ export default {
       &__header
         display flex
         flex 0 0 52px
-        padding: config.spacings.inBoxes
+        padding: config.spacings.inBoxes 0
 
         > .split
           .right

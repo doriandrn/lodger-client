@@ -124,7 +124,8 @@ export default {
     },
     handleSubmit () {
       const { formData: { actiuni: { confirm } }, $data, debug } = this
-      if (typeof confirm !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
+      debug('cofirm type', typeof this[confirm])
+      if (typeof this[confirm] !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
         const value = $data[what]

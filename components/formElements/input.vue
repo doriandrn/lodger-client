@@ -159,8 +159,9 @@ input[type="password"]
 textarea
   font-size 14px
   line-height 18px
-  border: 1px solid palette.borders
-  border-radius 3px
+  border: 1px solid palette.bgs.body
+  border-radius: config.radiuses.buttons
+  box-shadow inset 1px 2px 3px -1px rgba(black, .015) 
   transition all .15s ease-in-out
   background: palette.bgs.body
   padding 8px 12px

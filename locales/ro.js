@@ -27,7 +27,10 @@ export default {
       confirmStruct: 'Structura este finală'
     },
     init: {
-      title: 'Inițializare'
+      title: 'Inițializare',
+      structura: 'Structură',
+      serviciiFurnizori: 'Servicii & Furnizori',
+      financiar: 'Date financiare'
     },
     adminZone: {
       title: 'Zonă administrativă',
@@ -50,6 +53,7 @@ export default {
     edit: {
       title: 'Modifică blocul [X]'
     },
+    delete: 'Șterge blocul',
     etaje: 'Etaje',
     etaj: 'Etaj',
     parter: 'Parter',

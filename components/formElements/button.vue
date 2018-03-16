@@ -11,7 +11,7 @@ button(
   @click=           "!dangerous ? $emit('click', $event) : promptUser()"
   :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
-  :data-tip=        "tooltip ? $slots.default[0].text : false",
+  :data-tip=        "tooltip && typeof tooltip === 'string' && tooltip.length ? tooltip : $slots.default[0].text",
   :data-icon=       "icon",
   :data-size=       "size",
   :data-styl=       "styl",
@@ -39,7 +39,7 @@ button
 .button
   background-color: config.palette.primary
   border: 1px solid config.palette.primary
-  border-radius: config.radiuses.boxes
+  border-radius: config.radiuses.buttons
   color white
   cursor pointer
   transition all .15s ease-in-out
@@ -51,15 +51,20 @@ button
   flex-basis 56px
   white-space nowrap
 
+  &:before
+    pointer-events none
+
   &[disabled]
     cursor default
     border-color: config.palette.bgs.gray
     background-color rgba(black, .05)
     color: config.typography.palette.ui
 
-  &:not([disabled]):not([data-styl="unstyled"])
-    &:hover
-      background-color: darken(config.palette.primary, 15%)
+  &:not([disabled])
+    &:not([data-styl="unstyled"])
+      &:not([data-styl="outline"])
+        &:hover
+          background-color: darken(config.palette.primary, 15%)
 
   &[data-size="large"]
     padding: config.spacings.inBoxes
@@ -84,20 +89,29 @@ button
   &[data-styl="unstyled"]
     background-color transparent
     color: config.typography.palette.ui
+  
+  &[data-styl="unstyled"]
+    border 0
+    padding 0
 
     &[data-icon]
       &:before
         background-color: config.typography.palette.ui
-
+    
     &:hover
       color: config.palette.primary
 
       &[data-icon]:before
         background-color: config.palette.primary
-  
-  &[data-styl="unstyled"]
-    border 0
-    padding 0
+
+  &[data-styl="outline"]
+    color: config.palette.primary
+
+    &:before
+      background-color: config.palette.primary
+
+    &:hover
+      background transparent
 
 </style>
 
@@ -123,17 +137,7 @@ export default {
     }),
     async promptUser () {
       this.prompted = true
-      const prompt = this.newPrompt(this.prompt)
-      // this.debug('OMG')
-      // const confirmed = await this.promptStatusChange
-      // if (confirmed) {
-      //   this.$emit('click', this.$event)
-      //   this.prompted = false
-      //   this.debug('done')
-      // }
-    },
-    promptStatusChange () {
-      
+      this.newPrompt(this.prompt)
     }
   },
   watch: {

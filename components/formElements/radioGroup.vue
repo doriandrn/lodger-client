@@ -11,17 +11,13 @@ span()
   )
     span.input__radio(
       v-for=          "option, index in options"
-      role=           "radio"
-      :aria-chcked=   "picked === index"
-      :tabindex=      "picked === index ? 0 : -1"
     )
       input(
-        type=     "radio",
-        :value=   "option",
-        :checked= "picked === index",
-        :name=     "id",
-        :id=      "`${id}-${option}`"
-        @change=   "$emit('change', index)"
+        type=       "radio",
+        :value=     "value",
+        :name=      "id",
+        :id=        "`${id}-${option}`",
+        @change=    "$emit('change', Number(index))"
       )
       label.label(
         :for=   "`${id}-${option}`"
@@ -35,10 +31,6 @@ export default {
     labl
   },
   props: {
-    picked: {
-      type: Number,
-      default: -1
-    },
     options: {
       type: Object,
       default: {}
@@ -52,6 +44,10 @@ export default {
     label: {
       type: String,
       default: null
+    },
+    value: {
+      type: Number,
+      default: -1
     }
   }
 }

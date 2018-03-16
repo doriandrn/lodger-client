@@ -41,7 +41,7 @@ radios(
   v-else-if=    "type === 'radios'",
   :id=          "id",
   :value=       "value",
-  @input=       "$emit('input', $event)"
+  @change=      "$emit('input', $event)"
   :options=     "options"
   :label=       "label"
 )

@@ -200,9 +200,9 @@ spacings = 16px
   position absolute
   top calc(100% + 25px)
   right 0
-  height 300px
   background white
   line-height 20px
+  max-height 50vh
   min-width 320px
   box-shadow: config.shadows.boxes
   border-bottom-radius: config.radiuses.boxes

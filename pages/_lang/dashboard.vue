@@ -32,7 +32,7 @@ sction#dash
       //- widget.joaca(title="joaca", full)
         p ccucuuc
 
-      widget(
+      widget#init(
         :title=  "$t('asocs.init.title')",
         icon=     "hard-drive"
         :controls= "[{ type: 'progresInit' }]"
@@ -42,14 +42,16 @@ sction#dash
           slot=   "right"
           type=   "radios",
           id=     "initprgrs"
+          v-model=  "initprgrs"
           :label=   "null"
           :options= "{1: 1, 2: 2, 3: 3}"
         )
 
-        div(v-if="defineste > -1 || blocuri.length")
+        div
           split
-            h5 Structură
+            h5 {{ $t(initTitle) }}
             buton(
+              v-if=   "initprgrs === 2",
               icon=   "plus-circle",
               slot=   "right"
               @click= "openModal('blocs.new')"
@@ -57,7 +59,7 @@ sction#dash
               styl=   "outline"
             ) {{ $t('blocs.new.title') }}
 
-          ul.blocuri
+          ul.blocuri(v-if="initprgrs === 2")
             li(v-for="bloc in blocuri")
               split
                 label.nume {{ bloc.nume || '~'}}
@@ -68,7 +70,7 @@ sction#dash
                   icon-only
                   @click= "openModal({ id: 'blocs.edit', data: { _id: bloc._id }})"
                   tooltip
-                ) modifica
+                ) {{ $t('blocs.edit.title') }}
                 buton(
                   slot=     "right"
                   styl=     "unstyled"
@@ -77,7 +79,7 @@ sction#dash
                   icon-only
                   tooltip
                   dangerous
-                ) sterge
+                ) {{ $t('blocs.delete') }}
               .bloc
                 ul.scari
                   li(v-for="scara in bloc.scari")
@@ -85,31 +87,30 @@ sction#dash
                     .scara
                       ul.etaje
                         li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-                          split.etaj__header
+                          split.etaj__header 
                           .etaj__content
                             buton(
                               v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
                               :key=   "ap._id"
+                              :tooltip="ap.proprietar || '?'"
                               :class= "{ ultim: ap._id === ultimulApAdaugat}"
                               @click= "openModal({ id: 'aps.edit', data: { _id: ap._id }})"
-                            ) {{ ap.nr }}
-                            buton(
+                            ) #[em {{ ap.nr }}]
+                            buton.adauga(
                               styl=   "unstyled"
+                              tooltip
                               @click= "openModal({ id: 'aps.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
                               icon=   "plus-circle"
                               icon-only
-                            ) ad ap
-
-
-          
+                            ) {{ $t('aps.new.title') }}
 
           buton(
-            v-if= "apartamente && apartamente.length > 2"
+            v-if= "toateEtajeleAuApartamente"
             disabled
           ) {{ $t('asocs.new.confirmStruct') }}
 
         empty(
-          v-else-if=  "defineste < 0 && !blocuri.length",
+          v-if=     "!initprgrs && !blocuri.length",
           :title=   "$t('blocs.none.heading')",
           :CTA=     "$t('blocs.none.CTA')",
           :actions= "{ definesteStructura: $t('blocs.none.actions[0]'), importaDate: $t('blocs.none.actions[1]') }"
@@ -160,7 +161,9 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      asociatieInitializata: true
+      asociatieInitializata: true,
+      toateEtajeleAuApartamente: false,
+      initprgrs: 0
     }
   },
   components: {
@@ -174,6 +177,14 @@ export default {
     typecheck
   },
   computed: {
+    initTitle () {
+      switch (this.initprgrs) {
+        case 1: return 'ascos.init.serviciiFurnizori'
+        case 2: return 'ascos.init.structura'
+        case 3: return 'ascos.init.financiar'
+      }
+      return null
+    },
     ...mapGetters({
       blocuri: 'blocuri',
       asociatii: 'asociatii',
@@ -231,12 +242,11 @@ ul.blocuri
 
     > .split > .left > label
       text-transform uppercase
-      font-weight 700
 
     > .bloc
       padding-top 16px
       margin-top 16px
-      border-top: 1px solid config.palette.borders
+      // border-top: 1px solid config.palette.borders
 
     &.nou
       flex 0 1 160px
@@ -261,7 +271,13 @@ ul.blocuri
         display flex
 
         > .nume
+          color: config.typography.palette.meta
+          transition color .1s ease
           margin-bottom 8px
+
+        &:hover
+          > .nume
+            color: config.typography.palette.headings
 
     .scara
       width 100%
@@ -302,6 +318,10 @@ ul.blocuri
         &:not(:first-child)
           counter-increment etaje
 
+        &:hover
+          button.adauga
+            opacity 1 !important
+
     &__header
       flex-flow row nowrap
 
@@ -314,7 +334,7 @@ ul.blocuri
       text-transform capitalize
 
     &__content
-      padding: (config.spacings.inBoxes/2) 4px
+      padding: (config.spacings.inBoxes/2)
       display flex
       flex-flow row-reverse nowrap
 
@@ -323,16 +343,37 @@ ul.blocuri
         margin-left 4px
         flex 1 1 100%
         padding 8px
-        font-family: config.typography.fams.headings
-        font-weight medium
+        border-radius 0
+
+        &.adauga
+          opacity 0
+
+        em
+          font-family: config.typography.fams.headings
+          font-style normal
+          font-weight medium
+          pointer-events none
+          margin-bottom 4px
 
         &:not([data-styl="unstyled"])
           // background-color: lighten(config.palette.tertiary, 85%)
           background-color: config.palette.bgs.body
           color: darken(config.palette.tertiary, 40%)
-          border 0
+          border-color: config.palette.bgs.body
+
+          &:hover
+            background-color white
 
         &.ultim
           border-color: config.palette.tertiary
-      
+
+#init
+  header
+    .radios
+      display flex
+    
+    .input__radio
+      padding 8px
+      > label
+        display none
 </style>

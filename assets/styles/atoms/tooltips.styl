@@ -1,21 +1,25 @@
 [data-tip]
+  position relative
+
   &:after
     display block
     content attr(data-tip)
     font-size 11px
     color white
-    position absolute 105% auto auto 50%
+    position absolute
+    z-index 100
+    bottom 105%
+    left 50%
     transform translateX(-50%)
     background-color: config.palette.bgs.dark
-    text-transform none
     padding 0 12px
     border-radius 3px
     opacity 0
     visibility hidden
-    transition all .1s ease
+    text-transform capitalize
   
   &:hover
     &:after
-      top 100%
+      bottom 101%
       visibility visible
       opacity 1

@@ -1,12 +1,12 @@
 var packageConfig = require('./package.json')
 
 module.exports = {
-  exec: true,
   plugins: {
     'lost': {},
     'postcss-font-magician': {
-      protocol: 'https:',
+      // protocol: 'https:',
       display: 'swap',
+      hosted: ['~assets/fonts'],
       variants: {
         'Futura': {
           '400': ['woff, eot, woff2'],

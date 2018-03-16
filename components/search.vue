@@ -15,9 +15,13 @@
     :label=       "$t('search')"
     @input=       "search($event)"
     @keyDown=     "selected++",
-    @keyUp=       "selected--"
+    @keyUp=       "selected--",
+    @keyEnter=    "selecteaza"
+    :no-label=     "false",
+    :autosuggest=   "false",
     v-on-clickaway= "clearResults",
-    v-model=      "searchPhrase"
+    v-model=      "searchPhrase",
+    :value=        "value"
     no-label
   )
   .results(data-droparrow)
@@ -74,7 +78,7 @@ const string_similarity = function (str1, str2) {
 export default {
   data () {
     return {
-      searchPhrase: '',
+      searchPhrase: null,
       selected: 0,
       results: {
         apartamente: [],
@@ -98,11 +102,22 @@ export default {
           id: key, relevance, value
         })
       }
-      this.results.apartamente = results.sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 9)
+      this.results.apartamente = results.sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 6)
     },
     clearResults () {
       this.searchPhrase = null
-      this.results.apartamente = []
+      setTimeout(() => {
+        this.results.apartamente = []
+      }, 250)
+    },
+    selecteaza () {
+      const { results, selected, debug } = this
+      const { apartamente } = results
+      debug(results)
+      debug(apartamente)
+      debug(selected)
+      const { id } = apartamente[selected]
+      this.$emit('selectat', { ce: 'apartament', id })
     }
   },
   computed: {
@@ -135,7 +150,24 @@ export default {
     inpt,
     labl
   },
-  props: ['id', 'required', 'label', 'noLabel']
+  props: {
+    id: {
+      type: String,
+      default: 'search'
+    },
+    label: {
+      type: String,
+      default: null
+    },
+    value: {
+      type: String,
+      default: null
+    },
+    noLabel: {
+      type: Boolean,
+      default: true
+    }
+  }
 }
 </script>
 

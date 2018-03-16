@@ -31,4 +31,7 @@
       margin-left: baseSpacingUnit*8
       padding-left: baseSpacingUnit*8
       border-left: 1px solid config.palette.borders
+
+    > *
+      margin-bottom 0
 </style>

@@ -1,8 +1,7 @@
 <template lang="pug">
 #layout(:class="{modalOpen}")
   headr
-    h3.logo
-      nuxt-link(to="/") Lodger
+    logo
     
     slect(
       v-if=     "idsAsociatii.length > 1"
@@ -20,7 +19,10 @@
       )
         nuxt-link(:to="item.url") {{ item.title }}
 
-    search(slot="right")
+    search(
+      slot=     "right"
+      no-label
+    )
   
   main
     nuxt
@@ -107,6 +109,7 @@
 </style>
 
 <script>
+import logo from '~components/logo'
 import headr from '~components/header'
 import footr from '~components/footer'
 import modal from '~components/modal'
@@ -206,6 +209,7 @@ export default {
   },
   components: {
     headr,
+    logo,
     modal,
     footr,
     cale,

@@ -11,7 +11,7 @@ button(
   @click=           "!dangerous ? $emit('click', $event) : promptUser()"
   :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
-  :data-tip=        "tooltip ? text : false",
+  :data-tip=        "tooltip ? $slots.default[0].text : false",
   :data-icon=       "icon",
   :data-size=       "size",
   :data-styl=       "styl",
@@ -68,7 +68,7 @@ button
     padding: (config.spacings.inBoxes/2) config.spacings.inBoxes
   
   &[data-size="small"]
-    padding: (config.spacings.inBoxes/4)
+    padding: (config.spacings.inBoxes/4) (config.spacings.inBoxes/2)
 
   &[data-dangerous="true"]
     background-color: config.palette.warn
@@ -222,13 +222,7 @@ export default {
         return null
       }
     },
-    /* Button Text */
-    text: {
-      type: String,
-      default () {
-        return 'A dummy button'
-      }
-    },
+
     /* Arrow (::After) */
     arrow: {
       type: [Boolean, String],

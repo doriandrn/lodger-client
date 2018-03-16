@@ -5,7 +5,7 @@
     :data-icon= "icon"
   )
     split
-      h5.widget__title {{ title }}
+      h6.widget__title {{ title }}
       button.control(
         v-for="control in controls"
         v-if= "control.type === 'buton'"
@@ -90,10 +90,8 @@ export default {
       fullflex()
 
   &__title
-    text-transform uppercase
-    font-weight 500
-    letter-spacing .5px
     margin-bottom 0
+    line-height 24px
 
   &__header
     > .split
@@ -120,11 +118,14 @@ export default {
     background white
     border-radius: config.radiuses.boxes
     box-shadow: config.shadows.boxes
+    transition box-shadow .5s ease
+
+    &:hover
+      box-shadow: config.shadows.boxesHover
 
     .widget
       &__content
         padding: config.spacings.inBoxes
-        background: config.palette.borders
 
         > div
           fullflex()
@@ -132,7 +133,6 @@ export default {
           overflow hidden
       
       &__title
-        line-height 24px
         text-align center
         max-width 10px
         margin 0 auto

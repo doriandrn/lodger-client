@@ -1,3 +1,22 @@
+@font-face
+  font-family 'Town 80 Text'
+  font-weight normal
+  src url('~assets/fonts/Town80Text-Book.otf')
+  src url('~assets/fonts/Town80Text-Book.woff')
+
+@font-face
+  font-family 'Town 80 Text'
+  font-weight bold
+  src url('~assets/fonts/Town80Text-Bold.otf')
+  src url('~assets/fonts/Town80Text-Bold.woff')
+
+@font-face
+  font-family 'Town 80 Text'
+  font-weight medium
+  src url('~assets/fonts/Town80Text-Medium.otf')
+  src url('~assets/fonts/Town80Text-Medium.woff')
+
+
 t = config.typography
 
 h1
@@ -11,42 +30,68 @@ h6
   font-weight 400
 
 h1
-  font-size: t.sizes.default.headings.h1
-  line-height 32px
-  margin-bottom 24px
+h2
+h3
+h4
+h5
+h6
+p
+blockquote
+  max-width 480px
+
+h1
+  font-size: t.sizes.default.headings.h1.size
+  font-weight medium
 
 h2
   font-size: t.sizes.default.headings.h2
-  margin-bottom 12px
-  line-height 24px
+  font-weight medium
 
 h3
   font-size: t.sizes.default.headings.h3
-  margin-bottom 16px
+  font-weight normal
+
 h4
   font-size: t.sizes.default.headings.h4
   margin-bottom 16px
+
 h5
   font-size: t.sizes.default.headings.h5
   margin-bottom 16px
+
 h6
   font-size: t.sizes.default.headings.h6
-  font-weight 400
+  font-weight medium
   text-transform uppercase
-  letter-spacing .66px
-  margin-bottom 16px
-  color: t.palette.paragraphs
 
 
 body
 p
   font-family: t.fams.body
   font-size: t.sizes.default.body
-  line-height: t.sizes.baseLineHeight
+  line-height: 24px
   color: t.palette.paragraphs
 
+h1
+h2
+h3
+  margin-bottom 24px
+  line-height: t.sizes.default.headings.h1.lh
+
+h4
+h5
+h6
+  letter-spacing .66px
+  margin-bottom 16px
+
 p
-  margin-bottom 12px
+blockquote
+  margin-bottom 40px
+
+blockquote
+  padding-left: config.spacings.betweenBoxes
+  border-left: 1px solid config.palette.headings
+  font-style italic
 
 a
   cursor pointer

@@ -63,6 +63,12 @@ export default {
       title: 'Modifică apartamentul [X]'
     }
   },
+  incasare: {
+    new: {
+      title: 'Încasează',
+      nr: 'Nr. Chitanță'
+    }
+  },
   defaults: {
     address: 'Adresă',
     prompt: {
@@ -75,5 +81,6 @@ export default {
       edit: 'Modifică'
     }
   },
-  search: 'Caută'
+  search: 'Caută',
+  sum: 'Suma'
 }

@@ -13,7 +13,7 @@ export const campuri = [
   {
     id: 'suma',
     type: 'number',
-    label: 'incasare.new.suma'
+    label: 'suma'
   }
 ]
 

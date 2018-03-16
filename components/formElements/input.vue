@@ -14,6 +14,7 @@ span(
     :placeholder= "noLabel ? label : placeholder",
     v-focus=      "focus",
     :autofocus=   "focus",
+    :autocomplete= "autosuggest ? 'on' : 'off'"
     @input=       "emit($event)",
     :value=       "value",
     :min=         "type === 'number' ? min : null"
@@ -21,6 +22,7 @@ span(
     :step=         "type === 'number' ? step : null"
     @keyup.down=   "$emit('keyDown')"
     @keyup.up=    "$emit('keyUp')"
+    @keyup.enter.prevent= "$emit('keyEnter')"
   )
   p.input__info(v-if="info") {{ info }}
   p.input__message.field__desc(v-if="message") {{ message }}
@@ -48,6 +50,10 @@ export default {
     value: {
       type: [Boolean, String, Number],
       default: null
+    },
+    autosuggest: {
+      type: Boolean,
+      default: true,
     },
     min: {
       type: Number,

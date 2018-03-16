@@ -123,7 +123,8 @@ export default {
       })
     },
     handleSubmit () {
-      const { formData: { actiuni: { confirm } }, $data } = this
+      const { formData: { actiuni: { confirm } }, $data, debug } = this
+      if (typeof confirm !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
         const value = $data[what]

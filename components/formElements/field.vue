@@ -39,6 +39,7 @@ scari(
 )
 radios(
   v-else-if=    "type === 'radios'",
+  :id=          "id",
   :value=       "value",
   @input=       "$emit('input', $event)"
   :options=     "options"

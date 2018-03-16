@@ -10,6 +10,7 @@ config = {
       body: #F5F9F9
       ui: white
       gray: #fafafa
+      dark: #1a1a1a
     }
     borders: rgba(black, .075)
     
@@ -21,20 +22,23 @@ config = {
   },
   typography: {
     fams: {
-      headings: 'Ubuntu'\, fallbackTypography
+      headings: 'Town 80 Text'\, 'Futura'\, fallbackTypography
       body: 'Open Sans'\, fallbackTypography
       ui: 'Ubuntu'\, fallbackTypography
     },
     sizes: {
-      baseLineHeight: baseSpacingUnit*4
+      baseLineHeight: baseSpacingUnit*5
       default: {
-        body: baseSpacingUnit*3
+        body: baseSpacingUnit*3.25
         headings: {
-          h1: baseSpacingUnit*6
-          h2: baseSpacingUnit*5.5
-          h3: baseSpacingUnit*4.5
-          h4: baseSpacingUnit*3.5
-          h5: baseSpacingUnit*3.25
+          h1: {
+            size: baseSpacingUnit*5,
+            lh: baseSpacingUnit*8
+          },
+          h2: baseSpacingUnit*5
+          h3: baseSpacingUnit*5
+          h4: baseSpacingUnit*4
+          h5: baseSpacingUnit*4
           h6: baseSpacingUnit*3
         }
       }
@@ -42,19 +46,20 @@ config = {
     palette: {
       ui: #666666
       headings: #202020
-      paragraphs: #777,
+      paragraphs: #646464,
       meta: #a7a6a5
     }
   },
   spacings: {
-    inBoxes: baseSpacingUnit*4
+    inBoxes: baseSpacingUnit*5
     betweenBoxes: baseSpacingUnit*8
   },
   radiuses: {
     boxes: 2px
   }
   shadows: {
-    boxes: 0px 0px 20px rgba(black, .025)\, 0 20px 32px -16px rgba(black, .05)
+    boxes: 0px 0px 20px rgba(black, .025)
+    boxesHover: 0px 0px 20px rgba(black, .025)\, 0 20px 32px -16px rgba(black, .05)
     header: 0px 2px 5px rgba(black, .05)
   }
   lightning: 'top-right'

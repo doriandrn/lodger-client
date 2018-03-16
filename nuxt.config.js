@@ -71,6 +71,7 @@ module.exports = {
         form: resolve('components/formElements'),
         forms: resolve('forms'),
         db: resolve('db'),
+        pg: resolve('components/.playground'),
         helpers: resolve('helpers'),
         '~components': resolve('components')
       })

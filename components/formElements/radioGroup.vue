@@ -1,16 +1,26 @@
 <template lang="pug">
-span(:id="id")
-  labl(v-if="label"
-  :label="label") {{ label }}
-  span.radios
+span()
+  labl(
+    v-if=   "label"
+    :label= "label"
+  ) {{ label }}
+  span.radios(
+    :id=              "id"
+    role=             "radiogroup"
+    :aria-labelledby= "id"
+  )
     span.input__radio(
-      v-for=      "option, index in options"
+      v-for=          "option, index in options"
+      role=           "radio"
+      :aria-chcked=   "picked === index"
+      :tabindex=      "picked === index ? 0 : -1"
     )
       input(
         type=     "radio",
         :value=   "option",
         :checked= "picked === index",
         :name=     "id",
+        :id=      "`${id}-${option}`"
         @change=   "$emit('change', index)"
       )
       label.label(

@@ -9,20 +9,23 @@ sction#dash
         :boxed="false"
         v-if=   "asociatieInitializata"
       )
-        p Typography check
         buton(
           icon=   "trending-up"
           @click= "openModal('incasare.new')"
         ) {{ $t('dashboard.actions.cashIn') }}
 
+      //- typecheck
+
       widget(
         :title= "$t('dashboard.statistics.title')"
         v-if=   "asociatieInitializata"
+        icon=   "bar-chart-2"
       )
         h4 Rămas de încasat
 
       widget(
         :title= "$t('dashboard.activity.title')"
+        icon= "activity"
         v-if=   "asociatieInitializata"
       )
 
@@ -31,26 +34,30 @@ sction#dash
 
       widget(
         :title=  "$t('asocs.init.title')",
+        icon=     "hard-drive"
         :controls= "[{ type: 'progresInit' }]"
         expand
       )
         field(
           slot=   "right"
           type=   "radios",
+          id=     "initprgrs"
           :label=   "null"
           :options= "{1: 1, 2: 2, 3: 3}"
         )
 
         div(v-if="defineste > -1 || blocuri.length")
-          h5 Structură
+          split
+            h5 Structură
+            buton(
+              icon=   "plus-circle",
+              slot=   "right"
+              @click= "openModal('blocs.new')"
+              size=   "small"
+              styl=   "outline"
+            ) {{ $t('blocs.new.title') }}
 
           ul.blocuri
-            li.nou
-              buton(
-                icon= "plus-circle",
-                icon-only
-                @click="openModal('blocs.new')"
-              ) {{ $t('blocs.new.title') }}
             li(v-for="bloc in blocuri")
               split
                 label.nume {{ bloc.nume || '~'}}
@@ -60,6 +67,7 @@ sction#dash
                   icon=   "edit"
                   icon-only
                   @click= "openModal({ id: 'blocs.edit', data: { _id: bloc._id }})"
+                  tooltip
                 ) modifica
                 buton(
                   slot=     "right"
@@ -67,6 +75,7 @@ sction#dash
                   @click=   "stergeBloc(bloc._id)"
                   icon=     "trash"
                   icon-only
+                  tooltip
                   dangerous
                 ) sterge
               .bloc
@@ -76,8 +85,7 @@ sction#dash
                     .scara
                       ul.etaje
                         li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-                          split.etaj__heading
-                            h6.etaj__nr {{ (i > 0 ? `${ $t('blocs.etaj') } ${i}` : $t('blocs.parter') ) }}
+                          split.etaj__header
                           .etaj__content
                             buton(
                               v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
@@ -145,6 +153,8 @@ import empty from '~components/empty'
 import split from '~components/split'
 import field from 'form/field'
 
+import typecheck from 'pg/widgets/typography'
+
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -160,7 +170,8 @@ export default {
     buton,
     empty,
     field,
-    frm
+    frm,
+    typecheck
   },
   computed: {
     ...mapGetters({
@@ -254,6 +265,8 @@ ul.blocuri
 
     .scara
       width 100%
+      border: 1px solid config.palette.borders
+      counter-reset etaje
 
   .etaj
     margin-bottom auto
@@ -266,14 +279,34 @@ ul.blocuri
 
       > li
         display flex
+        position relative
         flex-flow column nowrap
+
+        &:before
+          content counter(etaje, upper-roman)
+          color: config.typography.palette.meta
+          position absolute
+          left 4px
+          top 4px
+          font-size 10px
+          line-height 10px
+
+        &:first-child:before
+          content 'P'
+          // background: config.palette.bgs.body
+
+        &:not(:last-child)
+          .etaj__header
+            border-top: 1px solid config.palette.borders
+
+        &:not(:first-child)
+          counter-increment etaje
 
     &__header
       flex-flow row nowrap
 
     &__nr
       flex 1 1 100%
-      border-bottom: 1px solid config.palette.borders
       padding 0 4px
       pointer-events none
       line-height 20px
@@ -282,7 +315,6 @@ ul.blocuri
 
     &__content
       padding: (config.spacings.inBoxes/2) 4px
-      background: config.palette.bgs.body
       display flex
       flex-flow row-reverse nowrap
 
@@ -291,11 +323,14 @@ ul.blocuri
         margin-left 4px
         flex 1 1 100%
         padding 8px
+        font-family: config.typography.fams.headings
+        font-weight medium
 
         &:not([data-styl="unstyled"])
-          background-color: lighten(config.palette.tertiary, 85%)
+          // background-color: lighten(config.palette.tertiary, 85%)
+          background-color: config.palette.bgs.body
           color: darken(config.palette.tertiary, 40%)
-          border-color rgba(black, .05)
+          border 0
 
         &.ultim
           border-color: config.palette.tertiary

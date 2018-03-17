@@ -1,57 +1,38 @@
 <template lang="pug">
-span(
-  :data-type=  "type !== 'text' ? type : null"
+input(
+  :type=            "type", 
+  :id=              "id",
+  :placeholder=     "placeholder",
+  v-focus=          "focus",
+  :autofocus=       "focus",
+  :autocomplete=    "autocomplete ? 'on' : 'off'"
+  @input=           "emit($event)",
+  :value=           "value",
+  :min=             "type === 'number' ? min : null"
+  :max=             "type === 'number' ? max : null"
+  :step=            "type === 'number' ? step : null"
+  @keyup.down=      "$emit('keyDown')"
+  @keyup.up=        "$emit('keyUp')"
+  @keyup.enter.prevent= "$emit('keyEnter')"
 )
-  labl.field__label(
-    :for= "id",
-    :label= "label",
-    :required= "required"
-    v-if="!noLabel"
-  )
-  input.field__input(
-    :type=        "type", 
-    :id=          "id",
-    :placeholder= "noLabel ? label : placeholder",
-    v-focus=      "focus",
-    :autofocus=   "focus",
-    :autocomplete= "autosuggest ? 'on' : 'off'"
-    @input=       "emit($event)",
-    :value=       "value",
-    :min=         "type === 'number' ? min : null"
-    :max=         "type === 'number' ? max : null"
-    :step=         "type === 'number' ? step : null"
-    @keyup.down=   "$emit('keyDown')"
-    @keyup.up=    "$emit('keyUp')"
-    @keyup.enter.prevent= "$emit('keyEnter')"
-  )
-  p.input__info(v-if="info") {{ info }}
-  p.input__message.field__desc(v-if="message") {{ message }}
 </template>
 
 <script>
-import labl from 'form/label'
-
 export default {
   directives: {
     focus: {
       inserted: (el) => {
         if (!this.focus) return
-        console.log('FOCUSIN', el)
-        setTimeout(function () {
-          el.focus()
-        }, 250)
+        setTimeout(() => { el.focus()}, 250)
       }
     }
-  },
-  components: {
-    labl
   },
   props: {
     value: {
       type: [Boolean, String, Number],
       default: null
     },
-    autosuggest: {
+    autocomplete: {
       type: Boolean,
       default: true,
     },
@@ -65,9 +46,7 @@ export default {
     },
     name: {
       type: String,
-      default () {
-        return ''
-      }
+      default: null
     },
     step: {
       type: Number,
@@ -79,60 +58,23 @@ export default {
     },
     required: {
       type: Boolean,
-      default () {
-        return false
-      }
-    },
-    message: {
-      type: String,
-      default () {
-        return ''
-      }
+      default: false
     },
     id: {
       type: String,
-      default () {
-        return 'demo::replace'
-      }
+      default: 'UnIdNedefinit'
     },
     size: {
       type: String,
-      default () {
-        return ''
-      }
+      default: null
     },
     type: {
       type: String,
-      default () {
-        return 'text'
-      }
-    },
-    label: {
-      type: String,
-      required: true,
-      default () {
-        return 'Input Label'
-      }
+      default: 'text'
     },
     error: {
       type: Boolean,
-      default () {
-        return false
-      }
-    },
-    // Additional description
-    info: {
-      type: String,
-      default () {
-        return ''
-      }
-    },
-    /* No Label enforces the input to display the label text as a placeholder */
-    noLabel: {
-      type: Boolean,
-      default () {
-        return false
-      }
+      default: false
     },
     focus: {
       type: Boolean,
@@ -154,6 +96,7 @@ export default {
 palette = config.palette
 
 input[type="text"]
+input[type="search"]
 input[type="number"]
 input[type="password"]
 textarea

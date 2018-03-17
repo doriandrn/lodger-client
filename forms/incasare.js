@@ -1,7 +1,7 @@
 export const campuri = [
   {
     id: 'deLa',
-    label: 'incsarare.new.dela',
+    label: 'incasare.new.dela',
     required: true,
     type: 'search',
     focus: true

@@ -21,7 +21,8 @@
 
     search(
       slot=     "right"
-      no-label
+      size=     "small"
+      hide-label
     )
   
   main
@@ -160,7 +161,6 @@ export default {
         // translate
         campuri = campuri.filter(field => !field.notInAddForm)
         campuri.forEach(camp => {
-          camp.label = $t(camp.label)
           if (path[1] === 'edit' && typeof modalData === 'object' && modalData._id) {
             switch (path[0]) {
               case 'blocs':

@@ -1,5 +1,6 @@
 <template lang="pug">
-label.label {{ label }} 
+label
+  slot
   span.input__req(v-if="required") *
 </template>
 
@@ -10,12 +11,6 @@ export default {
       type: Boolean,
       default () {
         return false
-      }
-    },
-    label: {
-      type: String,
-      default () {
-        return 'A dummy label'
       }
     }
   }

@@ -47,7 +47,13 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'frm',
   mounted () {
-    const footerEls = this.$el.querySelectorAll('span[data-slot]')
+    // tradu campurile
+    this.formData.campuri.forEach(camp => {
+      camp.label = this.$t(camp.label)
+    })
+
+    // move slot:footer items to form footer
+    const footerEls = this.$el.querySelectorAll('.field[data-slot]')
     if (!footerEls) return
     const footerActionsEl = this.$el.querySelector('.actions .left')
     for (const el of footerEls) {
@@ -124,7 +130,6 @@ export default {
     },
     handleSubmit () {
       const { formData: { actiuni: { confirm } }, $data, debug } = this
-      debug('cofirm type', typeof this[confirm])
       if (typeof this[confirm] !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
       const manipulatedData = {}
       Object.keys($data).forEach(what => {

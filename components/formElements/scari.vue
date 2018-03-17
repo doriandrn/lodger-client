@@ -1,35 +1,34 @@
 <template lang="pug">
-span(data-type="scari")
-  inpt(
-    v-if =  "Number(scariCount) < 2",
-    type=   "number",
-    :label=  "$t('blocs.etaje')",
-    v-model=  "scari[0].etaje"
-  )
+field(
+  v-if =  "Number(scariCount) < 2",
+  type=   "number",
+  :label=  "$t('blocs.etaje')",
+  v-model=  "scari[0].etaje"
+)
 
-  ul.field.scari(v-else)
-    .separator
-    li(v-for="scara, i in scari")
-      label.label Scara
-        strong {{ scari[i].id }}
-      inpt(
-        :id=      "`scara-${i}`", 
-        type=     "number"
-        :label=   "$t('blocs.etaje')"
-        v-model=  "scari[i].etaje",
-        @input=   "$emit('input', scari)"
-      )
-      inpt(
-        :id=      "`id-${i}`",
-        type=     "text"
-        :label=   "$t('blocs.new.name')",
-        v-model=  "scari[i].id"
-        @input=   "$emit('input', scari)"
-      )
+ul.field.scari(v-else)
+  .separator
+  li(v-for="scara, i in scari")
+    label.label Scara
+      strong {{ scari[i].id }}
+    field(
+      :id=      "`scara-${i}`", 
+      type=     "number"
+      :label=   "$t('blocs.etaje')"
+      v-model=  "scari[i].etaje",
+      @input=   "$emit('input', scari)"
+    )
+    field(
+      :id=      "`id-${i}`",
+      type=     "text"
+      :label=   "$t('blocs.new.name')",
+      v-model=  "scari[i].id"
+      @input=   "$emit('input', scari)"
+    )
 </template>
 
 <script>
-import inpt from 'form/input'
+import field from 'form/field'
 
 export default {
   data () {
@@ -64,7 +63,7 @@ export default {
     }
   },
   components: {
-    inpt
+    field
   },
   watch: {
     scariCount: function (newVal, old) {

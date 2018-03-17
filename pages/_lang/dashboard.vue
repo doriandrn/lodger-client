@@ -105,9 +105,14 @@ sction#dash
                             ) {{ $t('aps.new.title') }}
 
           buton(
-            v-if= "toateEtajeleAuApartamente"
+            v-if= "toateEtajeleAuApartamente && initprgrs === 2"
             disabled
           ) {{ $t('asocs.new.confirmStruct') }}
+
+          frm(
+            v-else-if=  "initprgrs === 3"
+            :formData=   "require('forms/initFinanc')"
+          )
 
         empty(
           v-if=     "!initprgrs && !blocuri.length",
@@ -178,10 +183,11 @@ export default {
   },
   computed: {
     initTitle () {
+      const pfix = 'asocs.init'
       switch (this.initprgrs) {
-        case 1: return 'ascos.init.serviciiFurnizori'
-        case 2: return 'ascos.init.structura'
-        case 3: return 'ascos.init.financiar'
+        case 1: return `${pfix}.serviciiFurnizori`
+        case 2: return `${pfix}.structura`
+        case 3: return `${pfix}.financiar`
       }
       return null
     },

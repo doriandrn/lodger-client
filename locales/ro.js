@@ -30,7 +30,9 @@ export default {
       title: 'Inițializare',
       structura: 'Structură',
       serviciiFurnizori: 'Servicii & Furnizori',
-      financiar: 'Date financiare'
+      financiar: 'Date financiare',
+      balanta: 'Balanța casei la data preluării',
+      dataDinLuna: 'Data din lună la care se generează listele de plată'
     },
     adminZone: {
       title: 'Zonă administrativă',
@@ -69,6 +71,7 @@ export default {
   },
   incasare: {
     new: {
+      dela: 'De la',
       title: 'Încasează',
       nr: 'Nr. Chitanță'
     }

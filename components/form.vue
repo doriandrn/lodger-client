@@ -16,10 +16,11 @@ form(@submit.prevent="validate")
     :options=       "field.options"
     :value=         "field.value"
     :data-slot=     "field.slot"
+    @change=        "typeof $options.methods[field['@change']] === 'function' ? $options.methods[field['@change']]($event) : null"
 
     :scariCount=    "field.type === 'array' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
 
-    v-model=        "$data[field.id]"
+    v-model.trim=   "$data[field.id]"
   )
 
   slot(name="formExtend")
@@ -47,11 +48,6 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'frm',
   mounted () {
-    // tradu campurile
-    this.formData.campuri.forEach(camp => {
-      camp.label = this.$t(camp.label)
-    })
-
     // move slot:footer items to form footer
     const footerEls = this.$el.querySelectorAll('.field[data-slot]')
     if (!footerEls) return
@@ -63,6 +59,11 @@ export default {
   data () {
     let dynamicFormData = {}
     const { campuri } = this.formData
+    
+    // tradu campurile
+    campuri.forEach(camp => { camp.label = this.$t(camp.label) })
+
+    // adauga-le valorile implicite
     const ids = campuri.filter(field => !field.notInAddForm).map(field => field.id)
     this.debug('ids', ids)
 
@@ -128,6 +129,9 @@ export default {
         if (valid) this.handleSubmit()
       })
     },
+    updateazaBalanta (e) {
+      console.log('e', e)
+    },
     handleSubmit () {
       const { formData: { actiuni: { confirm } }, $data, debug } = this
       if (typeof this[confirm] !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
@@ -165,7 +169,7 @@ form
   label
     margin-bottom: baseSpacingUnit
 
-  > span
+  .field
     display flex
     flex-flow row wrap
 

@@ -28,8 +28,6 @@ ul.field.scari(v-else)
 </template>
 
 <script>
-import field from 'form/field'
-
 export default {
   data () {
     let scari = []
@@ -50,6 +48,9 @@ export default {
     }
     return { scari }
   },
+  beforeCreate () {
+    this.$options.components.field = require('form/field').default
+  },
   props: {
     scariCount: {
       type: Number,
@@ -61,9 +62,6 @@ export default {
         return []
       }
     }
-  },
-  components: {
-    field
   },
   watch: {
     scariCount: function (newVal, old) {

@@ -7,6 +7,7 @@ input(
   :autofocus=       "focus",
   :autocomplete=    "autocomplete ? 'on' : 'off'"
   @input=           "emit($event)",
+  @change=          "$emit('change', $event.target.value)"
   :value=           "value",
   :min=             "type === 'number' ? min : null"
   :max=             "type === 'number' ? max : null"

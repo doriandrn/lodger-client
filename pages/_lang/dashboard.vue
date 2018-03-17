@@ -40,6 +40,7 @@ sction#dash
       )
         field(
           slot=   "right"
+          v-if="initprgrs"
           type=   "radios",
           id=     "initprgrs"
           v-model=  "initprgrs"
@@ -47,7 +48,7 @@ sction#dash
           :options= "{1: 1, 2: 2, 3: 3}"
         )
 
-        div
+        div(v-if="initprgrs")
           split
             h5 {{ $t(initTitle) }}
             buton(
@@ -115,10 +116,11 @@ sction#dash
           )
 
         empty(
-          v-if=     "!initprgrs && !blocuri.length",
+          v-else
           :title=   "$t('blocs.none.heading')",
           :CTA=     "$t('blocs.none.CTA')",
-          :actions= "{ definesteStructura: $t('blocs.none.actions[0]'), importaDate: $t('blocs.none.actions[1]') }"
+          :actions= "{ startInit: $t('blocs.none.actions[0]'), importaDate: $t('blocs.none.actions[1]') }"
+          @action=  "$event === 'startInit' ? initprgrs = 1 : null"
         )
 
       widget(

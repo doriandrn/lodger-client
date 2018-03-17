@@ -3,7 +3,8 @@ export const campuri = [
     id: 'balanta',
     label: 'asocs.init.balanta',
     required: true,
-    type: 'bani'
+    type: 'bani',
+    '@change': 'updateazaBalanta'
   },
   {
     id: 'dataDinLunaListe',

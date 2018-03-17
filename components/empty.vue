@@ -5,11 +5,11 @@
   p {{ CTA }}
   .actions
     buton(
-      v-for=  "traducere, metoda in actions",
+      v-for=  "traducere, metoda, index in actions",
       :key=   "metoda",
       :size=  "size",
-      :styl=  "metoda === 'importaDate' ? 'outline' : null"
-      @click= "handle(metoda)"
+      :styl=  "index === 0 ? 'outline' : null"
+      @click= "$emit('action', metoda)"
     ) {{ traducere }}
 </template>
 
@@ -25,7 +25,7 @@ export default {
     },
     CTA: {
       type: String,
-      default: 'Get started doing something'
+      default: 'Get started doing nothing'
     },
     actions: {
       type: Object,
@@ -42,22 +42,6 @@ export default {
   },
   components: {
     buton
-  },
-  methods: {
-    ...mapActions({
-      openModal: 'modal/open',
-      definesteStructura: 'asociatie/definesteStructura'
-    }),
-    newAsoc () {
-      this.openModal('asocs.new')
-    },
-    handle (metoda) {
-      if (typeof this[metoda] !== 'function') {
-        this.debug('metoda', metoda)
-        return
-      }
-      this[metoda]()
-    }
   }
 }
 </script>

@@ -11,7 +11,7 @@ button(
   @click=           "!dangerous ? $emit('click', $event) : promptUser()"
   :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
-  :data-tip=        "tooltip && typeof tooltip === 'string' && tooltip.length ? tooltip : $slots.default[0].text",
+  :data-tip=        "tooltip && typeof tooltip === 'string' && tooltip.length ? (tooltip || $slots.default[0].text) : null",
   :data-icon=       "icon",
   :data-size=       "size",
   :data-styl=       "styl",
@@ -177,9 +177,7 @@ export default {
     */
     type: {
       type: String,
-      default () {
-        return 'button'
-      }
+      default: 'button'
     },
     /*  Button Color
         Parameters: green | red | gray
@@ -187,9 +185,7 @@ export default {
     */
     color: {
       type: String,
-      default () {
-        return ''
-      }
+      default: null
     },
     /*  Button Icon
         Parameters: [ICONNAME]
@@ -197,15 +193,11 @@ export default {
     */
     icon: {
       type: String,
-      default () {
-        return null
-      }
+      default: null
     },
     iconOnly: {
       type: Boolean,
-      default () {
-        return false
-      }
+      default: null
     },
     /*  Disabled?
         Parameters: true | false
@@ -213,33 +205,25 @@ export default {
     */
     disabled: {
       type: Boolean,
-      default () {
-        return false
-      }
+      default: null
     },
     /*  Stylings - transitions, effects, etc.
      *  Parameters
      */
     styl: {
       type: String,
-      default () {
-        return null
-      }
+      default: null
     },
 
     /* Arrow (::After) */
     arrow: {
       type: [Boolean, String],
-      default () {
-        return null
-      }
+      default: null
     },
     // tooltip position or bottom by default
     tooltip: {
       type: [Boolean, String],
-      default () {
-        return null
-      }
+      default: null
     },
     /* link to nuxt page */
     to: {

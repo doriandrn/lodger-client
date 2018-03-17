@@ -14,6 +14,8 @@ const getters = {
 // subscriberi actiuni db
 const subs = []
 
+const sanitizeDBItems = items => items.map(item => item._data)
+
 const initAsoc = async (db, store, asociatieId) => {
   const findCriteria = key => {
     if (!asociatieId) return
@@ -33,10 +35,10 @@ const initAsoc = async (db, store, asociatieId) => {
   })
 
   subs.push(db.blocuri.find(findCriteria('bloc')).$.subscribe(blocuri => {
-    store.commit('set_blocuri', Object.freeze(blocuri))
+    store.commit('set_blocuri', sanitizeDBItems(blocuri))
 
     subs.push(db.apartamente.find(findCriteria('apartament')).$.subscribe(apartamente => {
-      store.commit('set_apartamente', Object.freeze(apartamente))
+      store.commit('set_apartamente', sanitizeDBItems(apartamente))
     }))
   }))
 }
@@ -89,7 +91,7 @@ function rxdb () {
     subs.push(db.asociatii.find().$.subscribe(items => {
       asociatieId = store.getters['asociatie/ultima'] || items[0].name
       debug('AID', asociatieId)
-      store.commit(`set_asociatii`, Object.freeze(items))
+      store.commit(`set_asociatii`, sanitizeDBItems(items))
       store.dispatch('asociatie/schimba', asociatieId)
     }))
   }

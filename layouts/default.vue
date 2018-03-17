@@ -3,12 +3,13 @@
   headr
     logo
     
-    slect(
+    field.switch(
       v-if=     "idsAsociatii.length > 1"
       id=       "asociatieSwitch"
       v-model=  "idAsociatieActiva",
-      :options= "idsAsociatii"
       label=    "Asociația de locatari"
+      type=     "select",
+      :options= "idsAsociatii"
     )
 
     nav(
@@ -28,11 +29,10 @@
   main
     nuxt
     modal(
-      v-if= "modalOpen"
-      :title= "modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
+      :title= "modalContent && modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
     )
       frm#main(
-        v-if=       "modalContent !== 'prompt'",
+        v-if=       "modalContent && modalContent !== 'prompt'",
         :formData=  "formData(modalContent, this)",
         :type=      "modalContent.split('.')[1]"
       )
@@ -70,12 +70,13 @@
     &+main
       padding-top 48px
 
-    .select
+    .switch
       position relative
       display flex
       flex-flow column wrap
       padding-top 8px
       padding-bottom 8px
+      height 100%
       
       label
         font-size 9px
@@ -119,6 +120,7 @@ import prompt from '~components/prompt'
 import cale from '~components/cale'
 import search from '~components/search'
 import slect from 'form/select'
+import field from 'form/field'
 
 import { mapGetters, mapActions } from 'vuex'
 import { version, name, author } from '../package.json'
@@ -154,6 +156,7 @@ export default {
     }),
     get formData () {
       return (id, ctx) => {
+        if (!id || !id.length) return
         const path = id.split('.')
         const data = require(`forms/${path[0]}`)
         let { campuri, actiuni } = data
@@ -216,7 +219,8 @@ export default {
     frm,
     prompt,
     slect,
-    search
+    search,
+    field
   }
 }
 </script>

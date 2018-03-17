@@ -1,5 +1,9 @@
 <template lang="pug">
-.modal(:class="{ 'modal--hasFooter': $slots.footer }")
+//- transition(name="modal")
+.modal(
+  :class= "{'modal--hasFooter': $slots.footer }"
+  v-focus
+)
   .modal__backdrop(@click="inchide")
   .modal__container
     header.modal__header(v-if="$slots.header || title")
@@ -24,15 +28,20 @@ export default {
   computed: mapGetters({
     modalContent: 'modal/content'
   }),
+  directives: {
+    focus: {
+      componentUpdated: (el, binding) => {
+        const firstInput = el.querySelector('input')
+        if (firstInput) setTimeout(() => { firstInput.focus() }, 150)
+        console.log('modal updated', binding, firstInput)
+      }
+    }
+  },
   props: {
     title: {
       type: String,
       default: 'Modal title'
     }
-  },
-  mounted () {
-    const firstInput = this.$el.querySelector('input[type="text"]')
-    if (firstInput) firstInput.focus()
   }
 }
 </script>
@@ -46,6 +55,8 @@ export default {
   display flex
   align-items center
   justify-content center
+  opacity 0
+  visibility hidden
   transition all .15s ease-in-out
 
   &__content
@@ -56,9 +67,14 @@ export default {
     position absolute 0
     z-index 201
     background rgba(white, .85)
+    opacity 0
+    visibility hidden
+    transition all .15s ease-in-out
 
   &__container
-    position relative
+    position absolute
+    top 50%
+    left 50%
     z-index 202
     border: 1px solid config.palette.borders
     background white
@@ -70,6 +86,12 @@ export default {
     box-shadow 0 1px 3px 0 rgba(black, .2)
     display flex
     flex-flow column nowrap
+    opacity 0
+    visibility hidden
+    transform-origin 0 0
+    transform-style preserve3d
+    transform scale(.5,.5) translate(-50%,-50%)
+    transition all .3s cubic-bezier(.165,.84,.44,1)
     
     +above(l)
       margin-top -5%
@@ -108,5 +130,46 @@ export default {
   &__footer
     lost-utility clearfix
     background: config.palette.bgs.body
+
+  &Open
+    overflow hidden
+    
+    .modal
+      z-index 10000000
+      opacity 1
+      /*visibility visible*/
+      &__backdrop
+        z-index 1
+        opacity 1
+        visibility visible
+        
+        &:hover
+          .modal
+            &__close
+              transform scale(1.5,1.5)!important
+        
+      &__close
+        z-index 2
+        opacity 1
+        visibility visible
+        transform scale(1,1)
+        
+      &__container
+        z-index 2
+        visibility visible
+        transform scale(1,1) translate(-50%,-50%)
+        opacity 1
   
+.modal
+  &-enter
+    opacity 0
+
+  &-leave-active
+    opacity: 0
+
+  &-enter
+  &-leave-active 
+    .modal__container
+      transform scale(.5,.5) translate(-50%,-50%)
+      // transform: scale(1.1)
 </style>

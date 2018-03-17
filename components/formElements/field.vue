@@ -1,13 +1,16 @@
 <template lang="pug">
-.field(:data-size=  "size")
+.field(
+  :data-size=  "size"
+  :data-type=   "type"
+)
   labl.field__label(
     :required=    "required"
     :for=         "id"
   ) {{ label }}
 
   inpt(
-    v-if=         "['text', 'number', 'search'].indexOf(type) > -1",
-    :type=        "type",
+    v-if=         "['text', 'number', 'search', 'bani'].indexOf(type) > -1",
+    :type=        "type !== 'bani' ? type : 'number'",
     :placeholder= "placeholder",
     :autocomplete="autocomplete",
     :id=          "id",
@@ -15,12 +18,10 @@
     :required=    "required",
     :min=         "min",
     :max=         "max",
-    :step=        "step",
+    :step=        "type !== 'bani' ? step : .01",
     :value=       "value",
-    @input=       "$emit('input', type === 'number' ? Number($event) : $event)"
-  )
-  bani(
-    v-else-if=     "type === 'bani'"
+    @input=       "$emit('input', type === 'number' ? Number($event) : $event)",
+    @change=      "$emit('change', $event)"
   )
   txtarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
@@ -71,7 +72,6 @@ import cbox from 'form/checkbox'
 import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
-import bani from 'form/bani'
 import search from '~components/search'
 
 export default {
@@ -156,8 +156,7 @@ export default {
     file,
     radios,
     scari,
-    search,
-    bani
+    search
   }
 }
 </script>

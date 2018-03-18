@@ -6,19 +6,21 @@ input(
   v-focus=          "focus",
   :autofocus=       "focus",
   :autocomplete=    "autocomplete ? 'on' : 'off'"
-  @input=           "emit($event)",
-  @change=          "$emit('change', $event.target.value)"
-  :value=           "value",
+  @input=           "handleInput",
+  @change=          "handleChange"
+  :value=           "type === 'search' ? selected.proprietar : value",
   :min=             "type === 'number' ? min : null"
   :max=             "type === 'number' ? max : null"
   :step=            "type === 'number' ? step : null"
   @keyup.down=      "$emit('keyDown')"
   @keyup.up=        "$emit('keyUp')"
-  @keyup.enter.prevent= "$emit('keyEnter')"
+  @keyup.enter.prevent=     "$emit('keyEnter')"
 )
 </template>
 
 <script>
+import { get_bigrams, string_similarity } from 'helpers/search'
+
 export default {
   directives: {
     focus: {
@@ -30,7 +32,7 @@ export default {
   },
   props: {
     value: {
-      type: [Boolean, String, Number],
+      type: [Boolean, String, Number, Object],
       default: null
     },
     autocomplete: {
@@ -80,13 +82,45 @@ export default {
     focus: {
       type: Boolean,
       default: false
+    },
+    searchTaxonomy: {
+      type: String,
+      default: null
+    },
+    selected: {
+      type: Object,
+      default () { return {
+        proprietar: null
+      }}
     }
   },
   methods: {
-    emit (e) {
+    handleInput (e) {
       let { value } = e.target
-      if (!value) value = null
-      this.$emit('input', value)
+      if (this.type !== 'search') {
+        if (!value) value = null
+        this.$emit('input', this.type === 'number' ? Number(value) : value)
+        return
+      }
+      this.search(value)
+    },
+    handleChange (e) {
+      if (this.type === 'search') return
+      this.$emit('change', e.target.value)
+    },
+    search (input) {
+      if (!input) return
+      let { searchTaxonomy } = this
+      if (!searchTaxonomy) searchTaxonomy = 'apartamente'
+      const iterator = this.$store.getters['searchMap'][searchTaxonomy].entries()
+      const results = []
+      for (let [ key, value ] of iterator) {
+        const relevance = string_similarity(String(input), value)
+        results.push({ id: key, relevance, value })
+      }
+      this.$emit('newResults', {
+        [searchTaxonomy]: results.sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 6)
+      })
     }
   }
 }

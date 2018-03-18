@@ -16,6 +16,7 @@ form(@submit.prevent="validate")
     :options=       "field.options"
     :value=         "field.value"
     :data-slot=     "field.slot"
+    :searchTaxonomy="field.taxonomy"
     @change=        "handleChange(field['@change'], field.id, field.type, $event)"
 
     :scariCount=    "field.type === 'array' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
@@ -126,6 +127,7 @@ export default {
       adaugaAsociatie: 'asociatie/adauga',
       adaugaBloc: 'bloc/adauga',
       adaugaAp: 'apartament/adauga',
+      incaseaza: 'incasare/adauga',
       modalClose: 'modal/close'
     }),
     validate () {
@@ -178,8 +180,6 @@ form
     display flex
     flex-flow row wrap
     max-width 335px
-    margin-left auto
-    margin-right auto
 
     &[data-type="number"]
       flex-basis 80px

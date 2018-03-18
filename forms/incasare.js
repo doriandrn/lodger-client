@@ -4,19 +4,20 @@ export const campuri = [
     label: 'incasare.new.dela',
     required: true,
     type: 'search',
-    focus: true
-  },
-  {
-    id: 'nrChitanta',
-    label: 'incasare.new.nr'
+    focus: true,
+    taxonomy: 'apartamente'
   },
   {
     id: 'suma',
     type: 'number',
     label: 'suma'
+  },
+  {
+    id: 'nrChitanta',
+    label: 'incasare.new.nr'
   }
 ]
 
 export const actiuni = {
-  confirm: 'adaugaIncasare'
+  confirm: 'incaseaza'
 }

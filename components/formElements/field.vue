@@ -3,6 +3,7 @@
   :data-size=  "size"
   :data-type=   "type"
   :data-icon=   "type === 'search' ? 'search' : null"
+  :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null"
 )
   labl.field__label(
     v-if=         "!hideLabel"
@@ -15,7 +16,6 @@
     :type=        "type !== 'bani' ? type : 'number'",
     :placeholder= "placeholder",
     :autocomplete="autocomplete",
-    :data-results="type === 'search' && !!results.apartamente.length",
     :id=          "id",
     :focus=       "focus",
     :required=    "required",
@@ -23,8 +23,14 @@
     :max=         "max",
     :step=        "type !== 'bani' ? step : .01",
     :value=       "value",
-    @input=       "handleInput",
+    @input=       "$emit('input', $event)",
     @change=      "$emit('change', $event)"
+    
+    :searchTaxonomy=    "searchTaxonomy"
+    @newResults=        "results = $event"
+    @selected=          "selected = $event"
+    :selected=          "type === 'search' ? selectedResult : null"
+    @keyEnter=          "selecteaza"
   )
   txtarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
@@ -60,15 +66,15 @@
 
   slot
 
-  .results(v-if="type === 'search' && results.apartamente.length")
-    .results__section
-      h5.results__heading Apartamente
+  .results(v-if="type === 'search' && !selectedResult.id")
+    .results__section(v-for="tax in Object.keys(results)")
+      h5.results__heading {{ tax }}
       nuxt-link(
-        v-for=    "ap, i in results.apartamente",
-        :key=     "ap.id"
-        :class=   "{ selected: i === selected, irelevant: ap.relevance < 0.25 }"
-        :to=      "`/aparatament/${ap.id}`"
-      ) {{ ap.value }}
+        v-for=    "res, i in results[tax]",
+        :key=     "res.id"
+        :class=   "{ selected: i === selected, irelevant: res.relevance < 0.25 }"
+        :to=      "`/${tax}/${res.id}`"
+      ) {{ res.value }}
 </template>
 
 <script>
@@ -80,66 +86,18 @@ import cbox from 'form/checkbox'
 import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
-import search from '~components/search'
-
-import { get_bigrams, string_similarity } from 'helpers/search'
-import { mapGetters } from 'vuex'
 
 export default {
   data () {
     // CUSTOM  only for search
     if (this.type !== 'search') return {}
-
-    // define methods, just for this element
-    this.search = input => {
-      this.debug('CAUT: ', input)
-      this.results.apartamente = []
-      if (!input) {
-        return
-      }
-      const iterator = this.searchMap.entries()
-      const results = []
-      for (let [ key, value ] of iterator) {
-        const relevance = string_similarity(String(input), value)
-        results.push({
-          id: key, relevance, value
-        })
-      }
-      this.results.apartamente = results.sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 6)
-    }
-
-    this.clearResults = () => {
-      this.searchPhrase = null
-      setTimeout(() => {
-        this.results.apartamente = []
-      }, 250)
-    }
-
-    this.selecteaza = () => {
-      const { results, selected, debug } = this
-      const { apartamente } = results
-      debug(results)
-      debug(apartamente)
-      debug(selected)
-      const { id } = apartamente[selected]
-      this.$emit('selectat', { ce: 'apartament', id })
-    }
-
-    this.$options.computed.searchMap = () => {
-      const map = new Map()
-      Object.values(this.$store.getters['apartamente']).forEach(ap => {
-        map.set(ap._id, `${ this.$store.getters['bloc/data'](ap.bloc).nume } ${ ap.scara } ${ ap.nr } ${ ap.proprietar }`)
-      })
-      return map
-    }
-
     return {
-      searchPhrase: null,
+      results: {},
       selected: 0,
-      results: {
-        apartamente: [],
-        incasari: [],
-        locatari: []
+      selectedResult: {
+        ce: '',
+        id: '',
+        proprietar: ''
       }
     }
   },
@@ -213,6 +171,10 @@ export default {
     autocomplete: {
       type: Boolean,
       default: false
+    },
+    searchTaxonomy: {
+      type: String,
+      default: null
     }
   },
   components: {
@@ -223,15 +185,30 @@ export default {
     cbox,
     file,
     radios,
-    scari,
-    search
+    scari
   },
   methods: {
-    handleInput (e) {
-      const { type, $emit } = this
-      if (type !== 'search') return $emit('input', type === 'number' ? Number(e) : e)
-      this.debug('GHGHGHGHGHHGGHGH')
-      this.search(e)
+    selecteaza () {
+      const { results, selected, debug, type } = this
+      if (type !== 'search') return
+      const { apartamente } = results
+      const { id, value } = apartamente[selected]
+
+      const ap = value.split(' ')
+      const bloc = ap[0]
+      const sc = ap[1]
+      const apnr = ap[2]
+      let proprietar = ''
+      for (let i=3; i < ap.length; i++) {
+        proprietar += ap[i] + (i === ap.length - 1 ? '' : ' ')
+      }
+
+      this.selectedResult = { ce: 'apartament', id, proprietar }
+      this.$emit('input', id)
+      this.clearResults()
+    },
+    clearResults () {
+      Object.keys(this.results).forEach(result => this.results[result] = [])
     }
   }
 }

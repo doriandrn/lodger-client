@@ -25,6 +25,7 @@
       slot=     "right"
       type=     "search"
       size=     "small"
+      :placeholder=  "$t('search')"
       hide-label
     )
   

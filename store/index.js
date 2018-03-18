@@ -4,11 +4,18 @@ import Debug from 'debug'
 import { defs } from 'db/_defs'
 
 const debug = Debug('lodger:rxstore')
-// let db
+
 const getters = {
   asociatii: state => Object.values(state.asociatii).map(asoc => asoc.name),
   blocuri: state => state.blocuri,
-  apartamente: state => state.apartamente
+  apartamente: state => state.apartamente,
+  searchMap: (state, getters) => {
+    const apartamente = new Map()
+    Object.values(getters['apartamente']).forEach(ap => {
+      apartamente.set(ap._id, `${ getters['bloc/data'](ap.bloc).nume } ${ ap.scara } ${ ap.nr } ${ ap.proprietar }`)
+    })
+    return { apartamente }
+  }
 }
 
 // subscriberi actiuni db

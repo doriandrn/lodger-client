@@ -14,14 +14,15 @@ span()
     )
       input(
         type=       "radio",
-        :value=     "value",
+        :value=     "index",
         :name=      "id",
+        :checked=   "Number(index) === value",
         :id=        "`${id}-${option}`",
         @change=    "$emit('change', Number(index))"
       )
       label.label(
         :for=   "`${id}-${option}`"
-      ) #[span] {{option}}
+      ) #[span] {{ option }}
 </template>
 
 <script>
@@ -62,6 +63,8 @@ input[type="radio"]
     &+label
       > span
         background-image: embedurl('~static/icons/ui/circle.svg', 'utf8')
+  &:hover
+    cursor pointer
 
 .input__radio
   display flex

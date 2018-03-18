@@ -6,23 +6,34 @@ const debug = Debug('lodger:db:collections')
 
 const cols = []
 
-const makeSchemaFromForm = ({ name, shortname }) => {
-  let hasChanged = false
+// const makeSchemaFromForm = ({ name, shortname }) => {
+//   let hasChanged = false
+//   const form = require(`forms/${shortname}s`)
+//   // if (!require(`forms/${shortname}s.cache.js`)) {
+//   //   // FS.saveAs(form, `forms/${shortname}s.cache.js`)
+//   // } else {
+//   //   // do a deep check
+//   //   const previousForm = require(`forms/${shortname}s.cache.js`)
+//   //   const nowFormCampuri = Object.values(form.campuri).map(o => o.id)
+//   //   const prevFormCampuri = Object.values(previousForm.campuri).map(o => o.id)
+//   //   debug('NFC', nowFormCampuri, 'PFC', prevFormCampuri)
+//   //   if (nowFormCampuri !== prevFormCampuri) hasChanged = true
+//   //   if (hasChanged) debug('HAS CHANGED')
+//   // }
+
+  
+
+//   debug('Schema', schema)
+//   return schema
+// }
+
+const makeCollection = data => {
+  const { key, value, shortname } = data
   const form = require(`forms/${shortname}s`)
-  // if (!require(`forms/${shortname}s.cache.js`)) {
-  //   // FS.saveAs(form, `forms/${shortname}s.cache.js`)
-  // } else {
-  //   // do a deep check
-  //   const previousForm = require(`forms/${shortname}s.cache.js`)
-  //   const nowFormCampuri = Object.values(form.campuri).map(o => o.id)
-  //   const prevFormCampuri = Object.values(previousForm.campuri).map(o => o.id)
-  //   debug('NFC', nowFormCampuri, 'PFC', prevFormCampuri)
-  //   if (nowFormCampuri !== prevFormCampuri) hasChanged = true
-  //   if (hasChanged) debug('HAS CHANGED')
-  // }
+  const { campuri, metode } = form
 
   const schema = {
-    name,
+    name: key,
     version: 0,
     type: 'object',
     properties: {},
@@ -38,8 +49,11 @@ const makeSchemaFromForm = ({ name, shortname }) => {
     if (required) schema.required.push(id)
   })
 
-  debug('Schema', schema)
-  return schema
+  return {
+    name: value,
+    schema,
+    methods: metode
+  }
 }
 
 for (let [key, value] of defs) {
@@ -51,11 +65,7 @@ for (let [key, value] of defs) {
     }
   })()
 
-  cols.push({
-    name: value,
-    schema: makeSchemaFromForm({ name: key, shortname }),
-    methods: {}
-  })
+  cols.push(makeCollection({ key, value, shortname }))
 }
 
 export default cols

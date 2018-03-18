@@ -21,3 +21,11 @@ export const campuri = [
 export const actiuni = {
   confirm: 'adaugaAsociatie'
 }
+
+export const metode = {
+  async initBalanta (data) {
+    console.log('DIS', this)
+    this.balanta = data.balanta
+    await this.save()
+  }
+}

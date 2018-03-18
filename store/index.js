@@ -13,16 +13,20 @@ const getters = {
 
 // subscriberi actiuni db
 const subs = []
+let asociatieActiva
+const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
 
-const sanitizeDBItems = items => items.map(item => item._data)
-
-const initAsoc = async (db, store, asociatieId) => {
+const initAsoc = async (db, store, { id, _$ }) => {
+  if (!id) {
+    console.error('initasoc fara id')
+    return
+  }
   const findCriteria = key => {
-    if (!asociatieId) return
+    if (!id) return
     switch (key) {
-      case 'bloc': return { asociatieId }
+      case 'bloc': return { asociatieId: id }
       case 'apartament': return { bloc: { $in: store.getters['bloc/ids'] } }
-      case 'incasare': return { asociatieId }
+      case 'incasare': return { asociatieId: id }
     }
     return
   }
@@ -41,6 +45,9 @@ const initAsoc = async (db, store, asociatieId) => {
       store.commit('set_apartamente', sanitizeDBItems(apartamente))
     }))
   }))
+
+  asociatieActiva = _$ || await db.asociatii.findOne({ name: id }).exec()
+  debug('initAsoc', id, asociatieActiva)
 }
 
 function rxdb () {
@@ -48,7 +55,7 @@ function rxdb () {
     const db = await Db
 
     let asociatieId = store.getters['asociatie/activa']
-    debug('aId', asociatieId)
+    if (asociatieId) await initAsoc(db, store, { id: asociatieId })
 
     store.subscribe(async ({ type, payload }) => {
       const what = type.split('/')[0]
@@ -64,35 +71,49 @@ function rxdb () {
         if (t.indexOf(['SCHIMBA_ACTIVA']) > -1) return 'schimba'
         if (t.indexOf('ADAUGA') > -1) return 'adauga'
         if (t.indexOf('STERGE') > -1) return 'sterge'
-        return null
+        return type.split('/')[1]
       })(type)
 
+      // global mutations, applied to all collections
       switch (mutation) {
         case 'schimba':
           await initAsoc(db, store, payload)
-          debug('Asociatie initializata', payload)
-          break
+          debug('Asociatie initializata', payload, asociatieActiva)
+          return
 
         case 'adauga':
           const action = payload._id ? 'upsert' : 'insert'
           const newItem = await col[action]({ ...payload })
           store.commit(`${what}/set_ultimul_adaugat`, what === 'asociatie' ? newItem.name : newItem._id)
           debug('Adaugat ', newItem)
-          break
+          return
 
         case 'sterge':
           const tobedel = await col.findOne({ _id: payload }).exec()
           await tobedel.remove()
           debug('Sters ', col)
+          return
+      }
+
+      // if none of above happened, run custom ones
+      switch (what) {
+        case 'asociatie':
+          if (typeof asociatieActiva[mutation] === 'function') {
+            await asociatieActiva[mutation](payload)
+            debug('DUN')
+          }
           break
       }
     })
 
-    subs.push(db.asociatii.find().$.subscribe(items => {
-      asociatieId = store.getters['asociatie/ultima'] || items[0].name
-      debug('AID', asociatieId)
+    subs.push(db.asociatii.find().$.subscribe(async items => {
       store.commit(`set_asociatii`, sanitizeDBItems(items))
-      store.dispatch('asociatie/schimba', asociatieId)
+      if (!asociatieId) {
+        const asoc0 = items[0]
+        asociatieId = asoc0 && asoc0.name ? asoc0.name : null
+        debug('XXXXX', asociatieId)
+        if (asociatieId) store.dispatch('asociatie/schimba', { id: asociatieId, '_$': asoc0  })
+      }
     }))
   }
 }

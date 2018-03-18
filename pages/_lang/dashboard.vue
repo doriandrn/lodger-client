@@ -148,6 +148,7 @@ sction#dash
     :title= "$t('asocs.noneAdmind.heading')",
     :CTA=   "$t('asocs.noneAdmind.CTA')",
     :actions= "{ newAsoc: $t('asocs.noneAdmind.action') }"
+    @action=  "openModal('asocs.new')"
   )
 
 </template>

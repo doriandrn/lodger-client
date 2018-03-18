@@ -20,6 +20,7 @@
       )
         nuxt-link(:to="item.url") {{ item.title }}
 
+    span.balanta(slot="right") {{ balanta }}
     search(
       slot=     "right"
       size=     "small"
@@ -198,11 +199,12 @@ export default {
   computed: {
     idAsociatieActiva: {
       get () { return this.idsAsociatii.indexOf(this.asociatieActiva) },
-      set (index) { this.schimbaAsociatieActiva(this.idsAsociatii[index]) }
+      set (index) { this.schimbaAsociatieActiva({ id: this.idsAsociatii[index] }) }
     },
     ...mapGetters({
       idsAsociatii: 'asociatii', 
       asociatieActiva: 'asociatie/activa',
+      balanta: 'asociatie/balanta',
       blocData: 'bloc/data',
       apData: 'apartament/data',
       modalOpen: 'modal/open',

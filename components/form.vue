@@ -16,14 +16,16 @@ form(@submit.prevent="validate")
     :options=       "field.options"
     :value=         "field.value"
     :data-slot=     "field.slot"
-    @change=        "typeof $options.methods[field['@change']] === 'function' ? $options.methods[field['@change']]($event) : null"
+    @change=        "$store.dispatch(field['@change'], { [field.id]: ['number', 'bani'].indexOf(field.type) > -1 ? Number($event) : $event })"
 
     :scariCount=    "field.type === 'array' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
 
     v-model.trim=   "$data[field.id]"
   )
 
-  slot(name="formExtend")
+  slot(
+    name=   "formExtend"
+  )
 
   split.actions
     
@@ -89,7 +91,9 @@ export default {
       modalData: 'modal/data'
     }),
     path () {
-      return this.modalContent.split('.')[0]
+      const { modalContent } = this
+      if (!modalContent) return
+      return modalContent.split('.')[0]
     }
   },
   props: {
@@ -128,9 +132,6 @@ export default {
       this.$validator.validateAll().then(valid => {
         if (valid) this.handleSubmit()
       })
-    },
-    updateazaBalanta (e) {
-      console.log('e', e)
     },
     handleSubmit () {
       const { formData: { actiuni: { confirm } }, $data, debug } = this

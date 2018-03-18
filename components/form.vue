@@ -179,7 +179,7 @@ form
     flex-flow row wrap
     max-width 335px
     margin-left auto
-    margin-rigth auto
+    margin-right auto
 
     &[data-type="number"]
       flex-basis 80px

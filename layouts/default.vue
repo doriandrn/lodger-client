@@ -21,8 +21,9 @@
         nuxt-link(:to="item.url") {{ item.title }}
 
     span.balanta(slot="right") {{ balanta }}
-    search(
+    field(
       slot=     "right"
+      type=     "search"
       size=     "small"
       hide-label
     )
@@ -119,7 +120,6 @@ import modal from '~components/modal'
 import frm from '~components/form.vue'
 import prompt from '~components/prompt'
 import cale from '~components/cale'
-import search from '~components/search'
 import slect from 'form/select'
 import field from 'form/field'
 
@@ -221,7 +221,6 @@ export default {
     frm,
     prompt,
     slect,
-    search,
     field
   }
 }

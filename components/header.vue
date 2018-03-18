@@ -49,5 +49,9 @@ header
 
     a
       color: config.typography.palette.headings
+
+  .field[data-icon]
+    &:before
+      bottom 16px
 </style>
 

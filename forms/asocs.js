@@ -24,7 +24,6 @@ export const actiuni = {
 
 export const metode = {
   async initBalanta (data) {
-    console.log('DIS', this)
     this.balanta = data.balanta
     await this.save()
   }

@@ -4,7 +4,8 @@ export const campuri = [
     label: 'asocs.init.balanta',
     required: true,
     type: 'bani',
-    '@change': 'asociatie/initBalanta'
+    '@change': 'asociatie/initBalanta',
+    value (getters) { return getters['asociatie/balanta'] }
   },
   {
     id: 'dataDinLunaListe',

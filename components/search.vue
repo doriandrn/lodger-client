@@ -18,15 +18,14 @@ field.search(
   @keyEnter=      "selecteaza",
   :hide-label=    "hideLabel"
 )
-  .results(data-droparrow)
-    .results__section
-      h5.results__heading(v-if="results.apartamente.length") Apartamente
-      nuxt-link(
-        v-for=    "ap, i in results.apartamente",
-        :key=     "ap.id"
-        :class=   "{ selected: i === selected, irelevant: ap.relevance < 0.25 }"
-        :to=      "`/aparatament/${ap.id}`"
-      ) {{ ap.value }}
+  .results__section(slot= "results")
+    h5.results__heading(v-if="results.apartamente.length") Apartamente
+    nuxt-link(
+      v-for=    "ap, i in results.apartamente",
+      :key=     "ap.id"
+      :class=   "{ selected: i === selected, irelevant: ap.relevance < 0.25 }"
+      :to=      "`/aparatament/${ap.id}`"
+    ) {{ ap.value }}
 </template>
 
 <script>

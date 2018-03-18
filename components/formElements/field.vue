@@ -52,13 +52,14 @@
     @change=      "$emit('input', $event)"
     :options=     "options"
   )
-  search(
-    v-else-if=    "type === 'search'",
-    :value=       "value",
-    @gasit=       "$emit('input', $event)"
-  )
 
   p.field__message(v-if="message") {{ message }}
+
+  .results(
+    v-if= "type === 'search' && $slots.results"
+    data-droparrow
+  )
+    slot(name="results")
 
   slot
 </template>
@@ -144,7 +145,7 @@ export default {
     },
     autocomplete: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   components: {

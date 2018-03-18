@@ -16,7 +16,7 @@ form(@submit.prevent="validate")
     :options=       "field.options"
     :value=         "field.value"
     :data-slot=     "field.slot"
-    @change=        "$store.dispatch(field['@change'], { [field.id]: ['number', 'bani'].indexOf(field.type) > -1 ? Number($event) : $event })"
+    @change=        "handleChange(field['@change'], field.id, field.type, $event)"
 
     :scariCount=    "field.type === 'array' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
 
@@ -133,6 +133,10 @@ export default {
         if (valid) this.handleSubmit()
       })
     },
+    handleChange (func, id, type, e) {
+      if (!func) return
+      this.$store.dispatch(func, { [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(e) : e })
+    },
     handleSubmit () {
       const { formData: { actiuni: { confirm } }, $data, debug } = this
       if (typeof this[confirm] !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
@@ -173,9 +177,13 @@ form
   .field
     display flex
     flex-flow row wrap
+    max-width 335px
+    margin-left auto
+    margin-rigth auto
 
     &[data-type="number"]
       flex-basis 80px
+      flex-grow 1
 
     &[data-type="separator"]
       flex-basis 100%

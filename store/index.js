@@ -8,7 +8,12 @@ const debug = Debug('lodger:rxstore')
 const getters = {
   asociatii: state => Object.values(state.asociatii).map(asoc => asoc.name),
   blocuri: state => state.blocuri,
-  apartamente: state => state.apartamente,
+  apartamente: state => { 
+    const aps = {}
+    state.apartamente.forEach(ap => aps[ap._id] = ap)
+    return aps
+  },
+  incasari: state => state.incasari,
   searchMap: (state, getters) => {
     const apartamente = new Map()
     Object.values(getters['apartamente']).forEach(ap => {
@@ -31,7 +36,7 @@ const initAsoc = async (db, store, { id, _$ }) => {
   const findCriteria = key => {
     if (!id) return
     switch (key) {
-      case 'bloc': return { asociatieId: id }
+      case 'bloc': case 'incasare': return { asociatieId: id }
       case 'apartament': return { bloc: { $in: store.getters['bloc/ids'] } }
       case 'incasare': return { asociatieId: id }
     }
@@ -41,7 +46,7 @@ const initAsoc = async (db, store, { id, _$ }) => {
   // cleanup subs from prev asoc
   subs.forEach((sub, i) => {
     if (i === 0) return // keep asocs sub
-    console.log('sub', sub, i)
+    debug('SUBSCRIBER TO UNSUB: ', sub, i)
     sub.unsubscribe()
   })
 
@@ -51,6 +56,10 @@ const initAsoc = async (db, store, { id, _$ }) => {
     subs.push(db.apartamente.find(findCriteria('apartament')).$.subscribe(apartamente => {
       store.commit('set_apartamente', sanitizeDBItems(apartamente))
     }))
+  }))
+
+  subs.push(db.incasari.find(findCriteria('incasare')).$.subscribe(incasari => {
+    store.commit('set_incasari', sanitizeDBItems(incasari))
   }))
 
   asociatieActiva = _$ || await db.asociatii.findOne({ name: id }).exec()
@@ -128,18 +137,22 @@ function rxdb () {
 export const state = () => ({
   asociatii: [],
   blocuri: [],
-  apartamente: []
+  apartamente: [],
+  incasari: []
 })
 
 export const mutations = {
   set_asociatii: (state, data) => {
     state.asociatii = data
   },
-  set_blocuri: (state, blocs) => {
-    state.blocuri = blocs
+  set_blocuri: (state, data) => {
+    state.blocuri = data
   },
-  set_apartamente: (state, aps) => {
-    state.apartamente = aps
+  set_apartamente: (state, data) => {
+    state.apartamente = data
+  },
+  set_incasari: (state, data) => {
+    state.incasari = data
   }
 }
 

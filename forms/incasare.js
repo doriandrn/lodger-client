@@ -13,8 +13,17 @@ export const campuri = [
     label: 'suma'
   },
   {
+    id: 'la',
+    type: 'date-time',
+    notInForm: true
+  },
+  {
     id: 'nrChitanta',
     label: 'incasare.new.nr'
+  },
+  {
+    id: 'asociatieId',
+    type: 'select'
   }
 ]
 

@@ -4,6 +4,7 @@
   :data-type=   "type"
   :data-icon=   "type === 'search' ? 'search' : null"
   :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null"
+  :data-selected="type === 'search' && selected.id"
 )
   labl.field__label(
     v-if=         "!hideLabel"
@@ -188,9 +189,11 @@ export default {
     scari
   },
   methods: {
-    selecteaza () {
+    selecteaza (e) {
       const { results, selected, debug, type } = this
+      debug('SELECTEZ')
       if (type !== 'search') return
+      e.preventDefault()
       const { apartamente } = results
       const { id, value } = apartamente[selected]
 
@@ -198,10 +201,12 @@ export default {
       const bloc = ap[0]
       const sc = ap[1]
       const apnr = ap[2]
-      let proprietar = ''
-      for (let i=3; i < ap.length; i++) {
-        proprietar += ap[i] + (i === ap.length - 1 ? '' : ' ')
-      }
+      const proprietar = String(ap.slice(3, ap.length).join(' '))
+
+      // let proprietar = ''
+      // for (let i=3; i < ap.length; i++) {
+      //   proprietar += ap[i] + (i === ap.length - 1 ? '' : ' ')
+      // }
 
       this.selectedResult = { ce: 'apartament', id, proprietar }
       this.$emit('input', id)

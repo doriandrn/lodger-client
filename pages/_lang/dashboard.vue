@@ -5,9 +5,9 @@ sction#dash
 
     .widgets
       widget(
-        :title="$t('dashboard.actions.title')"
-        :boxed="false"
-        v-if=   "asociatieInitializata"
+        v-if=     "asociatieInitializata"
+        :title=   "$t('dashboard.actions.title')"
+        :boxed=   "false"
       )
         buton(
           icon=   "trending-up"
@@ -25,27 +25,32 @@ sction#dash
 
       widget(
         :title= "$t('dashboard.activity.title')"
-        icon= "activity"
+        icon=   "activity"
         v-if=   "asociatieInitializata"
       )
+        ul.activitate(v-if="incasari.length > 0")
+          li(v-for="incasare in incasari")
+            split
+              strong {{ apartamente[incasare.deLa] ? apartamente[incasare.deLa].proprietar : '~' }} 
+              span.suma(slot="right") {{ incasare.suma }} RON
 
       //- widget.joaca(title="joaca", full)
         p ccucuuc
 
       widget#init(
-        :title=  "$t('asocs.init.title')",
-        icon=     "hard-drive"
-        :controls= "[{ type: 'progresInit' }]"
+        :title=     "$t('asocs.init.title')",
+        icon=       "hard-drive"
+        :controls=  "[{ type: 'progresInit' }]"
         expand
       )
         field(
-          slot=   "right"
-          v-if="initprgrs"
-          type=   "radios",
-          id=     "initprgrs"
-          v-model=  "initprgrs"
-          :label=   "null"
-          :options= "{1: 1, 2: 2, 3: 3}"
+          slot=       "right"
+          v-if=       "initprgrs"
+          type=       "radios",
+          id=         "initprgrs"
+          v-model=    "initprgrs"
+          :label=     "null"
+          :options=   "{1: 1, 2: 2, 3: 3}"
         )
 
         div(v-if="initprgrs")
@@ -55,7 +60,7 @@ sction#dash
               v-if=   "initprgrs === 2",
               icon=   "plus-circle",
               slot=   "right"
-              @click= "openModal('blocs.new')"
+              @click= "openModal('bloc.new')"
               size=   "small"
               styl=   "outline"
             ) {{ $t('blocs.new.title') }}
@@ -69,7 +74,7 @@ sction#dash
                   styl=   "unstyled"
                   icon=   "edit"
                   icon-only
-                  @click= "openModal({ id: 'blocs.edit', data: { _id: bloc._id }})"
+                  @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
                   tooltip
                 ) {{ $t('blocs.edit.title') }}
                 buton(
@@ -95,12 +100,12 @@ sction#dash
                               :key=   "ap._id"
                               :tooltip="ap.proprietar || '?'"
                               :class= "{ ultim: ap._id === ultimulApAdaugat}"
-                              @click= "openModal({ id: 'aps.edit', data: { _id: ap._id }})"
+                              @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
                             ) #[em {{ ap.nr }}]
                             buton.adauga(
                               styl=   "unstyled"
                               tooltip
-                              @click= "openModal({ id: 'aps.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
+                              @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
                               icon=   "plus-circle"
                               icon-only
                             ) {{ $t('aps.new.title') }}
@@ -131,7 +136,7 @@ sction#dash
           li
             buton(
               icon=   "plus-circle"
-              @click= "openModal('asocs.new')", 
+              @click= "openModal('asociatie.new')", 
               styl=   "unstyled"
             ) {{ $t('asocs.noneAdmind.action') }}
         .danger
@@ -148,7 +153,7 @@ sction#dash
     :title= "$t('asocs.noneAdmind.heading')",
     :CTA=   "$t('asocs.noneAdmind.CTA')",
     :actions= "{ newAsoc: $t('asocs.noneAdmind.action') }"
-    @action=  "openModal('asocs.new')"
+    @action=  "openModal('asociatie.new')"
   )
 
 </template>
@@ -201,6 +206,7 @@ export default {
       apartamenteEtaj: 'apartament/localizeaza',
       activaId: 'asociatie/activa',
       defineste: 'asociatie/defineste',
+      incasari: 'incasari',
       ultimulApAdaugat: 'apartament/ultimulAdaugat'
     })
   },
@@ -385,4 +391,8 @@ ul.blocuri
       padding 8px
       > label
         display none
+
+ul.activitate
+  list-style-type none
+  padding 0
 </style>

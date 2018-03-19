@@ -14,7 +14,7 @@ input(
   :step=            "type === 'number' ? step : null"
   @keyup.down=      "$emit('keyDown')"
   @keyup.up=        "$emit('keyUp')"
-  @keyup.enter.prevent=     "$emit('keyEnter')"
+  @keydown.enter=     "debug('ENTER'); $emit('keyEnter', $event)"
 )
 </template>
 

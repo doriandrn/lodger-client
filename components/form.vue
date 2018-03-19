@@ -2,6 +2,7 @@
 form(@submit.prevent="validate")
   field(
     v-for=          "field in formData.campuri"
+    v-if=           "!field.notInForm"
 
     :key=           "`${field.type}-${field.id}`"
     :id=            "field.id"
@@ -67,7 +68,7 @@ export default {
     campuri.forEach(camp => { camp.label = this.$t(camp.label) })
 
     // adauga-le valorile implicite
-    const ids = campuri.filter(field => !field.notInAddForm).map(field => field.id)
+    const ids = campuri.filter(field => !field.notInAddForm || !field.notInForm).map(field => field.id)
     this.debug('ids', ids)
 
     ids.forEach(fid => {
@@ -144,8 +145,11 @@ export default {
       if (typeof this[confirm] !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
-        const value = $data[what]
+        let value = $data[what]
         if (value === null || value === 'undefined') return
+        
+        // adauga data la indecsii numiti 'la'
+        if (what === 'la') value = Date.now()
         manipulatedData[what] = what === 'scara' ? String(value) : value
       })
       this[confirm](manipulatedData)

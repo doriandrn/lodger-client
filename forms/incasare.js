@@ -14,6 +14,7 @@ export const campuri = [
   },
   {
     id: 'la',
+    index: true,
     type: 'date-time',
     notInForm: true
   },

@@ -58,7 +58,7 @@ const initAsoc = async (db, store, { id, _$ }) => {
     }))
   }))
 
-  subs.push(db.incasari.find(findCriteria('incasare')).$.subscribe(incasari => {
+  subs.push(db.incasari.find(findCriteria('incasare')).sort({la: -1}).limit(2).$.subscribe(incasari => {
     store.commit('set_incasari', sanitizeDBItems(incasari))
   }))
 
@@ -100,8 +100,9 @@ function rxdb () {
         case 'adauga':
           const action = payload._id ? 'upsert' : 'insert'
           const newItem = await col[action]({ ...payload })
-          store.commit(`${what}/set_ultimul_adaugat`, what === 'asociatie' ? newItem.name : newItem._id)
-          debug('Adaugat ', newItem)
+          if (what) store.commit(`${what}/set_ultimul_adaugat`, what === 'asociatie' ? newItem.name : newItem._id)
+          if (what === 'incasare') store.commit('asociatie/incaseaza', { id: newItem._id, suma: newItem.suma })
+          debug('Adaugat ', what, newItem)
           return
 
         case 'sterge':
@@ -135,6 +136,7 @@ function rxdb () {
 }
 
 export const state = () => ({
+  locale: 'ro',
   asociatii: [],
   blocuri: [],
   apartamente: [],

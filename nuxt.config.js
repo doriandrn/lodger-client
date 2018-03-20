@@ -48,6 +48,9 @@ module.exports = {
   {
     src: '~plugins/i18n'
   }],
+  vendor: [
+    'moment'
+  ],
   router: {
     linkActiveClass: 'active'
   },

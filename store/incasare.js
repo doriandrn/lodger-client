@@ -10,3 +10,7 @@ export const mutations = {
 export const actions = {
   adauga: ({ commit }, data) => { commit('ADAUGA', data) }
 }
+
+export const getters = {
+  ultima: state => state.ultima
+}

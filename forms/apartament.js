@@ -44,6 +44,11 @@ export const campuri = [
     label: 'scara',
     required: true,
     slot: 'footer'
+  },
+  {
+    id: 'balanta',
+    label: 'balanta',
+    type: 'bani'
   }
 ]
 

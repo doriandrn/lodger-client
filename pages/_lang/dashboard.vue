@@ -14,6 +14,11 @@ sction#dash
           @click= "openModal('incasare.new')"
         ) {{ $t('dashboard.actions.cashIn') }}
 
+        buton(
+          @click= "openModal('cheltuiala.new')"
+          styl=   "outline"
+        ) {{ $t('dashboard.actions.spend' )}}
+
       //- typecheck
 
       widget(
@@ -31,7 +36,8 @@ sction#dash
         ul.activitate(v-if="incasari.length > 0")
           li(v-for="incasare in incasari")
             split
-              strong {{ apartamente[incasare.deLa] ? apartamente[incasare.deLa].proprietar : '~' }} 
+              span.nume {{ apartamente[incasare.deLa] ? apartamente[incasare.deLa].proprietar : '~' }}
+              date-time(:unixTime="incasare.la")
               span.suma(slot="right") {{ incasare.suma }} RON
 
       //- widget.joaca(title="joaca", full)
@@ -164,6 +170,7 @@ import widget from '~components/widget'
 import buton from 'form/button'
 import frm from '~components/form.vue'
 import empty from '~components/empty'
+import dateTime from '~components/dateTime'
 import split from '~components/split'
 import field from 'form/field'
 
@@ -187,6 +194,7 @@ export default {
     empty,
     field,
     frm,
+    dateTime,
     typecheck
   },
   computed: {
@@ -395,4 +403,14 @@ ul.blocuri
 ul.activitate
   list-style-type none
   padding 0
+
+  .split
+    .left
+      flex-flow column nowrap
+      align-items flex-start
+
+  > li
+    margin -20px -20px 20px
+    padding 20px
+    background yellow
 </style>

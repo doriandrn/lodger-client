@@ -12,7 +12,7 @@ const makeCollection = data => {
   const { campuri, metode } = form
   const getType = type => {
     if (!type || ['text', 'textarea', 'select', 'search'].indexOf(type) > -1) return 'string'
-    if (['date-time'].indexOf(type) > -1) return 'number'
+    if (['date-time', 'bani'].indexOf(type) > -1) return 'number'
     return type
   }
 
@@ -26,11 +26,13 @@ const makeCollection = data => {
   }
 
   Object.values(form.campuri).forEach(formItem => {
-    const { id, type, required, primary, step } = formItem
+    const { id, type, required, primary, step, index, ref } = formItem
     schema.properties[id] = {
       type: getType(type)
     }
     if (primary) Object.assign(schema.properties[id], { primary })
+    if (index) Object.assign(schema.properties[id], { index })
+    if (ref) Object.assign(schema.properties[id], { ref, items: { type: 'string' } })
     if (step) Object.assign(schema.properties[id], { multipleOf: step })
     if (required) schema.required.push(id)
   })

@@ -146,12 +146,17 @@ export default {
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
         let value = $data[what]
+         // adauga data la indecsii numiti 'la'
+        if (what === 'la') {
+          value = Date.now()
+          debug('LA', value)
+        }
         if (value === null || value === 'undefined') return
         
-        // adauga data la indecsii numiti 'la'
-        if (what === 'la') value = Date.now()
+       
         manipulatedData[what] = what === 'scara' ? String(value) : value
       })
+      debug('MANIPULATED', manipulatedData)
       this[confirm](manipulatedData)
       this.modalClose()
       this.$emit('submit', manipulatedData)
@@ -186,7 +191,7 @@ form
     max-width 335px
 
     &[data-type="number"]
-      flex-basis 80px
+      flex-basis 110px
       flex-grow 1
 
     &[data-type="separator"]

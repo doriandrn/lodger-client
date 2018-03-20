@@ -114,6 +114,14 @@ export default {
   &.expand
     flex-basis 65%
 
+  &:not(.boxed)
+    .widget
+      &__content
+        margin: -(config.spacings.inBoxes/2)
+        
+        > *
+          margin: (config.spacings.inBoxes/2)
+
   &.boxed
     background white
     border-radius: config.radiuses.boxes
@@ -148,6 +156,7 @@ export default {
         > .split
           .right
             margin-top auto
+
 
   &.hasSidebar
     .widget

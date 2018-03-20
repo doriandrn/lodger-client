@@ -1,10 +1,21 @@
 <template lang="pug">
-.split
+.split(:data-separate="separate")
   .left
     slot
   .right(v-if="$slots.right")
     slot(name="right")
 </template>
+
+<script>
+export default {
+  props: {
+    separate: {
+      type: Boolean,
+      default: null
+    }
+  }
+}
+</script>
 
 <style lang="stylus">
 @require '~styles/config'
@@ -21,17 +32,19 @@
   .right
     margin-left auto
 
-    > *:not(:first-child)
-      margin-left 8px
+  &[data-separate]
+    .right
+      > *:not(:first-child)
+        margin-left 8px
 
-  .left
-    margin-right: config.spacings.betweenBoxes
-    
-    > *:not(:first-child)
-      margin-left: baseSpacingUnit*8
-      padding-left: baseSpacingUnit*8
-      border-left: 1px solid config.palette.borders
+    .left
+      margin-right: config.spacings.betweenBoxes
+      
+      > *:not(:first-child)
+        margin-left: baseSpacingUnit*8
+        padding-left: baseSpacingUnit*8
+        border-left: 1px solid config.palette.borders
 
-    > *
-      margin-bottom 0
+      > *
+        margin-bottom 0
 </style>

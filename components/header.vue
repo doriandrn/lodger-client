@@ -1,6 +1,6 @@
 <template lang="pug">
 header.ui
-  split.inner
+  split.inner(separate)
     slot
     slot(name="right" slot="right")
 </template>

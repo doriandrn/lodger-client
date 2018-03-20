@@ -3,7 +3,8 @@ export default {
     title: 'Panou de control',
     actions: {
       title: 'Acțiuni',
-      cashIn: 'Încasează'
+      cashIn: 'Încasează',
+      spend: 'Adaugă o cheltuială'
     },
     statistics: {
       title: 'Statistici',

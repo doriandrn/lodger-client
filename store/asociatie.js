@@ -18,7 +18,8 @@ export const mutations = {
   set_ultimul_adaugat: (state, id) => {
     state.ultima = id
   },
-  initBalanta: (state, data) => {}
+  initBalanta: (state, data) => {},
+  incaseaza: (state, data) => {}
 }
 
 export const actions = {

@@ -48,9 +48,6 @@ module.exports = {
   {
     src: '~plugins/i18n'
   }],
-  vendor: [
-    'moment'
-  ],
   router: {
     linkActiveClass: 'active'
   },
@@ -58,13 +55,17 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    /*
-    ** Run ESLint on save
-    */
+    vendor: [
+      'moment',
+      'numeral'
+    ],
+    externals: {
+      fs: 'commonjs fs'
+    },
+
     extend (config, { isDev, isClient }) {
-      if (isDev && isClient) {
-        
-      }
+      if (isDev && isClient) {}
+      config.node = { fs: 'empty' }
 
       // Extend aliases
       Object.assign(config.resolve.alias, {

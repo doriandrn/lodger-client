@@ -35,10 +35,22 @@ sction#dash
       )
         ul.activitate(v-if="incasari.length > 0")
           li(v-for="incasare in incasari")
-            split
-              span.nume {{ apartamente[incasare.deLa] ? apartamente[incasare.deLa].proprietar : '~' }}
+            split(
+              v-if="apartamente[incasare.deLa]"
+              collapsable
+            )
+              adresa(
+                :bloc=  "blocData(apartamente[incasare.deLa].bloc).nume",
+                :scara= "apartamente[incasare.deLa].scara",
+                :etaj=  "apartamente[incasare.deLa].etaj",
+                :nrAp=  "String(apartamente[incasare.deLa].nr)"
+              )
+              span.deLa.nume {{ apartamente[incasare.deLa].proprietar }}
               date-time(:unixTime="incasare.la")
-              span.suma(slot="right") {{ incasare.suma }} RON
+              bani(
+                slot="right"
+                :valoare="incasare.suma"
+              )
 
       //- widget.joaca(title="joaca", full)
         p ccucuuc
@@ -172,6 +184,9 @@ import frm from '~components/form.vue'
 import empty from '~components/empty'
 import dateTime from '~components/dateTime'
 import split from '~components/split'
+
+import adresa from '~components/adresa'
+import bani from '~components/bani'
 import field from 'form/field'
 
 import typecheck from 'pg/widgets/typography'
@@ -188,7 +203,9 @@ export default {
   },
   components: {
     sction,
+    adresa,
     split,
+    bani,
     widget,
     buton,
     empty,
@@ -213,6 +230,7 @@ export default {
       apartamente: 'apartamente',
       apartamenteEtaj: 'apartament/localizeaza',
       activaId: 'asociatie/activa',
+      blocData: 'bloc/data',
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
       ultimulApAdaugat: 'apartament/ultimulAdaugat'
@@ -405,6 +423,7 @@ ul.activitate
   padding 0
 
   .split
+    align-items flex-start
     .left
       flex-flow column nowrap
       align-items flex-start
@@ -412,5 +431,10 @@ ul.activitate
   > li
     margin -20px -20px 20px
     padding 20px
-    background yellow
+    
+    &:not(:last-child)
+      border-bottom: 1px solid config.palette.borders
+
+    &:last-child
+      margin-bottom 0
 </style>

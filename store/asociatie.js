@@ -2,6 +2,7 @@ export const state = () => ({
   activa: {
     id: ''
   },
+  moneda: 'ron',
   ultima: null,
   initializata: false
 })
@@ -45,6 +46,7 @@ export const actions = {
 
 export const getters = {
   activa: state => state.activa.id,
+  moneda: state => state.moneda,
   ultima: state => state.ultima,
   balanta: (state, getters, rootGetters) => {
     const asoc = rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0]

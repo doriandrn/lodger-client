@@ -1,6 +1,7 @@
 <template lang="pug">
 time(
-  :datetime= "datetime"
+  :datetime=  "datetime"
+  data-icon=  "clock"
 ) {{ moment(unixTime).fromNow() }}
 </template>
 
@@ -33,3 +34,19 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+@require '~styles/config'
+tcolor = config.typography.palette.meta
+
+time
+  display flex
+  flex-flow row nowrap
+  align-items center
+  color: tcolor
+  font-size 10px
+  padding-left 0 !important
+
+  &:before
+    background-color: tcolor !important
+</style>

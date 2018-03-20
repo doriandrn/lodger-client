@@ -1,6 +1,6 @@
 import Debug from 'debug'
 import { defs } from 'db/_defs'
-import FS from 'file-saver'
+// const fs = require('fs')
 
 const debug = Debug('lodger:db:collections')
 
@@ -8,6 +8,24 @@ const cols = []
 
 const makeCollection = data => {
   const { key, value } = data
+  const cachedSchemaFileName = `cache-schema-${key}`
+  let cachedSchema = null
+  let version = 0
+  let foundCachedProperties = []
+
+  try {
+    let collectionCache = localStorage.getItem(cachedSchemaFileName)
+    if (collectionCache && collectionCache.length > 0) {
+      // check obj keys against one another
+      collectionCache = JSON.parse(collectionCache)
+      foundCachedProperties = Object.keys(collectionCache.properties)
+      version = collectionCache.version
+      cachedSchema = collectionCache
+    }
+  } catch (e) {
+    console.info('dat smell of a fresh DB :)')
+  }
+
   const form = require(`forms/${key}`)
   const { campuri, metode } = form
   const getType = type => {
@@ -18,24 +36,41 @@ const makeCollection = data => {
 
   const schema = {
     name: key,
-    version: 0,
     type: 'object',
     autoMigrate: true,
     properties: {},
-    required: []
+    required: [],
+    migrationStrategies: {}
   }
+  let versionMustIncrease = false
 
   Object.values(form.campuri).forEach(formItem => {
     const { id, type, required, primary, step, index, ref } = formItem
-    schema.properties[id] = {
-      type: getType(type)
+
+    // this is new from previous schema
+    if (foundCachedProperties.length > 0 && foundCachedProperties.indexOf(id) < 0) {
+      schema.migrationStrategies[version] = function (oldDoc) {
+        oldDoc[id] = undefined
+        return oldDoc
+      }
+      versionMustIncrease = true
     }
+
+    schema.properties[id] = { type: getType(type) }
     if (primary) Object.assign(schema.properties[id], { primary })
     if (index) Object.assign(schema.properties[id], { index })
     if (ref) Object.assign(schema.properties[id], { ref, items: { type: 'string' } })
     if (step) Object.assign(schema.properties[id], { multipleOf: step })
     if (required) schema.required.push(id)
   })
+
+  if (versionMustIncrease) version += 1
+  Object.assign(schema, { version })
+
+  localStorage.setItem(cachedSchemaFileName, JSON.stringify(schema))
+  // fs.writeFile(cachedSchemaFileName, `export default { ${schema} }`, err => {
+  //   if (err) throw err
+  // })
 
   return {
     name: value,

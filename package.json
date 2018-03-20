@@ -14,8 +14,10 @@
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "dependencies": {
+    "fs": "^0.0.1-security",
     "fuzzysearch": "^1.0.3",
     "moment": "^2.21.0",
+    "numeral": "^2.0.6",
     "nuxt": "^1.4.0",
     "pouchdb": "^6.4.3",
     "pouchdb-browser": "^6.4.3",

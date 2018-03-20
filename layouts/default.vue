@@ -20,7 +20,11 @@
       )
         nuxt-link(:to="item.url") {{ item.title }}
 
-    span.balanta(slot="right") {{ balanta }}
+    bani(
+      slot=     "right"
+      :valoare= "balanta",
+      data-icon="shield"
+    )
     field(
       slot=     "right"
       type=     "search"
@@ -47,72 +51,6 @@
     p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
 </template>
 
-<style lang="stylus">
-@require '~styles/config'
-
-#layout
-  display flex
-  flex-flow column nowrap
-  min-height 100vh
-
-  .actions
-    width 100%
-    display flex
-    flex-basis 100%
-
-  > header
-    position fixed 0 0 auto 0
-    z-index 99
-
-    nav
-      position fixed
-
-      +above(l)
-        position static
-
-    &+main
-      padding-top 48px
-
-    .switch
-      position relative
-      display flex
-      flex-flow column wrap
-      padding-top 8px
-      padding-bottom 8px
-      height 100%
-      
-      label
-        font-size 9px
-        text-transform uppercase
-        font-weight 100
-        line-height 12px
-        letter-spacing 1px
-        white-space nowrap
-
-      select
-        padding 0
-        box-shadow none
-        margin-top 4px
-        text-transform capitalize
-        font-weight 500
-
-  > main
-    fullflex()
-    margin-bottom 24px
-
-    > section
-      fullflex()
-      > .inner
-        fullflex()
-        > div
-          fullflex()
-
-.inner
-  max-width: config.sizes.maxContainerWidth
-  margin 0 auto
-  padding: 0 baseSpacingUnit*3
-</style>
-
 <script>
 import logo from '~components/logo'
 import headr from '~components/header'
@@ -121,6 +59,7 @@ import modal from '~components/modal'
 import frm from '~components/form.vue'
 import prompt from '~components/prompt'
 import cale from '~components/cale'
+import bani from '~components/bani'
 import slect from 'form/select'
 import field from 'form/field'
 
@@ -222,7 +161,74 @@ export default {
     frm,
     prompt,
     slect,
-    field
+    field,
+    bani
   }
 }
 </script>
+
+<style lang="stylus">
+@require '~styles/config'
+
+#layout
+  display flex
+  flex-flow column nowrap
+  min-height 100vh
+
+  .actions
+    width 100%
+    display flex
+    flex-basis 100%
+
+  > header
+    position fixed 0 0 auto 0
+    z-index 99
+
+    nav
+      position fixed
+
+      +above(l)
+        position static
+
+    &+main
+      padding-top 48px
+
+    .switch
+      position relative
+      display flex
+      flex-flow column wrap
+      padding-top 8px
+      padding-bottom 8px
+      height 100%
+      
+      label
+        font-size 9px
+        text-transform uppercase
+        font-weight 100
+        line-height 12px
+        letter-spacing 1px
+        white-space nowrap
+
+      select
+        padding 0
+        box-shadow none
+        margin-top 4px
+        text-transform capitalize
+        font-weight 500
+
+  > main
+    fullflex()
+    margin-bottom 24px
+
+    > section
+      fullflex()
+      > .inner
+        fullflex()
+        > div
+          fullflex()
+
+.inner
+  max-width: config.sizes.maxContainerWidth
+  margin 0 auto
+  padding: 0 baseSpacingUnit*3
+</style>

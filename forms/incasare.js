@@ -5,11 +5,12 @@ export const campuri = [
     required: true,
     type: 'search',
     focus: true,
-    taxonomy: 'apartamente'
+    taxonomy: 'apartamente',
+    ref: 'apartamente'
   },
   {
     id: 'suma',
-    type: 'number',
+    type: 'bani',
     label: 'suma'
   },
   {

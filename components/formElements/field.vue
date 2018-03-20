@@ -257,6 +257,10 @@ spacings = 16px
         &:focus
           max-width 155px
 
+  &[data-type="bani"]
+    flex-basis 120px
+  
+  
 .results
   position absolute
   top calc(100% + 25px)

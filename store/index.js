@@ -58,7 +58,7 @@ const initAsoc = async (db, store, { id, _$ }) => {
     }))
   }))
 
-  subs.push(db.incasari.find(findCriteria('incasare')).sort({la: -1}).limit(2).$.subscribe(incasari => {
+  subs.push(db.incasari.find(findCriteria('incasare')).sort({la: -1}).limit(25).$.subscribe(incasari => {
     store.commit('set_incasari', sanitizeDBItems(incasari))
   }))
 
@@ -71,6 +71,8 @@ function rxdb () {
     const db = await Db
 
     let asociatieId = store.getters['asociatie/activa']
+    let asocAdaugatTFlag = false
+
     if (asociatieId) await initAsoc(db, store, { id: asociatieId })
 
     store.subscribe(async ({ type, payload }) => {
@@ -102,6 +104,8 @@ function rxdb () {
           const newItem = await col[action]({ ...payload })
           if (what) store.commit(`${what}/set_ultimul_adaugat`, what === 'asociatie' ? newItem.name : newItem._id)
           if (what === 'incasare') store.commit('asociatie/incaseaza', { id: newItem._id, suma: newItem.suma })
+          // if (what === 'asociatie') store.dispatch('asociatie/schimba', newItem.name)
+          if (what === 'asociatie') asocAdaugatTFlag = newItem.name
           debug('Adaugat ', what, newItem)
           return
 
@@ -115,7 +119,7 @@ function rxdb () {
       // if none of above happened, run custom ones
       switch (what) {
         case 'asociatie':
-          if (typeof asociatieActiva[mutation] === 'function') {
+          if (asociatieActiva && typeof asociatieActiva[mutation] === 'function') {
             await asociatieActiva[mutation](payload)
             debug('DUN')
           }
@@ -130,6 +134,10 @@ function rxdb () {
         asociatieId = asoc0 && asoc0.name ? asoc0.name : null
         debug('XXXXX', asociatieId)
         if (asociatieId) store.dispatch('asociatie/schimba', { id: asociatieId, '_$': asoc0  })
+      }
+      if (asocAdaugatTFlag) {
+        store.dispatch('asociatie/schimba', { id: asocAdaugatTFlag })
+        asocAdaugatTFlag = false
       }
     }))
   }

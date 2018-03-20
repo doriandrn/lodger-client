@@ -48,10 +48,28 @@ export const campuri = [
   {
     id: 'balanta',
     label: 'balanta',
-    type: 'bani'
+    type: 'bani',
+    default: 0
+  },
+  {
+    id: 'plati',
+    label: 'apartament.plati',
+    type: 'array',
+    notInForm: true,
+    ref: 'incasari'
   }
 ]
 
 export const actiuni = {
   confirm: 'adaugaAp'
+}
+
+export const metode = {
+  async incaseaza (data) {
+    if (!this.balanta) this.balanta = 0
+    if (!this.plati) this.plati = []
+    this.balanta += data.suma
+    this.plati.push(data.id)
+    await this.save()
+  }
 }

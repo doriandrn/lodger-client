@@ -1,5 +1,5 @@
 <template lang="pug">
-.split(:data-separate="separate")
+.split(:data-separate="separate", :data-collapsable="collapsable")
   .left
     slot
   .right(v-if="$slots.right")
@@ -12,6 +12,10 @@ export default {
     separate: {
       type: Boolean,
       default: null
+    },
+    collapsable: {
+      type: Boolean,
+      default: false
     }
   }
 }

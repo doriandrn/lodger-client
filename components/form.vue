@@ -13,7 +13,7 @@ form(@submit.prevent="validate")
     :required=      "field.required"
     :min=           "field.min"
     :max=           "field.max",
-    :step=          "field.step",
+    :step=          "field.type === 'bani' ? 0.01 : field.step",
     :options=       "field.options"
     :value=         "field.value"
     :data-slot=     "field.slot"
@@ -147,13 +147,9 @@ export default {
       Object.keys($data).forEach(what => {
         let value = $data[what]
          // adauga data la indecsii numiti 'la'
-        if (what === 'la') {
-          value = Date.now()
-          debug('LA', value)
-        }
+        if (what === 'la') value = Date.now()
         if (value === null || value === 'undefined') return
-        
-       
+
         manipulatedData[what] = what === 'scara' ? String(value) : value
       })
       debug('MANIPULATED', manipulatedData)

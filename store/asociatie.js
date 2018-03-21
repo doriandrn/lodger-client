@@ -16,6 +16,7 @@ export const mutations = {
   DEFINESTE_STRUCTURA: (state) => {
     state.initializata = 0
   },
+  BACKUP: () => {},
   set_ultimul_adaugat: (state, id) => {
     state.ultima = id
   },
@@ -41,6 +42,9 @@ export const actions = {
   initBalanta ({ commit }, data) { commit('initBalanta', data) },
   definesteStructura ({ commit }) {
     commit('DEFINESTE_STRUCTURA')
+  },
+  backup ({ commit }) {
+    commit('BACKUP')
   }
 }
 
@@ -52,5 +56,6 @@ export const getters = {
     const asoc = rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0]
     return asoc && asoc.balanta ? asoc.balanta : 0
   },
+  nrUltimaChitanta: (state, getters, rootGetters) => rootGetters.incasari.length > 0 ? rootGetters.incasari[0].nrChitanta : 1,
   defineste: state => state.initializata
 }

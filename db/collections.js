@@ -49,6 +49,7 @@ const makeCollection = data => {
 
     // this is new from previous schema
     if (foundCachedProperties.length > 0 && foundCachedProperties.indexOf(id) < 0) {
+      debug('FOUND NEW ID', id)
       schema.migrationStrategies[version] = function (oldDoc) {
         oldDoc[id] = undefined
         return oldDoc

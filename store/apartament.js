@@ -5,7 +5,8 @@ export const state = () => ({
 export const mutations = {
   ADAUGA_APARTAMENT: (state, data) => {},
   STERGE_APARTAMENT: (state, id) => {},
-  set_ultimul_adaugat: (state, id) => {state.ultimul = id}
+  set_ultimul_adaugat: (state, id) => {state.ultimul = id},
+  incaseaza: (state, data) => {}
 }
 
 export const actions = {

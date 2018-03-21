@@ -14,6 +14,7 @@ const getters = {
     return aps
   },
   incasari: state => state.incasari,
+  servicii: state => state.servicii,
   searchMap: (state, getters) => {
     const apartamente = new Map()
     Object.values(getters['apartamente']).forEach(ap => {
@@ -24,7 +25,7 @@ const getters = {
 }
 
 // subscriberi actiuni db
-const subs = []
+let subs = []
 let asociatieActiva
 const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
 
@@ -76,15 +77,18 @@ function rxdb () {
     if (asociatieId) await initAsoc(db, store, { id: asociatieId })
 
     store.subscribe(async ({ type, payload }) => {
+      debug('type', type)
       const what = type.split('/')[0]
       if (['set', 'modal'].indexOf(what) > -1) return
 
       const col = db[defs.get(what)]
       if (!col) return
 
-      // debug('ARGUMENTS', arguments)
-      debug('type', type)
-      // debug('db', db)
+      if (type === 'DESTROYMAIN') {
+        subs.forEach(sub => sub.unsubscribe())
+        return
+      }
+
       const mutation = (t => {
         if (t.indexOf(['SCHIMBA_ACTIVA']) > -1) return 'schimba'
         if (t.indexOf('ADAUGA') > -1) return 'adauga'
@@ -103,7 +107,11 @@ function rxdb () {
           const action = payload._id ? 'upsert' : 'insert'
           const newItem = await col[action]({ ...payload })
           if (what) store.commit(`${what}/set_ultimul_adaugat`, what === 'asociatie' ? newItem.name : newItem._id)
-          if (what === 'incasare') store.commit('asociatie/incaseaza', { id: newItem._id, suma: newItem.suma })
+          if (what === 'incasare') {
+            const incasData = { id: newItem._id, suma: newItem.suma }
+            store.commit('asociatie/incaseaza', incasData)
+            store.commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
+          }
           // if (what === 'asociatie') store.dispatch('asociatie/schimba', newItem.name)
           if (what === 'asociatie') asocAdaugatTFlag = newItem.name
           debug('Adaugat ', what, newItem)
@@ -124,6 +132,13 @@ function rxdb () {
             debug('DUN')
           }
           break
+
+        case 'apartament':
+          if (mutation === 'incaseaza') {
+            const ap = await db.apartamente.findOne({ _id: payload.deLa }).exec()
+            ap.incaseaza(payload)
+          }
+          break
       }
     })
 
@@ -140,6 +155,10 @@ function rxdb () {
         asocAdaugatTFlag = false
       }
     }))
+
+    subs.push(db.servicii.find().$.subscribe(async servicii => {
+      store.commit('set_servicii', sanitizeDBItems(servicii))
+    }))
   }
 }
 
@@ -148,22 +167,18 @@ export const state = () => ({
   asociatii: [],
   blocuri: [],
   apartamente: [],
-  incasari: []
+  incasari: [],
+  servicii: [],
+  furnizori: []
 })
 
 export const mutations = {
-  set_asociatii: (state, data) => {
-    state.asociatii = data
-  },
-  set_blocuri: (state, data) => {
-    state.blocuri = data
-  },
-  set_apartamente: (state, data) => {
-    state.apartamente = data
-  },
-  set_incasari: (state, data) => {
-    state.incasari = data
-  }
+  set_asociatii: (state, data) => { state.asociatii = data },
+  set_blocuri: (state, data) => { state.blocuri = data },
+  set_apartamente: (state, data) => { state.apartamente = data },
+  set_incasari: (state, data) => { state.incasari = data },
+  set_servicii: (state, data) => { state.servicii = data },
+  DESTROYMAIN: (state, data) => {}
 }
 
 export { getters }

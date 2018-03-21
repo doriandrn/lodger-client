@@ -39,7 +39,7 @@ export default {
   &[data-separate]
     .right
       > *:not(:first-child)
-        margin-left 8px
+        margin-left: config.spacings.betweenBoxes
 
     .left
       margin-right: config.spacings.betweenBoxes

@@ -1,15 +1,23 @@
 <template lang="pug">
 span.adresa
-  span.adresa__main(v-if="bloc") {{ bloc }} / {{ scara }}
-  span.adresa__sec(v-if="nrAp") {{ etaj }} {{ nrAp }}
+  nuxt-link.adresa__main(
+    v-if= "bloc",
+    :to=  "`/bloc/${bloc._id}`"
+  ) {{ bloc.nume }} / {{ scara }}
+  span.adresa__sec(v-if="nrAp") Ap. {{ nrAp }} ({{ etaj }})
 </template>
 
 <script>
 export default {
   props: {
     bloc: {
-      type: String,
-      default: null
+      type: Object,
+      default () {
+        return {
+          '_id': -1,
+          nume: 'Nedefinit'
+        }
+      }
     },
     scara: {
       type: String,

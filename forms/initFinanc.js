@@ -1,7 +1,7 @@
 export const campuri = [
   {
     id: 'balanta',
-    label: 'asocs.init.balanta',
+    label: 'asociatie.init.balanta',
     required: true,
     type: 'bani',
     '@change': 'asociatie/initBalanta',
@@ -9,7 +9,7 @@ export const campuri = [
   },
   {
     id: 'dataDinLunaListe',
-    label: 'asocs.init.dataDinLuna',
+    label: 'asociatie.init.dataDinLuna',
     required: true,
     type: 'number',
     max: 28,

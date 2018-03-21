@@ -62,7 +62,7 @@ export default {
   position relative
   overflow hidden
   display flex
-  max-height 80vh
+  max-height 45vh
 
   .actions
     list-style-type none
@@ -113,6 +113,7 @@ export default {
 
   &.expand
     flex-basis 65%
+    max-height 80vh
 
   &:not(.boxed)
     .widget

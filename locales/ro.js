@@ -15,7 +15,7 @@ export default {
     }
   },
   navigation: ['Panou de Control', 'Liste de plată', 'Comunitate'],
-  asocs: {
+  asociatie: {
     noneAdmind: {
       heading: 'Nu administrezi nicio asociație',
       CTA: 'Începe prin a-ți configura prima asociație',

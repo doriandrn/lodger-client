@@ -21,11 +21,14 @@ export const campuri = [
   },
   {
     id: 'nrChitanta',
-    label: 'incasare.new.nr'
+    label: 'incasare.new.nr',
+    type: 'number',
+    slot: 'footer',
+    value: getters => getters['asociatie/nrUltimaChitanta']+1
   },
   {
     id: 'asociatieId',
-    type: 'select'
+    notInForm: true
   }
 ]
 

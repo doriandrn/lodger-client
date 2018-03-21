@@ -116,7 +116,7 @@ export default {
                 break
             }
           } else {
-            camp.value = camp.default || null
+            if (!camp.value) camp.value = camp.default || null
           }
 
           switch (camp.id) {
@@ -152,6 +152,9 @@ export default {
       modalData: 'modal/data'
     })
   },
+  beforeDestroy () {
+    this.$store.commit('DESTROYMAIN', 1)
+  },
   components: {
     headr,
     logo,
@@ -178,6 +181,7 @@ export default {
   .actions
     width 100%
     display flex
+    flex-flow row wrap
     flex-basis 100%
 
   > header

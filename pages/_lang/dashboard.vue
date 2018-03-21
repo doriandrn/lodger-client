@@ -40,7 +40,7 @@ sction#dash
               collapsable
             )
               adresa(
-                :bloc=  "blocData(apartamente[incasare.deLa].bloc).nume",
+                :bloc=  "blocData(apartamente[incasare.deLa].bloc)",
                 :scara= "apartamente[incasare.deLa].scara",
                 :etaj=  "apartamente[incasare.deLa].etaj",
                 :nrAp=  "String(apartamente[incasare.deLa].nr)"
@@ -56,7 +56,7 @@ sction#dash
         p ccucuuc
 
       widget#init(
-        :title=     "$t('asocs.init.title')",
+        :title=     "$t('asociatie.init.title')",
         icon=       "hard-drive"
         :controls=  "[{ type: 'progresInit' }]"
         expand
@@ -131,7 +131,7 @@ sction#dash
           buton(
             v-if= "toateEtajeleAuApartamente && initprgrs === 2"
             disabled
-          ) {{ $t('asocs.new.confirmStruct') }}
+          ) {{ $t('asociatie.new.confirmStruct') }}
 
           frm(
             v-else-if=  "initprgrs === 3"
@@ -147,7 +147,7 @@ sction#dash
         )
 
       widget(
-        title=  "$t('asocs.adminZone.title')"
+        title=  "$t('asociatie.adminZone.title')"
         icon=   "settings"
       )
         ul.actions
@@ -156,21 +156,31 @@ sction#dash
               icon=   "plus-circle"
               @click= "openModal('asociatie.new')", 
               styl=   "unstyled"
-            ) {{ $t('asocs.noneAdmind.action') }}
+            ) {{ $t('asociatie.noneAdmind.action') }}
+          li
+            button(
+              styl=   "unstyled"
+              @click= "openModal('asociatie.edit')"
+            ) {{ $t('asociatie.edit.title') }}
+          li
+            button() salveaza date
+          li
+            button() importa date
+
         .danger
-          h4 {{ $t('asocs.adminZone.dangerZone') }}
+          h4 {{ $t('asociatie.adminZone.dangerZone') }}
           buton(
             dangerous,
             icon=     "trash"
             @click=   "stergeAsociatie(activaId)",
-            :prompt=  "{ type: 'warning', message: $t('asocs.adminZone.deletePrompt') }"
-          ) {{ $t('asocs.adminZone.delete') }}
+            :prompt=  "{ type: 'warning', message: $t('asociatie.adminZone.deletePrompt') }"
+          ) {{ $t('asociatie.adminZone.delete') }}
   empty(
     v-else
     size=   "large"
-    :title= "$t('asocs.noneAdmind.heading')",
-    :CTA=   "$t('asocs.noneAdmind.CTA')",
-    :actions= "{ newAsoc: $t('asocs.noneAdmind.action') }"
+    :title= "$t('asociatie.noneAdmind.heading')",
+    :CTA=   "$t('asociatie.noneAdmind.CTA')",
+    :actions= "{ newAsoc: $t('asociatie.noneAdmind.action') }"
     @action=  "openModal('asociatie.new')"
   )
 
@@ -216,7 +226,7 @@ export default {
   },
   computed: {
     initTitle () {
-      const pfix = 'asocs.init'
+      const pfix = 'asociatie.init'
       switch (this.initprgrs) {
         case 1: return `${pfix}.serviciiFurnizori`
         case 2: return `${pfix}.structura`

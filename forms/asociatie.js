@@ -41,9 +41,21 @@ export const metode = {
   },
   async incaseaza (data) {
     if (!this.balanta) this.balanta = 0
-    if (!this.incasari) this.incasari = []
+    let incasari = this.incasari || []
     this.balanta += data.suma
-    this.incasari.push(data.id)
+    incasari.push(data.id)
+    this.incasari = incasari
+    await this.save()
+  },
+  async TOGGLE_SERVICIU (id) {
+    let servicii = this.servicii || []
+    const itemPosition = servicii.indexOf(id)
+    if (itemPosition > -1) {
+      servicii.splice(itemPosition, 1)
+    } else {
+      servicii.push(id)
+    }
+    this.servicii = servicii
     await this.save()
   }
 }

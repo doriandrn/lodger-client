@@ -2,8 +2,11 @@ import createPersistedState from 'vuex-persistedstate'
 import Db from 'db'
 import Debug from 'debug'
 import { defs } from 'db/_defs'
+import { createModule } from 'vuex-toast'
+import { predefinite } from 'forms/serviciu'
 
 const debug = Debug('lodger:rxstore')
+const toast = '@@toast/ADD_TOAST_MESSAGE'
 
 const getters = {
   asociatii: state => Object.values(state.asociatii).map(asoc => asoc.name),
@@ -46,7 +49,7 @@ const initAsoc = async (db, store, { id, _$ }) => {
 
   // cleanup subs from prev asoc
   subs.forEach((sub, i) => {
-    if (i === 0) return // keep asocs sub
+    if (i < 2) return // keep asocs & servicii sub
     debug('SUBSCRIBER TO UNSUB: ', sub, i)
     sub.unsubscribe()
   })
@@ -118,7 +121,14 @@ function rxdb () {
           return
 
         case 'sterge':
-          const tobedel = await col.findOne({ _id: payload }).exec()
+          const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : { _id: payload }).exec()
+          if (!tobedel) {
+            store.dispatch(toast, {
+              type: 'error',
+              text: `${what}.notFoundToBeDeleted`
+            })
+            return
+          }
           await tobedel.remove()
           debug('Sters ', col)
           return
@@ -157,6 +167,11 @@ function rxdb () {
     }))
 
     subs.push(db.servicii.find().$.subscribe(async servicii => {
+      if (!servicii.length) {
+        predefinite.forEach(async serviciu => {
+          await db.servicii.insert({ denumire: serviciu })
+        })
+      }
       store.commit('set_servicii', sanitizeDBItems(servicii))
     }))
   }
@@ -187,3 +202,9 @@ export const plugins = [
   // createPersistedState(),
   rxdb()
 ]
+
+export const modules = {
+  toast: createModule({
+    dismissInterval: 8000
+  })
+}

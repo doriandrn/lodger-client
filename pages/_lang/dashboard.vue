@@ -81,68 +81,96 @@ sction#dash
               @click= "openModal('bloc.new')"
               size=   "small"
               styl=   "outline"
-            ) {{ $t('blocs.new.title') }}
+            ) {{ $t('bloc.new.title') }}
 
-          ul.blocuri(v-if="initprgrs === 2")
-            li(v-for="bloc in blocuri")
-              split
-                label.nume {{ bloc.nume || '~'}}
+          div(v-if=       "initprgrs === 1")
+            ul.servicii
+              li(
+                v-for=      "serviciu in servicii"
+                :data-icon= "serviciu.denumire"
+                :data-sel=  "serviciiAsociatie.indexOf(serviciu.denumire) > -1"
+                @click=     "toggleServiciu(serviciu.denumire)"
+              ) 
+                span.nume {{ serviciu.denumire }}
                 buton(
-                  slot=   "right"
-                  styl=   "unstyled"
-                  icon=   "edit"
-                  icon-only
-                  @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
-                  tooltip
-                ) {{ $t('blocs.edit.title') }}
-                buton(
-                  slot=     "right"
+                  dangerous,
+                  v-if=     "serviciiPredefenite.indexOf(serviciu.denumire) < 0"
+                  @click=   "stergeServiciu(serviciu.denumire)"
                   styl=     "unstyled"
-                  @click=   "stergeBloc(bloc._id)"
                   icon=     "trash"
-                  icon-only
-                  tooltip
-                  dangerous
-                ) {{ $t('blocs.delete') }}
-              .bloc
-                ul.scari
-                  li(v-for="scara in bloc.scari")
-                    label.nume Scara {{ scara.id }}
-                    .scara
-                      ul.etaje
-                        li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-                          split.etaj__header 
-                          .etaj__content
-                            buton(
-                              v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
-                              :key=   "ap._id"
-                              :tooltip="ap.proprietar || '?'"
-                              :class= "{ ultim: ap._id === ultimulApAdaugat}"
-                              @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
-                            ) #[em {{ ap.nr }}]
-                            buton.adauga(
-                              styl=   "unstyled"
-                              tooltip
-                              @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
-                              icon=   "plus-circle"
-                              icon-only
-                            ) {{ $t('aps.new.title') }}
+                  :prompt=  "{ type: 'warning', message: $t('serviciu.deletePrompt') }"
+                ) sterge
+              li
+                buton(@click="openModal('serviciu.new')") {{ $t('serviciu.adauga') }}
 
-          buton(
-            v-if= "toateEtajeleAuApartamente && initprgrs === 2"
-            disabled
-          ) {{ $t('asociatie.new.confirmStruct') }}
+            ul.furnizori
+              li furni
+              li
+                buton(@click="openModal('furnizor.new')") {{ $t('furnizor.adauga') }}
+
+          div(v-else-if=  "initprgrs === 2")
+            ul.blocuri
+              li(v-for="bloc in blocuri")
+                split
+                  label.nume {{ bloc.nume || '~'}}
+                  buton(
+                    slot=   "right"
+                    styl=   "unstyled"
+                    icon=   "edit"
+                    icon-only
+                    @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
+                    tooltip
+                  ) {{ $t('bloc.edit.title') }}
+                  buton(
+                    slot=     "right"
+                    styl=     "unstyled"
+                    @click=   "stergeBloc(bloc._id)"
+                    icon=     "trash"
+                    icon-only
+                    tooltip
+                    dangerous
+                  ) {{ $t('bloc.delete') }}
+                .bloc
+                  ul.scari
+                    li(v-for="scara in bloc.scari")
+                      label.nume Scara {{ scara.id }}
+                      .scara
+                        ul.etaje
+                          li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
+                            split.etaj__header 
+                            .etaj__content
+                              buton(
+                                v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
+                                :key=   "ap._id"
+                                :tooltip="ap.proprietar || '?'"
+                                :class= "{ ultim: ap._id === ultimulApAdaugat}"
+                                @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
+                              ) #[em {{ ap.nr }}]
+                              buton.adauga(
+                                styl=   "unstyled"
+                                tooltip
+                                @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
+                                icon=   "plus-circle"
+                                icon-only
+                              ) {{ $t('apartament.new.title') }}
+
+            buton(
+              v-if= "toateEtajeleAuApartamente && initprgrs === 2"
+              disabled
+            ) {{ $t('asociatie.new.confirmStruct') }}
 
           frm(
             v-else-if=  "initprgrs === 3"
             :formData=   "require('forms/initFinanc')"
           )
+            p ultima incasare
+            p facturi / cheltuieli active
 
         empty(
           v-else
-          :title=   "$t('blocs.none.heading')",
-          :CTA=     "$t('blocs.none.CTA')",
-          :actions= "{ startInit: $t('blocs.none.actions[0]'), importaDate: $t('blocs.none.actions[1]') }"
+          :title=   "$t('bloc.none.heading')",
+          :CTA=     "$t('bloc.none.CTA')",
+          :actions= "{ startInit: $t('bloc.none.actions[0]'), importaDate: $t('bloc.none.actions[1]') }"
           @action=  "$event === 'startInit' ? initprgrs = 1 : null"
         )
 
@@ -158,21 +186,24 @@ sction#dash
               styl=   "unstyled"
             ) {{ $t('asociatie.noneAdmind.action') }}
           li
-            button(
+            buton(
               styl=   "unstyled"
               @click= "openModal('asociatie.edit')"
             ) {{ $t('asociatie.edit.title') }}
           li
-            button() salveaza date
+            buton(
+              @click= "backup"
+            ) salveaza date
           li
-            button() importa date
+            buton(
+            ) importa date
 
         .danger
           h4 {{ $t('asociatie.adminZone.dangerZone') }}
           buton(
             dangerous,
-            icon=     "trash"
             @click=   "stergeAsociatie(activaId)",
+            icon=     "trash"
             :prompt=  "{ type: 'warning', message: $t('asociatie.adminZone.deletePrompt') }"
           ) {{ $t('asociatie.adminZone.delete') }}
   empty(
@@ -243,14 +274,20 @@ export default {
       blocData: 'bloc/data',
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
-      ultimulApAdaugat: 'apartament/ultimulAdaugat'
+      ultimulApAdaugat: 'apartament/ultimulAdaugat',
+      servicii: 'servicii',
+      serviciiPredefenite:  'serviciu/predefinite',
+      serviciiAsociatie: 'asociatie/servicii'
     })
   },
   methods: {
     ...mapActions({
       openModal: 'modal/open',
+      backup: 'backup',
       stergeAsociatie: 'asociatie/sterge',
-      stergeBloc: 'bloc/sterge'
+      stergeBloc: 'bloc/sterge',
+      stergeServiciu: 'serviciu/sterge',
+      toggleServiciu: 'asociatie/toggleServiciu'
     })
   }
 }
@@ -447,4 +484,38 @@ ul.activitate
 
     &:last-child
       margin-bottom 0
+
+ul.servicii
+  list-style-type none
+  padding 0
+  display flex
+  flex-flow row wrap
+
+  > li
+    display flex
+    flex-flow column nowrap
+    padding 10px
+    border: 1px solid config.palette.borders
+    text-align center
+    align-items center
+    flex 0 0 100px
+    height 100px
+    border-radius 50px
+    margin 8px
+    transition all .15s ease-in-out
+    cursor pointer
+
+    &[data-sel]
+      border-color red
+
+    &:hover
+      border-color: config.palette.primary
+
+    &:before
+      background-color: config.palette.borders
+      mask-size 32px
+      flex-basis 32px
+      flex-shrink 0
+      size 32px
+      margin 0
 </style>

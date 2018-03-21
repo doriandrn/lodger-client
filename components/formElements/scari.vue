@@ -2,7 +2,7 @@
 field(
   v-if =  "Number(scariCount) < 2",
   type=   "number",
-  :label=  "$t('blocs.etaje')",
+  :label=  "$t('bloc.etaje')",
   v-model=  "scari[0].etaje"
 )
 
@@ -14,14 +14,14 @@ ul.field.scari(v-else)
     field(
       :id=      "`scara-${i}`", 
       type=     "number"
-      :label=   "$t('blocs.etaje')"
+      :label=   "$t('bloc.etaje')"
       v-model=  "scari[i].etaje",
       @input=   "$emit('input', scari)"
     )
     field(
       :id=      "`id-${i}`",
       type=     "text"
-      :label=   "$t('blocs.new.name')",
+      :label=   "$t('bloc.new.name')",
       v-model=  "scari[i].id"
       @input=   "$emit('input', scari)"
     )

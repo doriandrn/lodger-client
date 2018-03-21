@@ -11,7 +11,7 @@ button(
   @click=           "!dangerous ? $emit('click', $event) : promptUser()"
   :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
-  :data-tip=        "tooltip && typeof tooltip === 'string' && tooltip.length ? (tooltip || $slots.default[0].text) : null",
+  :data-tip=        "tooltip",
   :data-icon=       "icon",
   :data-size=       "size",
   :data-styl=       "styl",

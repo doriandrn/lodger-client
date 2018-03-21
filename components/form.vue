@@ -8,7 +8,7 @@ form(@submit.prevent="validate")
     :id=            "field.id"
     :type=          "field.type || 'text'"
     :label=         "field.label"
-    :placeholder=   "field.placeholder"
+    :placeholder=   "field.type === 'bani' ? '0.00' : field.placeholder"
     :focus=         "field.focus"
     :required=      "field.required"
     :min=           "field.min"
@@ -128,6 +128,9 @@ export default {
       adaugaAsociatie: 'asociatie/adauga',
       adaugaBloc: 'bloc/adauga',
       adaugaAp: 'apartament/adauga',
+      adaugaServiciu: 'serviciu/adauga',
+      adaugaFurnizor: 'furnizor/adauga',
+      adaugaCheltuiala: 'cheltuiala/adauga',
       incaseaza: 'incasare/adauga',
       modalClose: 'modal/close'
     }),

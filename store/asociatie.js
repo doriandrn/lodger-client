@@ -16,6 +16,7 @@ export const mutations = {
   DEFINESTE_STRUCTURA: (state) => {
     state.initializata = 0
   },
+  TOGGLE_SERVICIU: (state, id) => {},
   BACKUP: () => {},
   set_ultimul_adaugat: (state, id) => {
     state.ultima = id
@@ -45,17 +46,17 @@ export const actions = {
   },
   backup ({ commit }) {
     commit('BACKUP')
-  }
+  },
+  toggleServiciu: ({ commit }, id) => { commit('TOGGLE_SERVICIU', id) }
 }
 
 export const getters = {
   activa: state => state.activa.id,
+  $activa: (state, getters, rootGetters) => rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0],
   moneda: state => state.moneda,
   ultima: state => state.ultima,
-  balanta: (state, getters, rootGetters) => {
-    const asoc = rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0]
-    return asoc && asoc.balanta ? asoc.balanta : 0
-  },
+  balanta: (state, getters) => getters.$activa && getters.$activa.balanta ? getters.$activa.balanta : 0,
+  servicii: (state, getters) => getters.$activa && getters.$activa.servicii ? getters.$activa.servicii : [],
   nrUltimaChitanta: (state, getters, rootGetters) => rootGetters.incasari.length > 0 ? rootGetters.incasari[0].nrChitanta : 1,
   defineste: state => state.initializata
 }

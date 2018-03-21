@@ -1,4 +1,5 @@
-icons = activity 'bar-chart-2' clock edit 'hard-drive' search send server shield settings trash 'trending-up' 'plus-circle'
+icons = activity 'alert-circle' 'bar-chart-2' check clock edit 'hard-drive' search send server shield settings trash 'trending-up' 'plus-circle'
+servicii = apa electricitate gaze termoficare internet 'evacuare-gunoi-menajer'
 
 [data-icon]
   position relative
@@ -38,3 +39,8 @@ for i in icons
   [data-icon={i}]
     &:before
       mask-image embedurl('~static/icons/ui/' + i + '.svg')
+
+for se in servicii
+  [data-icon={se}]
+    &:before
+      mask-image embedurl('~static/icons/servicii/' + se + '.svg')

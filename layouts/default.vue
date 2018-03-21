@@ -49,6 +49,13 @@
 
   footr
     p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
+    ul.footer__stuff(slot="right")
+      li
+        nuxt-link(to="/credits") Credits
+      li
+        buton Feedback
+
+  toasts
 </template>
 
 <script>
@@ -62,6 +69,8 @@ import cale from '~components/cale'
 import bani from '~components/bani'
 import slect from 'form/select'
 import field from 'form/field'
+import buton from 'form/button'
+import toasts from '~components/toasts'
 
 import { mapGetters, mapActions } from 'vuex'
 import { version, name, author } from '../package.json'
@@ -101,23 +110,25 @@ export default {
         const path = id.split('.')
         const data = require(`forms/${path[0]}`)
         let { campuri, actiuni } = data
-        const { modalContent, modalData, $t, blocData, apData, debug } = ctx
+        const { modalContent, modalData, $t, blocData, apartamente, debug } = ctx
         // translate
         campuri = campuri.filter(field => !field.notInAddForm)
         campuri.forEach(camp => {
           if (path[1] === 'edit' && typeof modalData === 'object' && modalData._id) {
             switch (path[0]) {
-              case 'blocs':
+              case 'bloc':
                 camp.value = blocData(modalData._id)[camp.id]
                 break
 
-              case 'aps':
-                camp.value = apData(modalData._id)[camp.id]
+              case 'apartament':
+                camp.value = apartamente[modalData._id][camp.id]
                 break
             }
           } else {
             if (!camp.value) camp.value = camp.default || null
           }
+
+          // if (camp.label.indexOf(path[0]) < 0) camp.label = `${path[0]}.${camp.label}`
 
           switch (camp.id) {
             case 'asociatieId':
@@ -146,7 +157,7 @@ export default {
       asociatieActiva: 'asociatie/activa',
       balanta: 'asociatie/balanta',
       blocData: 'bloc/data',
-      apData: 'apartament/data',
+      apartamente: 'apartamente',
       modalOpen: 'modal/open',
       modalContent: 'modal/content',
       modalData: 'modal/data'
@@ -159,13 +170,15 @@ export default {
     headr,
     logo,
     modal,
+    buton,
     footr,
     cale,
     frm,
     prompt,
     slect,
     field,
-    bani
+    bani,
+    toasts
   }
 }
 </script>

@@ -3,14 +3,14 @@ export const campuri = [
     id: 'nume',
     placeholder: 'ex. M11, COCOR-2, A3...',
     type: 'text',
-    label: 'blocs.new.name',
+    label: 'bloc.new.name',
     required: true,
     focus: true
   },
   {
     id: 'scariCount',
     type: 'number',
-    label: 'blocs.scari',
+    label: 'bloc.scari',
     required: true,
     default: 1,
     min: 0,

@@ -27,6 +27,9 @@ export default {
       idN: 'CIF',
       confirmStruct: 'Structura este finală'
     },
+    edit: {
+      title: 'Modifică datele asociației'
+    },
     init: {
       title: 'Inițializare',
       structura: 'Structură',
@@ -43,7 +46,7 @@ export default {
       dangerZone: 'Zona periculoasă'
     }
   },
-  blocs: {
+  bloc: {
     none: {
       heading: 'Asociație neinițializată',
       CTA: 'Începe prin a-ți inițializa și configura asociația pe care o administrezi.',
@@ -60,9 +63,14 @@ export default {
     etaje: 'Etaje',
     etaj: 'Etaj',
     parter: 'Parter',
+    scara: 'Scară',
     scari: 'Scări'
   },
-  aps: {
+  apartament: {
+    nr: 'Nr.',
+    suprafata: 'Suprafață',
+    proprietar: 'Proprietar',
+    locatari:'Nr. Locatari',
     new: {
       title: 'Adaugă apartament'
     },
@@ -76,6 +84,13 @@ export default {
       title: 'Încasează',
       nr: 'Nr. Chitanță'
     }
+  },
+  serviciu: {
+    new: {
+      title: 'Adaugă un serviciu'
+    },
+    deletePrompt: 'Really?',
+    notFoundToBeDeleted: 'A apărut o problemă la ștergerea serviciului. Te rugăm să reîncerci.'
   },
   defaults: {
     address: 'Adresă',

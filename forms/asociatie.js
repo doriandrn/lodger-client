@@ -1,18 +1,15 @@
 export const campuri = [
   {
     id: 'name',
-    label: 'asociatie.new.name',
     required: true,
     focus: true,
     primary: true
   },
   {
-    id: 'idN',
-    label: 'asociatie.new.idN'
+    id: 'idN'
   },
   {
     id: 'balanta',
-    label: 'asociatie.balance',
     type: 'number',
     notInAddForm: true
   },

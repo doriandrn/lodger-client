@@ -57,6 +57,6 @@ export const getters = {
   ultima: state => state.ultima,
   balanta: (state, getters) => getters.$activa && getters.$activa.balanta ? getters.$activa.balanta : 0,
   servicii: (state, getters) => getters.$activa && getters.$activa.servicii ? getters.$activa.servicii : [],
-  nrUltimaChitanta: (state, getters, rootGetters) => rootGetters.incasari.length > 0 ? rootGetters.incasari[0].nrChitanta : 1,
+  nrUltimaChitanta: (state, getters, rootGetters) => rootGetters.incasari.length > 0 ? rootGetters.incasari[0].nrChitanta : 0,
   defineste: state => state.initializata
 }

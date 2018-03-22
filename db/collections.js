@@ -31,6 +31,7 @@ const makeCollection = data => {
   const getType = type => {
     if (!type || ['text', 'textarea', 'select', 'search'].indexOf(type) > -1) return 'string'
     if (['date-time', 'bani'].indexOf(type) > -1) return 'number'
+    if (['scari', 'servicii', 'furnizori'].indexOf(type) > -1) return 'array'
     return type
   }
 

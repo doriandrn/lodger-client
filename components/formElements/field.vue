@@ -50,7 +50,7 @@
     :id=          "id"
   )
   scari(
-    v-else-if=    "type === 'array' && typeof scariCount !== 'undefined'",
+    v-else-if=    "type === 'scari' && typeof scariCount !== 'undefined'",
     :scariCount=  "scariCount" 
     :value=       "value",
     @input=       "$emit('input', $event)"

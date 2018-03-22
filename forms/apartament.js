@@ -1,21 +1,18 @@
 export const campuri = [
   {
     id: 'nr',
-    label: 'apartament.nr',
     type: 'number',
     default: 1,
     required: true
   },
   {
     id: 'suprafata',
-    label: 'apartament.suprafata',
     type: 'number',
     default: 0.01,
     step: 0.01
   },
   {
     id: 'locatari',
-    label: 'apartament.locatari',
     type: 'number',
     default: 0,
     min: 0,
@@ -23,37 +20,34 @@ export const campuri = [
   },
   {
     id: 'proprietar',
-    label: 'apartament.proprietar',
     placeholder: 'Ion Barbu'
   },
   {
     id: 'etaj',
     type: 'number',
-    label: 'aparatment.etaj',
     required: true,
+    notInForm: true,
     slot: 'footer'
   },
   {
     id: 'bloc',
-    label: 'apartament.bloc',
     required: true,
+    notInForm: true,
     slot: 'footer'
   },
   {
     id: 'scara',
-    label: 'apartament.scara',
     required: true,
+    notInForm: true,
     slot: 'footer'
   },
   {
     id: 'balanta',
-    label: 'apartament.balanta',
     type: 'bani',
     default: 0
   },
   {
     id: 'plati',
-    label: 'apartament.plati',
     type: 'array',
     notInForm: true,
     ref: 'incasari'

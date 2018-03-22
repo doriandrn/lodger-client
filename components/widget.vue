@@ -75,7 +75,7 @@ export default {
     flex-flow column nowrap
     overflow auto
 
-    > ul.actions
+    ul
       margin-bottom: config.spacings.betweenBoxes
 
     .danger

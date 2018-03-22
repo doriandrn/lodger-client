@@ -20,7 +20,7 @@ form(@submit.prevent="validate")
     :searchTaxonomy="field.taxonomy"
     @change=        "handleChange(field['@change'], field.id, field.type, $event)"
 
-    :scariCount=    "field.type === 'array' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
+    :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
 
     v-model.trim=   "$data[field.id]"
   )
@@ -62,10 +62,10 @@ export default {
   },
   data () {
     let dynamicFormData = {}
-    const { campuri } = this.formData
-    
+    const { campuri, $for } = this.formData
+    if (!campuri) return dynamicFormData
     // tradu campurile
-    campuri.forEach(camp => { camp.label = this.$t(camp.label) })
+    campuri.forEach(camp => { camp.label = this.$t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`) })
 
     // adauga-le valorile implicite
     const ids = campuri.filter(field => !field.notInAddForm || !field.notInForm).map(field => field.id)
@@ -87,16 +87,14 @@ export default {
 
     return dynamicFormData
   },
+  mounted () {
+    this.debug('FORM MOUNT')
+  },
   computed: {
     ...mapGetters({
       modalContent: 'modal/content',
       modalData: 'modal/data'
     }),
-    path () {
-      const { modalContent } = this
-      if (!modalContent) return
-      return modalContent.split('.')[0]
-    }
   },
   props: {
     formData: {
@@ -114,7 +112,8 @@ export default {
           ],
           actiuni: {
             confirm: 'doNothing'
-          }
+          },
+          for: null
         }
       }
     },

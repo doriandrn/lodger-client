@@ -10,19 +10,14 @@ footer
 <style lang="stylus">
 @require '~styles/config'
 
-#layout > footer
-  position fixed
-  bottom 0
-  left 0
-  right 0
-  height 24px
-  line-height 24px
-  z-index -1
-  background: config.palette.borders
-
+.footer
   p
     margin-bottom 0
     line-height 24px
     font-size 10px
     color rgba(black, .25)
+
+  &__stuff
+    display flex
+    flex-flow row nowrap
 </style>

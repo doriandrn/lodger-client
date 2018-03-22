@@ -110,9 +110,11 @@ export default {
         const path = id.split('.')
         const data = require(`forms/${path[0]}`)
         let { campuri, actiuni } = data
+        if (!campuri) return
+
         const { modalContent, modalData, $t, blocData, apartamente, debug } = ctx
-        // translate
-        campuri = campuri.filter(field => !field.notInAddForm)
+
+        campuri = campuri.filter(camp => !camp.notInAddForm)
         campuri.forEach(camp => {
           if (path[1] === 'edit' && typeof modalData === 'object' && modalData._id) {
             switch (path[0]) {
@@ -124,9 +126,7 @@ export default {
                 camp.value = apartamente[modalData._id][camp.id]
                 break
             }
-          } else {
-            if (!camp.value) camp.value = camp.default || null
-          }
+          } else if (!camp.value) camp.value = camp.default || null
 
           // if (camp.label.indexOf(path[0]) < 0) camp.label = `${path[0]}.${camp.label}`
 
@@ -143,7 +143,7 @@ export default {
           }
         })
         debug('form data', campuri)
-        return { campuri, actiuni }
+        return { campuri, actiuni, $for: path[0] }
       }
     }
   },
@@ -185,6 +185,7 @@ export default {
 
 <style lang="stylus">
 @require '~styles/config'
+footerHeight = 24px
 
 #layout
   display flex
@@ -235,7 +236,11 @@ export default {
 
   > main
     fullflex()
-    margin-bottom 24px
+    margin-bottom: footerHeight
+    background: config.palette.bgs.body
+    min-height 100vh
+    position relative
+    z-index 1
 
     > section
       fullflex()
@@ -243,9 +248,20 @@ export default {
         fullflex()
         > div
           fullflex()
+  
+  > footer
+    position fixed
+    bottom 0
+    left 0
+    right 0
+    height: footerHeight
+    line-height: footerHeight
+    z-index -1
+    background: config.palette.borders
 
 .inner
   max-width: config.sizes.maxContainerWidth
   margin 0 auto
   padding: 0 baseSpacingUnit*3
+
 </style>

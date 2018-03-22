@@ -84,25 +84,13 @@ sction#dash
             ) {{ $t('bloc.new.title') }}
 
           div(v-if=       "initprgrs === 1")
-            ul.servicii
-              li(
-                v-for=      "serviciu in servicii"
-                :data-icon= "serviciu.denumire"
-                :data-sel=  "serviciiAsociatie.indexOf(serviciu.denumire) > -1"
-                @click=     "toggleServiciu(serviciu.denumire)"
-              ) 
-                span.nume {{ serviciu.denumire }}
-                buton(
-                  dangerous,
-                  v-if=     "serviciiPredefenite.indexOf(serviciu.denumire) < 0"
-                  @click=   "stergeServiciu(serviciu.denumire)"
-                  styl=     "unstyled"
-                  icon=     "trash"
-                  :prompt=  "{ type: 'warning', message: $t('serviciu.deletePrompt') }"
-                ) sterge
-              li
-                buton(@click="openModal('serviciu.new')") {{ $t('serviciu.adauga') }}
-
+            servicii(
+              @toggleServiciu=  "toggleServiciu",
+              @stergeServiciu=  "stergeServiciu",
+              @serviciuNou=     "openModal('serviciu.new')",
+              :servicii=        "servicii",
+              :alese=           "serviciiAsociatie"
+            )
             ul.furnizori
               li furni
               li
@@ -131,28 +119,26 @@ sction#dash
                     dangerous
                   ) {{ $t('bloc.delete') }}
                 .bloc
-                  ul.scari
+                  ol.scari
                     li(v-for="scara in bloc.scari")
                       label.nume Scara {{ scara.id }}
                       .scara
-                        ul.etaje
+                        ol.etaje
                           li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-                            split.etaj__header 
-                            .etaj__content
-                              buton(
-                                v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
-                                :key=   "ap._id"
-                                :tooltip="ap.proprietar || '?'"
-                                :class= "{ ultim: ap._id === ultimulApAdaugat}"
-                                @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
-                              ) #[em {{ ap.nr }}]
-                              buton.adauga(
-                                styl=   "unstyled"
-                                tooltip
-                                @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
-                                icon=   "plus-circle"
-                                icon-only
-                              ) {{ $t('apartament.new.title') }}
+                            buton(
+                              v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
+                              :key=   "ap._id"
+                              :tooltip="ap.proprietar || '?'"
+                              :class= "{ ultim: ap._id === ultimulApAdaugat}"
+                              @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
+                            ) #[em {{ ap.nr }}]
+                            buton.adauga(
+                              styl=   "unstyled"
+                              tooltip
+                              @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
+                              icon=   "plus-circle"
+                              icon-only
+                            ) {{ $t('apartament.new.title') }}
 
             buton(
               v-if= "toateEtajeleAuApartamente && initprgrs === 2"
@@ -228,6 +214,7 @@ import split from '~components/split'
 
 import adresa from '~components/adresa'
 import bani from '~components/bani'
+import servicii from '~components/servicii'
 import field from 'form/field'
 
 import typecheck from 'pg/widgets/typography'
@@ -253,6 +240,8 @@ export default {
     field,
     frm,
     dateTime,
+    servicii,
+
     typecheck
   },
   computed: {
@@ -276,7 +265,6 @@ export default {
       incasari: 'incasari',
       ultimulApAdaugat: 'apartament/ultimulAdaugat',
       servicii: 'servicii',
-      serviciiPredefenite:  'serviciu/predefinite',
       serviciiAsociatie: 'asociatie/servicii'
     })
   },
@@ -310,7 +298,7 @@ export default {
     +above(l)
       margin: config.spacings.inBoxes
 
-ul.blocuri
+.blocuri
   fullflex()
   flex-flow row nowrap
   overflow auto
@@ -379,12 +367,43 @@ ul.blocuri
     &e
       background white
       display flex
+      padding 0
       flex-flow column-reverse nowrap
 
       > li
         display flex
         position relative
-        flex-flow column nowrap
+        padding: (config.spacings.inBoxes/2)
+        flex-flow row-reverse nowrap
+
+        > button
+          width 100%
+          margin-left 4px
+          flex 1 1 100%
+          padding 8px
+          border-radius 0
+
+          &.adauga
+            opacity 0
+
+          em
+            font-family: config.typography.fams.headings
+            font-style normal
+            font-weight medium
+            pointer-events none
+            margin-bottom 4px
+
+          &:not([data-styl="unstyled"])
+            // background-color: lighten(config.palette.tertiary, 85%)
+            background-color: config.palette.bgs.body
+            color: darken(config.palette.tertiary, 40%)
+            border-color: config.palette.bgs.body
+
+            &:hover
+              background-color white
+
+        &.ultim
+          border-color: config.palette.tertiary
 
         &:before
           content counter(etaje, upper-roman)
@@ -400,8 +419,7 @@ ul.blocuri
           // background: config.palette.bgs.body
 
         &:not(:last-child)
-          .etaj__header
-            border-top: 1px solid config.palette.borders
+          border-top: 1px solid config.palette.borders
 
         &:not(:first-child)
           counter-increment etaje
@@ -410,9 +428,6 @@ ul.blocuri
           button.adauga
             opacity 1 !important
 
-    &__header
-      flex-flow row nowrap
-
     &__nr
       flex 1 1 100%
       padding 0 4px
@@ -420,40 +435,7 @@ ul.blocuri
       line-height 20px
       margin-bottom 0
       text-transform capitalize
-
-    &__content
-      padding: (config.spacings.inBoxes/2)
-      display flex
-      flex-flow row-reverse nowrap
-
-      > button
-        width 100%
-        margin-left 4px
-        flex 1 1 100%
-        padding 8px
-        border-radius 0
-
-        &.adauga
-          opacity 0
-
-        em
-          font-family: config.typography.fams.headings
-          font-style normal
-          font-weight medium
-          pointer-events none
-          margin-bottom 4px
-
-        &:not([data-styl="unstyled"])
-          // background-color: lighten(config.palette.tertiary, 85%)
-          background-color: config.palette.bgs.body
-          color: darken(config.palette.tertiary, 40%)
-          border-color: config.palette.bgs.body
-
-          &:hover
-            background-color white
-
-        &.ultim
-          border-color: config.palette.tertiary
+      
 
 #init
   header
@@ -485,37 +467,4 @@ ul.activitate
     &:last-child
       margin-bottom 0
 
-ul.servicii
-  list-style-type none
-  padding 0
-  display flex
-  flex-flow row wrap
-
-  > li
-    display flex
-    flex-flow column nowrap
-    padding 10px
-    border: 1px solid config.palette.borders
-    text-align center
-    align-items center
-    flex 0 0 100px
-    height 100px
-    border-radius 50px
-    margin 8px
-    transition all .15s ease-in-out
-    cursor pointer
-
-    &[data-sel]
-      border-color red
-
-    &:hover
-      border-color: config.palette.primary
-
-    &:before
-      background-color: config.palette.borders
-      mask-size 32px
-      flex-basis 32px
-      flex-shrink 0
-      size 32px
-      margin 0
 </style>

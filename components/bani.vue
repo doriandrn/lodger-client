@@ -25,6 +25,8 @@ export default {
 
 .bani
   display flex
+  flex-flow row nowrap
+  white-space nowrap
   text-transform uppercase
   align-items center
   font-size 11px

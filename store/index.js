@@ -122,6 +122,11 @@ function rxdb () {
 
         case 'sterge':
           const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : { _id: payload }).exec()
+          if (what === 'asociatie') {
+            const { asociatii } = store.getters
+            asocAdaugatTFlag = asociatii.length > 1 ? asociatii.splice(asociatii.indexOf( payload.id ), 1)[0] : null
+            debug('LALLALALALLA', asocAdaugatTFlag)
+          }
           if (!tobedel) {
             store.dispatch(toast, {
               type: 'error',

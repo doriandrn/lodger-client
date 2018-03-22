@@ -54,10 +54,12 @@ export default {
     },
     new: {
       title: 'Adaugă un bloc/o clădire nou(ă)',
-      name: 'Identificator / Denumire'
+      nume: 'Identificator / Denumire',
+      scariCount: 'Nr. scări (dacă există)',
+      scari: 'Structura scărilor'
     },
     edit: {
-      title: 'Modifică blocul [X]'
+      title: 'Modifică blocul'
     },
     delete: 'Șterge blocul',
     etaje: 'Etaje',
@@ -90,6 +92,7 @@ export default {
       title: 'Adaugă un serviciu'
     },
     deletePrompt: 'Really?',
+    adauga: 'Adaugă serviciu',
     notFoundToBeDeleted: 'A apărut o problemă la ștergerea serviciului. Te rugăm să reîncerci.'
   },
   defaults: {

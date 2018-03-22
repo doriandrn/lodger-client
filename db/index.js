@@ -9,10 +9,14 @@ import collections from './collections'
 
 const syncURL = 'http://lodger.ro:10101/'
 
+// const insertPredefinedDocs = async db => {
+//   const servicii = db.servicii.findOne().exec()
+// }
+
 export default (async function (dbdata) {
   // console.log('DatabaseService: creating database..')
   const conInfo = {
-    name: 'lodger15',
+    name: 'lodger16',
     password: '10dg3rP@55',
     adapter: 'idb'
   }
@@ -48,6 +52,8 @@ export default (async function (dbdata) {
   // })
 
   // collections.filter(col => col.sync).map(col => col.name).map(colName => db[colName].sync(syncURL + colName + '/'))
+
+  // await insertPredefinedDocs(db)
 
   return db
 })()

@@ -62,6 +62,7 @@ export default {
   &__content
     flex 1 1 50%
     overflow-y auto
+    overflow-x hidden
 
   &__backdrop
     position absolute 0

@@ -1,6 +1,6 @@
 <template lang="pug">
 sction#dash
-  div(v-if="asociatii.length")
+  div(v-if="asociatii")
     h1 {{ $t('dashboard.title') }}
 
     .widgets
@@ -263,7 +263,7 @@ export default {
       blocData: 'bloc/data',
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
-      ultimulApAdaugat: 'apartament/ultimulAdaugat',
+      ultimulApAdaugat: 'apartament/ultim',
       servicii: 'servicii',
       serviciiAsociatie: 'asociatie/servicii'
     })

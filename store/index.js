@@ -27,20 +27,32 @@ const updateMutationName = key => `set_${key}`
 /**
  * Normalize DB items (based on defs) and pass them to store
 */
-defs.forEach(defPlural => {
-  getters[defPlural] = state => {
-    const obj = {}
-    state[defPlural].forEach(item => obj[item._id] = item)
-    return obj
-  }
-  Object.assign(mutations, {
-    [updateMutationName(defPlural)]: (state, data) => state[defPlural] = data
+defs.forEach((plural, singular) => {
+  const ADAUGA = `${singular}/ADAUGA`
+  const STERGE = `${singular}/STERGE`
+  const SET_ULTIM = `${singular}/SET_ULTIM`
+  console.log('DEF', plural, singular)
+  Object.assign(_state, {
+    [`${singular}/ultim`]: null,
+    [plural]: []
   })
-  // default state data for all defs
-  _state[defPlural] = []
+  Object.assign(mutations, {
+    [updateMutationName(plural)]: (state, data) => state[plural] = data,
+    [ADAUGA]: (state, data) => {},
+    [STERGE]: (state, _id) => {},
+    [SET_ULTIM]: (state, _id) => { state.ultim = _id },
+  })
+  Object.assign(actions, {
+    [`${singular}/adauga`]: ({ commit }, data) => { commit(ADAUGA, data) },
+    [`${singular}/sterge`]: ({ commit }, _id) => { commit(STERGE, _id) },
+    // [`${singular}/set_ultimul_adaugat`]: ({ commit }, _id) => { commit(SET_ULTIM, _id) }
+  })
+  Object.assign(getters, {
+    [`${singular}/ultim`]: state => state.ultim,
+    [plural]: state => state[plural]
+  })
 })
 
-console.log('mutations', mutations)
 
 // const dataFlow = (db, store) => {
 //   console.log(arguments, this, db, store)
@@ -88,33 +100,44 @@ const schimbaAsociatie = (db, store, id) => async ({ type }) => {
   if (!type.indexOf('SCHIMBA_ACTIVA')) return
 }
 
-const addDelete = (db, { commit, getters }, defs) => async ({ type, payload }) => {
-  if (!['ADAUGA', 'STERGE'].indexOf(type)) return
-  const what = type.split('/')[0] // added item type
+const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
+  if (type.indexOf('/') < 0) return
+  if (['ADAUGA', 'STERGE'].indexOf(String(type).split('/')[1]) < 0) {
+    debug('drnu suck')
+    return
+  }
+  debug('ZAZA', type)
+  const what = String(type).split('/')[0] // added item type
   const col = db[defs.get(what)] // collection
   if (!col || !what) return
   
   // add = true, delete = false
-  const addOrDelete = type.indexOf('ADAUGA') > -1
+  const add = type.indexOf('ADAUGA') > -1
+  debug('addOrDelete:add', add)
 
   /**
    * ADD
    */
-  const newItem = await col[payload._id ? 'upsert' : 'insert']({ ...payload })
-  if (!newItem) throw eroare('ceva a mers prost la adaugarea itemului')
-  commit(`${what}/set_ultimul_adaugat`, newItem._id)
-  
-  await handleFollowingMutations(what, payload, newItem, store)
-  
-  if (what === 'incasare') {
-    const incasData = { id: newItem._id, suma: newItem.suma }
-    commit('asociatie/incaseaza', incasData)
-    commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
+  if (add) {
+    const newItem = await col[payload._id ? 'upsert' : 'insert']({ ...payload })
+    if (!newItem) throw eroare('ceva a mers prost la adaugarea itemului')
+    commit(`${what}/SET_ULTIM`, newItem._id)
+  } else {
+    // delete stuff
   }
-  // if (what === 'asociatie') store.dispatch('asociatie/schimba', newItem.name)
-  if (what === 'asociatie') asocAdaugatTFlag = newItem.name
-  debug('Adaugat ', what, newItem)
-  return
+  
+  
+  // await handleFollowingMutations(what, payload, newItem, store, add)
+  
+  // if (what === 'incasare') {
+  //   const incasData = { id: newItem._id, suma: newItem.suma }
+  //   commit('asociatie/incaseaza', incasData)
+  //   commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
+  // }
+  // // if (what === 'asociatie') store.dispatch('asociatie/schimba', newItem.name)
+  // if (what === 'asociatie') asocAdaugatTFlag = newItem.name
+  // debug('Adaugat ', what, newItem)
+  // return
 }
 
 function rxdb () {
@@ -159,6 +182,8 @@ function rxdb () {
 
     // store.subscribe(dataFlow(db, store))
     store.subscribe(unsubscribeDBsubscribers(subs))
+    const { commit, getters } = store
+    store.subscribe(addDelete(db, { commit, getters } ))
     // store.subscribe(schimbaAsociatie)
     
     // store.subscribe(adaugaChestii)

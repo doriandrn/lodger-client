@@ -1,22 +1,8 @@
-export const state = () => ({
-  ultimul: ''
-})
-
 export const mutations = {
-  ADAUGA_APARTAMENT: (state, data) => {},
-  STERGE_APARTAMENT: (state, id) => {},
-  set_ultimul_adaugat: (state, id) => {state.ultimul = id},
   incaseaza: (state, data) => {}
 }
 
-export const actions = {
-  adauga: ({ commit }, apData) => {
-    commit('ADAUGA_APARTAMENT', apData)
-  },
-  sterge: ({ commit }, blocId) => {
-    commit('STERGE_APARTAMENT', blocId)
-  }
-}
+export const actions = {}
 
 export const getters = {
   data: (state, getters, rootGetters) => id => rootGetters.apartamente[id] || {},
@@ -25,6 +11,5 @@ export const getters = {
     return ({ etaj, scara, bloc }) => {
       return rootGetters.apartamente.filter(ap => ap.bloc === bloc && String(ap.scara) === String(scara) && ap.etaj === etaj).sort((a, b) => a.nr > b.nr)
     }
-  },
-  ultimulAdaugat: state => state.ultimul
+  }
 }

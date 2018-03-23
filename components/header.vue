@@ -31,6 +31,7 @@ header
   select
     appearance none
     background transparent
+    max-width 180px
 
     &:before
       content: 'asoc'

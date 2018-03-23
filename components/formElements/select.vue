@@ -83,6 +83,7 @@ select
 	font-size 14px
 	line-height 16px
 	padding 14px 46px 14px 16px
+  max-width 180px
 	width 100%
 	border 0
 	position relative

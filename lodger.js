@@ -9,7 +9,7 @@ const ldgSchema = {
       _defaultLimit: 25
     },
     $cheltuieli: {
-      _singular: 'incasare',
+      _singular: 'cheltuiala',
       _sortOptions: { la: -1 },
       _defaultLimit: 25
     },

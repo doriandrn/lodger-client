@@ -3,10 +3,10 @@
   headr
     logo
     
+    //- v-if=     "idsAsociatii && idsAsociatii.length > 1"
+    //- v-model=  "idAsociatieActiva",
     field.switch(
-      v-if=     "idsAsociatii.length > 1"
       id=       "asociatieSwitch"
-      v-model=  "idAsociatieActiva",
       label=    "Asociația de locatari"
       type=     "select",
       :options= "idsAsociatii"
@@ -148,10 +148,10 @@ export default {
     }
   },
   computed: {
-    idAsociatieActiva: {
-      get () { return this.idsAsociatii.indexOf(this.asociatieActiva) },
-      set (index) { this.schimbaAsociatieActiva({ id: this.idsAsociatii[index] }) }
-    },
+    // idAsociatieActiva: {
+      // get () { return this.idsAsociatii.indexOf(this.asociatieActiva) },
+      // set (index) { this.schimbaAsociatieActiva({ id: this.idsAsociatii[index] }) }
+    // },
     ...mapGetters({
       idsAsociatii: 'asociatii', 
       asociatieActiva: 'asociatie/activa',

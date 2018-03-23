@@ -1,5 +1,5 @@
 import Debug from 'debug'
-import { defs } from 'db/_defs'
+import { defs } from 'lodger'
 // const fs = require('fs')
 
 const debug = Debug('lodger:db:collections')

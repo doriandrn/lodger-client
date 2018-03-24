@@ -4,8 +4,8 @@
     logo
     
     //- v-if=     "idsAsociatii && idsAsociatii.length > 1"
-    //- v-model=  "idAsociatieActiva",
     field.switch(
+      v-model=  "idAsociatieActiva",
       id=       "asociatieSwitch"
       label=    "Asociația de locatari"
       type=     "select",
@@ -20,11 +20,15 @@
       )
         nuxt-link(:to="item.url") {{ item.title }}
 
-    bani(
+    nuxt-link(
+      to=       "/registru"
       slot=     "right"
-      :valoare= "balanta",
-      data-icon="shield"
     )
+      bani(
+        :valoare= "balanta",
+        data-icon="shield"
+      )
+
     field(
       slot=     "right"
       type=     "search"
@@ -132,10 +136,10 @@ export default {
 
           switch (camp.id) {
             case 'asociatieId':
-              const { asociatieActiva, idsAsociatii } = ctx
+              const { activa, idsAsociatii } = ctx
               Object.assign(camp, {
                 options: idsAsociatii,
-                value: asociatieActiva,
+                value: activa,
                 slot: 'footer',
                 size: 'small'
               })
@@ -148,13 +152,14 @@ export default {
     }
   },
   computed: {
-    // idAsociatieActiva: {
-      // get () { return this.idsAsociatii.indexOf(this.asociatieActiva) },
-      // set (index) { this.schimbaAsociatieActiva({ id: this.idsAsociatii[index] }) }
-    // },
+    idAsociatieActiva: {
+      get () { return this.idsAsociatii.indexOf(this.activa) },
+      set (name) { this.debug('asoc', name); this.schimbaAsociatieActiva(this.asociatii[name]) }
+    },
     ...mapGetters({
-      idsAsociatii: 'asociatii', 
-      asociatieActiva: 'asociatie/activa',
+      asociatii: 'asociatii',
+      idsAsociatii: 'asociatie/ids', 
+      activa: 'asociatie/activa',
       balanta: 'asociatie/balanta',
       blocData: 'bloc/data',
       apartamente: 'apartamente',

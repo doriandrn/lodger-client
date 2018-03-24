@@ -93,8 +93,9 @@ export default {
 
   > li
     display flex
-    margin -8px -8px 8px
+    margin -8px -8px 16px
     flex-flow row nowrap
+    flex 1 1 100%
     align-items center
     
     > *

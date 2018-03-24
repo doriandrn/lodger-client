@@ -1,11 +1,11 @@
-import { ldgSchema, notificari, defs } from 'lodger'
 import Db from 'db'
 import Debug from 'debug'
 import createPersistedState from 'vuex-persistedstate'
+import { ldgSchema, notificari, defs } from 'lodger'
 import { createModule } from 'vuex-toast'
 import { predefinite } from 'forms/serviciu'
 import { searchMap } from 'helpers/store'
-import { trm } from 'helpers/functions'
+import { trm, traverse } from 'helpers/functions'
 import { sanitizeDBItems } from 'helpers/db'
 
 const debug = Debug('lodger:rxstore')
@@ -31,7 +31,7 @@ defs.forEach((plural, singular) => {
   const ADAUGA = `${singular}/ADAUGA`
   const STERGE = `${singular}/STERGE`
   const SET_ULTIM = `${singular}/SET_ULTIM`
-  console.log('DEF', plural, singular)
+
   Object.assign(_state, {
     [`${singular}/ultim`]: null,
     [plural]: []
@@ -49,16 +49,17 @@ defs.forEach((plural, singular) => {
   })
   Object.assign(getters, {
     [`${singular}/ultim`]: state => state.ultim,
-    [plural]: state => state[plural]
+    [plural]: state => {
+      const o = {}
+      Object.values(state[plural]).forEach(i => o[i[(singular === 'asociatie' ? 'name' : '_id')]] = i)
+      return o
+    },
+    [`${singular}/ids`]: (state, getters) => Object.keys(getters[plural])
   })
 })
 
+Object.assign(getters, { searchMap })
 
-// const dataFlow = (db, store) => {
-//   console.log(arguments, this, db, store)
-//   const { getters, commit } = store
-  
-// }
 
 // let asociatieActiva
 
@@ -91,29 +92,34 @@ defs.forEach((plural, singular) => {
 // }
 
 // de exportat 
+const schimbaAsociatie = (subs, subscribe) => async ({ type }) => {
+  if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
+  const subSubscribersCount = Object.keys(ldgSchema).filter(key => key.indexOf('$') === 0).length
+  debug('subSubcCount', subSubscribersCount)
+  subs.forEach((sub, i) => {
+    if (i < subSubscribersCount) return
+    sub.unsubscribe()
+  })
+  subscribe(ldgSchema.$asociatii)
+  return
+}
+
 const unsubscribeDBsubscribers = subs => async ({ type }) => {
   if (type !== 'DESTROYMAIN') return
   subs.forEach(sub => sub.unsubscribe())
 }
 
-const schimbaAsociatie = (db, store, id) => async ({ type }) => {
-  if (!type.indexOf('SCHIMBA_ACTIVA')) return
-}
-
 const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
   if (type.indexOf('/') < 0) return
-  if (['ADAUGA', 'STERGE'].indexOf(String(type).split('/')[1]) < 0) {
-    debug('drnu suck')
-    return
-  }
-  debug('ZAZA', type)
+  if (['ADAUGA', 'STERGE'].indexOf(String(type).split('/')[1]) < 0) return
+
   const what = String(type).split('/')[0] // added item type
   const col = db[defs.get(what)] // collection
   if (!col || !what) return
   
   // add = true, delete = false
   const add = type.indexOf('ADAUGA') > -1
-  debug('addOrDelete:add', add)
+  // debug('addOrDelete:add', add)
 
   /**
    * ADD
@@ -122,6 +128,7 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
     const newItem = await col[payload._id ? 'upsert' : 'insert']({ ...payload })
     if (!newItem) throw eroare('ceva a mers prost la adaugarea itemului')
     commit(`${what}/SET_ULTIM`, newItem._id)
+    debug('Adaugat: ', newItem)
   } else {
     // delete stuff
   }
@@ -143,14 +150,14 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
 function rxdb () {
   return async function (store) {
     const db = await Db
-    Object.keys(notificari).forEach(type => notificari[type].bind(store))
+    const { commit, getters } = store
     const findCriteria = key => {
       const { getters } = store
       switch (key) {
         case 'blocuri':
         case 'incasari':
         case 'cheltuieli':
-          return { asociatieId: getters['asociatie/activa'].id }
+          return { asociatieId: getters['asociatie/activa'] }
 
         case 'apartament':
           return { bloc: { $in: getters['bloc/ids'] } }
@@ -167,12 +174,15 @@ function rxdb () {
         const k = trm(key)
         if (!db[k]) return
         subs.push(db[k].find(findCriteria(k)).$.subscribe(items => {
+          if (!items) return
           store.commit(`set_${k}`, sanitizeDBItems(items))
           // mutations[updateMutationName(k)](sanitizeDBItems(items))
           subscribe(o[key])
         }))
       })
     }
+    
+    Object.keys(notificari).forEach(type => notificari[type].bind({ commit }))
     subscribe(ldgSchema)
 
     // let asociatieId = store.getters['asociatie/activa']
@@ -182,12 +192,8 @@ function rxdb () {
 
     // store.subscribe(dataFlow(db, store))
     store.subscribe(unsubscribeDBsubscribers(subs))
-    const { commit, getters } = store
     store.subscribe(addDelete(db, { commit, getters } ))
-    // store.subscribe(schimbaAsociatie)
-    
-    // store.subscribe(adaugaChestii)
-    // store.subscribe(stergeChestii)
+    store.subscribe(schimbaAsociatie(subs, subscribe))
     // store.subscribe(DBMethods)
 
 

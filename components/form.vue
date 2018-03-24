@@ -154,7 +154,7 @@ export default {
 
         manipulatedData[what] = what === 'scara' ? String(value) : value
       })
-      debug('MANIPULATED', manipulatedData)
+      debug('Final form data, submitted: ', manipulatedData)
       this[confirm](manipulatedData)
       this.modalClose()
       this.$emit('submit', manipulatedData)
@@ -174,6 +174,7 @@ export default {
 form
   display flex
   flex-flow row wrap
+  justify-content center
   margin: -(config.spacings.inBoxes)
 
   > *
@@ -181,7 +182,9 @@ form
     margin: config.spacings.inBoxes
 
   label
-    margin-bottom: baseSpacingUnit
+    margin-bottom: (baseSpacingUnit*1.5)
+    line-height: 16px
+
 
   .field
     display flex

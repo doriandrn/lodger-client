@@ -12,7 +12,7 @@ span.select(:class="{error}")
   )
     option(
       v-for=      "option, key in options",
-      :value=     "key",
+      :value=     "typeof options === 'object' ? option : key",
       :selected=  "value === key"
     ) {{ option }}
   p.input__message(v-if="message") {{ message }}

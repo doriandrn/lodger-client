@@ -62,7 +62,13 @@
     @change=      "$emit('input', $event)"
     :options=     "options"
   )
-
+  servicii(
+    v-else-if=        "type === 'servicii'"
+    @toggleServiciu=  "$emit('toggleServiciu')",
+    @stergeServiciu=  "stergeServiciu",
+    :servicii=        "servicii",
+    :alese=           "$emit('input')"
+  )
   p.field__message(v-if="message") {{ message }}
 
   slot
@@ -87,6 +93,7 @@ import cbox from 'form/checkbox'
 import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
+import servicii from '~components/servicii'
 
 export default {
   data () {
@@ -186,7 +193,8 @@ export default {
     cbox,
     file,
     radios,
-    scari
+    scari,
+    servicii
   },
   methods: {
     selecteaza (e) {
@@ -232,6 +240,12 @@ spacings = 16px
   &[data-icon]
     input
       padding-left 32px !important
+
+  &[data-type="scari"]
+    > label
+      font-weight 700
+      margin-bottom 16px
+      flex 1 0 100%
 
   &[data-type="search"]
     position relative

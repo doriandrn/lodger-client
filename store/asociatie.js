@@ -1,12 +1,12 @@
 export const state = () => ({
-  activa: { id: '' },
+  activa: '',
   moneda: 'ron',
   initializata: false
 })
 
 export const mutations = {
-  SCHIMBA_ACTIVA: (state, data) => {
-    state.activa.id = data.id
+  SCHIMBA_ACTIVA: (state, name) => {
+    state.activa = name
   },
   DEFINESTE_STRUCTURA: (state) => {
     state.initializata = 0
@@ -19,7 +19,7 @@ export const mutations = {
 
 export const actions = {
   schimba ({ commit, dispatch }, data) {
-    commit('SCHIMBA_ACTIVA', data)
+    commit('SCHIMBA_ACTIVA', data.name)
   },
   initBalanta ({ commit }, data) { commit('initBalanta', data) },
   definesteStructura ({ commit }) {
@@ -33,7 +33,7 @@ export const actions = {
 
 export const getters = {
   activa: state => state.activa.id,
-  $activa: (state, getters, rootGetters) => rootGetters.asociatii ? rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0] : {},
+  // $activa: (state, getters, rootGetters) => rootGetters.asociatii ? rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0] : {},
   moneda: state => state.moneda,
   balanta: (state, getters) => getters.$activa && getters.$activa.balanta ? getters.$activa.balanta : 0,
   servicii: (state, getters) => getters.$activa && getters.$activa.servicii ? getters.$activa.servicii : [],

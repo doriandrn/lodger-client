@@ -32,7 +32,7 @@ export const actions = {
 }
 
 export const getters = {
-  activa: state => state.activa.id,
+  activa: (state, getters, rootGetters) => state.activa,
   // $activa: (state, getters, rootGetters) => rootGetters.asociatii ? rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0] : {},
   moneda: state => state.moneda,
   balanta: (state, getters) => getters.$activa && getters.$activa.balanta ? getters.$activa.balanta : 0,

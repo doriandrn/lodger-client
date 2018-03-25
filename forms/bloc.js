@@ -28,7 +28,8 @@ export const campuri = [
   },
   {
     id: 'asociatieId',
-    type: 'select'
+    type: 'select',
+    required: true
   }
 ]
 

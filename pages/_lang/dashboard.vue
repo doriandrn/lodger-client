@@ -1,6 +1,6 @@
 <template lang="pug">
 sction#dash
-  div(v-if="asociatii")
+  div(v-if="asociatii.length > 0")
     h1 {{ $t('dashboard.title') }}
 
     .widgets
@@ -256,7 +256,7 @@ export default {
     },
     ...mapGetters({
       blocuri: 'blocuri',
-      asociatii: 'asociatii',
+      asociatii: 'asociatie/ids',
       apartamente: 'apartamente',
       apartamenteEtaj: 'apartament/localizeaza',
       activaId: 'asociatie/activa',

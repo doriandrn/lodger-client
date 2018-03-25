@@ -65,26 +65,6 @@ Object.assign(getters, { searchMap })
 
 // const initAsoc = async (db, { commit, getters }, { id, _$ }) => {
 //   if (!id) throw eroare('Cerere de initializare asociatie fara id. Nepermis')
-  
-  
-
-//   // // cleanup subs from prev asoc
-//   // subs.forEach((sub, i) => {
-//   //   if (i < 2) return // keep asocs & servicii sub
-//   //   sub.unsubscribe()
-//   // })
-
-//   // subs.push(db.blocuri.find(findCriteria('bloc')).$.subscribe(blocuri => {
-//   //   store.commit('set_blocuri', sanitizeDBItems(blocuri))
-
-//   //   subs.push(db.apartamente.find(findCriteria('apartament')).$.subscribe(apartamente => {
-//   //     store.commit('set_apartamente', sanitizeDBItems(apartamente))
-//   //   }))
-//   // }))
-
-//   // subs.push(db.incasari.find(findCriteria('incasare')).sort({la: -1}).limit(25).$.subscribe(incasari => {
-//   //   store.commit('set_incasari', sanitizeDBItems(incasari))
-//   // }))
 
 //   asociatieActiva = _$ || await db.asociatii.findOne({ name: id }).exec()
   
@@ -95,9 +75,8 @@ Object.assign(getters, { searchMap })
 const schimbaAsociatie = (subs, subscribe) => async ({ type }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
   const subSubscribersCount = Object.keys(ldgSchema).filter(key => key.indexOf('$') === 0).length
-  debug('subSubcCount', subSubscribersCount)
-  subs.forEach((sub, i) => {
-    if (i < subSubscribersCount) return
+
+  subs.forEach((sub, i) => { if (i < subSubscribersCount) return
     sub.unsubscribe()
   })
   subscribe(ldgSchema.$asociatii)
@@ -107,6 +86,14 @@ const schimbaAsociatie = (subs, subscribe) => async ({ type }) => {
 const unsubscribeDBsubscribers = subs => async ({ type }) => {
   if (type !== 'DESTROYMAIN') return
   subs.forEach(sub => sub.unsubscribe())
+}
+
+const DBMethods = db => async ({ type, payload }) => {
+  if (type.indexOf('/') < 0) return
+  const what = String(type).split('/')[0] // added item type
+  const col = db[defs.get(what)] // collection
+  if (!col || !what) return
+  debug(type, payload)
 }
 
 const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
@@ -130,9 +117,14 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
     commit(`${what}/SET_ULTIM`, newItem._id)
     debug('Adaugat: ', newItem)
   } else {
-    // delete stuff
+  /**
+   * DELETE
+   */
+    const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : { _id: payload }).exec()
+    if (!tobedel) throw eroare(`${what}.notFoundToBeDeleted`)
+    await tobedel.remove()
+    debug('Sters ', col)
   }
-  
   
   // await handleFollowingMutations(what, payload, newItem, store, add)
   
@@ -150,9 +142,9 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
 function rxdb () {
   return async function (store) {
     const db = await Db
-    const { commit, getters } = store
+    const { commit, getters, dispatch } = store
     const findCriteria = key => {
-      const { getters } = store
+      // if (['blocuri', 'incasari', 'cheltuieli'].indexOf)
       switch (key) {
         case 'blocuri':
         case 'incasari':
@@ -167,7 +159,7 @@ function rxdb () {
     }
 
     // inscrie recursiv to
-    const subscribe = o => {
+    const subscribe = (o) => {
       const keys = Object.keys(o).filter(k => k.indexOf('$') === 0)
       if (!keys.length) return
       keys.forEach(key => {
@@ -175,26 +167,30 @@ function rxdb () {
         if (!db[k]) return
         subs.push(db[k].find(findCriteria(k)).$.subscribe(items => {
           if (!items) return
+          // if (pre) pre(k, items)
           store.commit(`set_${k}`, sanitizeDBItems(items))
-          // mutations[updateMutationName(k)](sanitizeDBItems(items))
-          subscribe(o[key])
+          if (k !== 'asociatii') { subscribe(o[key]) }
+          else { dispatch('asociatie/schimba', items[0]) }
+          // if (post) post(o[key])
         }))
       })
     }
     
     Object.keys(notificari).forEach(type => notificari[type].bind({ commit }))
     subscribe(ldgSchema)
+    // if (key !== 'asociatii' || getters['asociatie/activa'] !== '') return
+    // dispatch('asociatie/schimba', items[0])
+    // Object.keys(ldgSchema).filter(k => k.indexOf('$') === 0)
 
     // let asociatieId = store.getters['asociatie/activa']
     // let asocAdaugatTFlag = false
 
     // if (asociatieId) await initAsoc(db, store, { id: asociatieId })
 
-    // store.subscribe(dataFlow(db, store))
     store.subscribe(unsubscribeDBsubscribers(subs))
     store.subscribe(addDelete(db, { commit, getters } ))
     store.subscribe(schimbaAsociatie(subs, subscribe))
-    // store.subscribe(DBMethods)
+    store.subscribe(DBMethods(db))
 
 
     // store.subscribe(async ({ type, payload }) => {

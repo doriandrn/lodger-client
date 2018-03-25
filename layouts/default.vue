@@ -3,8 +3,8 @@
   headr
     logo
     
-    //- v-if=     "idsAsociatii && idsAsociatii.length > 1"
     field.switch(
+      v-if=     "idsAsociatii && idsAsociatii.length > 1"
       v-model=  "idAsociatieActiva",
       id=       "asociatieSwitch"
       label=    "Asociația de locatari"

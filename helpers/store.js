@@ -5,8 +5,8 @@ const searchMap = (state, getters) => {
   Object.keys(searchables).forEach(cat => {
     searchObjs[cat] = new Map()
     Object.values(getters[cat]).forEach(item => {
-      let searchString = ''
-      searchables[cat].forEach(searchKey => { searchString += `${item[searchKey]}` })
+      let searchableString = ''
+      searchables[cat].forEach(searchKey => { searchableString += `${item[searchKey]}` })
       searchObjs[cat].set(item._id, searchableString)
     })
   })

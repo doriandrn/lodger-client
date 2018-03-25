@@ -40,7 +40,7 @@ defs.forEach((plural, singular) => {
     [updateMutationName(plural)]: (state, data) => state[plural] = data,
     [ADAUGA]: (state, data) => {},
     [STERGE]: (state, _id) => {},
-    [SET_ULTIM]: (state, _id) => { state.ultim = _id },
+    [SET_ULTIM]: (state, _id) => { state[`${singular}/ultim`] = _id },
   })
   Object.assign(actions, {
     [`${singular}/adauga`]: ({ commit }, data) => { commit(ADAUGA, data) },
@@ -48,7 +48,7 @@ defs.forEach((plural, singular) => {
     // [`${singular}/set_ultimul_adaugat`]: ({ commit }, _id) => { commit(SET_ULTIM, _id) }
   })
   Object.assign(getters, {
-    [`${singular}/ultim`]: state => state.ultim,
+    [`${singular}/ultim`]: state => state[`${singular}/ultim`],
     [plural]: state => {
       const o = {}
       Object.values(state[plural]).forEach(i => o[i[(singular === 'asociatie' ? 'name' : '_id')]] = i)
@@ -61,7 +61,7 @@ defs.forEach((plural, singular) => {
 Object.assign(getters, { searchMap })
 
 
-// let asociatieActiva
+let asociatieActiva
 
 // const initAsoc = async (db, { commit, getters }, { id, _$ }) => {
 //   if (!id) throw eroare('Cerere de initializare asociatie fara id. Nepermis')
@@ -72,8 +72,9 @@ Object.assign(getters, { searchMap })
 // }
 
 // de exportat 
-const schimbaAsociatie = (subs, subscribe) => async ({ type }) => {
+const schimbaAsociatie = (subs, subscribe) => async ({ type, payload }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
+  asociatieActiva = payload
   const subSubscribersCount = Object.keys(ldgSchema).filter(key => key.indexOf('$') === 0).length
 
   subs.forEach((sub, i) => { if (i < subSubscribersCount) return
@@ -90,10 +91,28 @@ const unsubscribeDBsubscribers = subs => async ({ type }) => {
 
 const DBMethods = db => async ({ type, payload }) => {
   if (type.indexOf('/') < 0) return
-  const what = String(type).split('/')[0] // added item type
+  const split = String(type).split('/')
+  const what = split[0] // added item type
+  const mutation = split[1]
   const col = db[defs.get(what)] // collection
   if (!col || !what) return
   debug(type, payload)
+
+  switch (what) {
+    case 'asociatie':
+      if (asociatieActiva && typeof asociatieActiva[mutation] === 'function') {
+        await asociatieActiva[mutation](payload)
+        debug('DUN')
+      }
+      break
+
+    case 'apartament':
+      if (mutation === 'incaseaza') {
+        const ap = await db.apartamente.findOne({ _id: payload.deLa }).exec()
+        ap.incaseaza(payload)
+      }
+      break
+  }
 }
 
 const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
@@ -123,6 +142,7 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
     const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : { _id: payload }).exec()
     if (!tobedel) throw eroare(`${what}.notFoundToBeDeleted`)
     await tobedel.remove()
+    notificari.success('Dun')
     debug('Sters ', col)
   }
   
@@ -167,16 +187,23 @@ function rxdb () {
         if (!db[k]) return
         subs.push(db[k].find(findCriteria(k)).$.subscribe(items => {
           if (!items) return
+          if (!items.length) {
+            if (k !== 'servicii') return
+            predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
+          }
           // if (pre) pre(k, items)
           store.commit(`set_${k}`, sanitizeDBItems(items))
-          if (k !== 'asociatii') { subscribe(o[key]) }
-          else { dispatch('asociatie/schimba', items[0]) }
-          // if (post) post(o[key])
+          
+          if (k === 'asociatii') { 
+            dispatch('asociatie/schimba', items[0])
+          } else {
+            subscribe(o[key])
+          }
         }))
       })
     }
     
-    Object.keys(notificari).forEach(type => notificari[type].bind({ commit }))
+    Object.keys(notificari).forEach(type => notificari[type]({ dispatch }))
     subscribe(ldgSchema)
     // if (key !== 'asociatii' || getters['asociatie/activa'] !== '') return
     // dispatch('asociatie/schimba', items[0])
@@ -239,22 +266,7 @@ function rxdb () {
     //       return
     //   }
 
-    //   // if none of above happened, run custom ones
-    //   switch (what) {
-    //     case 'asociatie':
-    //       if (asociatieActiva && typeof asociatieActiva[mutation] === 'function') {
-    //         await asociatieActiva[mutation](payload)
-    //         debug('DUN')
-    //       }
-    //       break
-
-    //     case 'apartament':
-    //       if (mutation === 'incaseaza') {
-    //         const ap = await db.apartamente.findOne({ _id: payload.deLa }).exec()
-    //         ap.incaseaza(payload)
-    //       }
-    //       break
-    //   }
+   
     // })
 
     // subs.push(db.asociatii.find().$.subscribe(async items => {

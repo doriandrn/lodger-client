@@ -5,8 +5,8 @@ export const state = () => ({
 })
 
 export const mutations = {
-  SCHIMBA_ACTIVA: (state, name) => {
-    state.activa = name
+  SCHIMBA_ACTIVA: (state, data) => {
+    state.activa = data.name
   },
   DEFINESTE_STRUCTURA: (state) => {
     state.initializata = 0
@@ -19,7 +19,8 @@ export const mutations = {
 
 export const actions = {
   schimba ({ commit, dispatch }, data) {
-    commit('SCHIMBA_ACTIVA', data.name)
+    if (!data) return
+    commit('SCHIMBA_ACTIVA', data)
   },
   initBalanta ({ commit }, data) { commit('initBalanta', data) },
   definesteStructura ({ commit }) {
@@ -32,8 +33,12 @@ export const actions = {
 }
 
 export const getters = {
-  activa: (state, getters, rootGetters) => state.activa,
-  // $activa: (state, getters, rootGetters) => rootGetters.asociatii ? rootGetters.asociatii.filter(asociatie => asociatie.name === getters.activa)[0] : {},
+  activa: state => state.activa,
+  $activa: (state, getters, rootState, rootGetters) => {
+    console.log('GETTERS', getters)
+    console.log('ROOT GETTERS', rootGetters)
+    return rootGetters.asociatii[getters.activa]
+  },
   moneda: state => state.moneda,
   balanta: (state, getters) => getters.$activa && getters.$activa.balanta ? getters.$activa.balanta : 0,
   servicii: (state, getters) => getters.$activa && getters.$activa.servicii ? getters.$activa.servicii : [],

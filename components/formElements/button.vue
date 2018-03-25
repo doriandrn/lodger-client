@@ -50,6 +50,7 @@ button
   line-height 20px
   flex-basis 56px
   white-space nowrap
+  user-select none
 
   &:before
     pointer-events none

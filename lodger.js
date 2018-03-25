@@ -33,7 +33,9 @@ const ldgSchema = {
 
 const notificari = {}
 ldgSchema.notificari.forEach(type => {
-  notificari[type] = (heading, text) => this.dispatch('@@toast/ADD_TOAST_MESSAGE', { type, heading, text })
+  notificari[type] = ({ dispatch }) => (heading, text) => {
+    dispatch('@@toast/ADD_TOAST_MESSAGE', { type, heading, text })
+  }
 })
 
 const searchables = {}

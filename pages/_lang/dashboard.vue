@@ -98,7 +98,10 @@ sction#dash
 
           div(v-else-if=  "initprgrs === 2")
             ul.blocuri
-              li(v-for="bloc in blocuri")
+              li(
+                v-for="bloc, blocId in blocuri"
+                :class="{ ultimul: blocId === ultimulBlocAdaugat }"
+              )
                 split
                   label.nume {{ bloc.nume || '~'}}
                   buton(
@@ -264,6 +267,7 @@ export default {
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
       ultimulApAdaugat: 'apartament/ultim',
+      ultimulBlocAdaugat: 'bloc/ultim',
       servicii: 'servicii',
       serviciiAsociatie: 'asociatie/servicii'
     })
@@ -293,9 +297,12 @@ export default {
 
   > *
     flex 1 0 300px
-    margin: (config.spacings.inBoxes/2)
+    margin: (config.spacings.inBoxes/4)
 
     +above(l)
+      margin: (config.spacings.inBoxes/2)
+
+    +desktop()
       margin: config.spacings.inBoxes
 
 .blocuri
@@ -324,8 +331,11 @@ export default {
       margin-top 16px
       // border-top: 1px solid config.palette.borders
 
-    &.nou
-      flex 0 1 160px
+    &.ultimul
+      > .split > .left label
+        &:after
+          content ''
+          bubble()
 
 
   .bloc

@@ -16,7 +16,7 @@ ul.servicii
       :prompt=  "{ type: 'warning', message: $t('serviciu.deletePrompt') }"
     ) sterge
   li
-    buton(@click= "$emit('servciuNou')") {{ $t('serviciu.adauga') }}
+    buton(@click= "$emit('serviciuNou')") {{ $t('serviciu.adauga') }}
 </template>
 
 <script>

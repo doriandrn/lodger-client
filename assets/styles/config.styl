@@ -17,6 +17,8 @@ config = {
     primary: blue
     secondary: purple
     tertiary: green
+    
+    highlight: #ff8add
 
     warn: orange
     succes: green
@@ -74,3 +76,9 @@ fullflex()
   flex 1 1 100%
   width 100%
   flex-flow column nowrap
+
+bubble()
+  size 5px
+  background: config.palette.highlight
+  margin auto auto auto 8px
+  border-radius 50%

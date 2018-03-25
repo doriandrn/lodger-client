@@ -69,15 +69,17 @@ export default {
     scari: 'Scări'
   },
   apartament: {
-    nr: 'Nr.',
-    suprafata: 'Suprafață',
-    proprietar: 'Proprietar',
-    locatari:'Nr. Locatari',
     new: {
-      title: 'Adaugă apartament'
+      title: 'Adaugă apartament',
+      nr: 'Nr.',
+      suprafata: 'Suprafață',
+      proprietar: 'Proprietar',
+      locatari:'Nr. Locatari',
+      balanta: 'Restant la zi',
+      utilitati: 'Utilități'
     },
     edit: {
-      title: 'Modifică apartamentul [X]'
+      title: 'Modifică apartamentul'
     }
   },
   incasare: {
@@ -87,11 +89,19 @@ export default {
       nr: 'Nr. Chitanță'
     }
   },
+  furnizor: {
+    new: {
+      title: 'Adaugă furnizor',
+      nume: 'Nume / Denumire Societate',
+      servicii: 'Pentru',
+      idN: 'CIF'
+    }
+  },
   serviciu: {
     new: {
       title: 'Adaugă un serviciu'
     },
-    deletePrompt: 'Really?',
+    deletePrompt: 'Ești sigur(ă) că vrei să elimini acest serviciu din listă?',
     adauga: 'Adaugă serviciu',
     notFoundToBeDeleted: 'A apărut o problemă la ștergerea serviciului. Te rugăm să reîncerci.'
   },

@@ -85,14 +85,17 @@ sction#dash
 
           div(v-if=       "initprgrs === 1")
             servicii(
-              @toggleServiciu=  "toggleServiciu",
+              @input=           "toggleServiciu",
               @stergeServiciu=  "stergeServiciu",
               @serviciuNou=     "openModal('serviciu.new')",
               :servicii=        "servicii",
-              :alese=           "serviciiAsociatie"
+              :value=           "serviciiAsociatie",
+              :areAdauga=       "true"
             )
             ul.furnizori
-              li furni
+              li(
+                v-for="furnizor in furnizori"
+              ) {{ furnizor.nume }}
               li
                 buton(@click="openModal('furnizor.new')") {{ $t('furnizor.adauga') }}
 
@@ -263,12 +266,12 @@ export default {
       apartamente: 'apartamente',
       apartamenteEtaj: 'apartament/localizeaza',
       activaId: 'asociatie/activa',
-      blocData: 'bloc/data',
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
       ultimulApAdaugat: 'apartament/ultim',
       ultimulBlocAdaugat: 'bloc/ultim',
       servicii: 'servicii',
+      furnizori: 'furnizori',
       serviciiAsociatie: 'asociatie/servicii'
     })
   },

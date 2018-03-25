@@ -44,14 +44,7 @@ export const metode = {
     this.incasari = incasari
     await this.save()
   },
-  async TOGGLE_SERVICIU (id) {
-    let servicii = this.servicii || []
-    const itemPosition = servicii.indexOf(id)
-    if (itemPosition > -1) {
-      servicii.splice(itemPosition, 1)
-    } else {
-      servicii.push(id)
-    }
+  async TOGGLE_SERVICIU (servicii) {
     this.servicii = servicii
     await this.save()
   }

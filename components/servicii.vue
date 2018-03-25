@@ -3,8 +3,8 @@ ul.servicii
   li(
     v-for=      "serviciu in servicii"
     :data-icon= "serviciu.denumire"
-    :data-sel=  "alese.indexOf(serviciu.denumire) > -1"
-    @click=     "$emit('toggleServiciu', serviciu.denumire)"
+    :data-sel=  "value && value.indexOf(serviciu.denumire) > -1"
+    @click=     "toggleServiciu(serviciu.denumire)"
   ) 
     span.nume {{ serviciu.denumire }}
     buton(
@@ -15,7 +15,7 @@ ul.servicii
       icon=     "trash"
       :prompt=  "{ type: 'warning', message: $t('serviciu.deletePrompt') }"
     ) sterge
-  li
+  li(v-if="areAdauga")
     buton(@click= "$emit('serviciuNou')") {{ $t('serviciu.adauga') }}
 </template>
 
@@ -28,6 +28,18 @@ export default {
   computed: mapGetters({
     serviciiPredefinite: 'serviciu/predefinite'
   }),
+  methods: {
+    toggleServiciu (e) {
+      const value = this.value || []
+      const i = value.indexOf(e)
+      if (i > -1) {
+        value.splice(i, 1)
+      } else {
+        value.push(e)
+      }
+      this.$emit('input', value)
+    }
+  },
   props: {
     servicii: {
       type: [Object, Array],
@@ -35,7 +47,11 @@ export default {
         return {}
       }
     },
-    alese: {
+    areAdauga: {
+      type: Boolean,
+      default: false
+    },
+    value: {
       type: Array,
       default () {
         return []

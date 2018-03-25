@@ -64,11 +64,11 @@
   )
   servicii(
     v-else-if=        "type === 'servicii'"
-    @toggleServiciu=  "$emit('toggleServiciu')",
-    @stergeServiciu=  "stergeServiciu",
-    :servicii=        "servicii",
-    :alese=           "$emit('input')"
+    @input=           "$emit('input', $event)"
+    :value=           "value"
+    :servicii=        "servicii"
   )
+    //- :alese=           "$emit('input')"
   p.field__message(v-if="message") {{ message }}
 
   slot
@@ -186,7 +186,7 @@ export default {
     },
 
     servicii: {
-      type: Array,
+      type: [Object, Array],
       default: null
     }
   },

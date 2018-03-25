@@ -25,6 +25,11 @@ const _state = {}
 const updateMutationName = key => `set_${key}`
 let asociatieActiva
 
+const dbKeys = {
+  asociatie: 'name',
+  serviciu: 'denumire'
+}
+
 /**
  * Normalize DB items (based on defs) and pass them to store
 */
@@ -52,7 +57,7 @@ defs.forEach((plural, singular) => {
     [`${singular}/ultim`]: state => state[`${singular}/ultim`],
     [plural]: state => {
       const o = {}
-      Object.values(state[plural]).forEach(i => o[i[(singular === 'asociatie' ? 'name' : '_id')]] = i)
+      Object.values(state[plural]).forEach(i => o[i[dbKeys[singular] || '_id']] = i)
       return o
     },
     [`${singular}/ids`]: (state, getters) => Object.keys(getters[plural])

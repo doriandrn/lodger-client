@@ -23,6 +23,7 @@ const mutations = {}
 const _state = {}
 
 const updateMutationName = key => `set_${key}`
+let asociatieActiva
 
 /**
  * Normalize DB items (based on defs) and pass them to store
@@ -58,10 +59,13 @@ defs.forEach((plural, singular) => {
   })
 })
 
-Object.assign(getters, { searchMap })
+Object.assign(getters, {
+  searchMap
+})
 
-
-let asociatieActiva
+// Object.assign(_state, {
+//   'asociatie/$activa': Object.freeze(asociatieActiva)
+// })
 
 // const initAsoc = async (db, { commit, getters }, { id, _$ }) => {
 //   if (!id) throw eroare('Cerere de initializare asociatie fara id. Nepermis')
@@ -142,6 +146,7 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
     const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : { _id: payload }).exec()
     if (!tobedel) throw eroare(`${what}.notFoundToBeDeleted`)
     await tobedel.remove()
+    if (what === 'asociatie') asociatieActiva = null
     notificari.success('Dun')
     debug('Sters ', col)
   }
@@ -188,8 +193,7 @@ function rxdb () {
         subs.push(db[k].find(findCriteria(k)).$.subscribe(items => {
           if (!items) return
           if (!items.length) {
-            if (k !== 'servicii') return
-            predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
+            if (k === 'servicii') predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
           }
           // if (pre) pre(k, items)
           store.commit(`set_${k}`, sanitizeDBItems(items))

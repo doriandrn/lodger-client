@@ -70,7 +70,7 @@ export default {
     background rgba(white, .85)
     opacity 0
     visibility hidden
-    transition all .15s ease-in-out
+    transition opacity .15s ease-in-out
 
   &__container
     position absolute
@@ -93,9 +93,6 @@ export default {
     transform-style preserve3d
     transform scale(.5,.5) translate(-50%,-50%)
     transition all .3s cubic-bezier(.165,.84,.44,1)
-    
-    +above(l)
-      margin-top -5%
 
   &__content
     padding-top: config.spacings.betweenBoxes
@@ -161,16 +158,16 @@ export default {
         transform scale(1,1) translate(-50%,-50%)
         opacity 1
   
-.modal
-  &-enter
-    opacity 0
+// .modal
+//   &-enter
+//     opacity 0
 
-  &-leave-active
-    opacity: 0
+//   &-leave-active
+//     opacity: 0
 
-  &-enter
-  &-leave-active 
-    .modal__container
-      transform scale(.5,.5) translate(-50%,-50%)
-      // transform: scale(1.1)
+//   &-enter
+//   &-leave-active 
+//     .modal__container
+//       transform scale(.5,.5) translate(-50%,-50%)
+//       // transform: scale(1.1)
 </style>

@@ -183,6 +183,11 @@ export default {
     searchTaxonomy: {
       type: String,
       default: null
+    },
+
+    servicii: {
+      type: Array,
+      default: null
     }
   },
   components: {

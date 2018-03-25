@@ -20,7 +20,8 @@ form(@submit.prevent="validate")
     :searchTaxonomy="field.taxonomy"
     @change=        "handleChange(field['@change'], field.id, field.type, $event)"
 
-    :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null"
+    :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null",
+    :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
 
     v-model.trim=   "$data[field.id]"
   )
@@ -65,11 +66,17 @@ export default {
     const { campuri, $for } = this.formData
     if (!campuri) return dynamicFormData
     // tradu campurile
-    campuri.forEach(camp => { camp.label = this.$t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`) })
+    campuri.forEach(camp => {
+      camp.label = this.$t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`)
+      // if (camp.id === 'servicii' && typeof camp.servicii === 'function') {
+      //   camp.servicii = camp.servicii(this.$store.getters)
+      //   this.debug('ZA', camp.servicii)
+      // }
+    })
 
     // adauga-le valorile implicite
     const ids = campuri.filter(field => !field.notInAddForm || !field.notInForm).map(field => field.id)
-    this.debug('ids', ids)
+    // this.debug('ids', ids)
 
     ids.forEach(fid => {
       const test = campuri.filter(field => field.id === fid)[0]

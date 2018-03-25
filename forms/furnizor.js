@@ -7,6 +7,7 @@ export const campuri = [
     id: 'servicii',
     type: 'array',
     required: true,
+    servicii: getters => { console.log('CAL'); return getters['asociatie/servicii'] },
     ref: 'serviciu'
   },
   {

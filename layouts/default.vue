@@ -116,14 +116,14 @@ export default {
         let { campuri, actiuni } = data
         if (!campuri) return
 
-        const { modalContent, modalData, $t, blocData, apartamente, debug } = ctx
+        const { modalContent, modalData, $t, blocuri, apartamente, debug } = ctx
 
         campuri = campuri.filter(camp => !camp.notInAddForm)
         campuri.forEach(camp => {
           if (path[1] === 'edit' && typeof modalData === 'object' && modalData._id) {
             switch (path[0]) {
               case 'bloc':
-                camp.value = blocData(modalData._id)[camp.id]
+                camp.value = blocuri[modalData._id][camp.id]
                 break
 
               case 'apartament':
@@ -158,10 +158,10 @@ export default {
     },
     ...mapGetters({
       asociatii: 'asociatii',
+      blocuri: 'blocuri',
       idsAsociatii: 'asociatie/ids', 
       activa: 'asociatie/activa',
       balanta: 'asociatie/balanta',
-      blocData: 'bloc/data',
       apartamente: 'apartamente',
       modalOpen: 'modal/open',
       modalContent: 'modal/content',

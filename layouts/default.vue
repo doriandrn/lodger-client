@@ -8,7 +8,7 @@
       v-model=  "idAsociatieActiva",
       id=       "asociatieSwitch"
       label=    "Asociația de locatari"
-      type=     "select",
+      type=     "altselect",
       :options= "idsAsociatii"
     )
 
@@ -71,7 +71,6 @@ import frm from '~components/form.vue'
 import prompt from '~components/prompt'
 import cale from '~components/cale'
 import bani from '~components/bani'
-import slect from 'form/select'
 import field from 'form/field'
 import buton from 'form/button'
 import toasts from '~components/toasts'
@@ -180,7 +179,6 @@ export default {
     cale,
     frm,
     prompt,
-    slect,
     field,
     bani,
     toasts
@@ -209,9 +207,13 @@ footerHeight = 24px
 
     nav
       position fixed
+      display none
+      margin-left 0
 
       +above(l)
         position static
+        display flex
+        flex-flow row wrap
 
     &+main
       padding-top 48px
@@ -222,7 +224,22 @@ footerHeight = 24px
       flex-flow column wrap
       padding-top 8px
       padding-bottom 8px
+      padding-right 32px
       height 100%
+
+      .altselect
+        position absolute 0
+        padding 0
+        cursor pointer
+        background: config.palette.bgs.body
+
+        &:hover
+          background white
+
+        > li
+          padding-left 32px
+          white-space nowrap
+          text-transform capitalize
       
       label
         font-size 9px
@@ -231,13 +248,20 @@ footerHeight = 24px
         line-height 12px
         letter-spacing 1px
         white-space nowrap
+        position relative
+        z-index 1
 
       select
-        padding 0
+        position absolute 0
+        width 100%
         box-shadow none
-        margin-top 4px
+        margin 0
         text-transform capitalize
+        padding 4px 8px
+        text-indent 8px
+        max-width 100%
         font-weight 500
+        appearance none
 
   > main
     fullflex()

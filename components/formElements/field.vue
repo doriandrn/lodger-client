@@ -49,6 +49,14 @@
     @input=       "$emit('input', $event)"
     :id=          "id"
   )
+  altslect(
+    v-else-if=    "type === 'altselect'"
+    :options=     "options"
+    :value=       "value",
+    :required=    "required",
+    @input=       "$emit('input', $event)"
+    :id=          "id"
+  )
   scari(
     v-else-if=    "type === 'scari' && typeof scariCount !== 'undefined'",
     :scariCount=  "scariCount" 
@@ -88,6 +96,7 @@
 import inpt from 'form/input'
 import labl from 'form/label'
 import slect from 'form/select'
+import altslect from 'form/altselect'
 import txtarea from 'form/textarea'
 import cbox from 'form/checkbox'
 import file from 'form/file'
@@ -193,6 +202,7 @@ export default {
   components: {
     inpt,
     slect,
+    altslect,
     labl,
     txtarea,
     cbox,
@@ -317,12 +327,12 @@ spacings = 16px
       &.selected
       :active
       :focus
-        background-color: rgba(config.palette.tertiary, .05)
+        background-color: config.palette.selectedItem
 
       &:hover
         color: config.typography.palette.headings
-        background-color: rgba(config.palette.primary, .05)
-      
+        background-color: config.palette.selectedItem
+
 
   &__heading
     padding: 0 spacings

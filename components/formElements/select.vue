@@ -1,29 +1,17 @@
 <template lang="pug">
-span.select(:class="{error}")
-  labl.field__label(
-    v-if=       "label",
-    :for=       "id",
-    :label=     "label",
-    :required=  "required"
-  )
-  select(
-    :id=        "id",
-    @change=    "$emit('input', $event.target.value); debug($event.target.value)"
-  )
-    option(
-      v-for=      "option, key in options",
-      :value=     "typeof options === 'object' ? option : key",
-      :selected=  "value === key"
-    ) {{ option }}
-  p.input__message(v-if="message") {{ message }}
+select(
+  :id=        "id",
+  @change=    "$emit('input', $event.target.value); debug($event.target.value)"
+)
+  option(
+    v-for=      "option, key in options",
+    :value=     "typeof options === 'object' ? option : key",
+    :selected=  "value === key"
+  ) {{ option }}
 </template>
 
 <script>
-import labl from 'form/label'
 export default {
-  components: {
-    labl
-  },
   props: {
     id: {
       type: String,

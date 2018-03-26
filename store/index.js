@@ -1,12 +1,14 @@
 import Db from 'db'
 import Debug from 'debug'
 import createPersistedState from 'vuex-persistedstate'
+
 import { ldgSchema, notificari, defs } from 'lodger'
 import { createModule } from 'vuex-toast'
 import { predefinite } from 'forms/serviciu'
 import { searchMap } from 'helpers/store'
 import { trm, traverse } from 'helpers/functions'
 import { sanitizeDBItems } from 'helpers/db'
+import { isRxDocument } from 'db'
 
 const debug = Debug('lodger:rxstore')
 
@@ -81,9 +83,10 @@ Object.assign(getters, {
 // }
 
 // de exportat 
-const schimbaAsociatie = (subs, subscribe) => async ({ type, payload }) => {
+const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
-  asociatieActiva = payload
+  asociatieActiva = isRxDocument(payload) ? payload : await db.asociatii.findOne({ name: payload.name }).exec()
+
   const subSubscribersCount = Object.keys(ldgSchema).filter(key => key.indexOf('$') === 0).length
 
   subs.forEach((sub, i) => { if (i < subSubscribersCount) return
@@ -105,10 +108,11 @@ const DBMethods = db => async ({ type, payload }) => {
   const mutation = split[1]
   const col = db[defs.get(what)] // collection
   if (!col || !what) return
-  debug(type, payload)
+  debug('DBMethod:', type, payload)
 
   switch (what) {
     case 'asociatie':
+      debug('DBM:asociatieActiva', asociatieActiva)
       if (asociatieActiva && typeof asociatieActiva[mutation] === 'function') {
         await asociatieActiva[mutation](payload)
         debug('DUN')
@@ -124,7 +128,7 @@ const DBMethods = db => async ({ type, payload }) => {
   }
 }
 
-const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
+const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload }) => {
   if (type.indexOf('/') < 0) return
   if (['ADAUGA', 'STERGE'].indexOf(String(type).split('/')[1]) < 0) return
 
@@ -143,7 +147,14 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
     const newItem = await col[payload._id ? 'upsert' : 'insert']({ ...payload })
     if (!newItem) throw eroare('ceva a mers prost la adaugarea itemului')
     commit(`${what}/SET_ULTIM`, newItem._id)
+    if (what === 'asociatie') dispatch('asociatie/schimba', newItem)
+    if (what === 'incasare') {
+      const incasData = { id: newItem._id, suma: newItem.suma }
+      commit('asociatie/incaseaza', incasData)
+      commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
+    }
     debug('Adaugat: ', newItem)
+    notificari.success('Adaugat!')
   } else {
   /**
    * DELETE
@@ -155,18 +166,8 @@ const addDelete = (db, { commit, getters }) => async ({ type, payload }) => {
     notificari.success('Dun')
     debug('Sters ', col)
   }
-  
   // await handleFollowingMutations(what, payload, newItem, store, add)
-  
-  // if (what === 'incasare') {
-  //   const incasData = { id: newItem._id, suma: newItem.suma }
-  //   commit('asociatie/incaseaza', incasData)
-  //   commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
-  // }
-  // // if (what === 'asociatie') store.dispatch('asociatie/schimba', newItem.name)
-  // if (what === 'asociatie') asocAdaugatTFlag = newItem.name
-  // debug('Adaugat ', what, newItem)
-  // return
+
 }
 
 function rxdb () {
@@ -204,7 +205,7 @@ function rxdb () {
           store.commit(`set_${k}`, sanitizeDBItems(items))
           
           if (k === 'asociatii') { 
-            dispatch('asociatie/schimba', items[0])
+            if (!asociatieActiva) dispatch('asociatie/schimba', items[0])
           } else {
             subscribe(o[key])
           }
@@ -224,8 +225,8 @@ function rxdb () {
     // if (asociatieId) await initAsoc(db, store, { id: asociatieId })
 
     store.subscribe(unsubscribeDBsubscribers(subs))
-    store.subscribe(addDelete(db, { commit, getters } ))
-    store.subscribe(schimbaAsociatie(subs, subscribe))
+    store.subscribe(addDelete(db, { commit, getters, dispatch } ))
+    store.subscribe(schimbaAsociatie(subs, subscribe, db))
     store.subscribe(DBMethods(db))
 
 

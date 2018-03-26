@@ -40,6 +40,9 @@ module.exports = {
     src: '~plugins/validate'
   },
   {
+    src: '~plugins/tabs'
+  },
+  {
     src: '~plugins/portal'
   },
   {
@@ -76,6 +79,7 @@ module.exports = {
         forms: resolve('forms'),
         lodger: resolve('lodger.js'),
         db: resolve('db'),
+        cc: resolve('components/composed'),
         pg: resolve('components/.playground'),
         helpers: resolve('helpers'),
         '~components': resolve('components')

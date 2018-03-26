@@ -63,16 +63,6 @@ export default {
     max-height 50vh
     overflow visible
   
-  &:hover
-    color: config.typography.palette.ui
-
-    > li
-      &:not(:nth-child(1))
-        display block
-    
-  &:focus
-    border-radius 0
-  
   > li
     display block
     border 0
@@ -87,8 +77,9 @@ export default {
       cursor default
       order 1
     
-    &:hover
-    &:focus
-      background-color: config.palette.selectedItem
-    
+    &:not([data-sel])
+      &:hover
+      &:focus
+        background-color: config.palette.selectedItem
+      
 </style>

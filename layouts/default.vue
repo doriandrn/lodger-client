@@ -119,14 +119,15 @@ export default {
 
         campuri = campuri.filter(camp => !camp.notInAddForm)
         campuri.forEach(camp => {
-          if (path[1] === 'edit' && typeof modalData === 'object' && modalData._id) {
+          if (path[1] === 'edit' && typeof modalData === 'object') {
+            const iId = path[0] === 'serviciu' ? modalData.denumire : modalData._id
             switch (path[0]) {
               case 'bloc':
-                camp.value = blocuri[modalData._id][camp.id]
+                camp.value = blocuri[iId][camp.id]
                 break
 
               case 'apartament':
-                camp.value = apartamente[modalData._id][camp.id]
+                camp.value = apartamente[iId][camp.id]
                 break
             }
           } else if (!camp.value) camp.value = camp.default || null
@@ -228,7 +229,7 @@ footerHeight = 24px
       height 100%
 
       .altselect
-        position absolute 0
+        position absolute 8px 0 0 0
         padding 0
         cursor pointer
         background: config.palette.bgs.body
@@ -238,7 +239,6 @@ footerHeight = 24px
 
         > li
           padding-left 32px
-          white-space nowrap
           text-transform capitalize
       
       label
@@ -275,8 +275,6 @@ footerHeight = 24px
       fullflex()
       > .inner
         fullflex()
-        > div
-          fullflex()
   
   > footer
     position fixed

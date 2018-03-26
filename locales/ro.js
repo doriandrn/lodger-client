@@ -99,11 +99,22 @@ export default {
   },
   serviciu: {
     new: {
-      title: 'Adaugă un serviciu'
+      title: 'Adaugă un serviciu',
+      denumire: 'Denumire'
     },
+    edit: {
+      title: 'Modifică serviciul'
+    },
+    modifica: 'Modifică serviciul',
+    sterge: 'Elimină serviciul',
     deletePrompt: 'Ești sigur(ă) că vrei să elimini acest serviciu din listă?',
     adauga: 'Adaugă serviciu',
     notFoundToBeDeleted: 'A apărut o problemă la ștergerea serviciului. Te rugăm să reîncerci.'
+  },
+  registru: {
+    title: 'Registru de plăți și încasări',
+    cheltuieli: 'Cheltuieli',
+    incasari: 'Încasări'
   },
   defaults: {
     address: 'Adresă',

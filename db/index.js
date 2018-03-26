@@ -13,6 +13,8 @@ const syncURL = 'http://lodger.ro:10101/'
 //   const servicii = db.servicii.findOne().exec()
 // }
 
+export const { isRxDocument } = RxDB
+
 export default (async function (dbdata) {
   // console.log('DatabaseService: creating database..')
   const conInfo = {

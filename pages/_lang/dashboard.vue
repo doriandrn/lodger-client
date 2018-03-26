@@ -1,7 +1,8 @@
 <template lang="pug">
-sction#dash
+sction#dash(
+  :title= "$t('dashboard.title')"
+)
   div(v-if="asociatii.length > 0")
-    h1 {{ $t('dashboard.title') }}
 
     .widgets
       widget(
@@ -34,23 +35,7 @@ sction#dash
         v-if=   "asociatieInitializata"
       )
         ul.activitate(v-if="incasari.length > 0")
-          li(v-for="incasare in incasari")
-            split(
-              v-if="apartamente[incasare.deLa]"
-              collapsable
-            )
-              adresa(
-                :bloc=  "blocData(apartamente[incasare.deLa].bloc)",
-                :scara= "apartamente[incasare.deLa].scara",
-                :etaj=  "apartamente[incasare.deLa].etaj",
-                :nrAp=  "String(apartamente[incasare.deLa].nr)"
-              )
-              span.deLa.nume {{ apartamente[incasare.deLa].proprietar }}
-              date-time(:unixTime="incasare.la")
-              bani(
-                slot="right"
-                :valoare="incasare.suma"
-              )
+          
 
       //- widget.joaca(title="joaca", full)
         p ccucuuc
@@ -87,6 +72,7 @@ sction#dash
             servicii(
               @input=           "toggleServiciu",
               @stergeServiciu=  "stergeServiciu",
+              @modificaServiciu="debug($event); openModal({ id: 'serviciu.edit', data: $event })"
               @serviciuNou=     "openModal('serviciu.new')",
               :servicii=        "servicii",
               :value=           "serviciiAsociatie",
@@ -97,7 +83,10 @@ sction#dash
                 v-for="furnizor in furnizori"
               ) {{ furnizor.nume }}
               li
-                buton(@click="openModal('furnizor.new')") {{ $t('furnizor.adauga') }}
+                buton(
+                  icon= "plus-circle",
+                  @click="openModal('furnizor.new')"
+                ) {{ $t('furnizor.adauga') }}
 
           div(v-else-if=  "initprgrs === 2")
             ul.blocuri
@@ -349,7 +338,8 @@ export default {
     > .scari
       display flex
       flex-flow row nowrap
-      margin -4px
+      padding 0
+      margin -4px auto
 
       > li
         min-width 160px
@@ -448,7 +438,14 @@ export default {
       line-height 20px
       margin-bottom 0
       text-transform capitalize
-      
+
+.furnizori
+  list-style-type none
+  padding 0
+
+  > li
+    padding 8px 32px
+    border: 1px solid config.palette.borders
 
 #init
   header
@@ -463,12 +460,6 @@ export default {
 ul.activitate
   list-style-type none
   padding 0
-
-  .split
-    align-items flex-start
-    .left
-      flex-flow column nowrap
-      align-items flex-start
 
   > li
     margin -20px -20px 20px

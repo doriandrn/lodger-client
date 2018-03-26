@@ -36,7 +36,7 @@ export const actions = {
 export const getters = {
   activa: state => state.activa,
   moneda: state => state.moneda,
-  balanta: (state, getters) => getters.$activa && getters.$activa.balanta ? getters.$activa.balanta : 0,
+  balanta: (state, getters, rs, rg) => rg.asociatii && rs.asociatii.length > 0 && rg.asociatii[getters.activa] ? rg.asociatii[getters.activa].balanta : 0,
   servicii: (state, getters, rs, rg) => rg.asociatii && rs.asociatii.length > 0 && rg.asociatii[getters.activa] && rg.asociatii[getters.activa].servicii ? rg.asociatii[getters.activa].servicii.filter(serv => Object.keys(rg.servicii).indexOf(serv) > -1) : [],
   nrUltimaChitanta: (state, getters, rootGetters) => rootGetters.incasari && rootGetters.incasari.length > 0 ? rootGetters.incasari[0].nrChitanta : 0,
   defineste: state => state.initializata

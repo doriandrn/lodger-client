@@ -17,7 +17,7 @@ const ldgSchema = {
       _singular: 'bloc',
       $apartamente: {
         _singular: 'apartament',
-        _cheiCautare: ['nume', 'scara', 'nr', 'proprietar']
+        _cheiCautare: ['bloc.nume', 'scara', 'nr', 'proprietar']
       }
     }
   },

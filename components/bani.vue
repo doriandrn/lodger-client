@@ -14,7 +14,7 @@ export default {
   props: {
     valoare: {
       type: Number,
-      default: 33.33333
+      default: 0
     }
   }
 }

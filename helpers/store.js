@@ -17,11 +17,10 @@ const searchMap = (state, getters) => {
         } else {
           ss = `${item[searchKey]} `
         }
-        console.log('ss', ss, getters)
+
         if (ss && ss !== 'undefined') searchableString += ss
       })
-      searchableString = searchableString.trim()
-      searchObjs[cat].set(item._id, searchableString)
+      searchObjs[cat].set(item._id, searchableString.trim())
     })
   })
   return searchObjs

@@ -6,7 +6,7 @@ import { ldgSchema, notificari, defs } from 'lodger'
 import { createModule } from 'vuex-toast'
 import { predefinite } from 'forms/serviciu'
 import { searchMap } from 'helpers/store'
-import { trm, traverse } from 'helpers/functions'
+import { trm, traverse, spleet } from 'helpers/functions'
 import { sanitizeDBItems } from 'helpers/db'
 import { isRxDocument } from 'db'
 
@@ -17,6 +17,9 @@ const debug = Debug('lodger:rxstore')
 */
 let subs = []
 
+// temp docs for db manip
+const active = {}
+
 /** Store izemz
 */
 const getters = {}
@@ -25,6 +28,11 @@ const mutations = {}
 const _state = {}
 
 const updateMutationName = key => `set_${key}`
+
+for (let [k, v] of defs) {
+  active[k] = null
+}
+
 let asociatieActiva
 
 const dbKeys = {
@@ -39,6 +47,8 @@ defs.forEach((plural, singular) => {
   const ADAUGA = `${singular}/ADAUGA`
   const STERGE = `${singular}/STERGE`
   const SET_ULTIM = `${singular}/SET_ULTIM`
+  const SET_ACTIV = `${singular}/SET_ACTIV`
+  const UNSET_ACTIV = `${singular}/UNSET_ACTIV`
 
   Object.assign(_state, {
     [`${singular}/ultim`]: null,
@@ -49,10 +59,13 @@ defs.forEach((plural, singular) => {
     [ADAUGA]: (state, data) => {},
     [STERGE]: (state, _id) => {},
     [SET_ULTIM]: (state, _id) => { state[`${singular}/ultim`] = _id },
+    [SET_ACTIV]: (state, _id) => {},
   })
   Object.assign(actions, {
     [`${singular}/adauga`]: ({ commit }, data) => { commit(ADAUGA, data) },
     [`${singular}/sterge`]: ({ commit }, _id) => { commit(STERGE, _id) },
+    [`${singular}/set_activ`]: ({ commit }, _id) => { commit(SET_ACTIV, _id) },
+    [`${singular}/unset_activ`]: ({ commit }, _id) => { commit(UNSET_ACTIV, _id) }
     // [`${singular}/set_ultimul_adaugat`]: ({ commit }, _id) => { commit(SET_ULTIM, _id) }
   })
   Object.assign(getters, {
@@ -69,6 +82,8 @@ defs.forEach((plural, singular) => {
 Object.assign(getters, {
   searchMap
 })
+
+Object.assign(_state, { active })
 
 // Object.assign(_state, {
 //   'asociatie/$activa': Object.freeze(asociatieActiva)
@@ -103,9 +118,7 @@ const unsubscribeDBsubscribers = subs => async ({ type }) => {
 
 const DBMethods = db => async ({ type, payload }) => {
   if (type.indexOf('/') < 0) return
-  const split = String(type).split('/')
-  const what = split[0] // added item type
-  const mutation = split[1]
+  const { what, mutation } = spleet(type)
   const col = db[defs.get(what)] // collection
   if (!col || !what) return
   debug('DBMethod:', type, payload)
@@ -126,6 +139,18 @@ const DBMethods = db => async ({ type, payload }) => {
       }
       break
   }
+}
+
+
+const activSingle = (db) => async({ type, payload }) => {
+  if (String(type).indexOf('SET_ACTIV') < 0 || !payload) return
+  const { what, mutation } = spleet(type)
+  const plrl = defs.get(what)
+  const item = await db[plrl].findOne({ _id: payload }).exec()
+  if (item) {
+    active[what] = item
+  }
+  debug('GOT', what, item)
 }
 
 const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload }) => {
@@ -228,6 +253,7 @@ function rxdb () {
     store.subscribe(addDelete(db, { commit, getters, dispatch } ))
     store.subscribe(schimbaAsociatie(subs, subscribe, db))
     store.subscribe(DBMethods(db))
+    store.subscribe(activSingle(db))
 
 
     // store.subscribe(async ({ type, payload }) => {

@@ -6,3 +6,12 @@ export const traverse = function (o, fn) {
 }
 
 export const trm = str => str.replace('$', '')
+
+export const spleet = str => {
+  const split = String(str).split('/')
+
+  return {
+    what: split[0],
+    mutation: split[1]
+  }
+}

@@ -8,44 +8,43 @@ sction#apartament(
       .usa__nr.ap__nr {{ ap.nr }}
       h5.nume {{ ap.proprietar }}
 
-    split(slot="right")
-      .ap__info
-        div.camp
-          label.balanta balanta 
-          bani(:valoare="ap.balanta")
+    split(slot="right").ap__info
+      .camp
+        label.balanta balanta 
+        bani(:valoare="ap.balanta")
 
-        div.camp
-          label suprafata
-          span {{ ap.suprafata }}
+      .camp
+        label suprafata
+        span {{ ap.suprafata }}
 
-        .camp
-          label utilitati
-          span {{ ap.utilitati || '~' }}
+      .camp
+        label utilitati
+        span {{ ap.utilitati || '~' }}
 
-        .camp
-          label locatari
-          span {{ ap.locatari || '~' }}
+      .camp
+        label locatari
+        span {{ ap.locatari || '~' }}
 
-      p(slot="right") pula
+      incaseaza(slot="right")
 
-      tabs
-        tab(title="statistici")
-          h4 Consumă cel mai mult
-          
-          h4 Ultima plată
-          p candva
+    tabs(slot="right")
+      tab(title="statistici")
+        h4 Consumă cel mai mult
+        
+        h4 Ultima plată
+        p candva
 
-        tab(title="incasari")
-          p incas
+      tab(title="incasari")
+        p incas
 
-        tab(title="cheltuieli")
-          p chelts
+      tab(title="cheltuieli")
+        p chelts
 
-        tab(title="instiintari")
-          p instiintari
+      tab(title="instiintari")
+        p instiintari
 
-        tab(title="date contact")
-          p aici e frumos
+      tab(title="date contact")
+        p aici e frumos
 
   //- .widgets
   //-   widget(expand)
@@ -57,18 +56,21 @@ import sction from '~components/section'
 import widget from '~components/widget'
 import split from '~components/split'
 import bani from '~components/bani'
+import incaseaza from 'cc/butonIncaseaza'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  async asyncData ({ params }) {
+  async asyncData ({ params, store }) {
     console.log('OARAMS', arguments)
+    if (params.id) { store.dispatch('apartament/set_activ', params.id )}
   },
   components: {
     bani,
     sction,
     widget,
-    split
+    split,
+    incaseaza
   },
   computed: {
     ap () {
@@ -108,6 +110,9 @@ export default {
       box-shadow none
       background transparent
 
+    .ap__info
+      margin-bottom 32px
+
     > .right
       margin-left 32px
       flex 1 1 100%
@@ -117,16 +122,17 @@ export default {
 
       .left
         display flex
-        flex-flow column nowrap
+        flex-flow row wrap
         flex 1 1 100%
         align-items flex-start
 
-        .tabs
-          margin-top auto
+    .tabs
+      width 100%
+      margin-top auto
 
-        .tab
-          background white
-          padding 16px
+    .tab
+      background white
+      padding 16px
 
     .split
       flex 1 1 100%
@@ -147,11 +153,5 @@ export default {
 
         &+*
           font-size 24px
-
-.ap
-  &__info
-    display flex
-    flex 1 1 100%
-    flex-flow row wrap
 
 </style>

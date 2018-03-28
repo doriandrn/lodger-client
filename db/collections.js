@@ -46,7 +46,7 @@ const makeCollection = data => {
   let versionMustIncrease = false
 
   Object.values(form.campuri).forEach(formItem => {
-    const { id, type, required, primary, step, index, ref } = formItem
+    const { id, type, required, primary, step, index, ref, indexRef } = formItem
 
     // this is new from previous schema
     if (foundCachedProperties.length > 0 && foundCachedProperties.indexOf(id) < 0) {
@@ -61,7 +61,11 @@ const makeCollection = data => {
     schema.properties[id] = { type: getType(type) }
     if (primary) Object.assign(schema.properties[id], { primary })
     if (index) Object.assign(schema.properties[id], { index })
-    if (ref) Object.assign(schema.properties[id], { ref, items: { type: 'string' } })
+    if (ref) {
+      const x = { ref, items: { type: 'string' } }
+      if (indexRef) Object.assign(x, { index: true })
+      Object.assign(schema.properties[id], x)
+    }
     if (step) Object.assign(schema.properties[id], { multipleOf: step })
     if (required) schema.required.push(id)
   })

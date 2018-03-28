@@ -31,9 +31,8 @@ export default {
   directives: {
     focus: {
       componentUpdated: (el, binding) => {
-        const firstInput = el.querySelector('input')
+        const firstInput = el.querySelector('input:not(.av)')
         if (firstInput) setTimeout(() => { firstInput.focus() }, 150)
-        console.log('modal updated', binding, firstInput)
       }
     }
   },

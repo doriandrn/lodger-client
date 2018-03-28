@@ -1,7 +1,7 @@
 <template lang="pug">
 buton(
   icon=   "trending-up"
-  @click= "openModal('incasare.new')"
+  @click= "openModal( {id: 'incasare.new', data: { deLa: id } })"
 ) {{ $t('dashboard.actions.cashIn') }}
 </template>
 
@@ -15,6 +15,12 @@ export default {
   }),
   components: {
     buton
+  },
+  props: {
+    id: {
+      type: String,
+      default: null
+    }
   }
 }
 </script>

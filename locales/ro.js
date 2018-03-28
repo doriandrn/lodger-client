@@ -1,3 +1,5 @@
+import { P } from "glamorous";
+
 export default {
   dashboard: {
     title: 'Panou de control',
@@ -80,6 +82,11 @@ export default {
     },
     edit: {
       title: 'Modifică apartamentul'
+    },
+    inexistent: {
+      heading: 'Apartament inexistent',
+      mesaj: 'Acest apartament, fie că a fost șters sau niciodata creat, nu există...',
+      actiuni: ['Încearcă recuperarea lui', 'Mergi la panoul de control', 'Adaugă un apartament']
     }
   },
   incasare: {

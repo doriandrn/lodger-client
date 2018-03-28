@@ -33,24 +33,15 @@ module.exports = {
     src: '~assets/styles/index.styl',
     lang: 'stylus'
   }],
-  plugins: [{
-    src: '~plugins/debug'
-  },
-  {
-    src: '~plugins/validate'
-  },
-  {
-    src: '~plugins/tabs'
-  },
-  {
-    src: '~plugins/portal'
-  },
-  {
-    src: '~plugins/range'
-  },
-  {
-    src: '~plugins/i18n'
-  }],
+  plugins: [
+    { src: '~plugins/debug' },
+    { src: '~plugins/db' },
+    { src: '~plugins/validate' },
+    { src: '~plugins/tabs' },
+    { src: '~plugins/portal' },
+    { src: '~plugins/range' },
+    { src: '~plugins/i18n' }
+  ],
   router: {
     linkActiveClass: 'active'
   },

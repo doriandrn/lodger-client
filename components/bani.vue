@@ -32,6 +32,8 @@ export default {
   font-size 11px
   letter-spacing 1px
   color: config.palette.tertiary
+  justify-content flex-end
+  text-align right
 
   &:before
     background-color: config.palette.tertiary

@@ -47,7 +47,7 @@ export const campuri = [
     default: 0
   },
   {
-    id: 'plati',
+    id: 'incasari',
     type: 'array',
     notInForm: true,
     ref: 'incasari'
@@ -61,10 +61,10 @@ export const actiuni = {
 export const metode = {
   async incaseaza (data) {
     if (!this.balanta) this.balanta = 0
-    let plati = this.plati || []
+    let incasari = this.incasari || []
     this.balanta += data.suma
-    plati.push(data.id)
-    this.plati = plati
+    incasari.push(data.id)
+    this.incasari = incasari
     await this.save()
   }
 }

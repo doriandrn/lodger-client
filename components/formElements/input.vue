@@ -94,6 +94,10 @@ export default {
       }}
     }
   },
+  mounted () {
+    if (this.type !== 'search') return
+    console.log(this.value, this.selected)
+  },
   methods: {
     handleInput (e) {
       let { value } = e.target

@@ -46,6 +46,7 @@ time
   color: tcolor
   font-size 10px
   padding-left 0 !important
+  white-space nowrap
 
   &:before
     background-color: tcolor !important

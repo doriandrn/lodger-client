@@ -30,8 +30,9 @@
     :searchTaxonomy=    "searchTaxonomy"
     @newResults=        "results = $event"
     @selected=          "selected = $event"
-    :selected=          "type === 'search' ? selectedResult : null"
+    :selected=          "selectedResult"
     @keyEnter=          "selecteaza"
+    :class=             "{ av: !!value }"
   )
   txtarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
@@ -81,7 +82,8 @@
 
   slot
 
-  .results(v-if="type === 'search' && !selectedResult.id")
+  //- && !selectedResult._id
+  .results(v-if="type === 'search'")
     .results__section(v-for="tax in Object.keys(results)")
       h5.results__heading {{ tax }}
       nuxt-link(
@@ -104,18 +106,31 @@ import radios from 'form/radioGroup'
 import scari from 'form/scari'
 import servicii from '~components/servicii'
 
+import { mapGetters } from 'vuex'
+
 export default {
+  computed: {
+    ...mapGetters({
+      apartamente: 'apartamente'
+    }),
+    selectedResult () {
+      if (this.type !== 'search' || !this.value) return
+
+      // return this[searchTaxonomy][this.value] || {}
+      return this.apartamente[this.value] || { _id: null }
+    }
+  },
   data () {
     // CUSTOM  only for search
     if (this.type !== 'search') return {}
     return {
       results: {},
       selected: 0,
-      selectedResult: {
-        ce: '',
-        id: '',
-        proprietar: ''
-      }
+      // selectedResult: {
+      //   ce: '',
+      //   id: '',
+      //   proprietar: ''
+      // }
     }
   },
   name: 'field',

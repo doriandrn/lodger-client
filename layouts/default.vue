@@ -227,6 +227,7 @@ footerHeight = 24px
       padding-bottom 8px
       padding-right 32px
       height 100%
+      margin-left 0
 
       .altselect
         position absolute 8px 0 0 0
@@ -274,7 +275,7 @@ footerHeight = 24px
     > section
       fullflex()
       > .inner
-        fullflex()
+        fullflex()z
   
   > footer
     position fixed

@@ -25,7 +25,10 @@ sction#apartament(
         label locatari
         span {{ ap.locatari || '~' }}
 
-      incaseaza(slot="right")
+      incaseaza(
+        slot=   "right",
+        :id=    "$route.params.id"
+      )
 
     tabs(slot="right")
       tab(title="statistici")
@@ -35,7 +38,10 @@ sction#apartament(
         p candva
 
       tab(title="incasari")
-        p incas
+        incasari(
+          :incasari=  "incasari",
+          :showAdresa="false"
+        )
 
       tab(title="cheltuieli")
         p chelts
@@ -49,6 +55,11 @@ sction#apartament(
   //- .widgets
   //-   widget(expand)
   //-     p omg
+sction#nuExista(
+  v-else,
+  :title= "$t('apartament.inexistent.heading')"
+)
+  p {{ $t('apartament.inexistent.mesaj') }}
 </template>
 
 <script>
@@ -57,19 +68,35 @@ import widget from '~components/widget'
 import split from '~components/split'
 import bani from '~components/bani'
 import incaseaza from 'cc/butonIncaseaza'
+import incasari from '~components/incasari'
 
 import { mapGetters } from 'vuex'
 
 export default {
-  async asyncData ({ params, store }) {
-    console.log('OARAMS', arguments)
-    if (params.id) { store.dispatch('apartament/set_activ', params.id )}
+  async asyncData ({ params, store, app: { $db, $dbSubs } }) {
+  },
+  async mounted () {
+    const { $store: { $db }, $route: { params: { id }} } = this
+    await $db.apartamente.findOne({ _id: id }).$.subscribe(async changes => {
+      console.log('CHG', changes)
+      // if (changes.incasari) this.incasari = await changes.incasari_
+    })
+
+    await $db.incasari.find({ deLa: id }).sort({ la: -1 }).$.subscribe(async changes => {
+      if (changes) this.incasari = changes
+    })
+  },
+  data () {
+    return {
+      incasari: []
+    }
   },
   components: {
     bani,
     sction,
     widget,
     split,
+    incasari,
     incaseaza
   },
   computed: {
@@ -100,6 +127,18 @@ export default {
     margin-bottom 8px
 
 #apartament
+  &:before
+    content ''
+    position absolute 0
+    bottom auto
+    height 40vh
+    background embedurl('~static/bgs/aphead.jpg')
+    z-index 0
+
+  .inner
+    position relative
+    z-index 1
+
   .header
     flex 1 1 100%
     max-height 100%

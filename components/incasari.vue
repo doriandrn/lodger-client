@@ -1,22 +1,23 @@
 <template lang="pug">
-ul.incasari
+ul.incasari.zebra
   li(v-for="incasare in incasari")
     split(
       v-if="apartamente[incasare.deLa]"
       collapsable
     )
       adresa(
+        v-if=   "showAdresa"
         :bloc=  "blocuri[apartamente[incasare.deLa].bloc]",
         :scara= "apartamente[incasare.deLa].scara",
         :etaj=  "apartamente[incasare.deLa].etaj",
         :nrAp=  "String(apartamente[incasare.deLa].nr)"
       )
-      nuxt-link.deLa.nume(:to="`apartament/${apartamente[incasare.deLa]._id}`") {{ apartamente[incasare.deLa].proprietar }}
-      date-time(:unixTime="incasare.la")
-      bani(
-        slot="right"
-        :valoare="incasare.suma"
-      )
+      nuxt-link.deLa.nume(:to="`/apartament/${apartamente[incasare.deLa]._id}`") {{ apartamente[incasare.deLa].proprietar }}
+      .incasare__detalii(slot="right")
+        bani(:valoare="incasare.suma")
+        date-time(
+          :unixTime="incasare.la"
+        )
 </template>
 
 <script>
@@ -29,10 +30,21 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
-      incasari: 'incasari',
       blocuri: 'blocuri',
       apartamente: 'apartamente'
     })
+  },
+  props: {
+    incasari: {
+      type: [Array, Object],
+      default () {
+        return []
+      }
+    },
+    showAdresa: {
+      type: Boolean,
+      default: true
+    }
   },
   components: {
     dateTime,
@@ -47,6 +59,19 @@ export default {
 @require '~styles/config'
 
 .incasari
+  list-style-type none
+  padding 0
+  display flex
+  flex-flow column nowrap
+
+  > li
+    max-width 480px
+    margin 0 auto
+    width 100%
+
+    > div
+      padding 8px 12px
+
   .split
     align-items flex-start
     .left

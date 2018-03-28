@@ -4,7 +4,7 @@ sction#registru(
 )
   tabs.registru
     tab(:title="$t('registru.incasari')")
-      incasari
+      incasari(:incasari="incasari")
 
     tab(:title="$t('registru.cheltuieli')")
       p cheltuieli
@@ -16,6 +16,9 @@ import incasari from '~components/incasari'
 import { mapGetters } from 'vuex'
 
 export default {
+  computed: mapGetters({
+    incasari: 'incasari'
+  }),
   components: {
     sction,
     incasari

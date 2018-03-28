@@ -9,16 +9,12 @@ import collections from './collections'
 
 const syncURL = 'http://lodger.ro:10101/'
 
-// const insertPredefinedDocs = async db => {
-//   const servicii = db.servicii.findOne().exec()
-// }
-
 export const { isRxDocument } = RxDB
 
 export default (async function (dbdata) {
   // console.log('DatabaseService: creating database..')
   const conInfo = {
-    name: 'lodger17',
+    name: 'lodger19',
     password: '10dg3rP@55',
     adapter: 'idb'
   }

@@ -1,8 +1,6 @@
 <template lang="pug">
-sction#dash(
-  :title= "$t('dashboard.title')"
-)
-  div(v-if="asociatii.length > 0")
+sction#dash
+  div(v-if="idsAsociatii.length > 0")
 
     .widgets
       widget(
@@ -10,11 +8,7 @@ sction#dash(
         :title=   "$t('dashboard.actions.title')"
         :boxed=   "false"
       )
-        buton(
-          icon=   "trending-up"
-          @click= "openModal('incasare.new')"
-        ) {{ $t('dashboard.actions.cashIn') }}
-
+        buton-incaseaza
         buton(
           @click= "openModal('cheltuiala.new')"
           styl=   "outline"
@@ -48,7 +42,7 @@ sction#dash(
       )
         field(
           slot=       "right"
-          v-if=       "initprgrs"
+          v-if=       "aDefMacarUnServiciu"
           type=       "radios",
           id=         "initprgrs"
           v-model=    "initprgrs"
@@ -56,7 +50,7 @@ sction#dash(
           :options=   "{1: 1, 2: 2, 3: 3}"
         )
 
-        div(v-if="initprgrs")
+        div(v-if="aDefMacarUnServiciu")
           split
             h5 {{ $t(initTitle) }}
             buton(
@@ -213,6 +207,7 @@ import servicii from '~components/servicii'
 import field from 'form/field'
 
 import typecheck from 'pg/widgets/typography'
+import butonIncaseaza from 'cc/butonIncaseaza'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -236,6 +231,7 @@ export default {
     frm,
     dateTime,
     servicii,
+    butonIncaseaza,
 
     typecheck
   },
@@ -249,9 +245,17 @@ export default {
       }
       return null
     },
+    aDefMacarUnServiciu () {
+      const activa = this.asociatii[this.activaId]
+      if (!activa) return
+      const { servicii } = activa
+      if (!servicii) return false
+      return servicii.length > 0
+    },
     ...mapGetters({
       blocuri: 'blocuri',
-      asociatii: 'asociatie/ids',
+      asociatii: 'asociatii',
+      idsAsociatii: 'asociatie/ids',
       apartamente: 'apartamente',
       apartamenteEtaj: 'apartament/localizeaza',
       activaId: 'asociatie/activa',

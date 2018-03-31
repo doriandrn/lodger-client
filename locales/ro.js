@@ -63,6 +63,8 @@ export default {
     edit: {
       title: 'Modifică blocul'
     },
+    anterior: 'Blocul anterior',
+    urmator: 'Blocul următor',
     delete: 'Șterge blocul',
     etaje: 'Etaje',
     etaj: 'Etaj',

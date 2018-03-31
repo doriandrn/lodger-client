@@ -1,5 +1,5 @@
 <template lang="pug">
-footer
+footer.footer
   .inner.split
     .left
       slot
@@ -11,6 +11,7 @@ footer
 @require '~styles/config'
 
 .footer
+  display none
   p
     margin-bottom 0
     line-height 24px

@@ -49,6 +49,7 @@
     :required=    "required",
     @input=       "$emit('input', $event)"
     :id=          "id"
+    :arrow=       "arrow"
   )
   altslect(
     v-else-if=    "type === 'altselect'"
@@ -57,6 +58,7 @@
     :required=    "required",
     @input=       "$emit('input', $event)"
     :id=          "id"
+    :arrow=       "arrow"
   )
   scari(
     v-else-if=    "type === 'scari' && typeof scariCount !== 'undefined'",
@@ -212,6 +214,10 @@ export default {
     servicii: {
       type: [Object, Array],
       default: null
+    },
+    arrow: {
+      type: Boolean,
+      default: false
     }
   },
   components: {

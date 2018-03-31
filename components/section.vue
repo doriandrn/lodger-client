@@ -23,6 +23,7 @@ section
   padding-top 24px
   padding-bottom 24px
   position relative
+  overflow hidden
 
   &#nuExista
     > .inner

@@ -47,8 +47,19 @@ export default {
       > *:not(:first-child)
         margin-left: baseSpacingUnit*8
         padding-left: baseSpacingUnit*8
-        border-left: 1px solid config.palette.borders
+        
+        &:before
+          content ''
+          position absolute
+          left 0
+          height 12px
+          width 1px
+          background: config.palette.borders
+          z-index 1
+          top 50%
+          transform translateY(-50%)
 
       > *
         margin-bottom 0
+        position relative
 </style>

@@ -40,7 +40,8 @@ module.exports = {
     { src: '~plugins/tabs' },
     { src: '~plugins/portal' },
     { src: '~plugins/range' },
-    { src: '~plugins/i18n' }
+    { src: '~plugins/i18n' },
+    { src: '~plugins/swiper' }
   ],
   router: {
     linkActiveClass: 'active'

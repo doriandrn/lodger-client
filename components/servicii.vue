@@ -90,6 +90,7 @@ export default {
   padding 0
   display flex
   flex-flow row wrap
+  justify-content center
 
   > li
     display flex

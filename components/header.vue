@@ -24,9 +24,9 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 header
-  background white
+  // background white
   line-height: baseSpacingUnit*12
-  box-shadow: config.shadows.header
+  // box-shadow: config.shadows.header
 
   select
     appearance none
@@ -48,6 +48,7 @@ header
     white-space nowrap
     margin-right: config.spacings.betweenBoxes
     font-weight 700
+    font-size 0
 
     a
       color: config.typography.palette.headings

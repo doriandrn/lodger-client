@@ -1,6 +1,7 @@
 <template lang="pug">
 ul.altselect(
   :id=        "id",
+  :data-arrow="arrow"
 )
   li(
     v-for=      "option, key in options",
@@ -20,6 +21,10 @@ export default {
     value: {
       type: [Number, String],
       default: null
+    },
+    arrow: {
+      type: Boolean,
+      default: true
     },
     options: {
       type: [Array, Object],
@@ -42,7 +47,7 @@ export default {
   line-height 16px
   padding 14px 46px 14px 16px
   position relative
-  box-shadow 0px 1px 2px rgba(#8B7070, .1)
+  // box-shadow 0px 1px 2px rgba(#8B7070, .1)
   cursor pointer
   background-color: config.palette.bgs.body
   background-image embedurl('~static/icons/ui/dropdown.svg', 'utf8') 
@@ -56,12 +61,17 @@ export default {
   max-height 100%
   overflow hidden
   transition max-height .15s ease-in-out
+
+  &:after
+    position absolute
+
   
   &:active
   &:hover
     outline none
     max-height 50vh
     overflow visible
+    background white
   
   > li
     display block
@@ -70,16 +80,17 @@ export default {
     flex 1 1 100%
     padding 14px 24px
     background white
-    transition all .1s ease-in-out
+    transition color .1s ease-in-out
 
     &[data-sel]
       color: config.typography.palette.headings
-      cursor default
+      // cursor default
       order 1
     
     &:not([data-sel])
       &:hover
       &:focus
-        background-color: config.palette.selectedItem
+        background-color: config.palette.selectedItem !important
+        color: config.typography.palette.headings
       
 </style>

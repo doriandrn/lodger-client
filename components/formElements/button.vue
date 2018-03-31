@@ -16,7 +16,8 @@ button(
   :data-size=       "size",
   :data-styl=       "styl",
   :data-dangerous=  "dangerous"
-  :class=           "{ iconOnly }"
+  :data-arrow=      "arrow"
+  :class=           "{ iconOnly, rounded }"
   )
   slot
   span.badge(v-if="$slots.badge")
@@ -90,20 +91,21 @@ button
   &[data-styl="unstyled"]
     background-color transparent
     color: config.typography.palette.ui
+
+    &:before
+    &:after
+      background-color: config.typography.palette.ui
+
+    &:hover
+      color: config.palette.primary
+
+      &:before
+      &:after
+        background-color: config.palette.primary
   
   &[data-styl="unstyled"]
     border 0
     padding 0
-
-    &[data-icon]
-      &:before
-        background-color: config.typography.palette.ui
-    
-    &:hover
-      color: config.palette.primary
-
-      &[data-icon]:before
-        background-color: config.palette.primary
 
   &[data-styl="outline"]
     color: config.palette.primary
@@ -113,6 +115,9 @@ button
 
     &:hover
       background transparent
+
+  &.rounded
+    border-radius 50%
 
 </style>
 
@@ -197,6 +202,10 @@ export default {
       default: null
     },
     iconOnly: {
+      type: Boolean,
+      default: null
+    },
+    rounded: {
       type: Boolean,
       default: null
     },

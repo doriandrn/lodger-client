@@ -9,6 +9,13 @@
       padding 10px 20px
       text-transform capitalize
       cursor pointer
+      display flex
+      flex-flow row nowrap
+      align-items center
+      color: config.typography.palette.meta
+
+      &:before
+        background-color: config.typography.palette.meta
 
       &[aria-selected="true"]
         font-weight bold

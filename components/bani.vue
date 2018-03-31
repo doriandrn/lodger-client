@@ -1,5 +1,7 @@
 <template lang="pug">
-span.bani {{ numeral(valoare).format('0,0[.]00') }} {{ moneda }}
+span.bani(
+  :class="{ negativ: valoare < 0 }"
+) {{ numeral(valoare).format('0,0[.]00') }} {{ moneda }}
 </template>
 
 <script>
@@ -37,4 +39,7 @@ export default {
 
   &:before
     background-color: config.palette.tertiary
+
+  &.negativ
+    color: config.palette.error
 </style>

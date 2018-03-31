@@ -34,12 +34,12 @@ export const tabs = {
 
     const tabList = []
     tabs.forEach((child, index) => {
-      const { title, disabled, counter } = child.componentOptions.propsData
+      const { title, disabled, counter, icon } = child.componentOptions.propsData
       const isDisabled = disabled === true || disabled === ''
       tabList.push(
         <li
-          class="tab__title"
           role="tab"
+          data-icon={icon}
           onClick={e => this.switchTab(e, index, isDisabled)}
           aria-selected={this.selectedIndex === index ? 'true' : 'false'}
           aria-disabled={isDisabled ? 'true' : 'false'}
@@ -62,7 +62,7 @@ export const tabs = {
 
 export const tab = {
   name: 'tab',
-  props: ['title', 'disabled', 'counter'],
+  props: ['title', 'disabled', 'counter', 'icon'],
   render () {
     return (
       <div class="tab" role="tabpanel">

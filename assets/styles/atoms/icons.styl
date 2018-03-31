@@ -1,26 +1,35 @@
-icons = activity 'alert-circle' 'bar-chart-2' check clock edit 'hard-drive' search send server shield settings trash 'trending-up' 'plus-circle'
+icons = activity 'alert-circle' 'bar-chart-2' check 'chevron-down' circle clock edit 'hard-drive' mail 'plus-circle' search send server shield settings target trash 'trending-up' users
 servicii = apa electricitate gaze termoficare internet 'evacuare-gunoi-menajer'
+
+icon()
+  content ''
+  size 14px
+  display inline-block
+  vertical-align middle
+  mask-size 13px
+  mask-position 50%
+  mask-repeat no-repeat
+  background-color white
+  pointer-events none
 
 [data-icon]
   position relative
   padding-left 36px
   
   &:before
-    content ''
-    size 14px
-    display block
-    mask-size 13px
-    mask-position 50%
-    mask-repeat no-repeat
-    background-color white
+    icon()
     margin-right 8px
-    pointer-events none
 
   &.iconOnly
     font-size 0
 
     &:before
       margin 0
+
+[data-arrow]
+  &:after
+    icon()
+    mask-image embedurl('~static/icons/ui/chevron-down.svg')
 
 header[data-icon]
   .widget__title

@@ -1,20 +1,20 @@
 <template lang="pug">
-sction#apartament(
+//- :title= "`Apartamentul ${ap.nr}`"
+sction.ap(
   v-if=   "ap && ap.nr"
-  :title= "`Apartamentul ${ap.nr}`"
 )
-  split.header
-    .usa
-      .usa__nr.ap__nr {{ ap.nr }}
+  split.ap__header
+    .ap__usa
+      .nr.ap__nr {{ ap.nr }}
       h5.nume {{ ap.proprietar }}
 
     split(slot="right").ap__info
       .camp
-        label.balanta balanta 
+        label.balanta(data-icon="target") balanta 
         bani(:valoare="ap.balanta")
 
       .camp
-        label suprafata
+        label(data-icon="circle") suprafata
         span {{ ap.suprafata }}
 
       .camp
@@ -22,7 +22,7 @@ sction#apartament(
         span {{ ap.utilitati || '~' }}
 
       .camp
-        label locatari
+        label(data-icon="users") locatari
         span {{ ap.locatari || '~' }}
 
       incaseaza(
@@ -30,6 +30,7 @@ sction#apartament(
         :id=    "$route.params.id"
       )
 
+  .ap__content
     tabs(slot="right")
       tab(title="statistici")
         h4 Consumă cel mai mult
@@ -49,7 +50,10 @@ sction#apartament(
       tab(title="instiintari")
         p instiintari
 
-      tab(title="date contact")
+      tab(
+        title="date contact"
+        icon= "mail"
+      )
         p aici e frumos
 
   //- .widgets
@@ -113,51 +117,136 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 
-.usa
-  background rgba(black, .05)
-  padding 24px
-  width 160px
-  height 280px
-  display flex
-  flex-flow column nowrap
-  align-items center
-  justify-content center
+.ap
+  background-color #574c6c
 
-  &__nr
-    margin-bottom 8px
-
-#apartament
   &:before
     content ''
     position absolute 0
     bottom auto
     height 40vh
     background embedurl('~static/bgs/aphead.jpg')
+    background-size contain
     z-index 0
+    opacity .35
 
   .inner
     position relative
     z-index 1
 
-  .header
+  &__info
+    margin-bottom 32px
+    align-items flex-start
+
+    +desktop()
+      margin-top 21px
+
+  &__nr
+    font-family: config.typography.fams.headings
+    font-size 16px
+    letter-spacing 2px
+    // color: config.typography.palette.headings
+    // color yellow
+    color #717110
+
+  &__usa
+    // background: config.palette.bgs.body
+    // background #504b4b
+    // background #393434
+    background white
+    // background #cbcaca
+    padding 50px 12px 12px
+    margin-top 36px
+    width 160px
+    height 280px
+    display flex
+    flex-flow column nowrap
+    align-items center
+    justify-content flex-start
+    position relative
+    border: 1px solid rgba(black, .175)
+    border-bottom 0
+    box-shadow inset 0px 16px 50px -10px rgba(black, .33)
+
+    .nume
+      // color white
+      color: config.typography.palette.headings
+      font-size 14px
+      line-height 16px
+
+    > *
+      position relative
+      z-index 1
+      text-align center
+
+    .nr
+      margin-bottom 12px
+
+    &:before
+      content ''
+      position absolute -20px -24px 0
+      // background #f4f4f1
+      background #f2f4f1
+      // background #f9f9f8
+      z-index -1
+      border-top-radius 2px
+      border-top 1px solid white
+      box-shadow 0px 1px 10px 0px rgba(black, .1)
+
+
+  &__content
     flex 1 1 100%
+    position relative
+    z-index 3
+
+    .tab
+      background white
+
+      padding 32px
+
+    // &:before
+    //   content ''
+    //   position absolute 0
+    //   z-index 0
+
+
+    > *
+      position relative
+      z-index 4
+
+  &__header
+    flex 0 1 40%
     max-height 100%
     height 100%
     align-items flex-start
+    position relative
+    min-height 300px
+
+    &:before
+      content ''
+      height 46px
+      position absolute
+      bottom -46px
+      left -100%
+      right -100%
+      z-index 2
+      border-top 1px solid white
+      background: config.palette.bgs.body
 
     header
       box-shadow none
       background transparent
 
-    .ap__info
-      margin-bottom 32px
-
     > .right
       margin-left 32px
+      padding-top 32px
       flex 1 1 100%
       display flex
       flex-flow row wrap
       align-items flex-start
+
+      +desktop()
+        margin-left 90px
 
       .left
         display flex
@@ -179,18 +268,39 @@ export default {
 
     .camp
       display flex
-      flex-flow row wrap
+      flex-flow column nowrap
       margin-right 32px
-      height 60px
+      // height 60px
+      // background white
+      // padding 20px
       min-width 90px
       
 
       label
         display block
-        flex 1 1 100%
+        flex 0 0 32px
         color: config.typography.palette.meta
+        size 32px
+        font-size 0
+        background rgba(black, .1)
+        border-radius 50%
+        margin-bottom 8px
+
+        &:before
+          position absolute
+          left 50%
+          top 50%
+          transform translate(-50%, -50%)
+          size 32px
+          margin 0
+          mask-size 20px
+          mask-position 50% 50%
+          opacity .25
 
         &+*
           font-size 24px
+          color white
+          margin-left 9px
+          text-shadow 0px 1px 3px rgba(black, .33)
 
 </style>

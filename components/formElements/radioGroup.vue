@@ -33,8 +33,10 @@ export default {
   },
   props: {
     options: {
-      type: Object,
-      default: {}
+      type: [Array, Object],
+      default () {
+        return {}
+      }
     },
     id: {
       type: String,

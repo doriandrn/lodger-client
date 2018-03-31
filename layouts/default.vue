@@ -10,6 +10,7 @@
       label=    "Asociația de locatari"
       type=     "altselect",
       :options= "idsAsociatii"
+      :arrow=   "true"
     )
 
     nav(
@@ -212,7 +213,7 @@ footerHeight = 24px
       margin-left 0
 
       +above(l)
-        position static
+        position relative
         display flex
         flex-flow row wrap
 
@@ -225,15 +226,22 @@ footerHeight = 24px
       flex-flow column wrap
       padding-top 8px
       padding-bottom 8px
-      padding-right 32px
+      padding-right 42px
       height 100%
       margin-left 0
+      // background: config.palette.bgs.body
 
       .altselect
-        position absolute 8px 0 0 0
+        position absolute 0 0 auto
         padding 0
         cursor pointer
         background: config.palette.bgs.body
+        transition all .15s ease-in-out
+
+        &:after
+          background: config.typography.palette.meta
+          right 20px
+          top 12px
 
         &:hover
           background white
@@ -241,6 +249,10 @@ footerHeight = 24px
         > li
           padding-left 32px
           text-transform capitalize
+          background transparent
+
+          &:first-child
+            padding-top 20px
       
       label
         font-size 9px
@@ -250,6 +262,8 @@ footerHeight = 24px
         letter-spacing 1px
         white-space nowrap
         position relative
+        pointer-events none
+        color: config.typography.palette.meta
         z-index 1
 
       select
@@ -275,7 +289,8 @@ footerHeight = 24px
     > section
       fullflex()
       > .inner
-        fullflex()z
+        fullflex()
+        justify-content center
   
   > footer
     position fixed
@@ -291,5 +306,6 @@ footerHeight = 24px
   max-width: config.sizes.maxContainerWidth
   margin 0 auto
   padding: 0 baseSpacingUnit*3
+  position relative
 
 </style>

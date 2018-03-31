@@ -5,108 +5,110 @@ sction#dash
     field(
       v-if=       "aDefMacarUnServiciu"
       type=       "radios",
-      data-icon=       "hard-drive"
+      icon=       "hard-drive"
       id=         "initprgrs"
       v-model=    "initprgrs"
       :label=     "null"
       :options=   "[0, 1, 2, 3]"
     )
 
-    div(v-if=       "!initprgrs")
-      servicii(
-        @input=           "toggleServiciu",
-        @stergeServiciu=  "stergeServiciu",
-        @modificaServiciu="debug($event); openModal({ id: 'serviciu.edit', data: $event })"
-        @serviciuNou=     "openModal('serviciu.new')",
-        :servicii=        "servicii",
-        :value=           "serviciiAsociatie",
-        :areAdauga=       "true"
+    servicii(
+      v-if=       "!initprgrs"
+      @input=           "toggleServiciu",
+      @stergeServiciu=  "stergeServiciu",
+      @modificaServiciu="debug($event); openModal({ id: 'serviciu.edit', data: $event })"
+      @serviciuNou=     "openModal('serviciu.new')",
+      :servicii=        "servicii",
+      :value=           "serviciiAsociatie",
+      :areAdauga=       "true"
+    )
+
+    ul.furnizori(v-else-if= "initprgrs === 1")
+      li(
+        v-for="furnizor in furnizori"
+      ) {{ furnizor.nume }}
+      li
+        buton(
+          icon= "plus-circle",
+          @click="openModal('furnizor.new')"
+        ) {{ $t('furnizor.adauga') }}
+
+    swiper.blocuri(
+      v-else-if=  "initprgrs === 2"
+      ref=        "blocuriSwiper"
+      :options=   "swiperOpts"
+    )
+    
+      swiper-slide.bloc(
+        v-for=      "bloc, blocId in blocuri",
+        :key=       "blocId",
+        :class=     "{ ultimul: blocId === ultimulBlocAdaugat }"
+        :data-nume= "bloc.nume"
       )
 
-    div(v-else-if= "initprgrs === 1")
-      ul.furnizori
-        li(
-          v-for="furnizor in furnizori"
-        ) {{ furnizor.nume }}
-        li
+        label.nume {{ bloc.nume || '~'}}
+        .bloc__actiuni
           buton(
-            icon= "plus-circle",
-            @click="openModal('furnizor.new')"
-          ) {{ $t('furnizor.adauga') }}
+            styl=   "unstyled"
+            icon=   "edit"
+            icon-only
+            @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
+            tooltip
+          ) {{ $t('bloc.edit.title') }}
+          buton(
+            styl=     "unstyled"
+            @click=   "stergeBloc(bloc._id)"
+            icon=     "trash"
+            icon-only
+            tooltip
+            dangerous
+          ) {{ $t('bloc.delete') }}
+        ol.scari
+          li(v-for="scara in bloc.scari")
+            label.nume Scara {{ scara.id }}
+            .scara
+              ol.etaje
+                li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
+                  buton(
+                    v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
+                    :key=   "ap._id"
+                    :class= "{ ultim: ap._id === ultimulApAdaugat}"
+                    @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
+                    tooltip
+                  ) {{ ap.proprietar }}
+                    em {{ ap.nr }}
+                  buton.adauga(
+                    styl=   "unstyled"
+                    tooltip
+                    @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
+                    icon=   "plus-circle"
+                    icon-only
+                  ) {{ $t('apartament.new.title') }}
 
-    div(v-else-if=  "initprgrs === 2")
-      buton.bloc__add(
-        v-if=   "initprgrs === 2",
-        icon=   "plus-circle",
-        slot=   "right"
-        @click= "openModal('bloc.new')"
-        size=   "large"
+      .blocuri__tabs(slot="pagination")
+        buton.bloc__add(
+          v-if=   "initprgrs === 2",
+          icon=   "plus-circle",
+          slot=   "right"
+          @click= "openModal('bloc.new')"
+          size=   "medium"
+
+          icon-only
+        ) {{ $t('bloc.new.title') }}
+        .blocuri__list
+
+      buton.urm.blocuri__nav(
+        slot=     "button-next"
+        arrow=    "right"
+        styl=     "unstyled",
         rounded
-        icon-only
-      ) {{ $t('bloc.new.title') }}
-      swiper.blocuri(
-        ref=        "blocuriSwiper"
-        :options=   "swiperOpts"
-      )
-      
-        swiper-slide(
-          v-for=  "bloc, blocId in blocuri",
-          :key=   "blocId",
-          :class= "{ ultimul: blocId === ultimulBlocAdaugat }"
-        ).bloc
-
-          label.nume {{ bloc.nume || '~'}}
-          .bloc__actiuni
-            buton(
-              styl=   "unstyled"
-              icon=   "edit"
-              icon-only
-              @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
-              tooltip
-            ) {{ $t('bloc.edit.title') }}
-            buton(
-              styl=     "unstyled"
-              @click=   "stergeBloc(bloc._id)"
-              icon=     "trash"
-              icon-only
-              tooltip
-              dangerous
-            ) {{ $t('bloc.delete') }}
-          ol.scari
-            li(v-for="scara in bloc.scari")
-              label.nume Scara {{ scara.id }}
-              .scara
-                ol.etaje
-                  li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-                    buton(
-                      v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
-                      :key=   "ap._id"
-                      :class= "{ ultim: ap._id === ultimulApAdaugat}"
-                      @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
-                      tooltip
-                    ) {{ ap.proprietar }}
-                      em {{ ap.nr }}
-                    buton.adauga(
-                      styl=   "unstyled"
-                      tooltip
-                      @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
-                      icon=   "plus-circle"
-                      icon-only
-                    ) {{ $t('apartament.new.title') }}
-
-        .blocuri__tabs(slot="pagination")
-        buton.urm.blocuri__nav(
-          slot=     "button-next"
-          arrow=    "right"
-          styl=     "unstyled",
-          rounded
-        ) {{ $t('bloc.urmator') }}
-        buton.ant.blocuri__nav(
-          slot=     "button-prev"
-          arrow=    "left"
-          styl=     "unstyled",
-          rounded
-        ) {{ $t('bloc.anterior') }}
+      ) {{ $t('bloc.urmator') }}
+      buton.ant.blocuri__nav(
+        slot=     "button-prev"
+        arrow=    "left"
+        styl=     "unstyled",
+        rounded
+      ) {{ $t('bloc.anterior') }}
       
       buton(
         v-if= "toateEtajeleAuApartamente && initprgrs === 1"
@@ -198,16 +200,27 @@ export default {
       initprgrs: 0,
       swiperOpts: {
         pagination: {
-          el: '.blocuri__tabs',
-          clickable: true
+          el: '.blocuri__list',
+          clickable: true,
+          renderBullet: (i, cls) => {
+            return `<span class="${cls}">${this.blocuri[this.idsBlocuri[i]].nume}</span>`
+          },
+          bulletActiveClass: 'activ'
+          // type: 'custom',
+          // renderCustom: ({ $wrapperEl }, i) => {
+          //   console.log('zz', $wrapperEl)
+          //   const { nume } = $wrapperEl[0].children[i - 1].dataset
+          //   return `<span>${nume || '~'}..${i}</span>`
+          // }
         },
         centeredSlides: true,
         longSwipes: false,
-        loop: true,
+        loop: false,
         keyboard: true,
         navigation: {
           nextEl: '.blocuri__nav.urm',
           prevEl: '.blocuri__nav.ant',
+          disabledClass: 'disabled'
         }
       }
     }
@@ -249,6 +262,7 @@ export default {
       blocuri: 'blocuri',
       asociatii: 'asociatii',
       idsAsociatii: 'asociatie/ids',
+      idsBlocuri: 'bloc/ids',
       apartamente: 'apartamente',
       apartamenteEtaj: 'apartament/localizeaza',
       activaId: 'asociatie/activa',
@@ -272,7 +286,7 @@ export default {
     })
   },
   mounted () {
-    this.initprgrs = 1
+    // this.initprgrs = 1
   }
 }
 </script>
@@ -311,6 +325,11 @@ export default {
     top 50%
     transform translateY(-50%)
     font-size 0
+    transition all .15s ease-in-out, opacity 1.5s ease-out
+
+    &:after
+      background-color: config.typography.palette.light !important
+      margin 0
 
     &:after
       mask-size 32px
@@ -322,13 +341,47 @@ export default {
     &.ant
       left 20px
 
+    &.disabled
+      opacity 0
+
   &__tabs
     position fixed
+    // position absolute
     z-index 11
     display flex
+    width 100%
+    bottom 0 !important
     flex-flow row nowrap
     justify-content center
 
+  &__list
+    display flex
+    flex-flow row nowrap
+    flex 1 1 100%
+    > span
+      flex 1 1 auto
+      size auto
+      opacity 100
+      border-radius 0
+      background transparent
+      border-top: 1px solid config.palette.borders
+      padding 8px 16px
+      margin 0 !important
+      transition all .1s ease-in-out
+      text-transform capitalize
+
+      &.activ
+        border-color: config.palette.primary
+        color: config.typography.palette.headings
+
+      &:not(.activ)
+        &:hover
+          color: config.typography.palette.headings
+          border-color: config.typography.palette.ui
+
+      // for i in 1..10
+      //   &:nth-child({i})
+      //     background-color: lighten(config.palette.primary, 80% + i*1.5)
   ul
     list-style-type none
     padding 0
@@ -377,10 +430,8 @@ export default {
           visibility visible
 
   &__add
-    position absolute
-    top 15%
-    right 0
-    z-index 8
+    // background-color: config.palette.borders !important
+    border-radius 0 !important
 
   &__actiuni
     display flex
@@ -401,13 +452,14 @@ export default {
     padding 0
     margin 50px auto
     flex 1 1 100%
+    max-height 50vh
 
     > li
       min-width 160px
       flex-flow column nowrap
       align-items flex-start
       justify-content flex-start
-      margin auto 4px 4px
+      margin auto 4px 0
       display flex
 
       > .nume
@@ -456,7 +508,6 @@ export default {
           font-size 18px
           pointer-events none
           margin-bottom 4px
-          pointer-events none
 
         &:not([data-styl="unstyled"])
           // background-color: lighten(config.palette.tertiary, 85%)
@@ -513,10 +564,26 @@ export default {
     border: 1px solid config.palette.borders
 
 #init
+  display flex
+  flex-flow row wrap
+  flex 1 1 100%
+
+  > *:not(.field)
+    width 100%
+    align-items center
+    justify-content center
+
   .field[data-type="radios"]
     position absolute
     top 0
-    left 0
+    left 8px
+    padding 0
+    z-index 21
+    text-align center
+
+    &:before
+      margin 0 auto 12px
+      background-color: config.typography.palette.ui
   
   .input__radio
     padding 8px

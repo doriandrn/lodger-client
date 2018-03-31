@@ -34,6 +34,7 @@
       slot=     "right"
       type=     "search"
       size=     "small"
+      id=       "search"
       :placeholder=  "$t('search')"
       hide-label
     )
@@ -280,7 +281,7 @@ footerHeight = 24px
 
   > main
     fullflex()
-    margin-bottom: footerHeight
+    // margin-bottom: footerHeight
     background: config.palette.bgs.body
     min-height 100vh
     position relative

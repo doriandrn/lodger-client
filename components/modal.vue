@@ -101,7 +101,7 @@ export default {
     form
       .actions
         margin: config.spacings.inBoxes -20px -20px
-        padding: config.spacings.inBoxes config.spacings.betweenBoxes
+        // padding: config.spacings.inBoxes config.spacings.betweenBoxes
         background: config.palette.borders
 
         input[type="submit"]

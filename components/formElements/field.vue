@@ -2,7 +2,7 @@
 .field(
   :data-size=  "size"
   :data-type=   "type"
-  :data-icon=   "type === 'search' ? 'search' : null"
+  :data-icon=   "type === 'search' ? 'search' : icon"
   :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null"
   :data-selected="type === 'search' && selected.id"
 )
@@ -85,7 +85,10 @@
   slot
 
   //- && !selectedResult._id
-  .results(v-if="type === 'search'")
+  .results(
+    v-if= "type === 'search'"
+    data-box-arrow
+  )
     .results__section(v-for="tax in Object.keys(results)")
       h5.results__heading {{ tax }}
       nuxt-link(
@@ -218,6 +221,10 @@ export default {
     arrow: {
       type: Boolean,
       default: false
+    },
+    icon: {
+      type: String,
+      default: null
     }
   },
   components: {
@@ -320,6 +327,7 @@ spacings = 16px
   max-height 50vh
   min-width 320px
   box-shadow: config.shadows.boxes
+  border-top-radius: (config.radiuses.boxes/2)
   border-bottom-radius: config.radiuses.boxes
   display flex
   flex-flow column nowrap

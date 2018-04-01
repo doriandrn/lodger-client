@@ -34,11 +34,10 @@ sction#dash
         ) {{ $t('furnizor.adauga') }}
 
     swiper.blocuri(
-      v-else-if=  "initprgrs === 2"
+      v-else-if=  "initprgrs === 2 && idsBlocuri.length"
       ref=        "blocuriSwiper"
       :options=   "swiperOpts"
     )
-    
       swiper-slide.bloc(
         v-for=      "bloc, blocId in blocuri",
         :key=       "blocId",
@@ -46,23 +45,22 @@ sction#dash
         :data-nume= "bloc.nume"
       )
 
-        label.nume {{ bloc.nume || '~'}}
-        .bloc__actiuni
-          buton(
-            styl=   "unstyled"
-            icon=   "edit"
-            icon-only
-            @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
-            tooltip
-          ) {{ $t('bloc.edit.title') }}
-          buton(
-            styl=     "unstyled"
-            @click=   "stergeBloc(bloc._id)"
-            icon=     "trash"
-            icon-only
-            tooltip
-            dangerous
-          ) {{ $t('bloc.delete') }}
+        //- .bloc__actiuni
+        //-   buton(
+        //-     styl=   "unstyled"
+        //-     icon=   "edit"
+        //-     icon-only
+        //-     @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
+        //-     tooltip
+        //-   ) {{ $t('bloc.edit.title') }}
+        //-   buton(
+        //-     styl=     "unstyled"
+        //-     @click=   "stergeBloc(bloc._id)"
+        //-     icon=     "trash"
+        //-     icon-only
+        //-     tooltip
+        //-     dangerous
+        //-   ) {{ $t('bloc.delete') }}
         ol.scari
           li(v-for="scara in bloc.scari")
             label.nume Scara {{ scara.id }}
@@ -76,7 +74,7 @@ sction#dash
                     @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
                     tooltip
                   ) {{ ap.proprietar }}
-                    em {{ ap.nr }}
+                    em.ap__nr {{ ap.nr }}
                   buton.adauga(
                     styl=   "unstyled"
                     tooltip
@@ -122,13 +120,13 @@ sction#dash
       p ultima incasare
       p facturi / cheltuieli active
 
-  //- empty(
-  //-   v-if=     "!idsAsociatii.length"
-  //-   :title=   "$t('bloc.none.heading')",
-  //-   :CTA=     "$t('bloc.none.CTA')",
-  //-   :actions= "{ startInit: $t('bloc.none.actions[0]'), importaDate: $t('bloc.none.actions[1]') }"
-  //-   @action=  "$event === 'startInit' ? initprgrs = 1 : null"
-  //- )
+    empty(
+      v-else-if=  "initprgrs === 2 && !idsBlocuri.length"
+      :title=     "$t('bloc.none.heading')",
+      :CTA=       "$t('bloc.none.CTA')",
+      :actions=   "{ startInit: $t('bloc.none.actions[0]'), importaDate: $t('bloc.none.actions[1]') }"
+      @action=    "$event === 'startInit' ? initprgrs = 1 : null"
+    )
 
   //- widget(
   //-   title=  "$t('asociatie.adminZone.title')"
@@ -199,22 +197,27 @@ export default {
       toateEtajeleAuApartamente: false,
       initprgrs: 0,
       swiperOpts: {
+        slideActiveClass: 'activ',
         pagination: {
           el: '.blocuri__list',
           clickable: true,
           renderBullet: (i, cls) => {
-            return `<span class="${cls}">${this.blocuri[this.idsBlocuri[i]].nume}</span>`
+            const activ = this.blocuri[this.idsBlocuri[i]]
+            if (!activ) return
+            return `<span class="${cls}">
+              <label class="nume">${activ.nume}</label>
+              <span class="bloc__actions">
+                <button onclick="$nuxt.$store.dispatch('modal/open', { id: 'bloc.edit', data: { _id: '${activ._id}' } })" aria-label="${ this.$t('bloc.edit.title') }" data-tip="true" data-icon="edit" data-size="medium" data-styl="unstyled" class="iconOnly">${ this.$t('bloc.edit') }</button>
+                <button onclick="$nuxt.$store.dispatch('bloc/sterge', '${activ._id}')" aria-label="${ this.$t('bloc.delete') }" data-tip="true" data-icon="trash" data-size="medium" data-styl="unstyled" class="iconOnly">${ this.$t('bloc.delete') }</button>
+              </span>
+            </span>`
           },
           bulletActiveClass: 'activ'
-          // type: 'custom',
-          // renderCustom: ({ $wrapperEl }, i) => {
-          //   console.log('zz', $wrapperEl)
-          //   const { nume } = $wrapperEl[0].children[i - 1].dataset
-          //   return `<span>${nume || '~'}..${i}</span>`
-          // }
         },
         centeredSlides: true,
         longSwipes: false,
+        slidesPerView: 'auto',
+        spaceBetween: 32,
         loop: false,
         keyboard: true,
         navigation: {
@@ -316,8 +319,19 @@ export default {
   flex-flow row nowrap
   overflow hidden
   list-style-type none
-  padding 0
+  padding 0 0 8vh
+  position relative
   // margin: -(config.spacings.inBoxes)
+
+  &:before
+    content ''
+    position fixed 48px 0 42px
+    background: linear-gradient(to right, config.palette.bgs.body 0%, transparent 15%, transparent 85%, config.palette.bgs.body 100%)
+    z-index 5
+    pointer-events none
+
+  > div
+    z-index 4
 
   &__nav
     position absolute
@@ -328,12 +342,14 @@ export default {
     transition all .15s ease-in-out, opacity 1.5s ease-out
 
     &:after
-      background-color: config.typography.palette.light !important
+      background-color: config.typography.palette.ui !important
       margin 0
-
-    &:after
       mask-size 32px
       size 32px
+
+    &:hover
+      &:after
+        background-color: config.palette.primary !important
 
     &.urm
       right 20px
@@ -354,12 +370,19 @@ export default {
     flex-flow row nowrap
     justify-content center
 
+    .bloc
+      &__actions
+        margin-left auto
+
   &__list
     display flex
     flex-flow row nowrap
     flex 1 1 100%
+
     > span
       flex 1 1 auto
+      display flex
+      flex-flow row nowrap
       size auto
       opacity 100
       border-radius 0
@@ -375,6 +398,9 @@ export default {
         color: config.typography.palette.headings
 
       &:not(.activ)
+        .bloc__actions
+          visibility hidden
+
         &:hover
           color: config.typography.palette.headings
           border-color: config.typography.palette.ui
@@ -411,34 +437,49 @@ export default {
 
 .bloc
   display flex
-  flex-flow column nowrap
+  flex-flow row wrap
   margin auto
+  flex 1 1 100%
   align-items center
   justify-content center
+  transition opacity .15s ease-in-out
 
-  &__actiuni
-    +desktop()
-      transition opacity .15s ease
-      opacity 0
-      visibility hidden
+  &:not(.activ)
+    pointer-events none
+    opacity .35
 
-  &:hover
-    .bloc
-      &__actiuni
-        +desktop()
-          opacity 1
-          visibility visible
+  &__actions
+    display flex
+    flex-flow row nowrap
+    
+    > button
+      &:not(:first-child)
+        margin-left 8px
+
+    
+
+  // &:hover
+  //   .bloc
+  //     &__actiuni
+  //       +desktop()
+  //         opacity 1
+  //         visibility visible
 
   &__add
     // background-color: config.palette.borders !important
     border-radius 0 !important
 
-  &__actiuni
-    display flex
-    flex-flow row nowrap
+  // &__actiuni
+  //   display flex
+  //   flex-flow row nowrap
 
-    > *
-      margin 0 8px
+  //   +desktop()
+  //     transition opacity .15s ease
+  //     opacity 0
+  //     visibility hidden
+
+  //   > *
+  //     margin 0 8px
 
   > .nume
     font-size 20px
@@ -450,9 +491,8 @@ export default {
     flex-flow row nowrap
     justify-content center
     padding 0
-    margin 50px auto
+    margin auto auto 0
     flex 1 1 100%
-    max-height 50vh
 
     > li
       min-width 160px
@@ -502,7 +542,6 @@ export default {
           opacity 0
 
         em
-          font-family: config.typography.fams.headings
           font-style normal
           font-weight 100
           font-size 18px

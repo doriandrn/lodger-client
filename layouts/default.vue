@@ -236,7 +236,7 @@ footerHeight = 24px
         position absolute 0 0 auto
         padding 0
         cursor pointer
-        background: config.palette.bgs.body
+        background transparent
         transition all .15s ease-in-out
 
         &:after

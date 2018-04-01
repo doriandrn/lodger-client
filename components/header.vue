@@ -49,6 +49,7 @@ header
     margin-right: config.spacings.betweenBoxes
     font-weight 700
     font-size 0
+    top 1px
 
     a
       color: config.typography.palette.headings

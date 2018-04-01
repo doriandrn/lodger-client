@@ -7,12 +7,9 @@ ul.incasari.zebra
     )
       adresa(
         v-if=   "showAdresa"
-        :bloc=  "blocuri[apartamente[incasare.deLa].bloc]",
-        :scara= "apartamente[incasare.deLa].scara",
-        :etaj=  "apartamente[incasare.deLa].etaj",
-        :nrAp=  "String(apartamente[incasare.deLa].nr)"
+        :apId=  "incasare.deLa"
       )
-      nuxt-link.deLa.nume(:to="`/apartament/${apartamente[incasare.deLa]._id}`") {{ apartamente[incasare.deLa].proprietar }}
+
       .incasare__detalii(slot="right")
         bani(:valoare="incasare.suma")
         date-time(

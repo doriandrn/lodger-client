@@ -141,14 +141,6 @@ export default {
     +desktop()
       margin-top 21px
 
-  &__nr
-    font-family: config.typography.fams.headings
-    font-size 16px
-    letter-spacing 2px
-    // color: config.typography.palette.headings
-    // color yellow
-    color #717110
-
   &__usa
     // background: config.palette.bgs.body
     // background #504b4b

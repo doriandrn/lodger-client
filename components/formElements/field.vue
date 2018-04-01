@@ -7,7 +7,7 @@
   :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null"
 )
   labl.field__label(
-    v-if=         "!hideLabel"
+    v-show=         "!hideLabel"
     :required=    "required"
     :for=         "id"
   ) {{ label }}

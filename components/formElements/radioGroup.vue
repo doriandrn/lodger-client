@@ -64,7 +64,7 @@ export default {
 input[type="radio"]
   &+label
     font-size 0
-    height 12px
+    height 24px
     cursor pointer
 
     > span
@@ -76,8 +76,10 @@ input[type="radio"]
   &:checked
     &+label
       > span
-        background-image: embedurl('~static/icons/ui/circle.svg', 'utf8')
+        background-image: embedurl('~static/icons/ui/stop-circle.svg', 'utf8')
         background-size contain
+        background-repeat no-repeat
+        border-color transparent
   &:hover
     cursor pointer
 

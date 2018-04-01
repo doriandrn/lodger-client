@@ -34,8 +34,9 @@ export default {
     },
     init: {
       title: 'Inițializare',
+      servicii: 'Servicii',
+      furnizori: 'Furnizori',
       structura: 'Structură',
-      serviciiFurnizori: 'Servicii & Furnizori',
       financiar: 'Date financiare',
       balanta: 'Balanța casei la data preluării',
       dataDinLuna: 'Data din lună la care se generează listele de plată'

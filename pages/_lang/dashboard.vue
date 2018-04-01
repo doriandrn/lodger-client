@@ -12,6 +12,8 @@ sction#dash
       :options=   "[0, 1, 2, 3]"
     )
 
+    h1 {{ $t(initTitle) }}
+
     servicii(
       v-if=       "!initprgrs"
       @input=           "toggleServiciu",
@@ -248,7 +250,8 @@ export default {
     initTitle () {
       const pfix = 'asociatie.init'
       switch (this.initprgrs) {
-        case 1: return `${pfix}.serviciiFurnizori`
+        case 0: return `${pfix}.servicii`
+        case 1: return `${pfix}.furnizori`
         case 2: return `${pfix}.structura`
         case 3: return `${pfix}.financiar`
       }
@@ -450,7 +453,7 @@ export default {
 .bloc
   display flex
   flex-flow row wrap
-  margin auto
+  margin auto auto 0
   flex 1 1 100%
   align-items center
   justify-content center
@@ -515,7 +518,7 @@ export default {
       display flex
 
       > .nume
-        color: config.typography.palette.meta
+        // color: config.typography.palette.meta
         transition color .1s ease
         margin-bottom 8px
 
@@ -619,10 +622,21 @@ export default {
   flex-flow row wrap
   flex 1 1 100%
 
+  h1
+    flex: 1 1 100%
+    text-align: center
+    width: auto
+    height: auto
+    display: inline-flex
+    margin: 0 auto
+
   > *:not(.field)
     width 100%
     align-items center
     justify-content center
+
+    &:not(h1)
+      margin-bottom auto
 
   .field[data-type="radios"]
     padding 0
@@ -635,7 +649,6 @@ export default {
     +desktop()
       position absolute
       top 0
-      left 8px
 
     &:before
       margin 0 auto 12px

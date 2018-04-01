@@ -182,11 +182,17 @@ form
   display flex
   flex-flow row wrap
   justify-content center
-  margin: -(config.spacings.inBoxes)
+  margin: -(config.spacings.inBoxes/2)
+
+  +desktop()
+    margin: -(config.spacings.inBoxes)
 
   > *
     flex 1 1 300px
-    margin: config.spacings.inBoxes
+    margin: (config.spacings.inBoxes/2)
+
+    +desktop()
+      margin: config.spacings.inBoxes
 
   label
     margin-bottom: (baseSpacingUnit*1.5)

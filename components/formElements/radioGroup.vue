@@ -1,13 +1,15 @@
 <template lang="pug">
-span()
+div(
+  role= "radiogroup"
+  :aria-labelledby= "id"
+)
   labl(
     v-if=   "label"
     :label= "label"
+    :for=   "id"
   ) {{ label }}
   span.radios(
     :id=              "id"
-    role=             "radiogroup"
-    :aria-labelledby= "id"
   )
     span.input__radio(
       v-for=          "option, index in options"
@@ -57,18 +59,39 @@ export default {
 </script>
 
 <style lang="stylus">
+@require '~styles/config'
+
 input[type="radio"]
   &+label
+    font-size 0
+    height 12px
+    cursor pointer
+
     > span
+      size 12px
+      display block
       border-radius 50%
+      border: 1px solid config.typography.palette.meta
+
   &:checked
     &+label
       > span
         background-image: embedurl('~static/icons/ui/circle.svg', 'utf8')
+        background-size contain
   &:hover
     cursor pointer
 
 .input__radio
   display flex
   flex-flow column nowrap
+  margin 4px
+
+  > input[type="radio"]
+    display none
+
+.radios
+  display flex
+  flex-flow row nowrap
+  align-items center
+  margin -4px
 </style>

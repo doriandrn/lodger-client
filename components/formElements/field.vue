@@ -307,6 +307,7 @@ export default {
     &[data-size="small"]
       input
         max-width 130px
+        min-width 96px
         padding-right 16px
         transition all .15s ease-in-out
 

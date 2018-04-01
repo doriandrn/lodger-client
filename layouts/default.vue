@@ -1,5 +1,5 @@
 <template lang="pug">
-#layout(:class="{modalOpen}")
+#layout
   headr
     logo
     
@@ -42,7 +42,8 @@
   main
     nuxt
     modal(
-      :title= "modalContent && modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
+      v-show=  "modalOpen"
+      :title=   "modalContent && modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
     )
       frm#main(
         v-if=       "modalContent && modalContent !== 'prompt'",
@@ -50,7 +51,7 @@
         :type=      "modalContent.split('.')[1]"
       )
 
-      prompt(v-else)
+      prompt(v-else-if= "modalContent === 'prompt'")
       //- cale(slot="footer")
 
   footr
@@ -213,7 +214,7 @@ footerHeight = 24px
       display none
       margin-left 0
 
-      +above(l)
+      +above(xl)
         position relative
         display flex
         flex-flow row wrap

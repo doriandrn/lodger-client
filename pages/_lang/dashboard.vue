@@ -84,6 +84,7 @@ sction#dash
                   ) {{ $t('apartament.new.title') }}
 
       .blocuri__tabs(slot="pagination")
+        .blocuri__list
         buton.bloc__add(
           v-if=   "initprgrs === 2",
           icon=   "plus-circle",
@@ -93,7 +94,6 @@ sction#dash
 
           icon-only
         ) {{ $t('bloc.new.title') }}
-        .blocuri__list
 
       buton.urm.blocuri__nav(
         slot=     "button-next"
@@ -335,16 +335,22 @@ export default {
 
   &__nav
     position absolute
-    z-index 11
-    top 50%
-    transform translateY(-50%)
+    z-index 10
+    top 0
+    bottom 0
+    // transform translateY(-50%)
+    width 15%
     font-size 0
     transition all .15s ease-in-out, opacity 1.5s ease-out
+
+    +desktop()
+      visibility visible
 
     &:after
       background-color: config.typography.palette.ui !important
       margin 0
       mask-size 32px
+      mask-position 50% 50%
       size 32px
 
     &:hover
@@ -352,13 +358,14 @@ export default {
         background-color: config.palette.primary !important
 
     &.urm
-      right 20px
+      right 0
 
     &.ant
-      left 20px
+      left 0
 
     &.disabled
       opacity 0
+      cursor default
 
   &__tabs
     position fixed
@@ -369,6 +376,7 @@ export default {
     bottom 0 !important
     flex-flow row nowrap
     justify-content center
+    background: config.palette.bgs.body
 
     .bloc
       &__actions
@@ -384,6 +392,7 @@ export default {
       display flex
       flex-flow row nowrap
       size auto
+      outline 0
       opacity 100
       border-radius 0
       background transparent
@@ -392,6 +401,9 @@ export default {
       margin 0 !important
       transition all .1s ease-in-out
       text-transform capitalize
+
+      .nume 
+        margin-right 24px
 
       &.activ
         border-color: config.palette.primary
@@ -613,21 +625,24 @@ export default {
     justify-content center
 
   .field[data-type="radios"]
-    position absolute
-    top 0
-    left 8px
     padding 0
     z-index 21
     text-align center
+    position fixed
+    top 60px
+    left 16px
+
+    +desktop()
+      position absolute
+      top 0
+      left 8px
 
     &:before
       margin 0 auto 12px
       background-color: config.typography.palette.ui
-  
-  .input__radio
-    padding 8px
-    > label
-      display none
+
+    .radios
+      flex-direction column
 
 ul.activitate
   list-style-type none

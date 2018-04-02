@@ -33,7 +33,7 @@ sction#dash
         buton(
           icon= "plus-circle",
           @click="openModal('furnizor.new')"
-        ) {{ $t('furnizor.adauga') }}
+        ) {{ $t('furnizor.new.title') }}
 
     swiper.blocuri(
       v-else-if=  "initprgrs === 2 && idsBlocuri.length"
@@ -319,11 +319,13 @@ export default {
 
 .blocuri
   fullflex()
+  flex-grow 0
   flex-flow row nowrap
-  overflow hidden
+  overflow visible
   list-style-type none
   padding 0 0 8vh
   position relative
+  margin-bottom 0 !important
   // margin: -(config.spacings.inBoxes)
 
   &:before
@@ -337,7 +339,7 @@ export default {
     z-index 4
 
   &__nav
-    position absolute
+    position fixed
     z-index 10
     top 0
     bottom 0
@@ -373,7 +375,7 @@ export default {
   &__tabs
     position fixed
     // position absolute
-    z-index 11
+    z-index 11 !important
     display flex
     width 100%
     bottom 0 !important
@@ -406,11 +408,14 @@ export default {
       text-transform capitalize
 
       .nume 
+        color: config.typography.palette.meta
         margin-right 24px
 
       &.activ
         border-color: config.palette.primary
-        color: config.typography.palette.headings
+
+        .nume
+          color: config.typography.palette.headings
 
       &:not(.activ)
         .bloc__actions
@@ -612,6 +617,9 @@ export default {
 .furnizori
   list-style-type none
   padding 0
+  display flex
+  max-width 630px
+  margin 0 auto
 
   > li
     padding 8px 32px
@@ -619,16 +627,18 @@ export default {
 
 #init
   display flex
-  flex-flow row wrap
+  flex-flow column nowrap
   flex 1 1 100%
 
   h1
-    flex: 1 1 100%
+    // flex: 1 1 100%
+    flex 0 0 auto
+    user-select none
     text-align: center
     width: auto
     height: auto
     display: inline-flex
-    margin: 0 auto
+    margin: auto
 
   > *:not(.field)
     width 100%
@@ -651,7 +661,7 @@ export default {
       top 0
 
     &:before
-      margin 0 auto 12px
+      margin 0 auto 20px
       background-color: config.typography.palette.ui
 
     .radios

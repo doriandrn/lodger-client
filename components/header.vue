@@ -46,7 +46,7 @@ header
   .logo
     margin-bottom 0
     white-space nowrap
-    margin-right: config.spacings.betweenBoxes
+    margin-right: (config.spacings.betweenBoxes/2)
     font-weight 700
     font-size 0
     top 1px

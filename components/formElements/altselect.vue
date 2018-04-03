@@ -9,6 +9,7 @@ ul.altselect(
     :data-value= "typeof options === 'object' ? option : key",
     @click=     "value !== key ? $emit('input', $event.target.dataset.value) : debug($event.target)"
   ) {{ option }}
+  slot
 </template>
 
 <script>

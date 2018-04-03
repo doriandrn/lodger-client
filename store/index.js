@@ -85,17 +85,6 @@ Object.assign(getters, {
 
 Object.assign(_state, { active })
 
-// Object.assign(_state, {
-//   'asociatie/$activa': Object.freeze(asociatieActiva)
-// })
-
-// const initAsoc = async (db, { commit, getters }, { id, _$ }) => {
-//   if (!id) throw eroare('Cerere de initializare asociatie fara id. Nepermis')
-
-//   asociatieActiva = _$ || await db.asociatii.findOne({ name: id }).exec()
-  
-//   debug('Asociatie initializata, ', id, asociatieActiva)
-// }
 
 // de exportat 
 const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
@@ -139,18 +128,6 @@ const DBMethods = db => async ({ type, payload }) => {
       }
       break
   }
-}
-
-
-const activSingle = (db) => async({ type, payload }) => {
-  if (String(type).indexOf('SET_ACTIV') < 0 || !payload) return
-  const { what, mutation } = spleet(type)
-  const plrl = defs.get(what)
-  const item = await db[plrl].findOne({ _id: payload }).exec()
-  if (item) {
-    active[what] = item
-  }
-  debug('GOT', what, item)
 }
 
 const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload }) => {
@@ -227,6 +204,7 @@ function rxdb () {
             if (k === 'servicii') predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
           }
           // if (pre) pre(k, items)
+          debug('XXSUBS', subs)
           store.commit(`set_${k}`, sanitizeDBItems(items))
           
           if (k === 'asociatii') { 
@@ -238,93 +216,13 @@ function rxdb () {
       })
     }
     
-    Object.keys(notificari).forEach(type => notificari[type]({ dispatch }))
+    Object.keys(notificari).forEach(type => () => notificari[type]({ dispatch }))
     subscribe(ldgSchema)
-    // if (key !== 'asociatii' || getters['asociatie/activa'] !== '') return
-    // dispatch('asociatie/schimba', items[0])
-    // Object.keys(ldgSchema).filter(k => k.indexOf('$') === 0)
-
-    // let asociatieId = store.getters['asociatie/activa']
-    // let asocAdaugatTFlag = false
-
-    // if (asociatieId) await initAsoc(db, store, { id: asociatieId })
 
     store.subscribe(unsubscribeDBsubscribers(subs))
     store.subscribe(addDelete(db, { commit, getters, dispatch } ))
     store.subscribe(schimbaAsociatie(subs, subscribe, db))
     store.subscribe(DBMethods(db))
-    store.subscribe(activSingle(db))
-
-
-    // store.subscribe(async ({ type, payload }) => {
-
-      // const mutation = (t => {
-      //   if (t.indexOf(['SCHIMBA_ACTIVA']) > -1) return 'schimba'
-      //   if (t.indexOf('ADAUGA') > -1) return 'adauga'
-      //   if (t.indexOf('STERGE') > -1) return 'sterge'
-      //   return type.split('/')[1]
-      // })(type)
-
-      // global mutations, applied to all collections
-    //   switch (mutation) {
-    //     case 'schimba':
-    //       await initAsoc(db, store, payload)
-    //       debug('Asociatie initializata', payload, asociatieActiva)
-    //       return
-
-    //     case 'adauga':
-    //       const action = payload._id ? 'upsert' : 'insert'
-    //       const newItem = await col[action]({ ...payload })
-    //       if (what) store.commit(`${what}/set_ultimul_adaugat`, what === 'asociatie' ? newItem.name : newItem._id)
-    //       if (what === 'incasare') {
-    //         const incasData = { id: newItem._id, suma: newItem.suma }
-    //         store.commit('asociatie/incaseaza', incasData)
-    //         store.commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
-    //       }
-    //       // if (what === 'asociatie') store.dispatch('asociatie/schimba', newItem.name)
-    //       if (what === 'asociatie') asocAdaugatTFlag = newItem.name
-    //       debug('Adaugat ', what, newItem)
-    //       return
-
-    //     case 'sterge':
-    //       const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : { _id: payload }).exec()
-    //       if (what === 'asociatie') {
-    //         const { asociatii } = store.getters
-    //         asocAdaugatTFlag = asociatii.length > 1 ? asociatii.splice(asociatii.indexOf( payload.id ), 1)[0] : null
-    //         debug('LALLALALALLA', asocAdaugatTFlag)
-    //       }
-    //       if (!tobedel) throw eroare(`${what}.notFoundToBeDeleted`)
-            
-    //         return
-    //       }
-    //       await tobedel.remove()
-    //       debug('Sters ', col)
-    //       return
-    //   }
-
-   
-    // })
-
-    // subs.push(db.asociatii.find().$.subscribe(async items => {
-    //   store.commit(`set_asociatii`, sanitizeDBItems(items))
-    //   if (!asociatieId) {
-    //     const asoc0 = items[0]
-    //     asociatieId = asoc0 && asoc0.name ? asoc0.name : null
-    //     debug('XXXXX', asociatieId)
-    //     if (asociatieId) store.dispatch('asociatie/schimba', { id: asociatieId, '_$': asoc0  })
-    //   }
-    //   if (asocAdaugatTFlag) {
-    //     store.dispatch('asociatie/schimba', { id: asocAdaugatTFlag })
-    //     asocAdaugatTFlag = false
-    //   }
-    // }))
-
-    // subs.push(db.servicii.find().$.subscribe(async servicii => {
-    //   if (!servicii.length) {
-    //     predefinite.forEach(async denumire => { await db.servicii.insert({ denumire }) })
-    //   }
-    //   store.commit('set_servicii', sanitizeDBItems(servicii))
-    // }))
   }
 }
 

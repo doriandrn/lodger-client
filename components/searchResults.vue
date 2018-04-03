@@ -94,7 +94,8 @@ spacings = 16px
         .adresa__main
           display none
 
-
+    .adresa__owner
+      flex 0 0 20px
   &__heading
     padding: 0 spacings
     flex 1 0 100%

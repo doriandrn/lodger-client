@@ -52,6 +52,8 @@
       )
 
       prompt(v-else-if= "modalContent === 'prompt'")
+
+      p(v-else) loading
       //- cale(slot="footer")
 
   footr
@@ -122,6 +124,7 @@ export default {
 
         campuri = campuri.filter(camp => !camp.notInAddForm)
         campuri.forEach(camp => {
+          console.log('B', camp)
           if (path[1] === 'edit' && typeof modalData === 'object') {
             const iId = path[0] === 'serviciu' ? modalData.denumire : modalData._id
             switch (path[0]) {
@@ -133,7 +136,9 @@ export default {
                 camp.value = apartamente[iId][camp.id]
                 break
             }
-          } else if (!camp.value) camp.value = camp.default || null
+          } 
+          else if (path[1] === 'new') camp.value = camp.default || null
+          console.log('C', camp)
 
           // if (camp.label.indexOf(path[0]) < 0) camp.label = `${path[0]}.${camp.label}`
 

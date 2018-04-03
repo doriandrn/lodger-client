@@ -51,9 +51,9 @@ export default {
   },
   bloc: {
     none: {
-      heading: 'Asociație neinițializată',
-      CTA: 'Începe prin a-ți inițializa și configura asociația pe care o administrezi.',
-      actions: ['Inițializează manual', 'Importă datele din altă aplicație']
+      heading: 'Definește structura imobilelor',
+      CTA: 'Următorul pas constă în definirea structurii apartamentelor',
+      actions: ['Adaugă un bloc', 'Importă datele din altă aplicație']
     },
     new: {
       title: 'Adaugă un bloc/o clădire nou(ă)',

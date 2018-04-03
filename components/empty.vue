@@ -1,8 +1,9 @@
 <template lang="pug">
 .empty
-  h2.empty__heading(v-if="size === 'large'") {{ title }}
-  h3.empty__heading(v-else) {{ title }}
-  p {{ CTA }}
+  .empty__heading(v-if="title")
+    h2(v-if="size === 'large'") {{ title }}
+    h3(v-else) {{ title }}
+  p(v-if="CTA") {{ CTA }}
   .actions
     buton(
       v-for=  "traducere, metoda, index in actions",
@@ -21,11 +22,11 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'This is an empty state!'
+      default: null
     },
     CTA: {
       type: String,
-      default: 'Get started doing nothing'
+      default: null
     },
     actions: {
       type: Object,

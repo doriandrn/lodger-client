@@ -21,7 +21,7 @@ ul.field.scari(v-else)
     field(
       :id=      "`id-${i}`",
       type=     "text"
-      :label=   "$t('bloc.new.name')",
+      :label=   "$t('scara.new.name')",
       v-model=  "scari[i].id"
       @input=   "$emit('input', scari)"
     )
@@ -36,7 +36,7 @@ export default {
       id: '1',
       etaje: 4
     })
-    console.log('VAL', value)
+
     if (value && value.length) {
       value.forEach(scara => {
         let x = {}

@@ -124,10 +124,9 @@ sction#dash
 
     empty(
       v-else-if=  "initprgrs === 2 && !idsBlocuri.length"
-      :title=     "$t('bloc.none.heading')",
       :CTA=       "$t('bloc.none.CTA')",
-      :actions=   "{ startInit: $t('bloc.none.actions[0]'), importaDate: $t('bloc.none.actions[1]') }"
-      @action=    "$event === 'startInit' ? initprgrs = 1 : null"
+      :actions=   "{ blocNew: $t('bloc.none.actions[0]') }"
+      @action=    "openModal('bloc.new')"
     )
 
   //- widget(
@@ -219,7 +218,7 @@ export default {
         centeredSlides: true,
         longSwipes: false,
         slidesPerView: 'auto',
-        spaceBetween: 32,
+        spaceBetween: 64,
         loop: false,
         keyboard: true,
         navigation: {

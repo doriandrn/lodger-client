@@ -62,6 +62,7 @@ export default {
     }
   },
   data () {
+    console.log('DCALLED')
     let dynamicFormData = {}
     const { campuri, $for } = this.formData
     if (!campuri) return dynamicFormData

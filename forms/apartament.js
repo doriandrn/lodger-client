@@ -2,7 +2,19 @@ export const campuri = [
   {
     id: 'nr',
     type: 'number',
-    default: 1,
+    default: getters => {
+      const bloc = getters['modal/data'].bloc
+      console.log('blc', bloc)
+      if (!bloc) return 1
+      const ultimulApAdaugat = getters.apartamente[getters['apartament/ultim']]
+      console.log('UA', ultimulApAdaugat)
+      if (!ultimulApAdaugat || bloc !== ultimulApAdaugat.bloc) {
+        const apsBloc = Object.values(getters.apartamente).filter(ap => ap.bloc === bloc)
+        if (!apsBloc || !apsBloc.length) return 1
+        return Number(apsBloc.sort((a, b) => a.nr > b.nr).reverse()[0].nr) + 1
+      }
+      return Number(ultimulApAdaugat.nr) + 1
+    },
     required: true
   },
   {
@@ -14,7 +26,7 @@ export const campuri = [
   {
     id: 'locatari',
     type: 'number',
-    default: 0,
+    default: 2,
     min: 0,
     max: 10,
   },
@@ -37,6 +49,7 @@ export const campuri = [
   },
   {
     id: 'scara',
+    type: 'number',
     required: true,
     notInForm: true,
     slot: 'footer'

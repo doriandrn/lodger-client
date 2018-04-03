@@ -7,9 +7,9 @@
   :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null"
 )
   labl.field__label(
-    v-show=         "!hideLabel"
-    :required=    "required"
-    :for=         "id"
+    v-show=         "!hideLabel || type === 'scari' && scariCount > 1"
+    :required=      "required"
+    :for=           "id"
   ) {{ label }}
 
   inpt(
@@ -63,6 +63,7 @@
     :id=          "id"
     :arrow=       "arrow"
   )
+    li(v-if="id === 'asociatieSwitch'") {{ $t('asociatie.new.title') }}
   scari(
     v-else-if=    "type === 'scari' && typeof scariCount !== 'undefined'",
     :scariCount=  "scariCount" 

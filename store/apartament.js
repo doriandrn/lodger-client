@@ -2,8 +2,6 @@ export const mutations = {
   incaseaza: (state, data) => {}
 }
 
-export const actions = {}
-
 export const getters = {
   data: (state, getters, rootGetters) => id => rootGetters.apartamente[id] || {},
   localizeaza: (state, getters, rootGetters) => {

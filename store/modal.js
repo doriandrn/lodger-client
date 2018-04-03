@@ -12,7 +12,7 @@ export const getters = {
 
 export const mutations = {
   OPEN: (state, content) => {
-    state.content = content
+    if (content) state.content = content
     state.open = true
   },
   DATA: (state, data) => {
@@ -27,11 +27,18 @@ export const mutations = {
 
 export const actions = {
   open: ({ commit }, content) => {
-    if (typeof content === 'string') commit('OPEN', content)
-    if (typeof content === 'object') {
-      commit('OPEN', content.id)
-      commit('DATA', content.data)
+    console.log('CC', content)
+    switch (typeof content) {
+      case 'object':
+        commit('DATA', content.data)
+        commit('OPEN', content.id)
+        return
+
+      case 'string':
+        commit('DATA', content)
+        break
     }
+    commit('OPEN', content)
   },
   close: ({ commit, dispatch, getters, rootGetters }) => {
     const prompt = rootGetters['modal/content'] === 'prompt'

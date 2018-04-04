@@ -15,7 +15,7 @@ sction#dash
     h1 {{ $t(initTitle) }}
 
     servicii(
-      v-if=       "!initprgrs"
+      v-if=             "!initprgrs"
       @input=           "toggleServiciu",
       @stergeServiciu=  "stergeServiciu",
       @modificaServiciu="debug($event); openModal({ id: 'serviciu.edit', data: $event })"
@@ -64,13 +64,13 @@ sction#dash
         //-     dangerous
         //-   ) {{ $t('bloc.delete') }}
         ol.scari
-          li(v-for="scara in bloc.scari")
+          li(v-for="scara, iScara in bloc.scari")
             label.nume Scara {{ scara.id }}
             .scara
               ol.etaje
                 li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
                   buton(
-                    v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: scara.id, etaj: i })",
+                    v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
                     :key=   "ap._id"
                     :class= "{ ultim: ap._id === ultimulApAdaugat}"
                     @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
@@ -80,7 +80,7 @@ sction#dash
                   buton.adauga(
                     styl=   "unstyled"
                     tooltip
-                    @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: scara.id, etaj: i } })",
+                    @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: Number(iScara), etaj: i } })",
                     icon=   "plus-circle"
                     icon-only
                   ) {{ $t('apartament.new.title') }}

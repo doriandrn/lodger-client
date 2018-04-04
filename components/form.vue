@@ -160,7 +160,7 @@ export default {
         if (what === 'la') value = Date.now()
         if (value === null || value === 'undefined') return
 
-        manipulatedData[what] = what === 'scara' ? String(value) : value
+        manipulatedData[what] = value
       })
       debug('Final form data, submitted: ', manipulatedData)
       this[confirm](manipulatedData)

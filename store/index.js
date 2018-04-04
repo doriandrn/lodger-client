@@ -191,6 +191,9 @@ function rxdb () {
       return
     }
 
+    let subscribers = []
+    const subscribedTo = item => subscribers.indexOf(item._singular) > -1
+
     // inscrie recursiv to
     const subscribe = (o) => {
       const keys = Object.keys(o).filter(k => k.indexOf('$') === 0)
@@ -205,12 +208,19 @@ function rxdb () {
           }
           // if (pre) pre(k, items)
           debug('XXSUBS', subs)
+          debug('XXSUBScribers', subscribers)
           store.commit(`set_${k}`, sanitizeDBItems(items))
           
           if (k === 'asociatii') { 
-            if (!asociatieActiva) dispatch('asociatie/schimba', items[0])
+            if (!asociatieActiva) {
+              subscribers = []
+              dispatch('asociatie/schimba', items[0])
+            }
           } else {
-            subscribe(o[key])
+            if (!subscribedTo(o[key])) {
+              subscribers.push(o[key]._singular)
+              subscribe(o[key])
+            }
           }
         }))
       })

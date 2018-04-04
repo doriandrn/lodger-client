@@ -7,7 +7,7 @@ export const getters = {
   localizeaza: (state, getters, rootGetters) => {
     if (!rootGetters['apartamente']) return () => {}
     return ({ etaj, scara, bloc }) => {
-      return rootGetters.apartamente.filter(ap => ap.bloc === bloc && String(ap.scara) === String(scara) && ap.etaj === etaj).sort((a, b) => a.nr > b.nr)
+      return rootGetters.apartamente.filter(ap => ap.bloc === bloc && ap.scara === scara && ap.etaj === etaj).sort((a, b) => a.nr > b.nr)
     }
   }
 }

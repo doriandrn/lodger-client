@@ -102,6 +102,8 @@ export default {
       .actions
         position fixed
         bottom -60px
+        height 0
+        margin 0
         // margin: config.spacings.inBoxes -20px -20px
         // padding: config.spacings.inBoxes config.spacings.betweenBoxes
         // background: config.palette.borders

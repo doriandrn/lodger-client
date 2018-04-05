@@ -139,5 +139,10 @@ export default {
     }
   },
   search: 'Caută',
-  sum: 'Suma'
+  sum: 'Suma',
+  settings: 'Setări',
+  erori: {
+    '404': 'Această resursă este inaccesibilă',
+    'inContinuare': 'Alege ce dorești să faci în continuare'
+  }
 }

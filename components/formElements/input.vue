@@ -12,6 +12,7 @@ input(
   :min=             "type === 'number' ? min : null"
   :max=             "type === 'number' ? max : null"
   :step=            "type === 'number' ? step : null"
+  v-on-clickaway=   "clickAway"
   @keyup.down=      "$emit('keyDown')"
   @keyup.up=        "$emit('keyUp')"
   @keydown.enter=     "debug('ENTER'); $emit('keyEnter', $event)"
@@ -20,6 +21,7 @@ input(
 
 <script>
 import { get_bigrams, string_similarity } from 'helpers/search'
+import { mixin as clickaway } from 'vue-clickaway'
 
 export default {
   directives: {
@@ -30,6 +32,7 @@ export default {
       }
     }
   },
+  mixins: [ clickaway ],
   props: {
     value: {
       type: [Boolean, String, Number, Object],
@@ -99,6 +102,9 @@ export default {
     console.log(this.value, this.selected)
   },
   methods: {
+    clickAway () {
+      this.$emit('clickAway')
+    },
     handleInput (e) {
       let { value } = e.target
       if (this.type !== 'search') {

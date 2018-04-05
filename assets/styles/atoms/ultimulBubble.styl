@@ -1,9 +1,21 @@
+bubblish()
+  content ''
+  bubble()
+
 .ultima
 .ultimul
   > .nume
+  > .ap__nr
     display flex
-    flex-flow row nowrap
     
     &:after
-      content ''
-      bubble()
+      bubblish()
+
+  > .nume
+    flex-flow row nowrap
+
+  > .ap__nr
+    flex-flow column nowrap
+
+    &:after
+      margin 0 auto

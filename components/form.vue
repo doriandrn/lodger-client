@@ -81,7 +81,7 @@ export default {
 
     ids.forEach(fid => {
       const test = campuri.filter(field => field.id === fid)[0]
-      dynamicFormData[fid] = typeof test.value === 'function' ? test.value(this.$store.getters) : test.value || null
+      dynamicFormData[fid] = typeof test.value === 'function' ? test.value(this.$store.getters) : test.value
     })
 
     // passed data in modal

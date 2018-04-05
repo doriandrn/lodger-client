@@ -68,6 +68,7 @@ module.exports = {
         UI: resolve('components/UI'),
         widgets: resolve('components/widgets'),
         form: resolve('components/formElements'),
+        struct: resolve('components/struct'),
         forms: resolve('forms'),
         lodger: resolve('lodger.js'),
         db: resolve('db'),

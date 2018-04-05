@@ -27,8 +27,10 @@ sction#dash
 
     ul.furnizori(v-else-if= "initprgrs === 1")
       li(
-        v-for="furnizor in furnizori"
-      ) {{ furnizor.nume }}
+        v-for=      "furnizor, furnizorId in furnizori"
+        :class=     "{ ultimul: furnizorId === ultimulFurnizorAdaugat }"
+      )
+        span.nume {{ furnizor.nume }}
       li
         buton(
           icon= "plus-circle",
@@ -46,6 +48,10 @@ sction#dash
         :class=     "{ ultimul: blocId === ultimulBlocAdaugat }"
         :data-nume= "bloc.nume"
       )
+        bloc(
+          :id=  "blocId"
+          modificabil
+        )
 
         //- .bloc__actiuni
         //-   buton(
@@ -63,27 +69,7 @@ sction#dash
         //-     tooltip
         //-     dangerous
         //-   ) {{ $t('bloc.delete') }}
-        ol.scari
-          li(v-for="scara, iScara in bloc.scari")
-            label.nume Scara {{ scara.id }}
-            .scara
-              ol.etaje
-                li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-                  buton(
-                    v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
-                    :key=   "ap._id"
-                    :class= "{ ultim: ap._id === ultimulApAdaugat}"
-                    @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
-                    tooltip
-                  ) {{ ap.proprietar }}
-                    em.ap__nr {{ ap.nr }}
-                  buton.adauga(
-                    styl=   "unstyled"
-                    tooltip
-                    @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: Number(iScara), etaj: i } })",
-                    icon=   "plus-circle"
-                    icon-only
-                  ) {{ $t('apartament.new.title') }}
+        
 
       .blocuri__tabs(slot="pagination")
         .blocuri__list
@@ -176,6 +162,7 @@ sction#dash
 import sction from '~components/section'
 import widget from '~components/widget'
 import buton from 'form/button'
+import bloc from 'struct/bloc'
 import frm from '~components/form.vue'
 import empty from '~components/empty'
 import dateTime from '~components/dateTime'
@@ -209,7 +196,6 @@ export default {
               <label class="nume">${activ.nume}</label>
               <span class="bloc__actions">
                 <button onclick="$nuxt.$store.dispatch('modal/open', { id: 'bloc.edit', data: { _id: '${activ._id}' } })" aria-label="${ this.$t('bloc.edit.title') }" data-tip="true" data-icon="edit" data-size="medium" data-styl="unstyled" class="iconOnly">${ this.$t('bloc.edit') }</button>
-                <button onclick="$nuxt.$store.dispatch('bloc/sterge', '${activ._id}')" aria-label="${ this.$t('bloc.delete') }" data-tip="true" data-icon="trash" data-size="medium" data-styl="unstyled" class="iconOnly">${ this.$t('bloc.delete') }</button>
               </span>
             </span>`
           },
@@ -230,6 +216,7 @@ export default {
     }
   },
   components: {
+    bloc,
     sction,
     adresa,
     split,
@@ -269,12 +256,11 @@ export default {
       idsAsociatii: 'asociatie/ids',
       idsBlocuri: 'bloc/ids',
       apartamente: 'apartamente',
-      apartamenteEtaj: 'apartament/localizeaza',
       activaId: 'asociatie/activa',
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
-      ultimulApAdaugat: 'apartament/ultim',
       ultimulBlocAdaugat: 'bloc/ultim',
+      ultimulFurnizorAdaugat: 'furnizor/ultim',
       servicii: 'servicii',
       furnizori: 'furnizori',
       serviciiAsociatie: 'asociatie/servicii'
@@ -577,7 +563,7 @@ export default {
 
           &:hover
             background white !important
-            color: config.typography.palette.headings
+            color: config.typography.palette.headings !important
 
       &.ultim
         border-color: config.palette.tertiary

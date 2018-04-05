@@ -207,8 +207,8 @@ function rxdb () {
             if (k === 'servicii') predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
           }
           // if (pre) pre(k, items)
-          debug('XXSUBS', subs)
-          debug('XXSUBScribers', subscribers)
+          // debug('XXSUBS', subs)
+          // debug('XXSUBScribers', subscribers)
           store.commit(`set_${k}`, sanitizeDBItems(items))
           
           if (k === 'asociatii') { 

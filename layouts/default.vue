@@ -38,6 +38,13 @@
       :placeholder=  "$t('search')"
       hide-label
     )
+
+    dropdown(
+      slot=         "right",
+      icon=         "settings"
+      :toggleText=   "$t('settings')"
+    )
+      nuxt-link(to="/setari#asociatie") {{ $t('defaults.asociatie') }}
   
   main
     nuxt
@@ -79,6 +86,7 @@ import bani from '~components/bani'
 import field from 'form/field'
 import buton from 'form/button'
 import toasts from '~components/toasts'
+import dropdown from '~components/dropdown'
 
 import { mapGetters, mapActions } from 'vuex'
 import { version, name, author } from '../package.json'
@@ -190,7 +198,8 @@ export default {
     prompt,
     field,
     bani,
-    toasts
+    toasts,
+    dropdown
   }
 }
 </script>
@@ -296,8 +305,7 @@ footerHeight = 24px
     > section
       fullflex()
       > .inner
-        fullflex()
-        justify-content center
+        fullflex(1)
   
   > footer
     position fixed

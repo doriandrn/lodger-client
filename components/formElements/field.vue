@@ -242,12 +242,12 @@ export default {
   },
   methods: {
     selecteaza (e) {
-      const { results, selected, debug, type } = this
-      debug('SELECTEZ')
+      const { results, indexRezultatSelectat, debug, type } = this
       if (type !== 'search') return
       e.preventDefault()
+      debug('SELECTEZ', results, indexRezultatSelectat)
       const { apartamente } = results
-      const { id, value } = apartamente[selected]
+      const { id, value } = apartamente[indexRezultatSelectat]
 
       const ap = value.split(' ')
       const bloc = ap[0]
@@ -260,11 +260,13 @@ export default {
       //   proprietar += ap[i] + (i === ap.length - 1 ? '' : ' ')
       // }
 
-      this.selectedResult = { ce: 'apartament', id, proprietar }
+      // this.selectedResult = { ce: 'apartament', id, proprietar }
       this.$emit('input', id)
       this.clearResults()
     },
     clearResults () {
+      if (this.type !== 'search') return
+      this.debug('CLEARRES')
       Object.keys(this.results).forEach(result => this.results[result] = [])
     }
   }

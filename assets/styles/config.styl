@@ -75,11 +75,15 @@ config = {
 
 config.palette.selectedItem = lighten(config.palette.tertiary, 95%)
 
-fullflex()
+fullflex(cntr=false)
   display flex
   flex 1 1 100%
   width 100%
   flex-flow column nowrap
+
+  if cntr
+    justify-content center
+    align-items center
 
 bubble()
   size 5px

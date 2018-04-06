@@ -83,6 +83,7 @@
     :value=           "value"
     :servicii=        "servicii"
   )
+  p(v-else-if=        "type === 'contactFields'") contactFields
     //- :alese=           "$emit('input')"
   p.field__message(v-if="message") {{ message }}
 
@@ -319,4 +320,7 @@ export default {
 
   &[data-type="bani"]
     flex-basis 120px
+
+  &[data-type="search"]
+    max-width 100%
 </style>

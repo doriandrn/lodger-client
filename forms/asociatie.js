@@ -20,6 +20,12 @@ export const campuri = [
     notInForm: true
   },
   {
+    id: 'utilizatori',
+    type: 'array',
+    ref: 'utilizatori',
+    notInForm: true
+  },
+  {
     id: 'servicii',
     type: 'array',
     ref: 'servicii',

@@ -34,10 +34,22 @@ export default {
     },
     init: {
       title: 'Inițializare',
-      servicii: 'Servicii',
-      furnizori: 'Furnizori',
-      structura: 'Structură',
-      financiar: 'Date financiare',
+      servicii: {
+        titlu: 'Servicii & contoare',
+        mesaj: 'Alege serviciile furnizate de asociație'
+      },
+      furnizori: {
+        titlu: 'Furnizori',
+        mesaj: 'Definește furnizorii pentru serviciile definite'
+      },
+      structura: {
+        titlu: 'Structură',
+        mesaj: 'Continuă cu definirea structurii blocurilor și apartamentelor'
+      },
+      financiar: {
+        titlu: 'Date financiare',
+        mesaj: 'Financiare'
+      },
       balanta: 'Balanța casei la data preluării',
       dataDinLuna: 'Data din lună la care se generează listele de plată'
     },
@@ -142,7 +154,15 @@ export default {
   sum: 'Suma',
   settings: 'Setări',
   erori: {
+    'Error': 'Ne pare rău, a apărut o eroare :(',
     '404': 'Această resursă este inaccesibilă',
     'inContinuare': 'Alege ce dorești să faci în continuare'
+  },
+  feedback: {
+    new: {
+      title: 'Feedback',
+      tip: 'Subiect',
+      mesaj: 'Mesaj'
+    }
   }
 }

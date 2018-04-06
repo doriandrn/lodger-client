@@ -28,6 +28,10 @@ const ldgSchema = {
     _singular: 'furnizor',
     _cheiCautare: ['nume']
   },
+  $utilizatori: {
+    _singular: 'utilizator',
+    _cheiCautare: ['username', 'emailPublic']
+  },
   notificari: ['error', 'warn', 'info', 'success']
 }
 

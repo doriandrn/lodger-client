@@ -12,7 +12,12 @@ sction#dash
       :options=   "[0, 1, 2, 3]"
     )
 
-    h1 {{ $t(initTitle) }}
+    h1 {{ $t( initMessage.titlu ) }}
+    p.intro {{ $t( initMessage.mesaj ) }}
+    buton(
+      v-if= "poateTreceLaUrmPas && initprgrs"
+      disabled
+    ) {{ $t('asociatie.new.confirmStruct') }}
 
     servicii(
       v-if=             "!initprgrs"
@@ -37,69 +42,11 @@ sction#dash
           @click="openModal('furnizor.new')"
         ) {{ $t('furnizor.new.title') }}
 
-    swiper.blocuri(
+    
+    blocuri(
       v-else-if=  "initprgrs === 2 && idsBlocuri.length"
-      ref=        "blocuriSwiper"
-      :options=   "swiperOpts"
+      :blocuri=   "blocuri"
     )
-      swiper-slide.bloc(
-        v-for=      "bloc, blocId in blocuri",
-        :key=       "blocId",
-        :class=     "{ ultimul: blocId === ultimulBlocAdaugat }"
-        :data-nume= "bloc.nume"
-      )
-        bloc(
-          :id=  "blocId"
-          modificabil
-        )
-
-        //- .bloc__actiuni
-        //-   buton(
-        //-     styl=   "unstyled"
-        //-     icon=   "edit"
-        //-     icon-only
-        //-     @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
-        //-     tooltip
-        //-   ) {{ $t('bloc.edit.title') }}
-        //-   buton(
-        //-     styl=     "unstyled"
-        //-     @click=   "stergeBloc(bloc._id)"
-        //-     icon=     "trash"
-        //-     icon-only
-        //-     tooltip
-        //-     dangerous
-        //-   ) {{ $t('bloc.delete') }}
-        
-
-      .blocuri__tabs(slot="pagination")
-        .blocuri__list
-        buton.bloc__add(
-          v-if=   "initprgrs === 2",
-          icon=   "plus-circle",
-          slot=   "right"
-          @click= "openModal('bloc.new')"
-          size=   "medium"
-
-          icon-only
-        ) {{ $t('bloc.new.title') }}
-
-      buton.urm.blocuri__nav(
-        slot=     "button-next"
-        arrow=    "right"
-        styl=     "unstyled",
-        rounded
-      ) {{ $t('bloc.urmator') }}
-      buton.ant.blocuri__nav(
-        slot=     "button-prev"
-        arrow=    "left"
-        styl=     "unstyled",
-        rounded
-      ) {{ $t('bloc.anterior') }}
-      
-      buton(
-        v-if= "toateEtajeleAuApartamente && initprgrs === 1"
-        disabled
-      ) {{ $t('asociatie.new.confirmStruct') }}
 
     frm(
       v-else-if=  "initprgrs === 3"
@@ -162,7 +109,7 @@ sction#dash
 import sction from '~components/section'
 import widget from '~components/widget'
 import buton from 'form/button'
-import bloc from 'struct/bloc'
+import blocuri from '~components/blocuri'
 import frm from '~components/form.vue'
 import empty from '~components/empty'
 import dateTime from '~components/dateTime'
@@ -183,40 +130,11 @@ export default {
     return {
       asociatieInitializata: true,
       toateEtajeleAuApartamente: false,
-      initprgrs: 0,
-      swiperOpts: {
-        slideActiveClass: 'activ',
-        pagination: {
-          el: '.blocuri__list',
-          clickable: true,
-          renderBullet: (i, cls) => {
-            const activ = this.blocuri[this.idsBlocuri[i]]
-            if (!activ) return
-            return `<span class="${cls}">
-              <label class="nume">${activ.nume}</label>
-              <span class="bloc__actions">
-                <button onclick="$nuxt.$store.dispatch('modal/open', { id: 'bloc.edit', data: { _id: '${activ._id}' } })" aria-label="${ this.$t('bloc.edit.title') }" data-tip="true" data-icon="edit" data-size="medium" data-styl="unstyled" class="iconOnly">${ this.$t('bloc.edit') }</button>
-              </span>
-            </span>`
-          },
-          bulletActiveClass: 'activ'
-        },
-        centeredSlides: true,
-        longSwipes: false,
-        slidesPerView: 'auto',
-        spaceBetween: 64,
-        loop: false,
-        keyboard: true,
-        navigation: {
-          nextEl: '.blocuri__nav.urm',
-          prevEl: '.blocuri__nav.ant',
-          disabledClass: 'disabled'
-        }
-      }
+      initprgrs: 0
     }
   },
   components: {
-    bloc,
+    blocuri,
     sction,
     adresa,
     split,
@@ -233,15 +151,22 @@ export default {
     typecheck
   },
   computed: {
-    initTitle () {
+    poateTreceLaUrmPas () {
+      return true
+    },
+    initMessage () {
       const pfix = 'asociatie.init'
+      let str = ''
       switch (this.initprgrs) {
-        case 0: return `${pfix}.servicii`
-        case 1: return `${pfix}.furnizori`
-        case 2: return `${pfix}.structura`
-        case 3: return `${pfix}.financiar`
+        case 0: str = `${pfix}.servicii`; break
+        case 1: str = `${pfix}.furnizori`; break
+        case 2: str = `${pfix}.structura`; break
+        case 3: str = `${pfix}.financiar`; break
       }
-      return null
+      return {
+        titlu: `${str}.titlu`,
+        mesaj: `${str}.mesaj`,
+      }
     },
     aDefMacarUnServiciu () {
       const activa = this.asociatii[this.activaId]
@@ -252,14 +177,13 @@ export default {
     },
     ...mapGetters({
       blocuri: 'blocuri',
+      idsBlocuri: 'bloc/ids',
       asociatii: 'asociatii',
       idsAsociatii: 'asociatie/ids',
-      idsBlocuri: 'bloc/ids',
       apartamente: 'apartamente',
       activaId: 'asociatie/activa',
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
-      ultimulBlocAdaugat: 'bloc/ultim',
       ultimulFurnizorAdaugat: 'furnizor/ultim',
       servicii: 'servicii',
       furnizori: 'furnizori',
@@ -271,7 +195,6 @@ export default {
       openModal: 'modal/open',
       backup: 'backup',
       stergeAsociatie: 'asociatie/sterge',
-      stergeBloc: 'bloc/sterge',
       stergeServiciu: 'serviciu/sterge',
       toggleServiciu: 'asociatie/toggleServiciu'
     })
@@ -302,224 +225,7 @@ export default {
     +desktop()
       margin: config.spacings.inBoxes
 
-.blocuri
-  fullflex()
-  flex-grow 0
-  flex-flow row nowrap
-  overflow visible
-  list-style-type none
-  padding 0 0 8vh
-  position relative
-  margin-bottom 0 !important
-  // margin: -(config.spacings.inBoxes)
 
-  &:before
-    content ''
-    position fixed 48px 0 42px
-    background: linear-gradient(to right, config.palette.bgs.body 0%, transparent 15%, transparent 85%, config.palette.bgs.body 100%)
-    z-index 5
-    pointer-events none
-
-  > div
-    z-index 4
-
-  &__nav
-    position fixed
-    z-index 10
-    top 0
-    bottom 0
-    // transform translateY(-50%)
-    width 15%
-    font-size 0
-    transition all .15s ease-in-out, opacity 1.5s ease-out
-
-    +desktop()
-      visibility visible
-
-    &:after
-      background-color: config.typography.palette.ui !important
-      margin 0
-      mask-size 32px
-      mask-position 50% 50%
-      size 32px
-
-    &:hover
-      &:after
-        background-color: config.palette.primary !important
-
-    &.urm
-      right 0
-
-    &.ant
-      left 0
-
-    &.disabled
-      opacity 0
-      cursor default
-
-  &__tabs
-    position fixed
-    // position absolute
-    z-index 11 !important
-    display flex
-    width 100%
-    bottom 0 !important
-    flex-flow row nowrap
-    justify-content center
-    background: config.palette.bgs.body
-
-    .bloc
-      &__actions
-        margin-left auto
-
-  &__list
-    display flex
-    flex-flow row nowrap
-    flex 1 1 100%
-
-    > span
-      flex 1 1 auto
-      display flex
-      flex-flow row nowrap
-      size auto
-      outline 0
-      opacity 100
-      border-radius 0
-      background transparent
-      border-top: 1px solid config.palette.borders
-      padding 8px 16px
-      margin 0 !important
-      transition all .1s ease-in-out
-      text-transform capitalize
-
-      .nume 
-        color: config.typography.palette.meta
-        margin-right 24px
-
-      &.activ
-        border-color: config.palette.primary
-
-        .nume
-          color: config.typography.palette.headings
-
-      &:not(.activ)
-        .bloc__actions
-          visibility hidden
-
-        &:hover
-          color: config.typography.palette.headings
-          border-color: config.typography.palette.ui
-
-      // for i in 1..10
-      //   &:nth-child({i})
-      //     background-color: lighten(config.palette.primary, 80% + i*1.5)
-  ul
-    list-style-type none
-    padding 0
-
-  > li
-    margin: config.spacings.inBoxes
-    flex 1 0 180px
-    display flex
-    flex-flow column nowrap
-    text-align center
-     
-
-    > .split > .left > label
-      text-transform uppercase
-
-    > .bloc
-      padding-top 16px
-      margin-top 16px
-      // border-top: 1px solid config.palette.borders
-
-    &.ultimul
-      > .split > .left label
-        &:after
-          content ''
-          bubble()
-
-
-.bloc
-  display flex
-  flex-flow row wrap
-  margin auto auto 0
-  flex 1 1 100%
-  align-items center
-  justify-content center
-  transition opacity .15s ease-in-out
-
-  &:not(.activ)
-    pointer-events none
-    opacity .35
-
-  &__actions
-    display flex
-    flex-flow row nowrap
-    
-    > button
-      &:not(:first-child)
-        margin-left 8px
-
-    
-
-  // &:hover
-  //   .bloc
-  //     &__actiuni
-  //       +desktop()
-  //         opacity 1
-  //         visibility visible
-
-  &__add
-    // background-color: config.palette.borders !important
-    border-radius 0 !important
-
-  // &__actiuni
-  //   display flex
-  //   flex-flow row nowrap
-
-  //   +desktop()
-  //     transition opacity .15s ease
-  //     opacity 0
-  //     visibility hidden
-
-  //   > *
-  //     margin 0 8px
-
-  > .nume
-    font-size 20px
-    text-align center
-    margin-bottom 12px
-
-  > .scari
-    display flex
-    flex-flow row nowrap
-    justify-content center
-    padding 0
-    margin auto auto 0
-    flex 1 1 100%
-
-    > li
-      min-width 160px
-      flex-flow column nowrap
-      align-items flex-start
-      justify-content flex-start
-      margin auto 4px 0
-      display flex
-
-      > .nume
-        // color: config.typography.palette.meta
-        transition color .1s ease
-        margin-bottom 8px
-
-      &:hover
-        > .nume
-          color: config.typography.palette.headings
-
-  .scara
-    width 100%
-    border: 1px solid config.palette.borders
-    counter-reset etaje
 
 .etaj
   margin-bottom auto
@@ -613,7 +319,11 @@ export default {
 #init
   display flex
   flex-flow column nowrap
+  align-items center
   flex 1 1 100%
+
+  .intro
+    text-align center
 
   h1
     // flex: 1 1 100%
@@ -623,14 +333,14 @@ export default {
     width: auto
     height: auto
     display: inline-flex
-    margin: auto
+    margin-top auto
 
   > *:not(.field)
     width 100%
     align-items center
     justify-content center
 
-    &:not(h1)
+    &:not(h1):not(.intro)
       margin-bottom auto
 
   .field[data-type="radios"]

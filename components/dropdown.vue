@@ -10,7 +10,7 @@
     styl=     "unstyled"
   ) #[slot(name="beforeText")] {{ toggleText }}
     slot(name="buton")
-  .dropdown__content
+  .dropdown__content(data-box-arrow)
     .dropdown__header(v-if="$slots.header")
       slot(name="header")
     .dropdown__main(v-if="$slots.default")
@@ -95,16 +95,9 @@ colors = config.palette
     &:hover
       background: colors.bgs.body
     &.arrow
-      padding-right 20px
-      padding-left 12px
+
       &:after
-        content '>'
-        position absolute
-        font-size 8px
-        line-height 0
-        right 10px
-        top 50%
-        transform rotate(90deg) translateY(-50%)
+        position relative
         transition transform .15s ease-in-out
   &__main
     border 2px solid white
@@ -116,21 +109,6 @@ colors = config.palette
     position absolute 100% 0 auto auto
     background white
     box-shadow: shadow
-    &:before
-    &:after
-      content ''
-      position absolute
-      bottom 100%
-      right 16px
-      size 0
-      border-style solid
-      border-width 0 5px 5px 5px
-      transition opacity .15s ease-in-out
-      border-color transparent transparent white transparent
-    &:before
-      right 15px
-      border-width 0 6px 6px 6px
-      border-color: transparent transparent colors.borders transparent
     
   &--open
     .dropdown

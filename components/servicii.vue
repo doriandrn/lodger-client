@@ -88,6 +88,7 @@ export default {
 .servicii
   list-style-type none
   padding 0
+  width 100%
   display flex
   flex-flow row wrap
   justify-content center

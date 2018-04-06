@@ -306,6 +306,7 @@ footerHeight = 24px
       fullflex()
       > .inner
         fullflex(1)
+        flex-flow row wrap
   
   > footer
     position fixed

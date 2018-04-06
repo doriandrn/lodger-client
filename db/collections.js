@@ -31,7 +31,7 @@ const makeCollection = data => {
   const getType = type => {
     if (!type || ['text', 'textarea', 'select', 'search'].indexOf(type) > -1) return 'string'
     if (['date-time', 'bani'].indexOf(type) > -1) return 'number'
-    if (['scari', 'servicii', 'furnizori'].indexOf(type) > -1) return 'array'
+    if (['scari', 'servicii', 'furnizori', 'contactFields'].indexOf(type) > -1) return 'array'
     return type
   }
 
@@ -46,7 +46,7 @@ const makeCollection = data => {
   let versionMustIncrease = false
 
   Object.values(form.campuri).forEach(formItem => {
-    const { id, type, required, primary, step, index, ref, indexRef } = formItem
+    const { id, type, required, primary, step, encrypted, index, ref, indexRef } = formItem
 
     // this is new from previous schema
     if (foundCachedProperties.length > 0 && foundCachedProperties.indexOf(id) < 0) {
@@ -61,6 +61,7 @@ const makeCollection = data => {
     schema.properties[id] = { type: getType(type) }
     if (primary) Object.assign(schema.properties[id], { primary })
     if (index) Object.assign(schema.properties[id], { index })
+    if (encrypted) Object.assign(schema.properties[id], { encrypted })
     if (ref) {
       const x = { ref, items: { type: 'string' } }
       if (indexRef) Object.assign(x, { index: true })

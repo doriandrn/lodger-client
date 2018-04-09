@@ -16,6 +16,7 @@ input(
   @keyup.down=      "$emit('keyDown')"
   @keyup.up=        "$emit('keyUp')"
   @keydown.enter=     "debug('ENTER'); $emit('keyEnter', $event)"
+  @keydown.esc=      "debug('ESC'); $emit('keyEscape', $event)"
 )
 </template>
 

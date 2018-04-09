@@ -64,6 +64,12 @@ export const campuri = [
     type: 'array',
     notInForm: true,
     ref: 'incasari'
+  },
+  {
+    id: 'datorii',
+    type: 'array',
+    notInForm: true,
+    ref: 'cheltuieli'
   }
 ]
 

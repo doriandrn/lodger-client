@@ -29,6 +29,7 @@ export const campuri = [
   {
     id: 'asociatieId',
     type: 'select',
+    notInForm: true,
     required: true
   }
 ]

@@ -45,6 +45,18 @@
       :toggleText=   "$t('settings')"
     )
       nuxt-link(to="/setari#asociatie") {{ $t('defaults.asociatie') }}
+
+    dropdown(
+      slot=       "right",
+      icon=       "plus",
+      :toggleText=   "$t('defaults.add')"
+      icon-only
+    )
+      butonIncaseaza(styl= "unstyled")
+      buton(
+        @click= "debug('cc')"
+        styl= "unstyled"
+      ) Citire contor
   
   main
     nuxt
@@ -85,6 +97,7 @@ import cale from '~components/cale'
 import bani from '~components/bani'
 import field from 'form/field'
 import buton from 'form/button'
+import butonIncaseaza from 'cc/butonIncaseaza'
 import toasts from '~components/toasts'
 import dropdown from '~components/dropdown'
 
@@ -199,6 +212,7 @@ export default {
     field,
     bani,
     toasts,
+    butonIncaseaza,
     dropdown
   }
 }
@@ -306,7 +320,6 @@ footerHeight = 24px
       fullflex()
       > .inner
         fullflex(1)
-        flex-flow row wrap
   
   > footer
     position fixed

@@ -58,9 +58,13 @@ button
 
   &[disabled]
     cursor default
-    border-color: config.palette.bgs.gray
-    background-color rgba(black, .05)
-    color: config.typography.palette.ui
+    border-color: config.palette.borders
+    background-color transparent
+    color: config.typography.palette.light
+
+    &[data-arrow]
+      &:after
+        background-color: config.typography.palette.light
 
   &:not([disabled])
     &:not([data-styl="unstyled"])
@@ -69,7 +73,7 @@ button
           background-color: darken(config.palette.primary, 15%)
 
   &[data-size="large"]
-    padding: config.spacings.inBoxes
+    padding: config.spacings.inBoxes (config.spacings.inBoxes*2)
 
   &[data-size="medium"]
     padding: (config.spacings.inBoxes/2) config.spacings.inBoxes

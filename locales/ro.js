@@ -1,5 +1,3 @@
-import { P } from "glamorous";
-
 export default {
   dashboard: {
     title: 'Panou de control',
@@ -27,7 +25,8 @@ export default {
       title: 'Asociație nouă',
       name: 'Denumire',
       idN: 'CIF',
-      confirmStruct: 'Structura este finală'
+      confirmStruct: 'Structura este finală',
+      continuaInitializarea: 'Continuă inițializarea'
     },
     edit: {
       title: 'Modifică datele asociației'
@@ -40,7 +39,7 @@ export default {
       },
       furnizori: {
         titlu: 'Furnizori',
-        mesaj: 'Definește furnizorii pentru serviciile definite'
+        mesaj: 'Definește furnizorii pentru serviciile alese anterior'
       },
       structura: {
         titlu: 'Structură',
@@ -65,11 +64,12 @@ export default {
     none: {
       heading: 'Definește structura imobilelor',
       CTA: 'Următorul pas constă în definirea structurii apartamentelor',
-      actions: ['Adaugă un bloc', 'Importă datele din altă aplicație']
+      actions: ['Adaugă un bloc', 'Importă datele din altă aplicație'],
     },
     new: {
       title: 'Adaugă un bloc/o clădire nou(ă)',
       nume: 'Identificator / Denumire',
+      adresa: 'Adresă',
       scariCount: 'Nr. scări (dacă există)',
       scari: 'Structura scărilor'
     },
@@ -148,7 +148,8 @@ export default {
     forms: {
       add: 'Adaugă',
       edit: 'Modifică'
-    }
+    },
+    add: 'Adaugă'
   },
   search: 'Caută',
   sum: 'Suma',

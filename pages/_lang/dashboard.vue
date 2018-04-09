@@ -13,11 +13,13 @@ sction#dash
     )
 
     h1 {{ $t( initMessage.titlu ) }}
-    p.intro {{ $t( initMessage.mesaj ) }}
-    buton(
-      v-if= "poateTreceLaUrmPas && initprgrs"
-      disabled
-    ) {{ $t('asociatie.new.confirmStruct') }}
+    p.intro(v-show="initprgrs !== 2 && idsBlocuri.length") {{ $t( initMessage.mesaj ) }}
+    buton.init__next(
+      :disabled= "!poateTreceLaUrmPas"
+      size= "large"
+      @click= "initprgrs++"
+      arrow="right"
+    ) {{ initMessage.continue }}
 
     servicii(
       v-if=             "!initprgrs"
@@ -36,7 +38,7 @@ sction#dash
         :class=     "{ ultimul: furnizorId === ultimulFurnizorAdaugat }"
       )
         span.nume {{ furnizor.nume }}
-      li
+      li.nou
         buton(
           icon= "plus-circle",
           @click="openModal('furnizor.new')"
@@ -55,12 +57,16 @@ sction#dash
       p ultima incasare
       p facturi / cheltuieli active
 
-    empty(
+    //- empty(
+    //-   v-else-if=  "initprgrs === 2 && !idsBlocuri.length"
+    //-   :CTA=       "$t('bloc.none.CTA')",
+    //-   :actions=   "{ blocNew: $t('bloc.none.actions[0]') }"
+    //-   @action=    "openModal('bloc.new')"
+    //- )
+    buton(
       v-else-if=  "initprgrs === 2 && !idsBlocuri.length"
-      :CTA=       "$t('bloc.none.CTA')",
-      :actions=   "{ blocNew: $t('bloc.none.actions[0]') }"
-      @action=    "openModal('bloc.new')"
-    )
+      @click=    "openModal('bloc.new')"
+    ) {{ $t('bloc.none.actions[0]') }}
 
   //- widget(
   //-   title=  "$t('asociatie.adminZone.title')"
@@ -152,28 +158,40 @@ export default {
   },
   computed: {
     poateTreceLaUrmPas () {
-      return true
+      const { initprgrs, aDefMacarUnServiciu, aDefMacarUnFurnizor } = this
+      if (initprgrs === 0 && aDefMacarUnServiciu) return true
+      if (initprgrs === 1 && aDefMacarUnFurnizor) return true
+      return false
     },
     initMessage () {
       const pfix = 'asociatie.init'
       let str = ''
-      switch (this.initprgrs) {
+      const { initprgrs } = this
+      switch (initprgrs) {
         case 0: str = `${pfix}.servicii`; break
         case 1: str = `${pfix}.furnizori`; break
         case 2: str = `${pfix}.structura`; break
         case 3: str = `${pfix}.financiar`; break
       }
+      const{ $t } = this
       return {
         titlu: `${str}.titlu`,
         mesaj: `${str}.mesaj`,
+        continue: initprgrs === 3 ? $t('asociatie.new.confirmStruct') : $t('asociatie.new.continuaInitializarea')
       }
     },
+    activa () {
+      return this.asociatii[this.activaId]
+    },
     aDefMacarUnServiciu () {
-      const activa = this.asociatii[this.activaId]
-      if (!activa) return
-      const { servicii } = activa
+      const { activa: { servicii } } = this
       if (!servicii) return false
       return servicii.length > 0
+    },
+    aDefMacarUnFurnizor () {
+      const { activa: { furnizori } } = this
+      if (!furnizori) return false
+      return furnizori.length > 0
     },
     ...mapGetters({
       blocuri: 'blocuri',
@@ -313,14 +331,22 @@ export default {
   margin 0 auto
 
   > li
-    padding 8px 32px
-    border: 1px solid config.palette.borders
+    flex 1 1 33%
+    margin 8px
+
+    &:not(.nou)
+      padding 8px 32px
+      border: 1px solid config.palette.borders
+      background white
+
+.init
+  &__next
+    position absolute auto 0 0 auto
+    width auto !important
 
 #init
-  display flex
-  flex-flow column nowrap
-  align-items center
-  flex 1 1 100%
+  fullflex(1)
+  width 100%
 
   .intro
     text-align center
@@ -334,6 +360,9 @@ export default {
     height: auto
     display: inline-flex
     margin-top auto
+
+    +desktop()
+      margin-top 20vh
 
   > *:not(.field)
     width 100%

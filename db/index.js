@@ -14,7 +14,7 @@ export const { isRxDocument } = RxDB
 export default (async function (dbdata) {
   // console.log('DatabaseService: creating database..')
   const conInfo = {
-    name: 'lodger21',
+    name: 'lodger22',
     password: '10dg3rP@55',
     adapter: 'idb'
   }

@@ -40,6 +40,10 @@ export default {
         return {}
       }
     },
+    disabled: {
+      type: Array,
+      default: () => []
+    },
     id: {
       type: String,
       default () {

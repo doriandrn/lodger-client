@@ -134,6 +134,7 @@ export default {
   padding 0 0 8vh
   position relative
   margin-bottom 0 !important
+  margin-top auto
   // margin: -(config.spacings.inBoxes)
 
   &:before

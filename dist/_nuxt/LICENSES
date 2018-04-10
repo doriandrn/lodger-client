@@ -1,183 +1,11 @@
-/**
- * @file Replace the comments in a string.
- * @version 2.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module replace-comments-x
- */
-
-/*!
- * is-primitive <https://github.com/jonschlinkert/is-primitive>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-/**
- * @file Tests if ES6 @@toStringTag is supported.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-@@tostringtag|26.3.1 @@toStringTag}
- * @version 1.4.1
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module has-to-string-tag-x
- */
-
 /*!
  * Vue.js v2.5.16
  * (c) 2014-2018 Evan You
  * Released under the MIT License.
  */
 
-/**
- * @file This method removes whitespace from the right end of a string.
- * @version 3.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module trim-right-x
- */
-
-/**
- * @file Requires an argument is corecible then converts using ToString.
- * @version 1.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module require-coercible-to-string-x
- */
-
-/**
- * @file Used to determine whether an object has an own property with the specified property key.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-hasownproperty|7.3.11 HasOwnProperty (O, P)}
- * @version 3.2.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module has-own-property-x
- */
-
-/**
- * @file Checks if `value` is `null` or `undefined`.
- * @version 1.4.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-nil-x
- */
-
 /*!
  * @ignore
- */
-
-/**
- * @file Converts a JavaScript object to a primitive value.
- * @version 1.1.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-primitive-x
- */
-
-/**
- * @file ES6-compliant shim for ToObject.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-toobject|7.1.13 ToObject ( argument )}
- * @version 1.5.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-object-x
- */
-
-/**
- * @file ES6-compliant shim for ToString.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-tostring|7.1.12 ToString ( argument )}
- * @version 1.4.5
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-string-x
- */
-
-/**
- * @file Detect whether or not an object is an ArrayBuffer.
- * @version 1.7.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-array-buffer-x
- */
-
-/**
- * @file Determine whether the passed value is a zero based index.
- * @version 1.1.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-index-x
- */
-
-/**
- * @file Test if a given value is falsey.
- * @version 1.0.3
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-falsey-x
- */
-
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-
-/**
- * @file Sham for ES6 Object.getOwnPropertyDescriptor
- * @version 3.2.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module object-get-own-property-descriptor-x
- */
-
-/**
- * @file ES6-compliant shim for Number.isNaN - the global isNaN returns false positives.
- * @version 1.0.3
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-nan-x
- */
-
-/**
- * @file Indicates whether the specified property is enumerable.
- * @version 1.1.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module property-is-enumerable-x
- */
-
-/**
- * @file ES6 abstract ToString with Symbol conversion support.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-tostring|7.1.12 ToString ( argument )}
- * @version 1.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-string-symbols-supported-x
- */
-
-/**
- * @file Clamp a number to limits.
- * @version 1.2.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module math-clamp-x
  */
 
 /*!
@@ -193,67 +21,12 @@
  * @license MIT
  */
 
-/**
- * @file Invokes function, returning an object of the results.
- * @version 1.1.3
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module attempt-x
- */
-
-/**
- * @file The constant value Infinity.
- * @version 1.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module infinity-x
- */
-
 //! moment.js
-
-/**
- * @file Trims and replaces sequences of whitespace characters by a single space.
- * @version 3.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module normalize-space-x
- */
-
-/**
- * @file Tests if ES6 Symbol is supported.
- * @version 1.4.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module has-symbol-support-x
- */
-
-/**
- * @file Determine if a value is object like.
- * @version 1.7.1
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-object-like-x
- */
 
 /*!
  * vue-i18n v7.6.0 
  * (c) 2018 kazuya kawaguchi
  * Released under the MIT License.
- */
-
-/**
- * @file Get an object's ES6 @@toStringTag.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring|19.1.3.6 Object.prototype.toString ( )}
- * @version 1.4.3
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-string-tag-x
  */
 
 /*! @preserve
@@ -264,65 +37,12 @@
  * http://adamwdraper.github.com/Numeral-js/
  */
 
-/**
- * @file This method removes whitespace from the left end of a string.
- * @version 3.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module trim-left-x
- */
-
-/**
- * @file Determine whether a given value is a function object.
- * @version 3.3.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-function-x
- */
-
-/*!
-  * prr
-  * (c) 2013 Rod Vagg <rod@vagg.org>
-  * https://github.com/rvagg/prr
-  * License: MIT
-  */
-
-/**
- * @file Shim for Math.sign.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-math.sign|20.2.2.29 Math.sign(x)}
- * @version 3.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module math-sign-x
- */
-
-/**
- * @file Parses a string argument and returns an integer of the specified radix.
- * @version 2.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module parse-int-x
- */
-
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
  * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
  * @license   Licensed under MIT license
  *            See https://raw.githubusercontent.com/stefanpenner/es6-promise/master/LICENSE
  * @version   v4.2.4+314e4831
- */
-
-/**
- * @file List of ECMAScript white space characters.
- * @version 3.0.1
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module white-space-x
  */
 
 /*!
@@ -333,24 +53,6 @@
  * Copyright (c) 2016 katashin
  * Released under the MIT license
  * https://github.com/ktsn/vuex-toast/blob/master/LICENSE
- */
-
-/**
- * @file Converts argument to a value of type Number.
- * @version 2.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-number-x
- */
-
-/**
- * @file Converts argument to a value of type Boolean.
- * @version 1.0.3
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-boolean-x
  */
 
 /**
@@ -366,80 +68,7 @@ object-assign
 */
 
 /**
- * @file This method removes whitespace from the left and right end of a string.
- * @version 3.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module trim-x
- */
-
-/**
- * @file ES6-compliant shim for Number.isFinite.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-number.isfinite|20.1.2.2 Number.isFinite ( number )}
- * @version 3.0.4
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module is-finite-x
- */
-
-/**
- * @file Converts argument to a value that can be used as a property key.
- * @version 2.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-property-key-x
- */
-
-/**
- * @file ES6-compliant shim for RequireObjectCoercible.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-requireobjectcoercible|7.2.1 RequireObjectCoercible ( argument )}
- * @version 1.4.3
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module require-object-coercible-x
- */
-
-/**
   * vee-validate v2.0.6
   * (c) 2018 Abdelrahman Awad
   * @license MIT
   */
-
-/**
- * @file The constant NaN derived mathematically by 0 / 0.
- * @version 1.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module nan-x
- */
-
-/*!
- * is-primitive <https://github.com/jonschlinkert/is-primitive>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-/**
- * @file ToInteger converts 'argument' to an integral numeric value.
- * @see {@link http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger|7.1.4 ToInteger ( argument )}
- * @version 3.0.0
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module to-integer-x
- */
-
-/**
- * @file Constructors cached from literals.
- * @version 1.0.2
- * @author Xotic750 <Xotic750@gmail.com>
- * @copyright  Xotic750
- * @license {@link <https://opensource.org/licenses/MIT> MIT}
- * @module cached-constructors-x
- */

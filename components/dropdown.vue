@@ -94,8 +94,7 @@ colors = config.palette
     padding 0 12px
     &:hover
       background: colors.bgs.body
-    &.arrow
-
+    &[data-arrow]
       &:after
         position relative
         transition transform .15s ease-in-out
@@ -120,5 +119,5 @@ colors = config.palette
       &__toggle
         background: colors.bgs.body
         &:after
-          transform rotate(270deg) translateY(-50%)
+          transform rotate(180deg)
 </style>

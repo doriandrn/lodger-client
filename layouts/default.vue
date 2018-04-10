@@ -52,12 +52,18 @@
       :toggleText=   "$t('defaults.add')"
       icon-only
     )
-      butonIncaseaza(styl= "unstyled")
+      butonIncaseaza(
+        styl= "unstyled"
+      )
       buton(
         @click= "debug('cc')"
         styl= "unstyled"
       ) Citire contor
-  
+      buton(
+        styl=   "unstyled"
+        @click= "openModal('cheltuiala.new')"
+      ) Cheltuială / Factură
+
   main
     nuxt
     modal(
@@ -131,7 +137,8 @@ export default {
   methods: {
     ...mapActions({
       schimbaAsociatieActiva: 'asociatie/schimba',
-      modalClose: 'modal/close'
+      modalClose: 'modal/close',
+      openModal: 'modal/open'
     }),
     get formData () {
       return (id, ctx) => {

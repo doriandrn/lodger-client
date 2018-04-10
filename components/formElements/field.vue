@@ -76,6 +76,7 @@
     :value=       "value",
     @change=      "$emit('input', $event)"
     :options=     "options"
+    :disabled=    "disabled"
   )
   servicii(
     v-else-if=        "type === 'servicii'"
@@ -212,6 +213,11 @@ export default {
     },
     searchTaxonomy: {
       type: String,
+      default: null
+    },
+
+    disabled: {
+      type: [Boolean, Array, Object],
       default: null
     },
 

@@ -24,7 +24,7 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  mode: 'spa',
+  // mode: 'spa',
   /*
   ** Customize the progress bar color
   */
@@ -41,7 +41,7 @@ module.exports = {
     { src: '~plugins/portal' },
     { src: '~plugins/range' },
     { src: '~plugins/i18n' },
-    { src: '~plugins/swiper' }
+    { src: '~plugins/swiper', ssr: false }
   ],
   router: {
     linkActiveClass: 'active'

@@ -19,6 +19,7 @@ div(
         :value=     "index",
         :name=      "id",
         :checked=   "Number(index) === value",
+        :disabled=  "disabled.indexOf(option) > -1"
         :id=        "`${id}-${option}`",
         @change=    "$emit('change', Number(index))"
       )
@@ -84,6 +85,11 @@ input[type="radio"]
         background-size contain
         background-repeat no-repeat
         border-color transparent
+
+  &:disabled
+    &+label>span
+      opacity .25
+      cursor default
   &:hover
     cursor pointer
 
@@ -91,6 +97,7 @@ input[type="radio"]
   display flex
   flex-flow column nowrap
   margin 4px
+  height 12px
 
   > input[type="radio"]
     display none
@@ -100,4 +107,5 @@ input[type="radio"]
   flex-flow row nowrap
   align-items center
   margin -4px
+  cursor default
 </style>

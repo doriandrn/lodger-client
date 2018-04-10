@@ -9,7 +9,8 @@ sction#dash
       id=         "initprgrs"
       v-model=    "initprgrs"
       :label=     "null"
-      :options=   "[0, 1, 2, 3]"
+      :options=   "initOptions"
+      :disabled=  "disabledSteps"
     )
 
     h1 {{ $t( initMessage.titlu ) }}
@@ -159,9 +160,16 @@ export default {
   computed: {
     poateTreceLaUrmPas () {
       const { initprgrs, aDefMacarUnServiciu, aDefMacarUnFurnizor } = this
-      if (initprgrs === 0 && aDefMacarUnServiciu) return true
-      if (initprgrs === 1 && aDefMacarUnFurnizor) return true
+      if (initprgrs === 0 && aDefMacarUnServiciu) return 1
+      if (initprgrs === 1 && aDefMacarUnFurnizor) return 2
       return false
+    },
+    initOptions () {
+      return [0, 1, 2, 3]
+    },
+    disabledSteps () {
+      const { poateTreceLaUrmPas, initOptions } = this
+      return initOptions.filter(opt => opt > poateTreceLaUrmPas) 
     },
     initMessage () {
       const pfix = 'asociatie.init'
@@ -347,6 +355,8 @@ export default {
 #init
   fullflex(1)
   width 100%
+
+  &prgrs
 
   .intro
     text-align center

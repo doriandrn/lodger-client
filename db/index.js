@@ -2,37 +2,45 @@
 import * as RxDB from 'rxdb'
 
 RxDB.plugin(require('pouchdb-adapter-idb'))
+// RxDB.plugin(require('pouchdb-adapter-memory'))
 // RxDB.plugin(require('pouchdb-replication'))
-RxDB.plugin(require('pouchdb-adapter-http'))
+// RxDB.plugin(require('pouchdb-adapter-http'))
 
 import collections from './collections'
 
 const syncURL = 'http://lodger.ro:10101/'
 
+const conInfo = {
+  name: 'lodger22',
+  password: '10dg3rP@55',
+  // adapter: 'memory',
+  adapter: 'idb',
+  // ignoreDuplicate: true
+}
+
+const getdb = async (con) => await RxDB.create(con)
+const db = getdb(conInfo)
+
+console.log('DatabaseService: created database', db)
+if (typeof window !== 'undefined') window['db'] = db // write to window for debugging
+
+
+
 export const { isRxDocument } = RxDB
 
 export default (async function (dbdata) {
-  // console.log('DatabaseService: creating database..')
-  const conInfo = {
-    name: 'lodger22',
-    password: '10dg3rP@55',
-    adapter: 'idb'
-  }
-  if (dbdata) Object.assign(conInfo, dbdata)
-  
-  const db = await RxDB.create(conInfo)
-  console.log('DatabaseService: created database')
-  window['db'] = db // write to window for debugging
-
+  const rdb = await db
   // show leadership in title
-  db.waitForLeadership().then(() => {
+  rdb.waitForLeadership().then(() => {
     console.log('isLeader now')
     // document.title = '♛ ' + document.title
   })
+  // console.log('DatabaseService: creating database..')
+  
 
   // create collections
   console.log('DatabaseService: create collections')
-  await Promise.all(collections.map(colData => db.collection(colData)))
+  await Promise.all(collections.map(colData => rdb.collection(colData)))
 
   // hooks
   console.log('DatabaseService: add hooks')
@@ -53,5 +61,5 @@ export default (async function (dbdata) {
 
   // await insertPredefinedDocs(db)
 
-  return db
+  return rdb
 })()

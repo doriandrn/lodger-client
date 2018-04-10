@@ -31,6 +31,7 @@ export default {
 colors = config.palette
 
 .registru
+  width 100%
   .tab
     ul
       list-style-type none

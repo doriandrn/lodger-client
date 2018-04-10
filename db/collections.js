@@ -13,18 +13,18 @@ const makeCollection = data => {
   let version = 0
   let foundCachedProperties = []
 
-  try {
-    let collectionCache = localStorage.getItem(cachedSchemaFileName)
-    if (collectionCache && collectionCache.length > 0) {
-      // check obj keys against one another
-      collectionCache = JSON.parse(collectionCache)
-      foundCachedProperties = Object.keys(collectionCache.properties)
-      version = collectionCache.version
-      cachedSchema = collectionCache
-    }
-  } catch (e) {
-    console.info('dat smell of a fresh DB :)')
-  }
+  // try {
+  //   let collectionCache = localStorage.getItem(cachedSchemaFileName)
+  //   if (collectionCache && collectionCache.length > 0) {
+  //     // check obj keys against one another
+  //     collectionCache = JSON.parse(collectionCache)
+  //     foundCachedProperties = Object.keys(collectionCache.properties)
+  //     version = collectionCache.version
+  //     cachedSchema = collectionCache
+  //   }
+  // } catch (e) {
+  //   console.info('dat smell of a fresh DB :)')
+  // }
 
   const form = require(`forms/${key}`)
   const { campuri, metode } = form
@@ -71,10 +71,10 @@ const makeCollection = data => {
     if (required) schema.required.push(id)
   })
 
-  if (versionMustIncrease) version += 1
+  // if (versionMustIncrease) version += 1
   Object.assign(schema, { version })
 
-  localStorage.setItem(cachedSchemaFileName, JSON.stringify(schema))
+  // localStorage.setItem(cachedSchemaFileName, JSON.stringify(schema))
   // fs.writeFile(cachedSchemaFileName, `export default { ${schema} }`, err => {
   //   if (err) throw err
   // })

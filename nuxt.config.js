@@ -44,7 +44,8 @@ module.exports = {
     { src: '~plugins/swiper', ssr: false }
   ],
   router: {
-    linkActiveClass: 'active'
+    linkActiveClass: 'active',
+    base: '/ui/'
   },
   /*
   ** Build configuration

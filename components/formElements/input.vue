@@ -16,13 +16,14 @@ input(
   @keyup.down=      "$emit('keyDown')"
   @keyup.up=        "$emit('keyUp')"
   @keydown.enter=     "debug('ENTER'); $emit('keyEnter', $event)"
-  @keydown.esc=      "debug('ESC'); $emit('keyEscape', $event)"
+  @keydown.esc=      "inchideModale; $emit('keyEscape', $event)"
 )
 </template>
 
 <script>
 import { get_bigrams, string_similarity } from 'helpers/search'
 import { mixin as clickaway } from 'vue-clickaway'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   directives: {
@@ -102,9 +103,16 @@ export default {
     if (this.type !== 'search') return
     console.log(this.value, this.selected)
   },
+  computed: mapGetters({
+    modalOpen: 'modal/open'
+  }),
   methods: {
     clickAway () {
       this.$emit('clickAway')
+    },
+    inchideModale () {
+      if (!this.modalOpen) return
+      this.closeModal()
     },
     handleInput (e) {
       let { value } = e.target
@@ -132,7 +140,10 @@ export default {
       this.$emit('newResults', {
         [searchTaxonomy]: results.sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 6)
       })
-    }
+    },
+    ...mapActions({
+      closeModal: 'modal/close'
+    })
   }
 }
 </script>

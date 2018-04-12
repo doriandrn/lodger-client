@@ -73,7 +73,7 @@ export default {
     z-index 202
     border: 1px solid config.palette.borders
     background white
-    width 85%
+    width 95%
     max-width 540px
     max-height 75vh
     transition all .15s ease-in-out
@@ -88,15 +88,18 @@ export default {
     transform scale(1, 1) translate(-50%,-50%)
     transition all .3s cubic-bezier(.165,.84,.44,1)
 
+    +above(m)
+      width 85%
+
+  &__header
+    background transparent
+    border-bottom: 1px solid config.palette.borders
+
   &__content
     position relative
     flex 1 1 50%
     overflow-y auto
     overflow-x hidden
-    padding-bottom: config.spacings.betweenBoxes
-
-    +desktop()
-      padding-top: config.spacings.betweenBoxes
 
     form
       .actions
@@ -112,6 +115,11 @@ export default {
           min-width 120px
 
   &__content
+    padding 20px
+
+    +above(xs)
+      padding 40px
+
   &__footer
   &__header
     padding-left 10px
@@ -122,10 +130,15 @@ export default {
     +above(l)
       padding-left 32px
       padding-right 32px
+  
   &__footer
   &__header
-    padding-top: config.spacings.inBoxes
-    padding-bottom: config.spacings.inBoxes
+    padding-top: (config.spacings.inBoxes/2)
+    padding-bottom: (config.spacings.inBoxes/2)
+
+    +desktop()
+      padding-top: config.spacings.inBoxes
+      padding-bottom: config.spacings.inBoxes
   &__title
     margin-bottom 0
   &__footer

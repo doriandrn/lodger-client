@@ -14,14 +14,8 @@ sction#dash
     )
 
     h1 {{ $t( initMessage.titlu ) }}
-    p.intro(v-show="initprgrs !== 2 && idsBlocuri.length") {{ $t( initMessage.mesaj ) }}
-    buton.init__next(
-      :disabled= "!poateTreceLaUrmPas"
-      size= "large"
-      @click= "initprgrs++"
-      arrow="right"
-    ) {{ initMessage.continue }}
-
+    p.intro(v-show="initprgrs !== 2 || !idsBlocuri.length") {{ $t( initMessage.mesaj ) }}
+    
     servicii(
       v-if=             "!initprgrs"
       @input=           "toggleServiciu",
@@ -68,6 +62,14 @@ sction#dash
       v-else-if=  "initprgrs === 2 && !idsBlocuri.length"
       @click=    "openModal('bloc.new')"
     ) {{ $t('bloc.none.actions[0]') }}
+
+    buton.init__next(
+      :disabled=  "!poateTreceLaUrmPas"
+      size=       "large"
+      @click=     "initprgrs++"
+      arrow=      "right"
+    ) {{ initMessage.continue }}
+
 
   //- widget(
   //-   title=  "$t('asociatie.adminZone.title')"
@@ -197,9 +199,8 @@ export default {
       return servicii.length > 0
     },
     aDefMacarUnFurnizor () {
-      const { activa: { furnizori } } = this
-      if (!furnizori) return false
-      return furnizori.length > 0
+      if (!this.furnizori) return false
+      return Object.keys(this.furnizori).length > 0
     },
     ...mapGetters({
       blocuri: 'blocuri',
@@ -349,7 +350,6 @@ export default {
 
 .init
   &__next
-    position absolute auto 0 0 auto
     width auto !important
 
 #init

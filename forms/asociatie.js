@@ -30,6 +30,12 @@ export const campuri = [
     type: 'array',
     ref: 'servicii',
     notInForm: true
+  },
+  {
+    id: 'furnizori',
+    type: 'array',
+    ref: 'furnizori',
+    notInForm: true
   }
 ]
 

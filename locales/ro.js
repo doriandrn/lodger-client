@@ -35,7 +35,7 @@ export default {
       title: 'Inițializare',
       servicii: {
         titlu: 'Servicii & contoare',
-        mesaj: 'Alege serviciile furnizate de asociație'
+        mesaj: 'Alege serviciile furnizate de asociația ta'
       },
       furnizori: {
         titlu: 'Furnizori',
@@ -93,7 +93,8 @@ export default {
       proprietar: 'Proprietar',
       locatari:'Nr. Locatari',
       balanta: 'Restant la zi',
-      utilitati: 'Utilități'
+      utilitati: 'Utilități',
+      contoare: 'Contoare'
     },
     edit: {
       title: 'Modifică apartamentul'

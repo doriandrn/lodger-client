@@ -40,17 +40,9 @@
     )
 
     dropdown(
-      slot=         "right",
-      icon=         "settings"
-      :toggleText=   "$t('settings')"
-    )
-      nuxt-link(to="/setari#asociatie") {{ $t('defaults.asociatie') }}
-
-    dropdown(
       slot=       "right",
       icon=       "plus",
       :toggleText=   "$t('defaults.add')"
-      icon-only
     )
       butonIncaseaza(
         styl= "unstyled"
@@ -64,9 +56,26 @@
         @click= "openModal('cheltuiala.new')"
       ) Cheltuială / Factură
 
+    dropdown(
+      slot=         "right",
+      icon=         "settings"
+      :toggleText=   "$t('settings')"
+    )
+      nuxt-link(to="/setari#asociatie") {{ $t('defaults.asociatie') }}
+
   main
     nuxt
-    modal(
+
+  footr
+    p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
+    ul.footer__stuff(slot="right")
+      li
+        nuxt-link(to="/credits") Credits
+      li
+        buton Feedback
+
+  toasts
+  modal(
       v-show=  "modalOpen"
       :title=   "modalContent && modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
     )
@@ -80,16 +89,6 @@
 
       p(v-else) loading
       //- cale(slot="footer")
-
-  footr
-    p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
-    ul.footer__stuff(slot="right")
-      li
-        nuxt-link(to="/credits") Credits
-      li
-        buton Feedback
-
-  toasts
 </template>
 
 <script>

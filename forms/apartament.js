@@ -60,6 +60,10 @@ export const campuri = [
     default: 0
   },
   {
+    id: 'contoare',
+    type: 'contoare'
+  },
+  {
     id: 'incasari',
     type: 'array',
     notInForm: true,

@@ -36,6 +36,15 @@ export default {
   .right
     margin-left auto
 
+    .dropdown
+      &__content
+        &[data-box-arrow]
+          &:before
+            right 16px
+
+          &:after
+            right 17px
+
   &[data-separate]
     .right
       > *:not(:first-child)

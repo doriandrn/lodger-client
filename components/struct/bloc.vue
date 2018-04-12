@@ -93,7 +93,12 @@ export default {
 
   &__add
     // background-color: config.palette.borders !important
-    border-radius 0 !important
+    position absolute
+    bottom -3px
+    right 3px
+    size 56px
+    border-radius 50%
+    margin -2px
 
   // &__actiuni
   //   display flex
@@ -114,11 +119,14 @@ export default {
 
   > .scari
     display flex
-    flex-flow row nowrap
+    flex-flow column nowrap
     justify-content center
     padding 0
     margin auto auto 0
     flex 1 1 100%
+
+    +above(l)
+      flex-direction row
 
     > li
       min-width 160px
@@ -127,6 +135,12 @@ export default {
       justify-content flex-start
       margin auto 4px 0
       display flex
+
+      &:not(:last-child)
+        margin-bottom 32px
+
+        +above(l)
+          margin-bottom 0
 
       > .nume
         // color: config.typography.palette.meta
@@ -141,5 +155,6 @@ export default {
     width 100%
     border: 1px solid config.palette.borders
     counter-reset etaje
+
 </style>
 

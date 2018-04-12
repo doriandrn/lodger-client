@@ -8,6 +8,10 @@ export const campuri = [
     id: 'furnizori',
     type: 'array',
     notInForm: true
+  },
+  {
+    id: 'contoare',
+    type: 'contoare'
   }
 ]
 

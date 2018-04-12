@@ -11,7 +11,7 @@ import collections from './collections'
 const syncURL = 'http://lodger.ro:10101/'
 
 const conInfo = {
-  name: 'lodger22',
+  name: 'lodger23',
   password: '10dg3rP@55',
   // adapter: 'memory',
   adapter: 'idb',

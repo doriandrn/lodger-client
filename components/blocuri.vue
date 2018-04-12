@@ -86,7 +86,7 @@ export default {
         centeredSlides: true,
         longSwipes: false,
         slidesPerView: 'auto',
-        // spaceBetween: 64,
+        spaceBetween: 64,
         loop: false,
         keyboard: true,
         navigation: {
@@ -131,11 +131,14 @@ export default {
   flex-flow row nowrap
   overflow visible
   list-style-type none
-  padding 0 0 8vh
+  padding 0
   position relative
   margin-bottom 0 !important
   margin-top auto
   // margin: -(config.spacings.inBoxes)
+
+  +above(l)
+    padding-bottom 8vh
 
   &:before
     content ''

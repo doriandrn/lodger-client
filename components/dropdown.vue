@@ -5,9 +5,11 @@
 )
   buton.dropdown__toggle(
     :icon=    "icon",
+    :icon-only= "iconOnly"
     @click=   "open = !open",
     :arrow=   "arrow"
     styl=     "unstyled"
+    tabIndex= 0
   ) #[slot(name="beforeText")] {{ toggleText }}
     slot(name="buton")
   .dropdown__content(data-box-arrow)
@@ -45,6 +47,10 @@ export default {
     arrow: {
       type: Boolean,
       default: true
+    },
+    iconOnly: {
+      type: Boolean,
+      default: true
     }
   },
   methods: {
@@ -68,20 +74,18 @@ colors = config.palette
 .dropdown
   position relative
   z-index 101
-  line-height .75vr
+  height 100%
   user-select none
   &__footer
     border-top: 1px solid colors.borders
     background: colors.bgs.body
   &__header
     border-bottom: 1px solid colors.borders
-    padding .5vr 12px
+    padding 6px 12px
     p
       color rgba(black, .55)
       margin 0
-  &__header
-  &__content
-    line-height 1vr
+
   &__toggle
     background transparent
     color #666
@@ -100,6 +104,16 @@ colors = config.palette
         transition transform .15s ease-in-out
   &__main
     border 2px solid white
+    display flex
+    flex-flow row wrap
+
+    padding 8px 0
+
+    > button[data-styl="unstyled"]
+      padding 4px 16px
+      flex 1 1 100%
+      justify-content flex-start
+
   &__content
     opacity 0
     visibility hidden

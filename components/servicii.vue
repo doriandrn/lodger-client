@@ -6,6 +6,9 @@ ul.servicii
     :data-sel=  "value && value.indexOf(serviciu.denumire) > -1"
     :class=     "{ ultimul: ultimulAdaugat === serviciu._id, modificabil: modificabil(serviciu.denumire) }"
     @click=     "toggleServiciu(serviciu.denumire)"
+    @keydown.enter=     "toggleServiciu(serviciu.denumire)"
+    @keydown.space=     "toggleServiciu(serviciu.denumire)"
+    tabIndex=   0
   ) 
     span.nume {{ serviciu.denumire }}
     .serviciu__actiuni(v-if="modificabil(serviciu.denumire)")
@@ -84,6 +87,7 @@ export default {
 
 <style lang="stylus">
 @require '~styles/config'
+serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff gaze #5300ff termoficare #ff5722 internet #9c27b0
 
 .servicii
   list-style-type none
@@ -112,6 +116,14 @@ export default {
     line-height 16px
     background: config.palette.bgs.body
     box-shadow inset 0px 2px 3px 1px rgba(black, .025)
+    user-select none
+
+    for culoare, i in serCulori
+      if i % 2 == 0
+        &[data-icon=\"{serCulori[i]}\"]
+          &[data-sel]
+            &:before
+              background-color: rgba(serCulori[i+1], .75)
 
     &[data-sel]
       // border-color: config.palette.tertiary
@@ -128,6 +140,17 @@ export default {
 
     &:hover
       box-shadow none
+
+    &:focus
+    &:active
+      box-shadow: 0px 2px 3px 1px rgba(config.palette.secondary, .15)
+      // background-color: rgba(config.palette.primary, .05)
+      border-color: config.palette.secondary
+      border-style dotted
+      outline: none
+
+      .nume
+        color: config.typography.palette.headings
 
     &:before
       background-color: config.palette.borders

@@ -4,6 +4,7 @@ nuxt-link(
   :to=          "to",
   :data-icon=   "icon",
   :data-size=   "size",
+  tabIndex=     1
 ) {{ text }}
 
 button(
@@ -18,6 +19,7 @@ button(
   :data-dangerous=  "dangerous"
   :data-arrow=      "arrow"
   :class=           "{ iconOnly, rounded }"
+  tabIndex=     1
   )
   slot
   span.badge(v-if="$slots.badge")
@@ -41,6 +43,7 @@ button
   background-color: config.palette.primary
   border: 1px solid config.palette.primary
   border-radius: config.radiuses.buttons
+  // color: config.palette.primary
   color white
   cursor pointer
   transition all .15s ease-in-out
@@ -48,13 +51,19 @@ button
   flex-flow row nowrap
   align-items center
   justify-content center
+  font-size 13px
   line-height 20px
   flex-basis 56px
   white-space nowrap
   user-select none
+  box-shadow -4px -5px #03A9F4
 
   &:before
     pointer-events none
+
+  &:hover
+  &:active
+    border-color: config.palette.secondary
 
   &[disabled]
     cursor default
@@ -73,7 +82,7 @@ button
           background-color: darken(config.palette.primary, 15%)
 
   &[data-size="large"]
-    padding: config.spacings.inBoxes (config.spacings.inBoxes*2)
+    padding: 15px 31px
 
   &[data-size="medium"]
     padding: (config.spacings.inBoxes/2) config.spacings.inBoxes
@@ -95,6 +104,7 @@ button
   &[data-styl="unstyled"]
     background-color transparent
     color: config.typography.palette.ui
+    box-shadow none
 
     &:before
     &:after

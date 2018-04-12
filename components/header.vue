@@ -24,7 +24,7 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 header
-  // background white
+  background: config.palette.bgs.body
   line-height: baseSpacingUnit*12
   // box-shadow: config.shadows.header
 

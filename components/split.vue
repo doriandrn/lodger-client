@@ -37,13 +37,14 @@ export default {
     margin-left auto
 
     .dropdown
-      &__content
-        &[data-box-arrow]
-          &:before
-            right 16px
+      &[data-box-arrow]
+        &:before
+          right 14px
+          z-index 99
 
-          &:after
-            right 17px
+        &:after
+          right 14px
+          z-index 100
 
   &[data-separate]
     .right

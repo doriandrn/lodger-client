@@ -1,6 +1,6 @@
 <template lang="pug">
 sction(title="Liste")
-  p urmatoarele liste de plata se vor genera
+  p Listele de plată pentru luna în curs se vor genera în 6 zile
 </template>
 
 <script>

@@ -96,7 +96,7 @@ input[type="radio"]
 .input__radio
   display flex
   flex-flow column nowrap
-  margin 4px
+  margin 4px 4px 8px
   height 12px
 
   > input[type="radio"]

@@ -1,11 +1,13 @@
 <template lang="pug">
-nuxt-link(
+nuxt-link.button(
   v-if=         "to",
   :to=          "to",
   :data-icon=   "icon",
   :data-size=   "size",
+  :data-styl=       "styl",
   tabIndex=     1
-) {{ text }}
+)
+  slot
 
 button(
   v-else-if=        "type === 'button' && !to",
@@ -56,7 +58,7 @@ button
   flex-basis 56px
   white-space nowrap
   user-select none
-  box-shadow -4px -5px #03A9F4
+  box-shadow -5px -5px #03A9F4
 
   &:before
     pointer-events none
@@ -70,6 +72,7 @@ button
     border-color: config.palette.borders
     background-color transparent
     color: config.typography.palette.light
+    box-shadow none
 
     &[data-arrow]
       &:after

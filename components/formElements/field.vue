@@ -4,14 +4,9 @@
   :data-size=  "size"
   :data-type=   "type"
   :data-icon=   "type === 'search' ? 'search' : icon"
-  :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null"
+  :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null",
+  :class=       "{ 'field--error': error }"
 )
-  labl.field__label(
-    v-show=         "!hideLabel || type === 'scari' && scariCount > 1"
-    :required=      "required"
-    :for=           "id"
-  ) {{ label }}
-
   inpt(
     v-if=         "['text', 'number', 'search', 'bani'].indexOf(type) > -1",
     :type=        "type !== 'bani' ? type : 'number'",
@@ -85,7 +80,12 @@
     :servicii=        "servicii"
   )
   p(v-else-if=        "type === 'contactFields'") contactFields
-    //- :alese=           "$emit('input')"
+  labl.field__label(
+    v-show=         "!hideLabel || type === 'scari' && scariCount > 1"
+    :required=      "required"
+    :for=           "id"
+  ) {{ label }}
+
   p.field__message(v-if="message") {{ message }}
 
   slot
@@ -95,6 +95,7 @@
     v-if=             "type === 'search' && results.apartamente && results.apartamente.length",
     :results=         "results",
     :selectedIndex=   "indexRezultatSelectat"
+    :class=           "{ singleTax: searchTaxonomy }"
   )
     
 </template>
@@ -232,6 +233,10 @@ export default {
     icon: {
       type: String,
       default: null
+    },
+    error: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -284,6 +289,8 @@ export default {
 @require '~styles/config'
 
 .field
+  position relative
+
   &[data-size="small"]
     input
       padding 4px
@@ -305,7 +312,7 @@ export default {
 
     &:before
       position absolute
-      bottom 11px
+      top 11px
       left 12px
       background-color: config.typography.palette.meta
 
@@ -313,6 +320,12 @@ export default {
       top 100%
       opacity 1
       visibility visible
+      z-index 11
+
+      &.singleTax
+        .results
+          &__header
+            display none
 
     &[data-size="small"]
       input
@@ -329,4 +342,25 @@ export default {
 
   &[data-type="search"]
     max-width 100%
+
+  &__message
+    margin-bottom 0
+    position absolute
+    top 35px
+    z-index 2
+    font-size 12px
+    background white
+    padding 0 4px
+
+  &__label
+    position absolute 0 0 auto 0
+    transition all .05s ease-in-out
+
+  &--error
+    .field
+      &__message
+        color: config.palette.error
+
+    input
+      border-color: config.palette.error !important
 </style>

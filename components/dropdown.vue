@@ -2,6 +2,7 @@
 .dropdown(
   :class=   "{'dropdown--open': open}",
   v-on-clickaway=   "inchide"
+  data-box-arrow
 )
   buton.dropdown__toggle(
     :icon=    "icon",
@@ -12,7 +13,7 @@
     tabIndex= 0
   ) #[slot(name="beforeText")] {{ toggleText }}
     slot(name="buton")
-  .dropdown__content(data-box-arrow)
+  .dropdown__content
     .dropdown__header(v-if="$slots.header")
       slot(name="header")
     .dropdown__main(v-if="$slots.default")
@@ -70,6 +71,7 @@ export default {
 @require '~styles/config'
 
 colors = config.palette
+shadow = -1px 2px rgba(black, .05)
 
 .dropdown
   position relative
@@ -106,29 +108,45 @@ colors = config.palette
     border 2px solid white
     display flex
     flex-flow row wrap
-
     padding 8px 0
 
-    > button[data-styl="unstyled"]
-      padding 4px 16px
-      flex 1 1 100%
-      justify-content flex-start
+    > button
+    > a
+      &[data-styl="unstyled"]
+        padding 4px 16px
+        flex 1 1 100%
+        justify-content flex-start
+        border-radius 0
 
   &__content
     opacity 0
     visibility hidden
     max-height 0
     min-width 190px
-    position absolute 100% 0 auto auto
+    position absolute 105% 0 auto auto
     background white
     box-shadow: shadow
+    border-radius 2px 3px 5px 8px
+    overflow hidden
+    transition all .15s ease-in-out
     
   &--open
+    &[data-box-arrow]
+      &:before
+      &:after
+        bottom 0
     .dropdown
       &__content
         opacity 1
         visibility visible
         max-height 50vh
+        top 100%
+
+      &__main
+        > button
+        > a
+          &:hover
+            background-color: colors.highlight
     .dropdown
       &__toggle
         background: colors.bgs.body

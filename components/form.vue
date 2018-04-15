@@ -1,5 +1,5 @@
 <template lang="pug">
-form(@submit.prevent="validate")
+form(@submit.prevent="validate(formName)")
   field(
     v-for=          "field in formData.campuri"
     v-if=           "!field.notInForm"
@@ -24,6 +24,13 @@ form(@submit.prevent="validate")
     :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
 
     v-model.trim=   "$data[field.id]"
+
+    v-validate=     "field.v || null"
+    :data-vv-scope= "formName",
+    :data-vv-as=    "field.label"
+    :data-vv-name=  "field.id"
+    :error=         "errors.has(`${formName}.${field.id}`)"
+    :message=       "errors.first(`${formName}.${field.id}`)"
   )
 
   slot(
@@ -62,18 +69,19 @@ export default {
     }
   },
   data () {
-    console.log('DCALLED')
     let dynamicFormData = {}
     const { campuri, $for } = this.formData
     if (!campuri) return dynamicFormData
     // tradu campurile
     campuri.forEach(camp => {
       camp.label = this.$t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`)
+      if (camp.required) camp.v = `required|${camp.v || ''}`
       // if (camp.id === 'servicii' && typeof camp.servicii === 'function') {
       //   camp.servicii = camp.servicii(this.$store.getters)
       //   this.debug('ZA', camp.servicii)
       // }
     })
+    this.debug('campuri', campuri)
 
     // adauga-le valorile implicite
     const ids = campuri.filter(field => !field.notInAddForm || !field.notInForm).map(field => field.id)
@@ -128,6 +136,10 @@ export default {
     type: {
       type: String,
       default: 'new'
+    },
+    formName: {
+      type: String,
+      default: 'unnamed'
     }
   },
   methods: {
@@ -141,8 +153,30 @@ export default {
       incaseaza: 'incasare/adauga',
       modalClose: 'modal/close'
     }),
-    validate () {
-      this.$validator.validateAll().then(valid => {
+    trimiteFeedback (data) {
+      this.debug('tfdata', data)
+      // this.$axios.$post('https://api.github.com/repos/doriandrn/ui/issues', data, {
+      //   headers: {
+      //     Accept: 'application/vnd.github.v3+json',
+      //     Authorization: 'token 8df7d1f0fcb5ec784664fbdd5a24eadb12a73daf'
+      //   }
+      // })
+      // .then(res => {
+      //   if (res.status === 201) {
+      //     this.debug('gh:api', res)
+      //     // this.sent = true
+      //     // this.gitRes.number = res.data.number
+      //     // this.gitRes.url = res.data.html_url
+      //   }
+      // })
+      // .catch(e => {
+      //   this.attempted = false
+      //   this.gitErrors.push(e)
+      // })
+    },
+    validate (scope) {
+      this.$validator.validateAll(scope).then(valid => {
+        console.log('valid', valid)
         if (valid) this.handleSubmit()
       })
     },
@@ -188,12 +222,15 @@ form
   +desktop()
     margin: -(config.spacings.inBoxes)
 
-  > *
+  > .field
     flex 1 1 300px
     margin: (config.spacings.inBoxes/2)
 
     +desktop()
       margin: config.spacings.inBoxes
+
+      &+.field
+        margin-top 0
 
   label
     margin-bottom: (baseSpacingUnit*1.5)

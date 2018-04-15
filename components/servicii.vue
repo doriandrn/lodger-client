@@ -10,7 +10,7 @@ ul.servicii
     @keydown.space=     "toggleServiciu(serviciu.denumire)"
     tabIndex=   0
   ) 
-    span.nume {{ serviciu.denumire }}
+    span.nume {{ $t(`serviciu.nume.${serviciu.denumire}`) }}
     .serviciu__actiuni(v-if="modificabil(serviciu.denumire)")
       buton(
         @click=   "$emit('modificaServiciu', serviciu)"

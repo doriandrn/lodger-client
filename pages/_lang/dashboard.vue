@@ -17,7 +17,7 @@ sction#dash
     p.intro(v-show="initprgrs !== 2 || !idsBlocuri.length") {{ $t( initMessage.mesaj ) }}
     
     servicii(
-      v-if=             "!initprgrs"
+      v-if=             "initprgrs === 0"
       @input=           "toggleServiciu",
       @stergeServiciu=  "stergeServiciu",
       @modificaServiciu="debug($event); openModal({ id: 'serviciu.edit', data: $event })"
@@ -53,7 +53,7 @@ sction#dash
       p facturi / cheltuieli active
 
     //- empty(
-    //-   v-else-if=  "initprgrs === 2 && !idsBlocuri.length"
+    //-   v-else-if=  "!initprgrs && !aDefMacarUnServiciu && !defineste"
     //-   :CTA=       "$t('bloc.none.CTA')",
     //-   :actions=   "{ blocNew: $t('bloc.none.actions[0]') }"
     //-   @action=    "openModal('bloc.new')"
@@ -105,9 +105,9 @@ sction#dash
   //-     ) {{ $t('asociatie.adminZone.delete') }}
   empty(
     v-else
-    size=   "large"
-    :title= "$t('asociatie.noneAdmind.heading')",
-    :CTA=   "$t('asociatie.noneAdmind.CTA')",
+    size=     "large"
+    :title=   "$t('asociatie.noneAdmind.heading')",
+    :CTA=     "$t('asociatie.noneAdmind.CTA')",
     :actions= "{ newAsoc: $t('asociatie.noneAdmind.action') }"
     @action=  "openModal('asociatie.new')"
   )
@@ -139,7 +139,7 @@ export default {
     return {
       asociatieInitializata: true,
       toateEtajeleAuApartamente: false,
-      initprgrs: 0
+      initprgrs: -1,
     }
   },
   components: {
@@ -161,9 +161,10 @@ export default {
   },
   computed: {
     poateTreceLaUrmPas () {
-      const { initprgrs, aDefMacarUnServiciu, aDefMacarUnFurnizor } = this
-      if (initprgrs === 0 && aDefMacarUnServiciu) return 1
-      if (initprgrs === 1 && aDefMacarUnFurnizor) return 2
+      const { initprgrs, aDefMacarUnServiciu, aDefMacarUnFurnizor, defineste } = this
+      if (initprgrs < 0) return 0
+      if (aDefMacarUnServiciu) return 1
+      if (aDefMacarUnFurnizor) return 2
       return false
     },
     initOptions () {
@@ -171,13 +172,14 @@ export default {
     },
     disabledSteps () {
       const { poateTreceLaUrmPas, initOptions } = this
-      return initOptions.filter(opt => opt > poateTreceLaUrmPas) 
+      return initOptions.filter(opt => opt > poateTreceLaUrmPas)
     },
     initMessage () {
       const pfix = 'asociatie.init'
       let str = ''
       const { initprgrs } = this
       switch (initprgrs) {
+        case -1: str = `${pfix}.start`; break
         case 0: str = `${pfix}.servicii`; break
         case 1: str = `${pfix}.furnizori`; break
         case 2: str = `${pfix}.structura`; break
@@ -194,9 +196,8 @@ export default {
       return this.asociatii[this.activaId]
     },
     aDefMacarUnServiciu () {
-      const { activa: { servicii } } = this
-      if (!servicii) return false
-      return servicii.length > 0
+      if (!this.activa || !this.activa.servicii) return false
+      return this.activa.servicii.length > 0
     },
     aDefMacarUnFurnizor () {
       if (!this.furnizori) return false
@@ -227,7 +228,7 @@ export default {
     })
   },
   mounted () {
-    // this.initprgrs = 1
+    this.initprgrs = this.poateTreceLaUrmPas
   }
 }
 </script>
@@ -251,86 +252,6 @@ export default {
 
     +desktop()
       margin: config.spacings.inBoxes
-
-
-
-.etaj
-  margin-bottom auto
-  padding-bottom 16px
-
-  &e
-    background white
-    display flex
-    padding 0
-    flex-flow column-reverse nowrap
-
-    > li
-      display flex
-      position relative
-      height 48px
-      flex-flow row-reverse nowrap
-
-      > button
-        width 100%
-        flex 1 1 100%
-        padding 8px
-        border-radius 0
-
-        &.adauga
-          opacity 0
-
-        em
-          font-style normal
-          font-weight 100
-          font-size 18px
-          pointer-events none
-          margin-bottom 4px
-
-        &:not([data-styl="unstyled"])
-          // background-color: lighten(config.palette.tertiary, 85%)
-          background-color: transparent
-          color: config.typography.palette.ui
-          border-color: transparent
-          font-size 0
-          border-left: 1px solid config.palette.borders !important
-
-          &:hover
-            background white !important
-            color: config.typography.palette.headings !important
-
-      &.ultim
-        border-color: config.palette.tertiary
-
-      &:before
-        content counter(etaje, upper-roman)
-        color: config.typography.palette.light
-        position absolute
-        left 4px
-        top 4px
-        font-size 10px
-        line-height 10px
-
-      &:first-child:before
-        content 'P'
-        // background: config.palette.bgs.body
-
-      &:not(:last-child)
-        border-top: 1px solid config.palette.borders
-
-      &:not(:first-child)
-        counter-increment etaje
-
-      &:hover
-        button.adauga
-          opacity 1 !important
-
-  &__nr
-    flex 1 1 100%
-    padding 0 4px
-    pointer-events none
-    line-height 20px
-    margin-bottom 0
-    text-transform capitalize
 
 .furnizori
   list-style-type none

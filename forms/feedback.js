@@ -19,5 +19,5 @@ export const campuri = [
 ]
 
 export const actiuni = {
-  confirm: 'trimite'
+  confirm: 'trimiteFeedback'
 }

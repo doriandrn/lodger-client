@@ -1,4 +1,4 @@
-export const campuri = [
+const campuri = [
   {
     id: 'name',
     required: true,
@@ -39,11 +39,11 @@ export const campuri = [
   }
 ]
 
-export const actiuni = {
+const actiuni = {
   confirm: 'adaugaAsociatie'
 }
 
-export const metode = {
+const metode = {
   async initBalanta (data) {
     this.balanta = data.balanta
     await this.save()
@@ -61,3 +61,5 @@ export const metode = {
     await this.save()
   }
 }
+
+export { campuri, actiuni, metode }

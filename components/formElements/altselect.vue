@@ -5,15 +5,23 @@ ul.altselect(
 )
   li(
     v-for=      "option, key in options",
+    :tabIndex=  "value === key ? 0 : -1"
     :data-sel=  "value === key"
-    :data-value= "typeof options === 'object' ? option : key",
-    @click=     "value !== key ? $emit('input', $event.target.dataset.value) : debug($event.target)"
+    :data-value=     "typeof options === 'object' ? option : key",
+    @click=     "alege($event.target.dataset.value)"
   ) {{ option }}
   slot
 </template>
 
 <script>
 export default {
+  methods: {
+    alege (value) {
+      this.$emit('input', value)
+      this.debug(this)
+      this.$el.blur()
+    }
+  },
   props: {
     id: {
       type: String,
@@ -65,14 +73,18 @@ export default {
 
   &:after
     position absolute
-
+    transition all .1s ease
   
   &:active
+  &:focus
   &:hover
     outline none
     max-height 50vh
     overflow visible
     background white
+
+    &:after
+      background-color: config.typography.palette.headings !important
   
   > li
     display block
@@ -80,6 +92,7 @@ export default {
     order 2
     flex 1 1 100%
     padding 14px 24px
+    outline 0
     background white
     transition color .1s ease-in-out
 

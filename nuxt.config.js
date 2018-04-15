@@ -1,6 +1,8 @@
 var path = require('path')
 var webpack = require('webpack')
 
+const debug = !(process && process.env.NODE_ENV === 'production')
+
 function resolve(dir) {
   return path.join(__dirname, '.', dir)
 }
@@ -25,6 +27,14 @@ module.exports = {
     ]
   },
   mode: 'spa',
+  manifest: {
+    name: 'Lodger',
+    short_name: 'Lodger',
+    lang: 'ro',
+    description: 'Administrează asociații de locatari ușor, eficient și cu plăcere',
+    theme_color: '#3B8070',
+    background_color: '#fff'
+  },
   /*
   ** Customize the progress bar color
   */
@@ -47,6 +57,25 @@ module.exports = {
     linkActiveClass: 'active',
     base: '/ui/'
   },
+  axios: {
+    credentials: true,
+    baseURL: 'https://api.graph.cool/simple/v1/lodger-v2',
+    debug,
+    // requestInterceptor: (config, { store }) => {
+    //   const token = store ? store.getters['user/autentificat'] : ''
+    //   // daca nu e autentificat
+    //   if (token) {
+    //     config.headers.common['Authorization'] = `Bearer ${token}`
+    //   }
+
+    //   return config
+    // }
+  },
+  modules: [
+    '@nuxtjs/axios',
+    // '@nuxtjs/proxy',
+    // '@nuxtjs/pwa'
+  ],
   /*
   ** Build configuration
   */

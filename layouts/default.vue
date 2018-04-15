@@ -55,13 +55,20 @@
         styl=   "unstyled"
         @click= "openModal('cheltuiala.new')"
       ) Cheltuială / Factură
+      buton(
+        styl=   "unstyled"
+        @click= "openModal('asociatie.new')"
+      ) Asociație
 
     dropdown(
       slot=         "right",
       icon=         "settings"
       :toggleText=   "$t('settings')"
     )
-      nuxt-link(to="/setari#asociatie") {{ $t('defaults.asociatie') }}
+      buton(
+        styl=   "unstyled"
+        to=     "/setari#asociatie"
+      ) {{ $t('defaults.asociatie') }}
 
   main
     nuxt
@@ -287,7 +294,7 @@ footerHeight = 24px
           text-transform capitalize
           background transparent
 
-          &:first-child
+          &[data-sel]
             padding-top 20px
       
       label

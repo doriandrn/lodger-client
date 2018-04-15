@@ -33,6 +33,10 @@ export default {
     },
     init: {
       title: 'Inițializare',
+      start: {
+        titlu: 'Asociație neiniațializată',
+        mesaj: 'Începe inițializarea'
+      },
       servicii: {
         titlu: 'Servicii & contoare',
         mesaj: 'Alege serviciile furnizate de asociația ta'
@@ -132,7 +136,15 @@ export default {
     sterge: 'Elimină serviciul',
     deletePrompt: 'Ești sigur(ă) că vrei să elimini acest serviciu din listă?',
     adauga: 'Adaugă serviciu',
-    notFoundToBeDeleted: 'A apărut o problemă la ștergerea serviciului. Te rugăm să reîncerci.'
+    notFoundToBeDeleted: 'A apărut o problemă la ștergerea serviciului. Te rugăm să reîncerci.',
+    nume: {
+      'evacuare-gunoi-menajer': 'Salubritate',
+      internet: 'Internet',
+      apa: 'Apă',
+      gaze: 'Gaze',
+      electricitate: 'Electricitate',
+      termoficare: 'Termoficare'
+    }
   },
   registru: {
     title: 'Registru de plăți și încasări',

@@ -98,8 +98,7 @@ export default {
   &__content
     position relative
     flex 1 1 50%
-    overflow-y auto
-    overflow-x hidden
+    overflow visible
 
     form
       .actions

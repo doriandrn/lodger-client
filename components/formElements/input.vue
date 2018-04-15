@@ -159,12 +159,13 @@ input[type="password"]
 textarea
   font-size 14px
   line-height 18px
-  border: 1px solid #c8c8c8
-  border-radius: config.radiuses.buttons
-  box-shadow inset 1px 2px 3px -1px rgba(black, .015) 
+  border 0
+  border-bottom: 1px solid #c8c8c8
+  // border-radius: config.radiuses.buttons
+  // box-shadow inset 1px 2px 3px -1px rgba(black, .015) 
   transition all .15s ease-in-out
-  background: palette.bgs.body
-  padding 8px 12px
+  // background: palette.bgs.body
+  padding 8px 4px
   width 100%
 
   &::placeholder
@@ -175,6 +176,10 @@ textarea
   &:focus
     border-color: palette.primary
     color: palette.primary
+
+    &+.field__label
+      top -15px
+      font-size 10px
 
 .input
   &__req

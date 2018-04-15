@@ -156,5 +156,84 @@ export default {
     border: 1px solid config.palette.borders
     counter-reset etaje
 
+.etaj
+  margin-bottom auto
+  padding-bottom 16px
+
+  &e
+    background white
+    display flex
+    padding 0
+    flex-flow column-reverse nowrap
+
+    > li
+      display flex
+      position relative
+      height 48px
+      flex-flow row-reverse nowrap
+
+      > button
+        width 100%
+        flex 1 1 100%
+        padding 8px
+        border-radius 0
+        box-shadow none
+
+        &.adauga
+          opacity 0
+
+        em
+          font-style normal
+          font-weight 100
+          font-size 18px
+          pointer-events none
+          margin-bottom 4px
+
+        &:not([data-styl="unstyled"])
+          // background-color: lighten(config.palette.tertiary, 85%)
+          background-color: transparent
+          color: config.typography.palette.ui
+          border-color: transparent
+          font-size 0
+          border-left: 1px solid config.palette.borders !important
+
+          &:hover
+            background white !important
+            color: config.typography.palette.headings !important
+
+      &.ultim
+        border-color: config.palette.tertiary
+
+      &:before
+        content counter(etaje, upper-roman)
+        color: config.typography.palette.light
+        position absolute
+        left 4px
+        top 4px
+        font-size 10px
+        line-height 10px
+
+      &:first-child:before
+        content 'P'
+        // background: config.palette.bgs.body
+
+      &:not(:last-child)
+        border-top: 1px solid config.palette.borders
+
+      &:not(:first-child)
+        counter-increment etaje
+
+      &:hover
+        button.adauga
+          opacity 1 !important
+
+  &__nr
+    flex 1 1 100%
+    padding 0 4px
+    pointer-events none
+    line-height 20px
+    margin-bottom 0
+    text-transform capitalize
+
 </style>
 

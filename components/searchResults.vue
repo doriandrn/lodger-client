@@ -8,14 +8,16 @@
     //-   :class=   "{ selected: i === selectedIndex, irelevant: res.relevance < 0.25 }"
     //-   :to=      "`/${tax}/${res.id}`"
     //- )
-    adresa(
-      v-for=    "res, i in results.apartamente",
-      :key=     "i"
-      v-if=     "tax === 'apartamente'"
-      :apId=    "res.id"
-      :class=   "{ selected: i === selectedIndex, irelevant: res.relevance < 0.25 }"
-    )
-
+    ul
+      li(
+        v-for=    "res, i in results.apartamente"
+        v-if=     "tax === 'apartamente'"
+        :class=   "{ selected: i === selectedIndex, irelevant: res.relevance < 0.25 }"
+      )
+        adresa(
+          :key=     "i"
+          :apId=    "res.id"
+        )
 </template>
 
 <script>
@@ -65,34 +67,48 @@ spacings = 16px
     overflow-y auto
     padding 8px 0
 
-    > a
-      flex 1 0 100%
-      padding: (spacings/2) (spacings*1.5)
-      text-transform capitalize
-      text-decoration none
+    > ul
+      list-style-type none
+      padding 0
+      margin 0
+      display flex
+      flex-flow row wrap
 
-      for i in 1 2 3 4 5
-        &:nth-child({i}):not(.irelevant)
-          color: lighten(config.typography.palette.headings, i*10%)
+      > li
+        flex 1 1 100%
+        > a
+          flex 1 0 100%
+          padding: (spacings/2) (spacings*1.5)
+          text-transform capitalize
+          text-decoration none
+          &:active
+          &:focus
+            background-color: config.palette.selectedItem
 
-      &.irelevant
-        color: config.typography.palette.meta
+            .proprietar
+              color: config.typography.palette.headings
 
-      &.selected
-      :active
-      :focus
-        background-color: config.palette.selectedItem
+          &:hover
+            color: config.typography.palette.headings
+            background-color: config.palette.highlight
 
-        .proprietar
-          color: config.typography.palette.headings
+        &.irelevant
+          > a
+            color: config.typography.palette.meta
 
-      &:hover
-        color: config.typography.palette.headings
-        background-color: config.palette.selectedItem
+        &.selected
+          > a
+            color: config.typography.palette.headings
+            background-color: config.palette.selectedItem
 
-      &:not(.selected)
-        .adresa__main
-          display none
+          for i in 1 2 3 4 5
+            &:nth-child({i}):not(.irelevant)
+              > a
+                color: lighten(config.typography.palette.headings, i*10%)
+
+          &:not(.selected)
+            .adresa__main
+              display none
 
     .adresa__owner
       flex 0 0 20px

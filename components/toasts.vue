@@ -6,6 +6,7 @@ ul.toasts
     :data-type= "toast.type",
     :data-icon=  "toast.type === 'succes' ? 'check' : 'alert-circle'"
   )
+    h4(v-if="toast.heading") {{ $t( toast.heading ) }}
     p {{ $t( toast.text ) }}
 </template>
 
@@ -22,13 +23,16 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 
-types = info warn error succes
+types = info warn error success
+palette = config.palette
+iconBgWidth = 40px
 
 .toasts
   position fixed
   top 70px
   right 0
   max-width 280px
+  z-index 2
   display flex
   flex-flow column wrap
 
@@ -43,44 +47,42 @@ types = info warn error succes
     flex-flow row nowrap
     background white
     align-items center
-    border-left 3px solid
+    border-left 1px solid
     min-width 300px
     padding-left 0
     position relative
 
-    &:after
-      content ''
-      position absolute
-      left 0
-      top 0
-      bottom 0
-      width 64px
-      z-index 1
+    // &:after
+    //   content ''
+    //   position absolute
+    //   left 0
+    //   top 0
+    //   bottom 0
+    //   width: iconBgWidth
+    //   z-index 1
     
     &:not(:last-child)
       margin-bottom 20px
 
     p
       margin-bottom 0
-      font-size 16px
       color: config.typography.palette.headings
-      padding 20px 32px
 
     &:before
-      flex-basis 64px
+      flex-basis: iconBgWidth
       height 40px
-      mask-size 32px
+      mask-size 20px
       flex-shrink 0
       margin-right 12px
       z-index 2
 
-    palette = config.palette
     for $type in types
       type = s("%s", $type)
       dcolor = palette[type]
+
       &[data-type=\"{$type}\"]
         border-left-color: dcolor
-        box-shadow: 0px 2px 5px -2px dcolor
+        // box-shadow: 0px 2px 5px -2px dcolor
 
         &:before
           background-color: dcolor

@@ -136,6 +136,10 @@ button
   &.rounded
     border-radius 50%
 
+  &[data-arrow]
+    &:after
+      background: config.typography.palette.light
+
 </style>
 
 <script>

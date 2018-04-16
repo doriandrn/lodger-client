@@ -1,18 +1,18 @@
 export const campuri = [
   {
+    id: 'subiect',
+    required: true
+  },
+  {
     id: 'tip',
     type: 'select',
-    options: ['defect', 'imbunatatire', 'feature', 'altceva'],
-    // options: {
-    //   bug: 'Raportez un defect',
-    //   improvement: 'Vreau o îmbunătățire',
-    //   feature: 'Vreau o funcționalitate',
-    //   other: 'Altceva, legat de funcționalitatea aplicației'
-    // },
-    default: 'bug'
+    options: ['bug', 'enhacement', 'feature', 'other'],
+    default: 'bug',
+    required: true
   },
   {
     id: 'mesaj',
+    required: true,
     type: 'textarea',
     placeholder: 'Părerea / Sugestia / Critica ta'
   }

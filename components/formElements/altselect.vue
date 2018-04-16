@@ -80,7 +80,7 @@ export default {
   &:hover
     outline none
     max-height 50vh
-    overflow visible
+    overflow auto
     background white
 
     &:after

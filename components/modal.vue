@@ -93,7 +93,6 @@ export default {
 
   &__header
     background transparent
-    border-bottom: 1px solid config.palette.borders
 
   &__content
     position relative
@@ -137,7 +136,7 @@ export default {
 
     +desktop()
       padding-top: config.spacings.inBoxes
-      padding-bottom: config.spacings.inBoxes
+      // padding-bottom: config.spacings.inBoxes
   &__title
     margin-bottom 0
   &__footer

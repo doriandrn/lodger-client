@@ -54,8 +54,14 @@ header
     a
       color: config.typography.palette.headings
 
-  .field[data-icon]
+  .field[data-type="search"]
+    > input
+      padding-left 32px !important
+
+      &::placeholder
+        opacity 1
     &:before
-      bottom 16px
+      top 16px
+      left 11px
 </style>
 

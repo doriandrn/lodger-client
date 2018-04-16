@@ -11,6 +11,7 @@
       type=     "altselect",
       :options= "idsAsociatii"
       :arrow=   "true"
+      required= true
     )
 
     nav(
@@ -158,7 +159,6 @@ export default {
 
         campuri = campuri.filter(camp => !camp.notInAddForm)
         campuri.forEach(camp => {
-          console.log('B', camp)
           if (path[1] === 'edit' && typeof modalData === 'object') {
             const iId = path[0] === 'serviciu' ? modalData.denumire : modalData._id
             switch (path[0]) {
@@ -172,7 +172,6 @@ export default {
             }
           } 
           else if (path[1] === 'new') camp.value = camp.default || null
-          console.log('C', camp)
 
           // if (camp.label.indexOf(path[0]) < 0) camp.label = `${path[0]}.${camp.label}`
 

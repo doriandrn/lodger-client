@@ -1,11 +1,11 @@
 <template lang="pug">
 //- :data-selected="type === 'search' && selected.id"
 .field(
-  :data-size=  "size"
+  :data-size=   "size"
   :data-type=   "type"
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null",
-  :class=       "{ 'field--error': error }"
+  :class=       "{ 'field--error': error, 'field--val': value }"
 )
   inpt(
     v-if=         "['text', 'number', 'search', 'bani'].indexOf(type) > -1",
@@ -297,8 +297,8 @@ export default {
       border-radius 24px
 
   &[data-icon]
-    input
-      padding-left 32px !important
+    > input
+      padding-left 20px 
 
   &[data-type="scari"]
     > label
@@ -309,22 +309,29 @@ export default {
   &[data-type="search"]
     position relative
     padding-left 0
+    max-width 100%
 
     &:before
       position absolute
       top 11px
-      left 12px
+      left 0
       background-color: config.typography.palette.meta
+
+    > label.field__label
+        left 22px
 
     .results
       top 100%
+      left 0
+      right auto
       opacity 1
       visibility visible
       z-index 11
+      max-width 350px
 
       &.singleTax
         .results
-          &__header
+          &__heading
             display none
 
     &[data-size="small"]
@@ -340,9 +347,6 @@ export default {
   &[data-type="bani"]
     flex-basis 120px
 
-  &[data-type="search"]
-    max-width 100%
-
   &__message
     margin-bottom 0
     position absolute
@@ -353,8 +357,31 @@ export default {
     padding 0 4px
 
   &__label
-    position absolute 0 0 auto 0
-    transition all .05s ease-in-out
+    min-width 100px
+    pointer-events none
+
+  &[data-type="text"]
+  &[data-type="textarea"]
+  &[data-type="number"]
+  &[data-type="search"]
+  &[data-type="bani"]
+    .field
+      &__label
+        position absolute 8px 0 auto 0
+        transition all .05s ease-in-out
+        margin-bottom 0
+
+    &.field--val
+      .field__label
+        moveFieldLabel()
+
+
+  &:not([data-type="text"])
+    &:not([data-type="textarea"])
+      &:not([data-type="altselect"])
+        flex-direction row-reverse
+        align-items center
+        justify-content flex-end
 
   &--error
     .field

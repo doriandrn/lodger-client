@@ -172,17 +172,22 @@ textarea
     color: config.typography.palette.meta
     font-size 12px
     font-weight 100
+    opacity 0
+    transition opacity .1s ease
   
   &:focus
     border-color: palette.primary
     color: palette.primary
 
+    &::placeholder
+      opacity 1
+
     &+.field__label
-      top -15px
-      font-size 10px
+      moveFieldLabel()
 
 .input
-  &__req
-    color: palette.warn
+  &__optional
     margin-left 4px
+    color: config.typography.palette.meta
+    font-weight 100
 </style>

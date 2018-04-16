@@ -118,17 +118,17 @@ export default {
 @require '~styles/config'
 
 .ap
-  background-color #574c6c
+  // background-color #574c6c
 
-  &:before
-    content ''
-    position absolute 0
-    bottom auto
-    height 40vh
-    background embedurl('~static/bgs/aphead.jpg')
-    background-size contain
-    z-index 0
-    opacity .35
+  // &:before
+  //   content ''
+  //   position absolute 0
+  //   bottom auto
+  //   height 40vh
+  //   background embedurl('~static/bgs/aphead.jpg')
+  //   background-size contain
+  //   z-index 0
+  //   opacity .35
 
   .inner
     position relative

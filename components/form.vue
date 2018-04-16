@@ -154,25 +154,33 @@ export default {
       modalClose: 'modal/close'
     }),
     trimiteFeedback (data) {
-      this.debug('tfdata', data)
-      // this.$axios.$post('https://api.github.com/repos/doriandrn/ui/issues', data, {
-      //   headers: {
-      //     Accept: 'application/vnd.github.v3+json',
-      //     Authorization: 'token 8df7d1f0fcb5ec784664fbdd5a24eadb12a73daf'
-      //   }
-      // })
-      // .then(res => {
-      //   if (res.status === 201) {
-      //     this.debug('gh:api', res)
-      //     // this.sent = true
-      //     // this.gitRes.number = res.data.number
-      //     // this.gitRes.url = res.data.html_url
-      //   }
-      // })
-      // .catch(e => {
-      //   this.attempted = false
-      //   this.gitErrors.push(e)
-      // })
+      const issue = {
+        title: data.subiect || 'Test',
+        labels: [`${data.tip}`],
+        assignee: 'doriandrn',
+        body: `
+### Descriere
+${data.mesaj} (${this.topic})`
+      }
+
+      this.$axios.$post('https://api.github.com/repos/doriandrn/ui/issues', issue, {
+        headers: {
+          Accept: 'application/vnd.github.v3+json',
+          Authorization: 'token 8df7d1f0fcb5ec784664fbdd5a24eadb12a73daf'
+        }
+      })
+      .then(res => {
+        if (res.status === 201) {
+          this.debug('gh:api', res)
+          // this.sent = true
+          // this.gitRes.number = res.data.number
+          // this.gitRes.url = res.data.html_url
+        }
+      })
+      .catch(e => {
+        // this.attempted = false
+        // this.gitErrors.push(e)
+      })
     },
     validate (scope) {
       this.$validator.validateAll(scope).then(valid => {
@@ -228,9 +236,6 @@ form
 
     +desktop()
       margin: config.spacings.inBoxes
-
-      &+.field
-        margin-top 0
 
   label
     margin-bottom: (baseSpacingUnit*1.5)

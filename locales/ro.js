@@ -89,6 +89,11 @@ export default {
     scara: 'Scară',
     scari: 'Scări'
   },
+  cheltuiala: {
+    new: {
+      title: 'Cheltuială nouă'
+    }
+  },
   apartament: {
     new: {
       title: 'Adaugă apartament',
@@ -162,11 +167,17 @@ export default {
       add: 'Adaugă',
       edit: 'Modifică'
     },
-    add: 'Adaugă'
+    add: 'Adaugă',
+    optional: 'opțional'
   },
   search: 'Caută',
   sum: 'Suma',
   settings: 'Setări',
+  scara: {
+    new: {
+      name: 'Id'
+    }
+  },
   erori: {
     'Error': 'Ne pare rău, a apărut o eroare :(',
     '404': 'Această resursă este inaccesibilă',
@@ -175,8 +186,9 @@ export default {
   feedback: {
     new: {
       title: 'Feedback',
-      tip: 'Subiect',
-      mesaj: 'Mesaj'
+      tip: 'Tip',
+      mesaj: 'Mesaj',
+      subiect: 'Subiect'
     }
   }
 }

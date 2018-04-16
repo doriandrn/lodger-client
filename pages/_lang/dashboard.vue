@@ -10,7 +10,8 @@ sction#dash
       v-model=    "initprgrs"
       :label=     "null"
       :options=   "initOptions"
-      :disabled=  "disabledSteps"
+      :disabled=  "disabledSteps",
+      :required=  "true"
     )
 
     h1 {{ $t( initMessage.titlu ) }}
@@ -321,6 +322,9 @@ export default {
 
     .radios
       flex-direction column
+
+    .field__label
+      min-width 0
 
 ul.activitate
   list-style-type none

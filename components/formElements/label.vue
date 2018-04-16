@@ -1,7 +1,7 @@
 <template lang="pug">
 label
   slot
-  span.input__req(v-if="required") *
+  span.input__optional(v-if="!required") {{ $t('defaults.optional') }}
 </template>
 
 <script>

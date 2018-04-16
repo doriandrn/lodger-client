@@ -15,7 +15,7 @@ const debug = Debug('lodger:rxstore')
 /**
   Subscriberii la actiunile din DB
 */
-let subs = []
+let subs = {}
 
 // temp docs for db manip
 const active = {}
@@ -28,6 +28,7 @@ const mutations = {}
 const _state = {}
 
 const updateMutationName = key => `set_${key}`
+const globalSubs = Object.keys(ldgSchema).filter(key => key.indexOf('$') === 0)
 
 for (let [k, v] of defs) {
   active[k] = null
@@ -90,14 +91,14 @@ Object.assign(_state, { active })
 const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
   asociatieActiva = isRxDocument(payload) ? payload : await db.asociatii.findOne({ name: payload.name }).exec()
-
-  const subSubscribersCount = Object.keys(ldgSchema).filter(key => key.indexOf('$') === 0).length
-
-  subs.forEach((sub, i) => { if (i < subSubscribersCount) return
-    sub.unsubscribe()
-  })
+  // debug('defSubs', defSubscriptions)
+  
+  // subs.forEach((sub, i) => { if (i < defSubscriptions.length) return
+  //   sub.unsubscribe()
+  // })
   subscribe(ldgSchema.$asociatii)
-  return
+  debug('subscribers', subs)
+  return { asociatieActiva }
 }
 
 const unsubscribeDBsubscribers = subs => async ({ type }) => {
@@ -156,7 +157,7 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
       commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
     }
     debug('Adaugat: ', newItem)
-    notificari.success('Adaugat!')
+    notificari.success('Adaugat!', 'added')
   } else {
   /**
    * DELETE
@@ -191,8 +192,8 @@ function rxdb () {
       return
     }
 
-    let subscribers = []
-    const subscribedTo = item => subscribers.indexOf(item._singular) > -1
+    // let subscribers = []
+    const subscribedTo = item => Object.keys(subs).indexOf(item._singular) > -1
 
     // inscrie recursiv to
     const subscribe = (o) => {
@@ -201,32 +202,31 @@ function rxdb () {
       keys.forEach(key => {
         const k = trm(key)
         if (!db[k]) return
-        subs.push(db[k].find(findCriteria(k)).$.subscribe(items => {
+
+        if (k !== 'asociatii' && !subscribedTo(o[key])) {
+          // subscribers.push(o[key]._singular)
+          // debug('inscriu', o[key])
+          subscribe(o[key])
+        }
+
+        subs[o[key]._singular] = db[k].find(findCriteria(k)).$.subscribe(items => {
           if (!items) return
           if (!items.length) {
             if (k === 'servicii') predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
           }
+
+          if (!asociatieActiva) {
+            // subscribers = []
+            dispatch('asociatie/schimba', items[0])
+          }
           // if (pre) pre(k, items)
           // debug('XXSUBS', subs)
-          // debug('XXSUBScribers', subscribers)
           store.commit(`set_${k}`, sanitizeDBItems(items))
-          
-          if (k === 'asociatii') { 
-            if (!asociatieActiva) {
-              subscribers = []
-              dispatch('asociatie/schimba', items[0])
-            }
-          } else {
-            if (!subscribedTo(o[key])) {
-              subscribers.push(o[key]._singular)
-              subscribe(o[key])
-            }
-          }
-        }))
+        })
       })
     }
     
-    Object.keys(notificari).forEach(type => () => notificari[type]({ dispatch }))
+    Object.keys(notificari).forEach(type => notificari[type] = notificari[type]({ dispatch }))
     subscribe(ldgSchema)
 
     store.subscribe(unsubscribeDBsubscribers(subs))

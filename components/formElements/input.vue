@@ -127,7 +127,7 @@ export default {
     handleChange (e) {
       if (this.type === 'search') return
       if (this.type === 'checkbox') {
-        this.$emit('input', Boolean(e.target.value))
+        this.$emit('input', Boolean(!this.value))
         return
       }
       this.$emit('change', e.target.value)
@@ -165,6 +165,7 @@ textarea
   font-size 14px
   line-height 18px
   border 0
+  min-width 32px
   border-bottom: 1px solid #c8c8c8
   // border-radius: config.radiuses.buttons
   // box-shadow inset 1px 2px 3px -1px rgba(black, .015) 

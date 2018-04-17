@@ -8,11 +8,10 @@ field(
 )
 
 ul.scari.zebra(v-else)
-  .separator
   li(v-for="scara, i in scari")
     label.label Scara
       strong {{ scari[i].id }}
-      p.test(@click="debug(scari)") {{ scari[i].lift }}
+
     field(
       :id=      "`scara-${i}`", 
       type=     "number"
@@ -35,7 +34,15 @@ ul.scari.zebra(v-else)
       :label=     "$t('scara.lift')",
       v-model=    "scari[i].lift",
       :required=  "true",
-      @input=    "$emit('input', scari)"
+      @input=     "$emit('input', scari)"
+    )
+    field(
+      :id=        "`mansarda-${i}`",
+      type=       "checkbox",
+      :label=     "$t('scara.mansarda')",
+      v-model=    "scari[i].mansarda",
+      :required=  "true",
+      @input=     "$emit('input', scari)"
     )
 </template>
 
@@ -47,7 +54,8 @@ export default {
     if (!value) scari.push({
       id: '1',
       etaje: 4,
-      lift: false
+      lift: false,
+      mansarda: false
     })
 
     if (value && value.length) {
@@ -84,7 +92,7 @@ export default {
       if (newVal > old) {
         dif = newVal - old
         for (let i = old; i < newVal; i++) {
-          if (i > 0) this.scari.push({ id: i+1, etaje: 1, lift: false })
+          if (i > 0) this.scari.push({ id: i+1, etaje: 1, lift: false, manssarda: false })
         }
       } else {
         dif = old - newVal

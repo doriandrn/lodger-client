@@ -357,8 +357,7 @@ export default {
     padding 0 4px
 
   &__label
-    min-width 100px
-    pointer-events none
+    user-select none
 
   &[data-type="text"]
   &[data-type="textarea"]
@@ -370,18 +369,26 @@ export default {
         position absolute 8px 0 auto 0
         transition all .05s ease-in-out
         margin-bottom 0
+        min-width 100px
+        pointer-events none
 
     &.field--val
       .field__label
         moveFieldLabel()
 
+  &[data-type="checkbox"]
+    flex-wrap nowrap
+
+    .field__label
+      margin-bottom 0
 
   &:not([data-type="text"])
     &:not([data-type="textarea"])
       &:not([data-type="altselect"])
-        flex-direction row-reverse
-        align-items center
-        justify-content flex-end
+        &:not([data-type="scari"])
+          flex-direction row-reverse
+          align-items center
+          justify-content flex-end
 
   &--error
     .field

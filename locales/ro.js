@@ -179,7 +179,8 @@ export default {
     new: {
       name: 'Id'
     },
-    lift: 'Ascensor'
+    lift: 'Ascensor',
+    mansarda: 'Mansardă'
   },
   erori: {
     'Error': 'Ne pare rău, a apărut o eroare :(',

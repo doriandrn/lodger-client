@@ -158,6 +158,8 @@ export default {
   },
   defaults: {
     address: 'Adresă',
+    asociatie: 'Asociație',
+    asociatia: 'Asociația de locatari',
     prompt: {
       message: 'Ești sigur?',
       confirm: 'Da',
@@ -168,15 +170,16 @@ export default {
       edit: 'Modifică'
     },
     add: 'Adaugă',
-    optional: 'opțional'
+    optional: 'opțional',
+    search: 'Caută',
+    sum: 'Suma',
+    settings: 'Setări'
   },
-  search: 'Caută',
-  sum: 'Suma',
-  settings: 'Setări',
   scara: {
     new: {
       name: 'Id'
-    }
+    },
+    lift: 'Ascensor'
   },
   erori: {
     'Error': 'Ne pare rău, a apărut o eroare :(',

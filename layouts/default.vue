@@ -7,7 +7,7 @@
       v-if=     "idsAsociatii && idsAsociatii.length > 1"
       v-model=  "idAsociatieActiva",
       id=       "asociatieSwitch"
-      label=    "Asociația de locatari"
+      :label=    "$t('defaults.asociatia')"
       type=     "altselect",
       :options= "idsAsociatii"
       :arrow=   "true"
@@ -36,7 +36,7 @@
       type=     "search"
       size=     "small"
       id=       "search"
-      :placeholder=  "$t('search')"
+      :placeholder=  "$t('defaults.search')"
       hide-label
     )
 

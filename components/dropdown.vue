@@ -129,12 +129,19 @@ shadow = -1px 2px rgba(black, .05)
     border-radius 2px 3px 5px 8px
     overflow hidden
     transition all .15s ease-in-out
+
+  &[data-box-arrow]
+    &:before
+    &:after
+      opacity 0
     
   &--open
     &[data-box-arrow]
       &:before
       &:after
         bottom 0
+        opacity 1
+
     .dropdown
       &__content
         opacity 1

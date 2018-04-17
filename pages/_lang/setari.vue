@@ -1,13 +1,12 @@
 <template lang="pug">
-sction.setari(:title="$t('settings')")
+sction.setari(:title="$t('defaults.settings')")
   tabs
-    tab(title="asoc") asoc
+    tab(:title="$t('defaults.asociatie')") asoc
       buton(
         @click= "openModal('feedback.new')"
       ) Feedback
 
-    tab(title="Utilizator")
-      h2 Profil
+    tab(:title="$t('defaults.user.profile')")
       frm
 </template>
 

@@ -5,10 +5,10 @@
   :data-type=   "type"
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null",
-  :class=       "{ 'field--error': error, 'field--val': value }"
+  :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
 )
   inpt(
-    v-if=         "['text', 'number', 'search', 'bani'].indexOf(type) > -1",
+    v-if=         "['text', 'number', 'search', 'bani', 'checkbox'].indexOf(type) > -1",
     :type=        "type !== 'bani' ? type : 'number'",
     :placeholder= "placeholder",
     :autocomplete="autocomplete",
@@ -18,7 +18,7 @@
     :min=         "min",
     :max=         "max",
     :step=        "type !== 'bani' ? step : .01",
-    :value=       "value",
+    :value=       "type === 'checkbox' ? Boolean(value) : value",
     @input=       "$emit('input', $event)",
     @change=      "$emit('change', $event)"
     

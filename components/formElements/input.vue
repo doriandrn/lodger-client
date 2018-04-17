@@ -6,6 +6,7 @@ input(
   v-focus=          "focus",
   :autofocus=       "focus",
   :autocomplete=    "autocomplete ? 'on' : 'off'"
+  :checked=         "type === 'checkbox' && value === true"
   @input=           "handleInput",
   @change=          "handleChange"
   :value=           "type === 'search' ? selected.proprietar : value",
@@ -101,13 +102,13 @@ export default {
   },
   mounted () {
     if (this.type !== 'search') return
-    console.log(this.value, this.selected)
   },
   computed: mapGetters({
     modalOpen: 'modal/open'
   }),
   methods: {
     clickAway () {
+      if (this.type !== 'search') return
       this.$emit('clickAway')
     },
     inchideModale () {
@@ -125,6 +126,10 @@ export default {
     },
     handleChange (e) {
       if (this.type === 'search') return
+      if (this.type === 'checkbox') {
+        this.$emit('input', Boolean(e.target.value))
+        return
+      }
       this.$emit('change', e.target.value)
     },
     search (input) {

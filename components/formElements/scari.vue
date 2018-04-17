@@ -1,29 +1,41 @@
 <template lang="pug">
 field(
-  v-if =  "Number(scariCount) < 2",
-  type=   "number",
-  :label=  "$t('bloc.etaje')",
-  v-model=  "scari[0].etaje"
+  v-if =      "Number(scariCount) < 2",
+  type=       "number",
+  :label=     "$t('bloc.etaje')",
+  v-model=    "scari[0].etaje"
+  :required=  "true"
 )
 
-ul.field.scari(v-else)
+ul.scari.zebra(v-else)
   .separator
   li(v-for="scara, i in scari")
     label.label Scara
       strong {{ scari[i].id }}
+      p.test(@click="debug(scari)") {{ scari[i].lift }}
     field(
       :id=      "`scara-${i}`", 
       type=     "number"
       :label=   "$t('bloc.etaje')"
       v-model=  "scari[i].etaje",
-      @input=   "$emit('input', scari)"
+      :required=  "true",
+      @input=    "$emit('input', scari)"
     )
     field(
       :id=      "`id-${i}`",
       type=     "text"
       :label=   "$t('scara.new.name')",
       v-model=  "scari[i].id"
-      @input=   "$emit('input', scari)"
+      :required=  "true",
+      @input=    "$emit('input', scari)"
+    )
+    field(
+      :id=        "`lift-${i}`",
+      type=       "checkbox",
+      :label=     "$t('scara.lift')",
+      v-model=    "scari[i].lift",
+      :required=  "true",
+      @input=    "$emit('input', scari)"
     )
 </template>
 
@@ -34,7 +46,8 @@ export default {
     const { value } = this
     if (!value) scari.push({
       id: '1',
-      etaje: 4
+      etaje: 4,
+      lift: false
     })
 
     if (value && value.length) {
@@ -71,7 +84,7 @@ export default {
       if (newVal > old) {
         dif = newVal - old
         for (let i = old; i < newVal; i++) {
-          if (i > 0) this.scari.push({ id: i+1, etaje: 1})
+          if (i > 0) this.scari.push({ id: i+1, etaje: 1, lift: false })
         }
       } else {
         dif = old - newVal

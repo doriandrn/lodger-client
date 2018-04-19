@@ -18,12 +18,22 @@
           :key=     "i"
           :apId=    "res.id"
         )
+        bani.restanta(
+          v-if=       "modalContent === 'incasare.new'"
+          :valoare=   "aps[res.id].balanta"
+        )
 </template>
 
 <script>
+import bani from '~components/bani'
 import adresa from '~components/adresa'
+import { mapGetters } from 'vuex'
 
 export default {
+  computed: mapGetters({
+    modalContent: 'modal/content',
+    aps: 'apartamente'
+  }),
   props: {
     selectedIndex: {
       type: Number,
@@ -35,7 +45,8 @@ export default {
     }
   },
   components: {
-    adresa
+    adresa,
+    bani
   }
 }
 </script>
@@ -55,6 +66,7 @@ spacings = 16px
   box-shadow: config.shadows.boxes
   border-top-radius: (config.radiuses.boxes/2)
   border-bottom-radius: config.radiuses.boxes
+  border: 1px solid config.palette.borders
   display flex
   flex-flow column nowrap
   opacity 0
@@ -67,6 +79,11 @@ spacings = 16px
     overflow-y auto
     padding 8px 0
 
+    .bani
+      position absolute
+      right 12px
+      top 8px
+
     > ul
       list-style-type none
       padding 0
@@ -76,6 +93,10 @@ spacings = 16px
 
       > li
         flex 1 1 100%
+        display flex
+        flex-flow row nowrap
+        position relative
+
         > a
           flex 1 0 100%
           padding: (spacings/2) (spacings*1.5)
@@ -106,9 +127,9 @@ spacings = 16px
               > a
                 color: lighten(config.typography.palette.headings, i*10%)
 
-          &:not(.selected)
-            .adresa__main
-              display none
+        &:not(.selected)
+          .adresa__main
+            display none
 
     .adresa__owner
       flex 0 0 20px

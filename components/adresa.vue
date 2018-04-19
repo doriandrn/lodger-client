@@ -108,5 +108,5 @@ export default {
 
     .proprietar
       flex 1 1 100%
-      color: config.typography.palette.body
+      color: config.typography.palette.ui
 </style>

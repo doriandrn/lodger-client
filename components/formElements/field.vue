@@ -27,8 +27,8 @@
     @selected=          "selected = $event"
     :selected=          "selectedResult"
     @keyEnter=          "selecteaza"
-    @keyDown=           "type === 'search' ? indexRezultatSelectat++ : null"
-    @keyUp=             "type === 'search' ? indexRezultatSelectat-- : null"
+    @keyDown=           "type === 'search' ? (indexRezultatSelectat < results[searchTaxonomy].length - 1 ? indexRezultatSelectat++ : indexRezultatSelectat = 0) : null"
+    @keyUp=             "type === 'search' ? (indexRezultatSelectat > 0 ? indexRezultatSelectat-- : indexRezultatSelectat = results[searchTaxonomy].length - 1) : null"
     :class=             "{ av: !!value }"
     @clickAway=         "clearResults"
   )
@@ -100,7 +100,7 @@
     :selectedIndex=   "indexRezultatSelectat"
     :class=           "{ singleTax: searchTaxonomy }"
   )
-    
+  span(v-if=           "type === 'search' && searchTaxonomy && indexRezultatSelectat > -1") Ultima incasare:
 </template>
 
 <script>
@@ -283,7 +283,6 @@ export default {
     },
     clearResults () {
       if (this.type !== 'search') return
-      this.debug('CLEARRES')
       Object.keys(this.results).forEach(result => this.results[result] = [])
     }
   }
@@ -334,8 +333,8 @@ export default {
         moveFieldLabel()
 
     .results
-      top 100%
-      left 0
+      top 36px
+      left -12px
       right auto
       opacity 1
       visibility visible

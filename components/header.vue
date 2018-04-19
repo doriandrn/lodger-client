@@ -57,6 +57,7 @@ header
   .field[data-type="search"]
     > input
       padding-left 32px !important
+      border: 1px solid config.palette.borders
 
       &::placeholder
         opacity 1

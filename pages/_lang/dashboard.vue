@@ -164,8 +164,8 @@ export default {
     poateTreceLaUrmPas () {
       const { initprgrs, aDefMacarUnServiciu, aDefMacarUnFurnizor, defineste } = this
       if (initprgrs < 0) return 0
-      if (aDefMacarUnServiciu) return 1
       if (aDefMacarUnFurnizor) return 2
+      if (aDefMacarUnServiciu) return 1
       return false
     },
     initOptions () {
@@ -264,6 +264,7 @@ export default {
   > li
     flex 1 1 33%
     margin 8px
+    user-select none
 
     &:not(.nou)
       padding 8px 32px

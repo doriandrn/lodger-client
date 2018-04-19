@@ -74,7 +74,7 @@ export default {
       title: 'Adaugă un bloc/o clădire nou(ă)',
       nume: 'Identificator / Denumire',
       adresa: 'Adresă',
-      scariCount: 'Nr. scări (dacă există)',
+      scariCount: 'Nr. scări',
       scari: 'Structura scărilor'
     },
     edit: {
@@ -132,7 +132,8 @@ export default {
   serviciu: {
     new: {
       title: 'Adaugă un serviciu',
-      denumire: 'Denumire'
+      denumire: 'Denumire',
+      contoare: 'Contorizare'
     },
     edit: {
       title: 'Modifică serviciul'
@@ -185,6 +186,7 @@ export default {
   erori: {
     'Error': 'Ne pare rău, a apărut o eroare :(',
     '404': 'Această resursă este inaccesibilă',
+    '500': 'Eroare de server',
     'inContinuare': 'Alege ce dorești să faci în continuare'
   },
   feedback: {

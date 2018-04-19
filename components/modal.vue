@@ -98,6 +98,10 @@ export default {
     position relative
     flex 1 1 50%
     overflow visible
+    padding 20px
+
+    +above(xl)
+      padding 40px
 
     form
       .actions
@@ -111,12 +115,6 @@ export default {
 
         input[type="submit"]
           min-width 120px
-
-  &__content
-    padding 20px
-
-    +above(xs)
-      padding 40px
 
   &__footer
   &__header

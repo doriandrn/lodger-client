@@ -53,6 +53,7 @@ config = {
       ui: #666666
       headings: #202020
       paragraphs: #646464,
+      labels: #333,
       meta: #a7a6a5,
       light: #dedede
     }
@@ -92,6 +93,20 @@ bubble()
   border-radius 50%
 
 moveFieldLabel()
-  top -20px
+  top -15px
   font-size 10px
   left 0 !important
+  color: config.typography.palette.meta
+
+icon(icon = null)
+  content ''
+  size 14px
+  display inline-block
+  vertical-align middle
+  mask-size 13px
+  mask-position 50%
+  mask-repeat no-repeat
+  pointer-events none
+
+  if icon
+    mask-image embedurl('~static/icons/ui/'+icon+'.svg')

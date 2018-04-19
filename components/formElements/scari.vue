@@ -8,27 +8,34 @@ field(
 )
 
 ul.scari.zebra(v-else)
-  li(v-for="scara, i in scari")
+  li(
+    v-for=          "scara, i in scari"
+    :data-mansarda= "scara.mansarda"
+  )
     label.label Scara
       strong {{ scari[i].id }}
 
     field(
-      :id=      "`scara-${i}`", 
-      type=     "number"
-      :label=   "$t('bloc.etaje')"
-      v-model=  "scari[i].etaje",
+      :id=        "`scara-${i}`", 
+      type=       "number"
+      :label=     "$t('bloc.etaje')"
+      data-for=   "etaje",
+      v-model=    "scari[i].etaje",
       :required=  "true",
-      @input=    "$emit('input', scari)"
+      @input=     "$emit('input', scari)"
+      hide-label
+    )
+    field.scari__id(
+      :id=        "`id-${i}`",
+      type=       "text"
+      :label=     "$t('scara.new.name')",
+      v-model=    "scari[i].id"
+      :required=  "true",
+      @input=     "$emit('input', scari)"
+      hide-label
     )
     field(
-      :id=      "`id-${i}`",
-      type=     "text"
-      :label=   "$t('scara.new.name')",
-      v-model=  "scari[i].id"
-      :required=  "true",
-      @input=    "$emit('input', scari)"
-    )
-    field(
+      v-if=       "scara.etaje > 4"
       :id=        "`lift-${i}`",
       type=       "checkbox",
       :label=     "$t('scara.lift')",
@@ -111,13 +118,34 @@ export default {
 <style lang="stylus" scoped>
 .scari
   padding 0
+  width 100%
+  display flex
+  flex-flow column-reverse nowrap
+
+  &__id
+    max-width 53px
 
   > li
     display flex
-    margin -8px -8px 16px
+    margin 0 -20px
+    padding 0 12px
     flex-flow row nowrap
-    flex 1 1 100%
+    flex 0 0 100%
     align-items center
+
+    .field[data-for="etaje"]
+      max-width 60px
+      flex 0 0 60px
+
+    &[data-mansarda]
+      .field[data-for="etaje"]
+        &:before
+          content '+ M'
+          position absolute
+          left 16px
+          z-index 0
+          pointer-events none
+          font-weight 100
     
     > *
       margin 8px
@@ -125,7 +153,7 @@ export default {
     > label
       white-space nowrap
       margin-right 32px
-      flex-basis 50%
+      flex 0 0 100px
 
       > strong
         margin-left 4px

@@ -164,6 +164,7 @@ input[type="password"]
 textarea
   font-size 14px
   line-height 18px
+  background-color transparent
   border 0
   min-width 32px
   border-bottom: 1px solid #c8c8c8
@@ -190,6 +191,16 @@ textarea
 
     &+.field__label
       moveFieldLabel()
+
+input
+  &[type="checkbox"]
+    display none
+
+    &+label
+      position relative
+
+      &:before
+        icon('x')
 
 .input
   &__optional

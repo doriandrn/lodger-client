@@ -73,6 +73,9 @@
     :options=     "options"
     :disabled=    "disabled"
   )
+  contoare(
+    v-else-if=      "type === 'contoare'"
+  )
   servicii(
     v-else-if=        "type === 'servicii'"
     @input=           "$emit('input', $event)"
@@ -112,6 +115,7 @@ import radios from 'form/radioGroup'
 import scari from 'form/scari'
 import servicii from '~components/servicii'
 import results from '~components/searchResults'
+import contoare from 'form/contoare'
 
 import { mapGetters } from 'vuex'
 
@@ -246,6 +250,7 @@ export default {
     labl,
     txtarea,
     cbox,
+    contoare,
     file,
     radios,
     scari,
@@ -301,10 +306,14 @@ export default {
       padding-left 20px 
 
   &[data-type="scari"]
+    flex-direction column-reverse 
+    flex-wrap nowrap
     > label
-      font-weight 700
+      font-weight 600
       margin-bottom 16px
-      flex 1 0 100%
+      // flex 1 0 100%
+      flex 1 1 38px
+      align-self flex-start
 
   &[data-type="search"]
     position relative
@@ -319,6 +328,10 @@ export default {
 
     > label.field__label
         left 22px
+
+    &[data-results]
+      .field__label
+        moveFieldLabel()
 
     .results
       top 100%
@@ -378,9 +391,33 @@ export default {
 
   &[data-type="checkbox"]
     flex-wrap nowrap
+    cursor pointer
 
     .field__label
       margin-bottom 0
+      cursor pointer
+      color: config.typography.palette.meta
+
+      &:before
+        background-color: config.typography.palette.meta
+        position relative
+        margin-right 4px
+        top 1px
+
+    &:hover
+      .field__label
+        color: config.typography.palette.headings
+
+        &:before
+          background-color: config.typography.palette.headings
+
+    > input[type="checkbox"]
+      &:checked
+        &+label
+          color: config.typography.palette.headings
+          &:before
+            mask-image embedurl('~static/icons/ui/check.svg')
+            background-color: config.typography.palette.headings
 
   &:not([data-type="text"])
     &:not([data-type="textarea"])

@@ -2,7 +2,10 @@
 ol.scari(v-if="id")
   li(v-for="scara, iScara in bloc.scari")
     label.nume Scara {{ scara.id }}
-    .scara
+    .scara(
+      :data-lift=       "scara.lift"
+      :data-mansarda="  scara.mansarda"
+    )
       ol.etaje
         li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
           buton(
@@ -64,7 +67,7 @@ export default {
 .bloc
   display flex
   flex-flow row wrap
-  margin auto auto 0
+  margin auto 32px 0
   flex 1 1 100%
   align-items center
   justify-content center
@@ -155,6 +158,29 @@ export default {
     width 100%
     border: 1px solid config.palette.borders
     counter-reset etaje
+    position relative
+
+    &[data-lift]
+      > ol.etaje
+        margin-left 8px
+
+      &:before
+        content ''
+        width 5px
+        height 20px
+        background rgba(black, .15)
+        position absolute
+        top 40px
+        left 1px
+
+      &:after
+        content ''
+        width 1px
+        height 40px
+        background: config.palette.borders
+        position absolute
+        top 0
+        left 3px
 
 .etaj
   margin-bottom auto
@@ -226,6 +252,9 @@ export default {
       &:hover
         button.adauga
           opacity 1 !important
+
+        &:before
+          color: config.palette.primary
 
   &__nr
     flex 1 1 100%

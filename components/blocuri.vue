@@ -125,6 +125,8 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 
+drkr = rgba(black, .05)
+
 .blocuri
   fullflex()
   flex-grow 0
@@ -143,9 +145,10 @@ export default {
   &:before
     content ''
     position fixed 48px 0 42px
-    background: linear-gradient(to right, config.palette.bgs.body 0%, transparent 15%, transparent 85%, config.palette.bgs.body 100%)
+    background: linear-gradient(to right, drkr 0%, transparent 15%, transparent 85%, drkr 100%)
     z-index 5
     pointer-events none
+    border-top-radius 50%
 
   > div
     z-index 4

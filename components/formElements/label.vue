@@ -18,6 +18,14 @@ export default {
 </script>
 
 <style lang="stylus">
+@require '~styles/config'
+defColor = config.typography.palette.labels
+
 label
   display inline-flex
+  user-select none
+  color: defColor
+
+  &:before
+    background-color: defColor
 </style>

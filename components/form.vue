@@ -231,7 +231,7 @@ form
     margin: -(config.spacings.inBoxes)
 
   > .field
-    flex 1 1 300px
+    flex 1 1 200px
     margin: (config.spacings.inBoxes/2)
 
     +desktop()
@@ -245,7 +245,7 @@ form
   .field
     display flex
     flex-flow row wrap
-    max-width 335px
+    // max-width 335px
 
     &[data-type="number"]
       flex-basis 110px

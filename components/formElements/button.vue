@@ -62,6 +62,7 @@ button
 
   &:before
     pointer-events none
+    background-color white
 
   &:hover
   &:active

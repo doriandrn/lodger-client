@@ -192,7 +192,9 @@ textarea
     &+.field__label
       moveFieldLabel()
 
-input
+input:not([type="submit"])
+  max-height 36px
+
   &[type="checkbox"]
     display none
 

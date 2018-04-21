@@ -82,7 +82,8 @@ const makeCollection = data => {
   return {
     name: value,
     schema,
-    methods: metode
+    methods: metode,
+    sync: true
   }
 }
 

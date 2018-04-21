@@ -33,17 +33,24 @@ export default {
     flex-flow row nowrap
     align-items center
 
+  .left
+    flex 1 1 100%
+
   .right
     margin-left auto
+    flex 1 1 55%
+    justify-content flex-end
 
     .dropdown
       &[data-box-arrow]
         &:before
-          right 14px
+          right 13px
+          left auto
           z-index 99
 
         &:after
           right 14px
+          left auto
           z-index 100
 
   &[data-separate]

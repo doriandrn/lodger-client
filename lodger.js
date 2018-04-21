@@ -50,5 +50,4 @@ traverse(ldgSchema, (k, v) => {
   if (v._singular) defs.set(v._singular, trm(k))
 })
 
-
 export { ldgSchema, searchables, notificari, defs }

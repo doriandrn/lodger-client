@@ -1,14 +1,14 @@
 <template lang="pug">
 ul.altselect(
-  :id=        "id",
-  :data-arrow="arrow"
+  :id=          "id",
+  :data-arrow=  "arrow"
 )
   li(
-    v-for=      "option, key in options",
-    :tabIndex=  "value === key ? 0 : -1"
-    :data-sel=  "value === key"
-    :data-value=     "typeof options === 'object' ? option : key",
-    @click=     "alege($event.target.dataset.value)"
+    v-for=        "option, key in options",
+    :tabIndex=    "value === key ? 0 : -1"
+    :data-sel=    "value === key"
+    :data-value=  "typeof options === 'object' ? option : key",
+    @click=       "alege($event.target.dataset.value)"
   ) {{ option }}
   slot
 </template>
@@ -67,7 +67,7 @@ export default {
   display flex
   flex-flow column nowrap
   max-width 100%
-  max-height 100%
+  max-height 54px
   overflow hidden
   transition max-height .15s ease-in-out
 

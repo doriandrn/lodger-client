@@ -1,14 +1,13 @@
 // import 'babel-polyfill'
 import * as RxDB from 'rxdb'
+import { remoteUrl } from 'config'
 
 RxDB.plugin(require('pouchdb-adapter-idb'))
 // RxDB.plugin(require('pouchdb-adapter-memory'))
-// RxDB.plugin(require('pouchdb-replication'))
-// RxDB.plugin(require('pouchdb-adapter-http'))
+RxDB.plugin(require('pouchdb-adapter-http'))
+RxDB.plugin(require('pouchdb-authentication'))
 
 import collections from './collections'
-
-const syncURL = 'http://lodger.ro:10101/'
 
 const conInfo = {
   name: 'lodger23',
@@ -23,8 +22,6 @@ const db = getdb(conInfo)
 
 console.log('DatabaseService: created database', db)
 if (typeof window !== 'undefined') window['db'] = db // write to window for debugging
-
-
 
 export const { isRxDocument } = RxDB
 
@@ -56,10 +53,14 @@ export default (async function (dbdata) {
   //     return db
   //   })
   // })
-
-  // collections.filter(col => col.sync).map(col => col.name).map(colName => db[colName].sync(syncURL + colName + '/'))
-
   // await insertPredefinedDocs(db)
+
+  collections
+    .filter(col => col.sync)
+    .map(col => col.name)
+    .map(colName => rdb[colName].sync({
+      remote: remoteUrl + colName + '/'
+    }))
 
   return rdb
 })()

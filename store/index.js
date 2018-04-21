@@ -103,7 +103,7 @@ const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
 
 const unsubscribeDBsubscribers = subs => async ({ type }) => {
   if (type !== 'DESTROYMAIN') return
-  subs.forEach(sub => sub.unsubscribe())
+  subs= {}
 }
 
 const DBMethods = db => async ({ type, payload }) => {

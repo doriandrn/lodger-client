@@ -163,10 +163,10 @@ export default {
   computed: {
     poateTreceLaUrmPas () {
       const { initprgrs, aDefMacarUnServiciu, aDefMacarUnFurnizor, defineste } = this
-      if (initprgrs < 0) return 0
       if (aDefMacarUnFurnizor) return 2
       if (aDefMacarUnServiciu) return 1
-      return false
+      if (initprgrs < 0) return 0
+      return -1
     },
     initOptions () {
       return [0, 1, 2, 3]
@@ -230,6 +230,12 @@ export default {
   },
   mounted () {
     this.initprgrs = this.poateTreceLaUrmPas
+  },
+  watch: {
+    activaId: function (oldV, newV) {
+      this.initprgrs = this.poateTreceLaUrmPas
+      this.debug('wtf', oldV, newV)
+    }
   }
 }
 </script>
@@ -258,6 +264,7 @@ export default {
   list-style-type none
   padding 0
   display flex
+  flex-flow row wrap
   max-width 630px
   margin 0 auto
 

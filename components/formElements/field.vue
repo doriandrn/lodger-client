@@ -314,6 +314,9 @@ export default {
       flex 1 1 38px
       align-self flex-start
 
+  &[data-type="servicii"]
+    flex 1 1 100%
+
   &[data-type="search"]
     position relative
     padding-left 0

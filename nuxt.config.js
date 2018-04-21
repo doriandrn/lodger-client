@@ -94,6 +94,7 @@ module.exports = {
 
       // Extend aliases
       Object.assign(config.resolve.alias, {
+        config: resolve('config'),
         styles: resolve('assets/styles'),
         UI: resolve('components/UI'),
         widgets: resolve('components/widgets'),

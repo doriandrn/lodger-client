@@ -24,6 +24,13 @@
 //! moment.js
 
 /*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+/*!
  * vue-i18n v7.6.0 
  * (c) 2018 kazuya kawaguchi
  * Released under the MIT License.

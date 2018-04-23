@@ -10,6 +10,10 @@ export const campuri = [
     type: 'bani'
   },
   {
+    id: 'dataScadenta',
+    type: 'date'
+  },
+  {
     id: 'modDistribuire',
     type: 'distribuire'
   },

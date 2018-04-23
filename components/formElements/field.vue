@@ -76,6 +76,12 @@
   contoare(
     v-else-if=      "type === 'contoare'"
   )
+  sel-apartamente(
+    v-else-if=      "type === 'selApartamente'"
+  )
+  distribuire(
+    v-else-if=      "type === 'distribuire'"
+  )
   servicii(
     v-else-if=        "type === 'servicii'"
     @input=           "$emit('input', $event)"
@@ -100,7 +106,7 @@
     :selectedIndex=   "indexRezultatSelectat"
     :class=           "{ singleTax: searchTaxonomy }"
   )
-  span(v-if=           "type === 'search' && searchTaxonomy && indexRezultatSelectat > -1") Ultima incasare:
+  span(v-if=           "type === 'search' && searchTaxonomy === 'apartamente' && indexRezultatSelectat > -1") Ultima incasare:
 </template>
 
 <script>
@@ -116,6 +122,8 @@ import scari from 'form/scari'
 import servicii from '~components/servicii'
 import results from '~components/searchResults'
 import contoare from 'form/contoare'
+import distribuire from 'form/distribuire'
+import selApartamente from 'form/selApartamente'
 
 import { mapGetters } from 'vuex'
 
@@ -247,6 +255,7 @@ export default {
     inpt,
     slect,
     altslect,
+    distribuire,
     labl,
     txtarea,
     cbox,
@@ -255,6 +264,7 @@ export default {
     radios,
     scari,
     servicii,
+    selApartamente,
     results
   },
   methods: {
@@ -321,6 +331,7 @@ export default {
     position relative
     padding-left 0
     max-width 100%
+    flex-flow row wrap !important
 
     &:before
       position absolute
@@ -426,9 +437,11 @@ export default {
     &:not([data-type="textarea"])
       &:not([data-type="altselect"])
         &:not([data-type="scari"])
-          flex-direction row-reverse
-          align-items center
-          justify-content flex-end
+          // flex-direction row-reverse
+          flex-flow column-reverse nowrap
+          align-items flex-start
+          justify-content flex-start
+          margin-top 0
 
   &--error
     .field

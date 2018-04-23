@@ -105,6 +105,7 @@ export default {
 
     form
       .actions
+        flex-wrap nonwrap
         position fixed
         bottom -60px
         height 0

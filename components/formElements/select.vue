@@ -6,7 +6,7 @@ select(
   option(
     v-for=      "option, key in options",
     :value=     "typeof options === 'object' ? option : key",
-    :selected=  "value === key"
+    :selected=  "value === option"
   ) {{ option }}
 </template>
 
@@ -71,8 +71,9 @@ select
   font-size 14px
   line-height 16px
   padding 8px 24px 8px 4px
+  min-height 32px
   flex 1 1 auto
-  max-width 180px
+  // max-width 180px
   width 100%
   border 0
   position relative

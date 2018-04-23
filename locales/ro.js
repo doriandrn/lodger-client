@@ -91,7 +91,11 @@ export default {
   },
   cheltuiala: {
     new: {
-      title: 'Cheltuială nouă'
+      title: 'Cheltuială nouă',
+      catre: 'Către',
+      modDistribuire: 'Mod de distribuire',
+      apartamenteEligibile: 'Apartamente eligibile',
+      suma: 'Suma'
     }
   },
   apartament: {
@@ -116,9 +120,9 @@ export default {
   },
   incasare: {
     new: {
-      dela: 'De la',
+      deLa: 'De la',
       title: 'Încasează',
-      nr: 'Nr. Chitanță'
+      nrChitanta: 'Nr. Chitanță'
     }
   },
   furnizor: {
@@ -169,6 +173,9 @@ export default {
     forms: {
       add: 'Adaugă',
       edit: 'Modifică'
+    },
+    user: {
+      profile: 'Profil'
     },
     add: 'Adaugă',
     optional: 'opțional',

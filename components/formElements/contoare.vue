@@ -1,9 +1,10 @@
 <template lang="pug">
 .contoare
+  p(v-if="status") contoare
   div(
+    v-else
     @click= "status = 1"
   ) Necontorizabil
-  p(v-if="status") contoare
 </template>
 
 <script>
@@ -25,5 +26,7 @@ export default {
 @require '~styles/config'
 
 .contoare
-  background yellow
+  flex 1 1 100%
+  p
+    background yellow
 </style>

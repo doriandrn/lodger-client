@@ -157,7 +157,8 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
       commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
     }
     debug('Adaugat: ', newItem)
-    notificari.success('Adaugat!', 'added')
+    const ss = `${what}.adaugat`
+    notificari.success(`${ss}.h`, `${ss}.p`)
   } else {
   /**
    * DELETE

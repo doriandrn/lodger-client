@@ -373,6 +373,7 @@ export default {
 
   &__label
     user-select none
+    flex 1 1 100%
 
   &[data-type="text"]
   &[data-type="textarea"]

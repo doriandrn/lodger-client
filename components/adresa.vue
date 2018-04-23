@@ -80,6 +80,8 @@ export default {
   flex-flow column wrap
   text-decoration none
   line-height 20px
+  width 100%
+  flex 1 1 100%
 
   &__main
     font-weight 100

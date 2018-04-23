@@ -37,11 +37,12 @@ colors = config.palette
       list-style-type none
       padding 0
       max-width 639px
+      width 100%
+      flex 1 1 100%
       margin 0 auto
 
       li
         background white
-        padding 20px
 
         &:not(:last-child)
           border-bottom: 1px solid colors.borders

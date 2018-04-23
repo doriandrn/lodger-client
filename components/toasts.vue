@@ -1,5 +1,7 @@
 <template lang="pug">
-ul.toasts
+ul.toasts(
+  :class=   "{ 'toasts--has': toasts.length > 0 }"
+)
   li(
     v-for=      "toast in toasts",
     :key=       "toast.id",
@@ -51,6 +53,8 @@ iconBgWidth = 40px
     min-width 300px
     padding-left 0
     position relative
+    left 100%
+    transition all .15s ease-in-out
 
     // &:after
     //   content ''
@@ -90,5 +94,8 @@ iconBgWidth = 40px
         &:after
           background: lighten(dcolor, 95%)
 
+  &--has
+    > li
+      left 0
 
 </style>

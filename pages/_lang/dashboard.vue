@@ -178,7 +178,7 @@ export default {
     initMessage () {
       const pfix = 'asociatie.init'
       let str = ''
-      const { initprgrs } = this
+      const { initprgrs, $t } = this
       switch (initprgrs) {
         case -1: str = `${pfix}.start`; break
         case 0: str = `${pfix}.servicii`; break
@@ -186,7 +186,7 @@ export default {
         case 2: str = `${pfix}.structura`; break
         case 3: str = `${pfix}.financiar`; break
       }
-      const{ $t } = this
+
       return {
         titlu: `${str}.titlu`,
         mesaj: `${str}.mesaj`,
@@ -301,15 +301,12 @@ export default {
     display: inline-flex
     margin-top auto
 
-    +desktop()
-      margin-top 20vh
-
   > *:not(.field)
     width 100%
     align-items center
     justify-content center
 
-    &:not(h1):not(.intro)
+    &:not(h1):not(.intro):not(.blocuri)
       margin-bottom auto
 
   .field[data-type="radios"]

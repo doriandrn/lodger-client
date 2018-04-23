@@ -12,7 +12,7 @@ swiper.blocuri(
     bloc(
       :id=  "blocId"
       modificabil
-    )
+  )|""
 
     //- .bloc__actiuni
     //-   buton(
@@ -240,6 +240,9 @@ drkr = rgba(black, .05)
         &:hover
           color: config.typography.palette.headings
           border-color: config.typography.palette.ui
+
+      &:last-child
+        padding-right 84px
 
       // for i in 1..10
       //   &:nth-child({i})

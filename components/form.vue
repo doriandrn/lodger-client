@@ -14,7 +14,7 @@ form(@submit.prevent="validate(formName)")
     :min=           "field.min"
     :max=           "field.max",
     :step=          "field.type === 'bani' ? 0.01 : field.step",
-    :options=       "field.options"
+    :options=       "typeof field.options === 'function' ? field.options($store.getters) : field.options"
     :value=         "field.value"
     :data-slot=     "field.slot"
     :searchTaxonomy="field.taxonomy"

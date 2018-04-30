@@ -194,6 +194,7 @@ export default {
     'Error': 'Ne pare rău, a apărut o eroare :(',
     '404': 'Această resursă este inaccesibilă',
     '500': 'Eroare de server',
+    'typeError': 'Dorian, învață să programezi!!',
     'inContinuare': 'Alege ce dorești să faci în continuare'
   },
   feedback: {

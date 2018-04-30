@@ -78,6 +78,7 @@
   )
   sel-apartamente(
     v-else-if=      "type === 'selApartamente'"
+    :optiuni=       "options"
   )
   distribuire(
     v-else-if=      "type === 'distribuire'"

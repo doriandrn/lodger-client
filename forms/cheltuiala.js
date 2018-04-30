@@ -19,7 +19,8 @@ export const campuri = [
   },
   {
     id: 'apartamenteEligibile',
-    type: 'selApartamente'
+    type: 'selApartamente',
+    options: getters => getters['asociatie/apartamente']
   }
 ]
 

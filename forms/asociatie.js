@@ -36,6 +36,11 @@ const campuri = [
     type: 'array',
     ref: 'furnizori',
     notInForm: true
+  },
+  {
+    id: 'filtreCheltuieli',
+    type: 'array',
+    notInForm: true
   }
 ]
 

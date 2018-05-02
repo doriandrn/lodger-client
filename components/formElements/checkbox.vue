@@ -3,16 +3,24 @@ span.checkbox
   input(
     type=   "checkbox",
     :id=    "id"
+    :value= "id"
+    :selected=  "selected"
   )
   label.label(
     :for=       "id"
   ) #[span] {{ label }}
     p.field__desc(v-if="desc") {{desc}}
+
+  slot
 </template>
 
 <script>
 export default {
   props: {
+    selected: {
+      type: Boolean,
+      default: false
+    },
     id: {
       type: String,
       default () {
@@ -35,13 +43,3 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-input[type="checkbox"]
-  &+label
-    > span
-      border-radius 5px
-  &:checked
-    &+label
-      >span
-        background-image: embedurl('~static/icons/ui/ok.svg', 'utf8')
-</style>

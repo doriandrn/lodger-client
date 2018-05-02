@@ -14,7 +14,11 @@ export default {
       title: 'Activitate'
     }
   },
-  navigation: ['Panou de Control', 'Liste de plată', 'Comunitate'],
+  navigation: [
+    'Panou de Control',
+    'Liste de plată',
+    'Comunitate'
+  ],
   asociatie: {
     noneAdmind: {
       heading: 'Nu administrezi nicio asociație',
@@ -27,6 +31,9 @@ export default {
       idN: 'CIF',
       confirmStruct: 'Structura este finală',
       continuaInitializarea: 'Continuă inițializarea'
+    },
+    adaugat: {
+      h: 'Asociație adaugată!'
     },
     edit: {
       title: 'Modifică datele asociației'
@@ -85,6 +92,7 @@ export default {
     delete: 'Șterge blocul',
     etaje: 'Etaje',
     etaj: 'Etaj',
+    etajul: 'Etajul',
     parter: 'Parter',
     scara: 'Scară',
     scari: 'Scări'
@@ -95,7 +103,8 @@ export default {
       catre: 'Către',
       modDistribuire: 'Mod de distribuire',
       apartamenteEligibile: 'Apartamente eligibile',
-      suma: 'Suma'
+      suma: 'Suma',
+      dataScadenta: 'Scadentă la'
     }
   },
   apartament: {
@@ -184,6 +193,7 @@ export default {
     settings: 'Setări'
   },
   scara: {
+    _articulat: 'Scara',
     new: {
       name: 'Id'
     },
@@ -194,7 +204,7 @@ export default {
     'Error': 'Ne pare rău, a apărut o eroare :(',
     '404': 'Această resursă este inaccesibilă',
     '500': 'Eroare de server',
-    'typeError': 'Dorian, învață să programezi!!',
+    'TypeError': 'Dorian, învață să programezi!!',
     'inContinuare': 'Alege ce dorești să faci în continuare'
   },
   feedback: {

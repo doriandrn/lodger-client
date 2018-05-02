@@ -8,7 +8,7 @@
   :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
 )
   inpt(
-    v-if=         "['text', 'number', 'search', 'bani', 'checkbox'].indexOf(type) > -1",
+    v-if=         "['text', 'number', 'search', 'bani', 'checkbox', 'date'].indexOf(type) > -1",
     :type=        "type !== 'bani' ? type : 'number'",
     :placeholder= "placeholder",
     :autocomplete="autocomplete",
@@ -73,6 +73,13 @@
     :options=     "options"
     :disabled=    "disabled"
   )
+  checkboxes(
+    v-else-if=    "type === 'checkboxes'",
+    :id=          "id",
+    :value=       "value",
+    @change=      "$emit('input', $event)"
+    :options=     "options"
+  )
   contoare(
     v-else-if=      "type === 'contoare'"
   )
@@ -116,7 +123,7 @@ import labl from 'form/label'
 import slect from 'form/select'
 import altslect from 'form/altselect'
 import txtarea from 'form/textarea'
-import cbox from 'form/checkbox'
+import checkboxes from 'form/checkboxes'
 import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
@@ -259,7 +266,7 @@ export default {
     distribuire,
     labl,
     txtarea,
-    cbox,
+    checkboxes,
     contoare,
     file,
     radios,
@@ -385,7 +392,7 @@ export default {
 
   &__label
     user-select none
-    flex 1 1 100%
+    flex 1 1 24px
 
   &[data-type="text"]
   &[data-type="textarea"]
@@ -405,35 +412,10 @@ export default {
         moveFieldLabel()
 
   &[data-type="checkbox"]
+    display inline-flex
     flex-wrap nowrap
     cursor pointer
-
-    .field__label
-      margin-bottom 0
-      cursor pointer
-      color: config.typography.palette.meta
-
-      &:before
-        background-color: config.typography.palette.meta
-        position relative
-        margin-right 4px
-        top 1px
-
-    &:hover
-      .field__label
-        color: config.typography.palette.headings
-
-        &:before
-          background-color: config.typography.palette.headings
-
-    > input[type="checkbox"]
-      &:checked
-        &+label
-          color: config.typography.palette.headings
-          &:before
-            mask-image embedurl('~static/icons/ui/check.svg')
-            background-color: config.typography.palette.headings
-
+        
   &:not([data-type="text"])
     &:not([data-type="textarea"])
       &:not([data-type="altselect"])

@@ -161,6 +161,7 @@ input[type="text"]
 input[type="search"]
 input[type="number"]
 input[type="password"]
+input[type="date"]
 textarea
   font-size 14px
   line-height 18px
@@ -194,15 +195,6 @@ textarea
 
 input:not([type="submit"])
   max-height 36px
-
-  &[type="checkbox"]
-    display none
-
-    &+label
-      position relative
-
-      &:before
-        icon('x')
 
 .input
   &__optional

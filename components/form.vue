@@ -72,27 +72,23 @@ export default {
     let dynamicFormData = {}
     const { campuri, $for } = this.formData
     if (!campuri) return dynamicFormData
-    // tradu campurile
+    
+    // Label-uri pt campuri => traduse
     campuri.forEach(camp => {
       camp.label = this.$t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`)
       if (camp.required) camp.v = `required|${camp.v || ''}`
-      // if (camp.id === 'servicii' && typeof camp.servicii === 'function') {
-      //   camp.servicii = camp.servicii(this.$store.getters)
-      //   this.debug('ZA', camp.servicii)
-      // }
-    })
-    this.debug('campuri', campuri)
-
-    // adauga-le valorile implicite
-    const ids = campuri.filter(field => !field.notInAddForm || !field.notInForm).map(field => field.id)
-    // this.debug('ids', ids)
-
-    ids.forEach(fid => {
-      const test = campuri.filter(field => field.id === fid)[0]
-      dynamicFormData[fid] = typeof test.value === 'function' ? test.value(this.$store.getters) : test.value
     })
 
-    // passed data in modal
+    // Valorile implicite
+    campuri
+      .filter(field => !field.notInAddForm || !field.notInForm)
+      .map(field => field.id)
+      .forEach(fid => {
+        const test = campuri.filter(field => field.id === fid)[0]
+        dynamicFormData[fid] = typeof test.value === 'function' ? test.value(this.$store.getters) : test.value
+      })
+
+    // data pasata prin modal
     const modalData = this.$store.getters['modal/data']
     if (typeof modalData === 'object' && modalData) {
       Object.keys(modalData).forEach(data => {

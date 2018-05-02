@@ -1,0 +1,31 @@
+typeColors = config.typography.palette
+
+input[type="checkbox"]
+  display none
+  &+label
+    position relative
+    margin-bottom 0
+    padding 4px // sa fie mai pushy
+    cursor pointer
+    color: typeColors.meta
+
+    &:before
+      icon('x')
+      background-color: typeColors.meta
+      position relative
+      margin-right 4px
+      top 1px
+
+  &:checked
+    &+label
+      color: typeColors.headings
+      &:before
+        mask-image embedurl('~static/icons/ui/check.svg')
+        background-color: typeColors.headings
+
+  &:hover
+    &+label
+      color: typeColors.headings
+
+      &:before
+        background-color: typeColors.headings

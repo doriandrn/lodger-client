@@ -3,11 +3,13 @@ export const campuri = [
     id: 'catre',
     type: 'search',
     taxonomy: 'furnizori',
-    ref: 'furnizori'
+    ref: 'furnizori',
+    required: true
   },
   {
     id: 'suma',
-    type: 'bani'
+    type: 'bani',
+    required: true
   },
   {
     id: 'dataScadenta',

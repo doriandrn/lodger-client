@@ -30,8 +30,8 @@ const makeCollection = data => {
   const { campuri, metode } = form
   const getType = type => {
     if (!type || ['text', 'textarea', 'select', 'search'].indexOf(type) > -1) return 'string'
-    if (['date-time', 'bani'].indexOf(type) > -1) return 'number'
-    if (['scari', 'servicii', 'furnizori', 'contactFields', 'contoare'].indexOf(type) > -1) return 'array'
+    if (['date-time', 'bani', 'date'].indexOf(type) > -1) return 'number'
+    if (['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire'].indexOf(type) > -1) return 'array'
     return type
   }
 

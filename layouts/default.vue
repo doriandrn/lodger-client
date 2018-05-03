@@ -265,36 +265,25 @@ footerHeight = 24px
     .switch
       position relative
       display flex
-      flex-flow column wrap
+      flex-flow column-reverse wrap
       padding-top 8px
       padding-bottom 8px
       padding-right 42px
       height 100%
       margin-left 0
-      // background: config.palette.bgs.body
 
       .altselect
         position absolute 0 0 auto
-        padding 0
-        cursor pointer
-        background transparent
-        transition all .15s ease-in-out
+        padding 0 !important
+        max-height 54px
+        
+        > ul
+          > li
+            padding-left 32px
+            text-transform capitalize
 
-        &:after
-          background: config.typography.palette.meta
-          right 20px
-          top 12px
-
-        &:hover
-          background white
-
-        > li
-          padding-left 32px
-          text-transform capitalize
-          background transparent
-
-          &[data-sel]
-            padding-top 20px
+            &[data-sel]
+              padding-top 20px
       
       label
         font-size 9px

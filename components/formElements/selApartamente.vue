@@ -131,14 +131,17 @@ export default {
         if ( _bloc._id !== blocId ) return
         const { scari } = _bloc
         if (!scari.length) return
-
+        debug(scara, s.indexOf(scara), scari)
         scari.forEach(scr => {
-          if (scr.id !== scara) return
-          if (s.indexOf(scr.id) > -1) return
-          s.push(scr.id)
+          const { id } = scr
+          if (id !== scara) return
+          if (s.indexOf(id) > -1) return
+          debug('adgat', id)
+          s.push(id)
         })
       })
 
+      debug(s, 'scari')
       return s
     }
   },

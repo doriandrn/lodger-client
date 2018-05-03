@@ -13,7 +13,13 @@ export default {
     options () {
       return [
         'cpi',
-        'locatar'
+        'locatar',
+        'bla',
+        'blabla',
+        'xx',
+        'mm',
+        'bb',
+        'cucu'
       ]
     }
   },
@@ -22,3 +28,8 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+.distribuire
+  width 100%
+</style>

@@ -97,8 +97,9 @@
     :servicii=        "servicii"
   )
   p(v-else-if=        "type === 'contactFields'") contactFields
+  
   labl.field__label(
-    v-show=         "!hideLabel || type === 'scari' && scariCount > 1"
+    v-show=         "!hideLabel && type !== 'scari' && scariCount < 2"
     :required=      "required"
     :for=           "id"
   ) {{ label }}

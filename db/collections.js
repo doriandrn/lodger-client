@@ -31,7 +31,7 @@ const makeCollection = data => {
   const getType = type => {
     if (!type || ['text', 'textarea', 'select', 'search'].indexOf(type) > -1) return 'string'
     if (['date-time', 'bani', 'date'].indexOf(type) > -1) return 'number'
-    if (['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire'].indexOf(type) > -1) return 'array'
+    if (['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire', 'selApartamente'].indexOf(type) > -1) return 'array'
     return type
   }
 

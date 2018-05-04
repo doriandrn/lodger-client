@@ -14,5 +14,14 @@ export const getters = {
         return false
       }).sort((a, b) => a.nr > b.nr)
     }
+  },
+  tooltip: (state, getters, rs, rootGetters) => {
+    if (!rootGetters['apartamente']) return () => {}
+    return apId => {
+      const ap = rootGetters.apartamente[apId]
+      if (!ap) return {}
+      const { proprietar, suprafata, locatari } = ap
+      return { proprietar, suprafata, locatari }
+    }
   }
 }

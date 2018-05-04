@@ -14,9 +14,9 @@ button(
   @click=           "!dangerous ? $emit('click', $event) : promptUser()"
   :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
-  :data-tip=        "tooltip",
   :data-icon=       "icon",
   :data-size=       "size",
+  :data-tip=        "!!tooltip"
   :data-styl=       "styl",
   :data-dangerous=  "dangerous"
   :data-arrow=      "arrow"
@@ -26,6 +26,11 @@ button(
   slot
   span.badge(v-if="$slots.badge")
     slot(name="badge")
+
+  tooltip(
+    v-if=   "tooltip"
+    :text=  "typeof tooltip !== 'boolean' ? tooltip : null"
+  )
 
 input(
   v-else-if=    "type === 'submit'",
@@ -145,6 +150,7 @@ button
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import tooltip from '~components/tooltip'
 
 export default {
   data () {
@@ -158,6 +164,9 @@ export default {
       modalContent: 'modal/content',
       _prompted: 'prompt/prompted'
     })
+  },
+  components: {
+    tooltip
   },
   methods: {
     ...mapActions({
@@ -254,7 +263,7 @@ export default {
     },
     // tooltip position or bottom by default
     tooltip: {
-      type: [Boolean, String],
+      type: [Boolean, String, Object],
       default: null
     },
     /* link to nuxt page */

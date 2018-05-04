@@ -278,6 +278,7 @@ footerHeight = 24px
         max-height 54px
         
         > ul
+          border-color transparent
           > li
             padding-left 32px
             text-transform capitalize
@@ -295,7 +296,7 @@ footerHeight = 24px
         position relative
         pointer-events none
         color: config.typography.palette.meta
-        z-index 1
+        z-index 21
 
       select
         position absolute 0

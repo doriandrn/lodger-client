@@ -117,6 +117,7 @@ export default {
     },
     handleInput (e) {
       let { value } = e.target
+      if (this.type === 'checkbox') return !!value
       if (this.type !== 'search') {
         if (!value) value = null
         this.$emit('input', this.type === 'number' ? Number(value) : value)

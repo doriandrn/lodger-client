@@ -13,7 +13,7 @@ ol.scari(v-if="id")
             :key=   "ap._id"
             :class= "{ ultimul: ap._id === ultimulApAdaugat}"
             @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
-            tooltip
+            :tooltip="apTooltip(ap._id)"
           ) {{ ap.proprietar }}
             em.ap__nr {{ ap.nr }}
           buton.adauga(
@@ -44,6 +44,7 @@ export default {
     ...mapGetters({
       blocuri: 'blocuri',
       apartamenteEtaj: 'apartament/localizeaza',
+      apTooltip: 'apartament/tooltip',
       ultimulApAdaugat: 'apartament/ultim'
     }),
     bloc () {

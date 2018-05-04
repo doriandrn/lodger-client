@@ -1,49 +1,53 @@
 <template lang="pug">
-ul.selAp
-  li(v-for=  "bId in _blocuri")
-    field(
-      type=   "checkbox"
-      :label= "blocuri[bId].nume"
-      :key=   "bId"
-      :id=    "bId"
-      @input= "selecteazaToate(aparts(bId), $event)"
-      :value= "toateApsSel(aparts(bId))"
-      required= true
-    )
-    ul
-      li(v-for=  "scara in scari(bId)")
-        field(
-          type=   "checkbox"
-          :key=   "scara",
-          :label= "`${$t('scara._articulat')} ${scara}`"
-          :id=    "`${bId}:${scara}`"
-          @input= "selecteazaToate(aparts(bId, scara), $event)"
-          :value= "toateApsSel(aparts(bId, scara))"
-          required= true
-        )
-        ul
-          li(v-for=  "etaj in etaje(scara, bId)")
-            field(
-              type=   "checkbox"
-              :key=   "etaj",
-              :id=    "`${bId}:${scara}:${etaj}`"
-              :label= "`${$t('bloc.etajul')} ${etaj}`"
-              @input= "selecteazaToate(aparts(bId, scara, etaj), $event)"
-              :value= "toateApsSel(aparts(bId, scara, etaj))"
-              required= true
-            )
-            ul
-              li.nume(v-for=  "ap in aparts(bId, scara, etaj)")
-                field(
-                  type=   "checkbox"
-                  :key=   "ap._id"
-                  :id=    "ap._id"
-                  :value= "selectate.indexOf(ap._id) > -1"
-                  @input=  "$event && selectate.indexOf(ap._id) < 0 ? selectate.push(ap._id) : selectate.splice(selectate.indexOf(ap._id), 1)"
-                  :label= "`${ap.nr} ${ap.proprietar}`"
-                  required= true
-                )
-  //- li(v-for="apId, index in optiuni") {{ apartamente[apId].proprietar }}
+.selAp
+  span(v-if="selectate.length") Apartamente selectate: {{ selectate.length }} / {{ optiuni.length }}
+  span(v-else) Niciun apartament selectat
+  p Denumire Criteriu: {{ numeCriteriu }}
+  ul
+    li(v-for=  "bId in _blocuri")
+      field(
+        type=   "checkbox"
+        :label= "blocuri[bId].nume"
+        :key=   "bId"
+        :id=    "bId"
+        @input= "selecteazaToate(aparts(bId), $event)"
+        :value= "toateApsSel(aparts(bId))"
+        required= true
+      )
+      ul
+        li(v-for=  "scara, i in scari(bId)")
+          field(
+            type=   "checkbox"
+            :key=   "scara",
+            :label= "`${$t('scara._articulat')} ${scara}`"
+            :id=    "`${bId}:${scara}`"
+            @input= "selecteazaToate(aparts(bId, i), $event)"
+            :value= "toateApsSel(aparts(bId, i))"
+            required= true
+          )
+          ul
+            li(v-for=  "etaj in etaje(scara, bId)")
+              field(
+                type=   "checkbox"
+                :key=   "etaj",
+                :id=    "`${bId}:${scara}:${etaj}`"
+                :label= "`${$t('bloc.etajul')} ${etaj}`"
+                @input= "selecteazaToate(aparts(bId, i, etaj), $event)"
+                :value= "toateApsSel(aparts(bId, i, etaj))"
+                required= true
+              )
+              ul
+                li.nume.check__apartament(v-for=  "ap in aparts(bId, i, etaj)")
+                  field(
+                    type=   "checkbox"
+                    :key=   "ap._id"
+                    :id=    "ap._id"
+                    :value= "selectate.indexOf(ap._id) > -1"
+                    @input=  "debug('ok', ap._id); $event && selectate.indexOf(ap._id) < 0 ? selectate.push(ap._id) : selectate.splice(selectate.indexOf(ap._id), 1)"
+                    :label= "`${ap.nr}. ${ap.proprietar}`"
+                    required= true
+                  )
+    //- li(v-for="apId, index in optiuni") {{ apartamente[apId].proprietar }}
 </template>
 
 <script>
@@ -53,7 +57,8 @@ export default {
   name: 'selApartamente',
   data () {
     return {
-      selectate: []
+      selectate: [],
+      numeCriteriu: '...'
     }
   },
   props: {
@@ -78,7 +83,7 @@ export default {
   },
   methods: {
     selecteazaToate (apartamente, flag) {
-      this.debug(apartamente, flag)
+      // this.debug(apartamente, flag)
       if (!apartamente && !apartamente.length) return
       let { selectate } = this
       apartamente.forEach(ap => {
@@ -103,13 +108,18 @@ export default {
     },
     etaje (scaraId, blocId) {
       const e = []
-      const { optiuni, apartamente, debug } = this
+      const { optiuni, blocuri, apartamente, debug } = this
+      const { scari } = blocuri[blocId]
+      if (!scari) return e
 
       optiuni.forEach(apId => {
         const { bloc, scara, etaj } = apartamente[apId]
-
         if (blocId !== bloc) return
-        if (scara !== scaraId) return
+        const _scara = scari[scara]
+        if (!_scara) return
+        const { id } = _scara
+        if (!id) return
+        if (id !== scaraId) return
         if (e.indexOf(etaj) > -1) return
         e.push(etaj)
       })
@@ -117,6 +127,7 @@ export default {
     },
     aparts (bloc, scara, etaj) {
       const { loc } = this
+
       return loc({
         etaj, scara, bloc
       })
@@ -131,17 +142,18 @@ export default {
         if ( _bloc._id !== blocId ) return
         const { scari } = _bloc
         if (!scari.length) return
-        debug(scara, s.indexOf(scara), scari)
+
         scari.forEach(scr => {
           const { id } = scr
-          if (id !== scara) return
+
+          if (id === undefined) return
+          if (id !== scari[scara].id) return
           if (s.indexOf(id) > -1) return
-          debug('adgat', id)
-          s.push(id)
+
+          s[scara] = id
         })
       })
 
-      debug(s, 'scari')
       return s
     }
   },
@@ -166,17 +178,26 @@ export default {
 </script>
 
 <style lang="stylus">
+@require '~styles/config'
+
 .selAp
-  list-style-type none
-  padding-left 0
-  display flex
-  flex-flow column nowrap
-  overflow auto
-  flex 1 1 100%
   width 100%
   max-height 100%
+
+  > ul:first-child
+    flex 1 1 100%
+    padding-left 0
+    display flex
+    flex-flow column nowrap
+    overflow auto
 
   ul
     list-style-type none
     padding-left 16px
+
+.check
+  &__apartament
+    input[type="checkbox"]:checked
+      &+label:before
+        background-color: config.palette.tertiary 
 </style>

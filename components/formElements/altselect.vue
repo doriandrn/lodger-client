@@ -66,6 +66,7 @@ export default {
     list-style-type none
     font-size 14px
     line-height 16px
+    border: 1px solid config.palette.borders
     // position absolute 0
     padding 0
     width 100%

@@ -133,7 +133,7 @@ export default {
       })
     },
     scari (blocId) {
-      const s = []
+      const s = {}
       const { blocuri, optiuni, apartamente, debug } = this
 
       optiuni.forEach(apId => {
@@ -148,12 +148,12 @@ export default {
 
           if (id === undefined) return
           if (id !== scari[scara].id) return
-          if (s.indexOf(id) > -1) return
+          if (Object.values(s).indexOf(id) > -1) return
 
           s[scara] = id
         })
       })
-
+      debug(s)
       return s
     }
   },
@@ -182,18 +182,18 @@ export default {
 
 .selAp
   width 100%
-  max-height 100%
 
-  > ul:first-child
+  ul
+    list-style-type none
+    padding-left 16px
+
+  > ul
     flex 1 1 100%
     padding-left 0
     display flex
     flex-flow column nowrap
     overflow auto
-
-  ul
-    list-style-type none
-    padding-left 16px
+    max-height 360px
 
 .check
   &__apartament

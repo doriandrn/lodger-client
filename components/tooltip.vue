@@ -68,6 +68,29 @@ export default {
 
 .tooltip
   min-width 160px
+
+  &:after
+  &:before
+    top 100%
+    left 50%
+    border solid transparent
+    content ' '
+    height 0
+    width 0
+    position absolute
+    pointer-events none
+
+  &:after
+    border-width 4px
+	  margin-left -4px
+    border-color: rgba(136, 183, 213, 1)
+	  border-top-color #88b7d5
+
+  &:before
+    border-color rgba(194, 225, 245, 1)
+	  border-top-color #c2e1f5
+	  border-width: 5px
+	  margin-left: -5px
   
   &__preformatted
     display flex
@@ -76,13 +99,18 @@ export default {
     > li
       margin 4px 8px
       padding-left 0
+      display flex
+      flex-flow row nowrap
+      align-items center
+      line-height 17px
 
       &[data-icon]
         &:before
-          background-color rgba(white, .25)
+          background-color white
 
       &[data-type="proprietar"]
         flex 0 0 100%
         text-align: left
+        font-weight bold
 
 </style>

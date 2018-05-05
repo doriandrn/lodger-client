@@ -1,6 +1,6 @@
 <template lang="pug">
 .selAp
-  span(v-if="selectate.length") Apartamente selectate: {{ selectate.length }} / {{ optiuni.length }}
+  span(v-if="value.length") Apartamente selectate: {{ value.length }} / {{ optiuni.length }}
   span(v-else) Niciun apartament selectat
   p Denumire Criteriu: {{ numeCriteriu }}
   ul
@@ -42,8 +42,8 @@
                     type=   "checkbox"
                     :key=   "ap._id"
                     :id=    "ap._id"
-                    :value= "selectate.indexOf(ap._id) > -1"
-                    @input=  "debug('ok', ap._id); $event && selectate.indexOf(ap._id) < 0 ? selectate.push(ap._id) : selectate.splice(selectate.indexOf(ap._id), 1)"
+                    :value= "value.indexOf(ap._id) > -1"
+                    @input=  "$event && value.indexOf(ap._id) < 0 ? value.push(ap._id) : value.splice(value.indexOf(ap._id), 1)"
                     :label= "`${ap.nr}. ${ap.proprietar}`"
                     required= true
                   )
@@ -57,17 +57,16 @@ export default {
   name: 'selApartamente',
   data () {
     return {
-      selectate: [],
       numeCriteriu: '...'
     }
   },
   props: {
-    // selectate: {
-    //   type: Array,
-    //   default () {
-    //     return []
-    //   }
-    // },
+    value: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
     /** 
      * Id-uri de apartamente
     */
@@ -82,30 +81,31 @@ export default {
     this.$options.components.field = require('form/field').default
   },
   methods: {
-    inputSelected () {
-      this.$emit('input', this.selected)
+    inputSelected (vechi, nou) {
+      this.$emit('input', nou)
+      return nou
     },
     selecteazaToate (apartamente, flag) {
       // this.debug(apartamente, flag)
       if (!apartamente && !apartamente.length) return
-      let { selectate } = this
+      let { value } = this
       apartamente.forEach(ap => {
         const { _id } = ap
         if (!_id) return
-        const index = selectate.indexOf(_id)
+        const index = value.indexOf(_id)
         if (flag) {
-          if (index < 0) selectate.push(_id)
+          if (index < 0) value.push(_id)
         } else {
-          if (index > -1) selectate.splice(index, 1)
+          if (index > -1) value.splice(index, 1)
         }
       })
-      this.selectate = selectate
+      this.value = value
     },
     toateApsSel (aps) {
       let toate = true
       if (!aps && !aps.length) toate = false
       aps.forEach(ap => {
-        if (this.selectate.indexOf(ap._id) < 0) toate = false
+        if (this.value.indexOf(ap._id) < 0) toate = false
       })
       return toate
     },
@@ -161,7 +161,7 @@ export default {
     }
   },
   watch: {
-    selected: 'inputSelected'
+    value: 'inputSelected'
   },
   computed: {
     _blocuri () {

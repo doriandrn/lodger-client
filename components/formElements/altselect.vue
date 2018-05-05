@@ -2,6 +2,7 @@
 .altselect(
   :data-arrow=  "arrow"
   :id=          "id",
+  tabIndex= "-1"
 )
   ul
     li(

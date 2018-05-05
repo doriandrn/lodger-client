@@ -110,6 +110,7 @@ export default {
 
       if (searchTaxonomy === 'apartamente') return selected.proprietar
       if (searchTaxonomy === 'furnizori') return selected.nume
+      return value
     },
     ...mapGetters({
       modalOpen: 'modal/open'
@@ -126,13 +127,15 @@ export default {
     },
     handleInput (e) {
       let { value } = e.target
-      if (this.type === 'checkbox') return !!value
-      if (this.type !== 'search') {
-        if (!value) value = null
-        this.$emit('input', this.type === 'number' ? Number(value) : value)
+      const { type, $emit, search } = this
+
+      if (!value) value = null
+      if (type === 'checkbox') return !!value
+      if (type !== 'search') {
+        $emit('input', type === 'number' ? Number(value) : value)
         return
       }
-      this.search(value)
+      else search(value)
     },
     handleChange (e) {
       if (this.type === 'search') return
@@ -145,19 +148,25 @@ export default {
     search (input) {
       if (!input) return
       let { searchTaxonomy } = this
-      if (!searchTaxonomy) return
-      const iterator = this.$store.getters['searchMap'][searchTaxonomy].entries()
-      const results = []
-      for (let [ key, value ] of iterator) {
-        const relevance = string_similarity(String(input), value)
-        results.push({ id: key, relevance, value })
-      }
+      const searchMap = this.$store.getters['searchMap']
+      const results = {}
+
+      Object.keys(searchMap).forEach(tax => {
+        if (searchTaxonomy && searchTaxonomy !== tax) return
+        const iterator = searchMap[tax].entries()
+        results[tax] = []
+
+        for (let [ key, value ] of iterator) {
+          const relevance = string_similarity(String(input), value)
+          results[tax].push({ id: key, relevance, value })
+        }
+
+        results[tax] = results[tax].sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 6)
+      })
+      
       // on change, refresh teh status of the v-model item
       this.$emit('input', null)
-      // emit the original event
-      this.$emit('newResults', {
-        [searchTaxonomy]: results.sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 6)
-      })
+      this.$emit('newResults', results)
     },
     ...mapActions({
       closeModal: 'modal/close'

@@ -1,7 +1,7 @@
 <template lang="pug">
 .selAp
   span(v-if="value.length") Apartamente selectate: {{ value.length }} / {{ optiuni.length }}
-  span(v-else) Niciun apartament selectat
+  span(v-else) Alege apartamentele
   p Denumire Criteriu: {{ numeCriteriu }}
   ul
     li(v-for=  "bId in _blocuri")

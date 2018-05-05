@@ -86,7 +86,7 @@
     v-else-if=      "type === 'selApartamente'"
     :optiuni=       "options"
     @input=         "$emit('input', $event)"
-    :value=         "value"
+    :value=         "value || []"
   )
   distribuire(
     v-else-if=      "type === 'distribuire'"
@@ -111,7 +111,7 @@
 
   //- && !selectedResult._id
   results(
-    v-if=             "type === 'search' && Object.keys(results).length && results[Object.keys(results)[0]].length",
+    v-if=             "hasResults",
     :results=         "results",
     :selectedIndex=   "indexRezultatSelectat"
     @selecteaza=      "selecteaza"
@@ -149,6 +149,24 @@ export default {
       if (type !== 'search' || !value) return
 
       return this[searchTaxonomy][value] || { _id: null }
+    },
+    hasResults () {
+      const { type } = this
+      if (type !== 'search') return
+      const { results, searchTaxonomy, debug } = this
+      debug('results', results)
+      if (!results) return false
+
+      let has = false
+
+      const taxes = Object.keys(results)
+      taxes.forEach(tax => {
+        debug(tax)
+        if (has) return
+        if (tax && results[tax] && results[tax].length > 0) has = true
+      })
+
+      return has
     }
   },
   data () {
@@ -157,12 +175,6 @@ export default {
     return {
       results: {},
       indexRezultatSelectat: 0
-      // selected: 0,
-      // selectedResult: {
-      //   ce: '',
-      //   id: '',
-      //   proprietar: ''
-      // }
     }
   },
   name: 'field',

@@ -2,9 +2,7 @@
 sction.setari(:title="$t('defaults.settings')")
   tabs
     tab(:title="$t('defaults.asociatie')") asoc
-      buton(
-        @click= "openModal('feedback.new')"
-      ) Feedback
+      frm
 
     tab(:title="$t('defaults.user.profile')")
       frm

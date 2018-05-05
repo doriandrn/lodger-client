@@ -1,5 +1,4 @@
 <template lang="pug">
-//- :data-selected="type === 'search' && selected.id"
 .field(
   :data-size=   "size"
   :data-type=   "type"
@@ -86,6 +85,8 @@
   sel-apartamente(
     v-else-if=      "type === 'selApartamente'"
     :optiuni=       "options"
+    @input=         "$emit('input', $event)"
+    :value=         "value"
   )
   distribuire(
     v-else-if=      "type === 'distribuire'"
@@ -110,9 +111,10 @@
 
   //- && !selectedResult._id
   results(
-    v-if=             "type === 'search' && results.apartamente && results.apartamente.length",
+    v-if=             "type === 'search' && Object.keys(results).length && results[Object.keys(results)[0]].length",
     :results=         "results",
     :selectedIndex=   "indexRezultatSelectat"
+    @selecteaza=      "selecteaza"
     :class=           "{ singleTax: searchTaxonomy }"
   )
   span(v-if=           "type === 'search' && searchTaxonomy === 'apartamente' && indexRezultatSelectat > -1") Ultima incasare:
@@ -138,14 +140,15 @@ import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters({
-      apartamente: 'apartamente'
-    }),
+    ...mapGetters([
+      'apartamente',
+      'furnizori'
+    ]),
     selectedResult () {
-      if (this.type !== 'search' || !this.value) return
+      const { type, value, searchTaxonomy } = this
+      if (type !== 'search' || !value) return
 
-      // return this[searchTaxonomy][this.value] || {}
-      return this.apartamente[this.value] || { _id: null }
+      return this[searchTaxonomy][value] || { _id: null }
     }
   },
   data () {
@@ -277,27 +280,31 @@ export default {
     results
   },
   methods: {
+    /**
+     * Metoda doar pentru search
+     */
     selecteaza (e) {
-      const { results, indexRezultatSelectat, debug, type } = this
+      const { id, tax } = e
+      if (id) {
+        this.$emit('input', id)
+        this.clearResults()
+        this.debug('tax', tax)
+        return
+      }
+      const {
+        results,
+        indexRezultatSelectat,
+        debug,
+        type, 
+        searchTaxonomy
+      } = this
       if (type !== 'search') return
       e.preventDefault()
-      debug('SELECTEZ', results, indexRezultatSelectat)
-      const { apartamente } = results
-      const { id, value } = apartamente[indexRezultatSelectat]
 
-      const ap = value.split(' ')
-      const bloc = ap[0]
-      const sc = ap[1]
-      const apnr = ap[2]
-      const proprietar = String(ap.slice(3, ap.length).join(' '))
-
-      // let proprietar = ''
-      // for (let i=3; i < ap.length; i++) {
-      //   proprietar += ap[i] + (i === ap.length - 1 ? '' : ' ')
-      // }
-
-      // this.selectedResult = { ce: 'apartament', id, proprietar }
-      this.$emit('input', id)
+      let taxResults = searchTaxonomy ? results[searchTaxonomy] : null
+      if (!taxResults) return
+      const rezultat = taxResults[indexRezultatSelectat]
+      this.$emit('input', rezultat.id)
       this.clearResults()
     },
     clearResults () {
@@ -361,7 +368,7 @@ export default {
       right auto
       opacity 1
       visibility visible
-      z-index 11
+      z-index 51
       max-width 350px
 
       &.singleTax

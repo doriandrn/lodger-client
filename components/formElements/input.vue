@@ -9,7 +9,7 @@ input(
   :checked=         "type === 'checkbox' && value === true"
   @input=           "handleInput",
   @change=          "handleChange"
-  :value=           "type === 'search' ? selected.proprietar : value",
+  :value=           "val",
   :min=             "type === 'number' ? min : null"
   :max=             "type === 'number' ? max : null"
   :step=            "type === 'number' ? step : null"
@@ -103,9 +103,18 @@ export default {
   mounted () {
     if (this.type !== 'search') return
   },
-  computed: mapGetters({
-    modalOpen: 'modal/open'
-  }),
+  computed: {
+    val () {
+      const { value, type, searchTaxonomy, selected } = this
+      if (type !== 'search') return value
+
+      if (searchTaxonomy === 'apartamente') return selected.proprietar
+      if (searchTaxonomy === 'furnizori') return selected.nume
+    },
+    ...mapGetters({
+      modalOpen: 'modal/open'
+    })
+  },
   methods: {
     clickAway () {
       if (this.type !== 'search') return
@@ -136,13 +145,16 @@ export default {
     search (input) {
       if (!input) return
       let { searchTaxonomy } = this
-      if (!searchTaxonomy) searchTaxonomy = 'apartamente'
+      if (!searchTaxonomy) return
       const iterator = this.$store.getters['searchMap'][searchTaxonomy].entries()
       const results = []
       for (let [ key, value ] of iterator) {
         const relevance = string_similarity(String(input), value)
         results.push({ id: key, relevance, value })
       }
+      // on change, refresh teh status of the v-model item
+      this.$emit('input', null)
+      // emit the original event
       this.$emit('newResults', {
         [searchTaxonomy]: results.sort((a, b) => a.relevance > b.relevance).reverse().slice(0, 6)
       })

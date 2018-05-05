@@ -82,6 +82,9 @@ export default {
     this.$options.components.field = require('form/field').default
   },
   methods: {
+    inputSelected () {
+      this.$emit('input', this.selected)
+    },
     selecteazaToate (apartamente, flag) {
       // this.debug(apartamente, flag)
       if (!apartamente && !apartamente.length) return
@@ -156,6 +159,9 @@ export default {
       debug(s)
       return s
     }
+  },
+  watch: {
+    selected: 'inputSelected'
   },
   computed: {
     _blocuri () {

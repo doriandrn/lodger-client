@@ -3,7 +3,6 @@ export const campuri = [
     id: 'deLa',
     required: true,
     type: 'search',
-    focus: true,
     taxonomy: 'apartamente',
     ref: 'apartamente'
   },

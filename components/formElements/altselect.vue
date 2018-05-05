@@ -9,20 +9,33 @@
       :tabIndex=    "value === key ? 0 : -1"
       :data-sel=    "value === key"
       :data-value=  "typeof options === 'object' ? option : key",
-      @click=       "alege($event.target.dataset.value)"
+      @click=       "alege(option)"
+      :data-initializat= "id !== 'asociatieSwitch' ? null : asocInitProgr(option)"
     ) {{ option }}
     slot
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   methods: {
     alege (value) {
       this.$emit('input', value)
       this.debug(this)
       this.$el.blur()
+    },
+    asocInitProgr (aId) {
+      const { asociatii, debug } = this
+      const asociatie = asociatii[aId]
+      if (!asociatie) return false
+      if (!asociatie.servicii || !asociatie.servicii.length) return 0
+      return 20
     }
   },
+  computed: mapGetters({
+    asociatii: 'asociatii'
+  }),
   props: {
     id: {
       type: String,

@@ -1,6 +1,7 @@
 <template lang="pug">
 section
   .inner
+    slot(name="beforeTitle")
     h1(v-if="title") {{ title }}
     slot
 </template>

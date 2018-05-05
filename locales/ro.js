@@ -174,6 +174,7 @@ export default {
     address: 'Adresă',
     asociatie: 'Asociație',
     asociatia: 'Asociația de locatari',
+    feedback: 'Reacționează!',
     prompt: {
       message: 'Ești sigur?',
       confirm: 'Da',
@@ -205,6 +206,7 @@ export default {
     '404': 'Această resursă este inaccesibilă',
     '500': 'Eroare de server',
     'TypeError': 'Dorian, învață să programezi!!',
+    'ReferenceError': 'Dorian, învață să programezi!!',
     'inContinuare': 'Alege ce dorești să faci în continuare'
   },
   feedback: {

@@ -14,6 +14,7 @@ const conInfo = {
   password: '10dg3rP@55',
   // adapter: 'memory',
   adapter: 'idb',
+  multiInstance: false
   // ignoreDuplicate: true
 }
 

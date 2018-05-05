@@ -230,11 +230,16 @@ export default {
   },
   mounted () {
     this.initprgrs = this.poateTreceLaUrmPas
+    if (window && typeof window.addEventListener === 'function') {
+      window.addEventListener('keyup', e => {
+        console.log(e.keyCode)
+      })
+    }
   },
   watch: {
     activaId: function (oldV, newV) {
       this.initprgrs = this.poateTreceLaUrmPas
-      this.debug('wtf', oldV, newV)
+      this.debug('initprgrs', oldV, newV)
     }
   }
 }

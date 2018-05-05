@@ -48,6 +48,8 @@ export default {
 <style lang="stylus">
 @import '~styles/config'
 
+lrPad = 32px
+
 .modal
   position fixed 0
   z-index 200
@@ -101,7 +103,7 @@ export default {
     padding 20px
 
     +above(xl)
-      padding 40px
+      padding: lrPad
 
     form
       .actions
@@ -125,8 +127,8 @@ export default {
       padding-left 16px
       padding-right 16px
     +above(l)
-      padding-left 32px
-      padding-right 32px
+      padding-left: lrPad
+      padding-right: lrPad
   
   &__footer
   &__header

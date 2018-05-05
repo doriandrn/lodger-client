@@ -2,31 +2,32 @@
 .results(data-box-arrow)
   .results__section(v-for="tax in Object.keys(results)")
     h6.results__heading {{ tax }}
-    //- nuxt-link(
-    //-   v-for=    "res, i in results[tax]",
-    //-   :key=     "res.id"
-    //-   :class=   "{ selected: i === selectedIndex, irelevant: res.relevance < 0.25 }"
-    //-   :to=      "`/${tax}/${res.id}`"
-    //- )
     ul
       li(
-        v-for=    "res, i in results.apartamente"
-        v-if=     "tax === 'apartamente'"
+        v-for=    "res, i in results[tax]"
         :class=   "{ selected: i === selectedIndex, irelevant: res.relevance < 0.25 }"
+        @click=   "$emit('selecteaza', { id: res.id, tax })"
       )
         adresa(
+          v-if=     "tax === 'apartamente'"
           :key=     "i"
           :apId=    "res.id"
         )
         bani.restanta(
-          v-if=       "modalContent === 'incasare.new'"
+          v-if=       "modalContent === 'incasare.new' && tax === 'apartamente'"
           :valoare=   "aps[res.id].balanta"
+        )
+        furnizor(
+          v-if= "tax === 'furnizori'"
+          :key= "res.id"
+          :id=  "res.id"
         )
 </template>
 
 <script>
 import bani from '~components/bani'
 import adresa from '~components/adresa'
+import furnizor from '~components/furnizor'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -46,7 +47,8 @@ export default {
   },
   components: {
     adresa,
-    bani
+    bani,
+    furnizor
   }
 }
 </script>
@@ -98,6 +100,7 @@ spacings = 16px
         position relative
 
         > a
+        > span
           flex 1 0 100%
           padding: (spacings/2) (spacings*1.5)
           text-transform capitalize
@@ -115,16 +118,19 @@ spacings = 16px
 
         &.irelevant
           > a
+          > span
             color: config.typography.palette.meta
 
         &.selected
           > a
+          > span
             color: config.typography.palette.headings
             background-color: config.palette.selectedItem
 
           for i in 1 2 3 4 5
             &:nth-child({i}):not(.irelevant)
               > a
+              > span
                 color: lighten(config.typography.palette.headings, i*10%)
 
         &:not(.selected)

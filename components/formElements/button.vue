@@ -60,7 +60,6 @@ button
   justify-content center
   font-size 13px
   line-height 20px
-  flex-basis 56px
   white-space nowrap
   user-select none
   box-shadow -5px -5px #03A9F4
@@ -91,7 +90,8 @@ button
           background-color: darken(config.palette.primary, 15%)
 
   &[data-size="large"]
-    padding: 15px 31px
+    padding: 8px 31px
+    flex-basis 40px
 
   &[data-size="medium"]
     padding: (config.spacings.inBoxes/2) config.spacings.inBoxes

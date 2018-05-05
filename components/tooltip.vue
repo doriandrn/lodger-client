@@ -38,6 +38,7 @@ export default {
 
 <style lang="stylus">
 @require '~styles/config'
+bg = config.palette.bgs.dark
 
 [data-tip]
   position relative
@@ -53,7 +54,7 @@ export default {
     left 50%
     width auto
     transform translateX(-50%)
-    background-color: config.palette.bgs.dark
+    background-color: bg
     padding 0
     border-radius 3px
     opacity 0
@@ -83,14 +84,12 @@ export default {
   &:after
     border-width 4px
 	  margin-left -4px
-    border-color: rgba(136, 183, 213, 1)
-	  border-top-color #88b7d5
+	  border-top-color: white
 
   &:before
-    border-color rgba(194, 225, 245, 1)
-	  border-top-color #c2e1f5
-	  border-width: 5px
-	  margin-left: -5px
+	  border-top-color: bg
+	  border-width 5px
+	  margin-left -5px
   
   &__preformatted
     display flex

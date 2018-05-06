@@ -8,7 +8,7 @@ input(
   :autocomplete=    "autocomplete ? 'on' : 'off'"
   :checked=         "type === 'checkbox' && value === true"
   @input=           "handleInput",
-  @change=          "handleChange"
+  @change=          "$emit('change', $event)"
   :value=           "val",
   :min=             "type === 'number' ? min : null"
   :max=             "type === 'number' ? max : null"
@@ -137,21 +137,21 @@ export default {
       const { type, search } = this
 
       if (value === undefined) value = null
-      // if (type === 'checkbox') return !!value ->> checkbox e pe change
+      if (type === 'checkbox') return
       if (type !== 'search') {
         this.$emit('input', type === 'number' ? Number(value) : value)
         return
       }
       else search(value)
     },
-    handleChange (e) {
-      if (this.type === 'search') return
-      if (this.type === 'checkbox') {
-        this.$emit('input', Boolean(!this.value))
-        return
-      }
-      this.$emit('change', e.target.value)
-    },
+    // handleChange (e) {
+    //   const { type, debug } = this
+    //   if (type === 'search') return
+    //   let { value } = type === 'checkbox' ? this : e.target
+    //   value = type === 'checkbox' ? Boolean(!value) : value
+ 
+    //   this.$emit('change', value)
+    // },
     search (input) {
       if (!input) return
       let { searchTaxonomy } = this

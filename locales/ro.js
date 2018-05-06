@@ -132,6 +132,9 @@ export default {
       deLa: 'De la',
       title: 'Încasează',
       nrChitanta: 'Nr. Chitanță'
+    },
+    adaugat: {
+      h: 'Încasat!'
     }
   },
   furnizor: {

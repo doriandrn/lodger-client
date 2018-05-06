@@ -3,10 +3,10 @@
   :data-size=   "size"
   :data-type=   "type"
   :data-icon=   "type === 'search' ? 'search' : icon"
-  :data-results="type === 'search' && searchTaxonomy && results[searchTaxonomy] ? true : null",
+  :data-results="hasResults",
   :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
 )
-  inpt(
+  input(
     v-if=         "['text', 'number', 'search', 'bani', 'checkbox', 'date'].indexOf(type) > -1",
     :type=        "type !== 'bani' ? type : 'number'",
     :placeholder= "placeholder",
@@ -14,23 +14,21 @@
     :id=          "id",
     :focus=       "focus",
     :required=    "required",
-    :min=         "min",
-    :max=         "max",
-    :step=        "type !== 'bani' ? step : .01",
-    :value=       "type === 'checkbox' ? Boolean(value) : value",
-    @input=       "$emit('input', $event)",
+    :min=         "type === 'number' ? min : null"
+    :max=         "type === 'number' ? max : null"
+    :step=        "type === 'number' ? step : null"
+    :value=       "val",
+    :checked=     "checked"
+    @input=       "handleInput",
     @change=      "$emit('change', $event)"
-    
-    :searchTaxonomy=    "searchTaxonomy"
-    :hasResults=        "hasResults"
-    @newResults=        "results = $event"
-    @selected=          "selected = $event"
-    :selected=          "selectedResult"
-    @keyEnter=          "selecteaza"
-    @keyDown=           "indexSelectat(1)"
-    @keyUp=             "indexSelectat(0)"
-    :class=             "{ av: !!value }"
-    @clickAway=         "clearResults"
+
+    @keydown.enter= "selecteaza"
+    @keyup.tab=   "selecteaza"
+    @keyup.down=  "indexSelectat(1)"
+    @keyup.up=    "indexSelectat(0)"
+    @keydown.esc=   "inchideModale"
+    :class=       "{ av: !!value }"
+    @clickAway=   "clearResults"
   )
   txtarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
@@ -137,26 +135,48 @@ import contoare from 'form/contoare'
 import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
 
-import { mapGetters } from 'vuex'
+import { get_bigrams, string_similarity } from 'helpers/search'
+import { mixin as clickaway } from 'vue-clickaway'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
+  mixins: [ clickaway ],
   computed: {
     ...mapGetters([
       'apartamente',
       'furnizori'
     ]),
-    selectedResult () {
+    val () {
+      const { type, searchTaxonomy, selected, debug } = this
+      let { value } = this
+
+      // a weird reset
+      if (['text', 'search'].indexOf(type) > -1 && typeof value === 'boolean') {
+        value = ''
+      }
+
+      if (value && selected && selected._id) {
+        if (searchTaxonomy === 'apartamente') return selected.proprietar
+        if (searchTaxonomy === 'furnizori') return selected.nume
+      }
+      return value
+    },
+    selected () {
       const { type, value, searchTaxonomy } = this
       if (type !== 'search' || !value) return
 
-      return this[searchTaxonomy][value] || { _id: null }
+      const tax = this[searchTaxonomy]
+      if (!tax || typeof value !== 'string') return
+
+      return tax[value] || { _id: null }
     },
+
     hasResults () {
       const { type } = this
       if (type !== 'search') return
 
       const { results, resultsTaxes, searchTaxonomy, debug, taxes } = this
-      let has = false
+      let has = null
 
       if (!results) return has
 
@@ -168,13 +188,15 @@ export default {
           return
         }
       })
-      
-      // debug('has', has)
+
       return has
     },
+
     taxes () {
       const { results, type } = this
       if (type !== 'search') return
+      if (!results) return
+
       return Object.keys(results)
     }
   },
@@ -200,6 +222,12 @@ export default {
       type: String,
       default: 'NOID!'
     },
+    name: {
+      type: String,
+      default () {
+        return this.id
+      }
+    },
     label: {
       type: String,
       default: 'Field Label'
@@ -218,6 +246,10 @@ export default {
       default: null
     },
     required: {
+      type: Boolean,
+      default: false
+    },
+    checked: {
       type: Boolean,
       default: false
     },
@@ -328,6 +360,7 @@ export default {
 
       let taxResults = searchTaxonomy ? results[searchTaxonomy] : null
       if (!taxResults) return
+
       const rezultat = taxResults[indexRezultatSelectat]
       this.$emit('input', rezultat.id)
       this.clearResults()
@@ -339,6 +372,66 @@ export default {
 
       const { results } = this
       Object.keys(results).forEach(result => results[result] = [])
+    },
+
+    /**
+     * Cauta in searchMap
+     * @param input - string de cautat
+     */
+    search (input) {
+      if (!input) return
+      let { searchTaxonomy } = this
+      const searchMap = this.$store.getters['searchMap']
+      const results = {}
+
+      Object.keys(searchMap).forEach(tax => {
+        if (searchTaxonomy && searchTaxonomy !== tax) return
+        const iterator = searchMap[tax].entries()
+        results[tax] = []
+
+        for (let [ key, value ] of iterator) {
+          const relevance = string_similarity(String(input), value)
+          results[tax]
+            .push({ id: key, relevance, value })
+        }
+
+        results[tax] = results[tax]
+          .sort((a, b) => a.relevance > b.relevance)
+          .reverse()
+          .slice(0, 6)
+      })
+      
+      return results
+    },
+
+    handleInput (e) {
+      let { value, type } = e.target
+      const { search, debug } = this
+
+      switch (type) {
+        case 'search':
+          this.results = search(value)
+          break
+
+        case 'number':
+          value = Number(value)
+          break
+      }
+
+      this.$emit('input', value)
+    },
+
+    clickAway () {
+      const { type, hasResults } = this
+      if (type !== 'search') return
+      if (!hasResults) return
+
+      this.$emit('clickAway')
+    },
+
+    inchideModale () {
+      const { modalOpen, closeModal } = this
+      if (modalOpen) closeModal()
     },
 
     indexSelectat (incDec) {
@@ -362,6 +455,53 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 
+palette = config.palette
+
+input[type="text"]
+input[type="search"]
+input[type="number"]
+input[type="password"]
+input[type="date"]
+textarea
+  font-size 14px
+  line-height 18px
+  background-color transparent
+  border 0
+  min-width 32px
+  border-bottom: 1px solid #c8c8c8
+  // border-radius: config.radiuses.buttons
+  // box-shadow inset 1px 2px 3px -1px rgba(black, .015) 
+  transition all .15s ease-in-out
+  // background: palette.bgs.body
+  padding 8px 4px
+  width 100%
+
+  &::placeholder
+    color: config.typography.palette.meta
+    font-size 12px
+    font-weight 100
+    opacity 0
+    transition opacity .1s ease
+  
+  &:focus
+    border-color: palette.primary
+    color: palette.primary
+
+    &::placeholder
+      opacity 1
+
+    &+.field__label
+      moveFieldLabel()
+
+input:not([type="submit"])
+  max-height 36px
+
+.input
+  &__optional
+    margin-left 4px
+    color: config.typography.palette.meta
+    font-weight 100
+
 .field
   position relative
 
@@ -377,10 +517,11 @@ export default {
   &[data-type="scari"]
     flex-direction column-reverse 
     flex-wrap nowrap
+    height auto
+
     > label
       font-weight 600
       margin-bottom 16px
-      // flex 1 0 100%
       flex 1 1 38px
       align-self flex-start
 

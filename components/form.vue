@@ -1,5 +1,7 @@
 <template lang="pug">
 form(@submit.prevent="validate(formName)")
+  slot(name=        "beforeFields")
+
   field(
     v-for=          "field in formData.campuri"
     v-if=           "!field.notInForm"
@@ -33,9 +35,7 @@ form(@submit.prevent="validate(formName)")
     :message=       "errors.first(`${formName}.${field.id}`)"
   )
 
-  slot(
-    name=   "formExtend"
-  )
+  slot(name=        "afterFields")
 
   split.actions
     
@@ -72,7 +72,7 @@ export default {
   data () {
     let dynamicFormData = {}
     const { $t, formData: { campuri, $for }} = this
-    // const { campuri, $for } = this.formData
+
     if (!campuri) return dynamicFormData
     
     // Label-uri pt campuri => traduse
@@ -188,11 +188,16 @@ ${data.mesaj} (${this.topic})`
     },
     handleChange (func, id, type, e) {
       if (!func) return
-      this.$store.dispatch(func, { [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(e) : e })
+      this.$store.dispatch(func, {
+        [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(e) : e
+      })
     },
     handleSubmit () {
       const { formData: { actiuni: { confirm } }, $data, debug } = this
-      if (typeof this[confirm] !== 'function') { debug('Confirm nedefinit, neinregistrat', $data); return }
+      if (typeof this[confirm] !== 'function') {
+        debug('Confirm nedefinit, neinregistrat', $data);
+        return
+      }
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
         let value = $data[what]
@@ -230,10 +235,10 @@ form
 
   > .field
     flex 1 1 200px
-    margin: (config.spacings.inBoxes/2)
+    margin: 0 (config.spacings.inBoxes/2) (config.spacings.inBoxes/2)
 
     +desktop()
-      margin: config.spacings.inBoxes
+      margin: 0 config.spacings.inBoxes config.spacings.inBoxes
 
   label
     margin-bottom: (baseSpacingUnit*1.5)
@@ -243,6 +248,7 @@ form
   .field
     display flex
     flex-flow row wrap
+    height 36px
     // max-width 335px
 
     &[data-type="number"]

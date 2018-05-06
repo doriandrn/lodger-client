@@ -2,7 +2,8 @@
 .selAp
   span(v-if="value.length") Apartamente selectate: {{ value.length }} / {{ optiuni.length }}
   span(v-else) Alege apartamentele
-  p Denumire Criteriu: {{ numeCriteriu }}
+
+  label Denumire Criteriu: {{ numeCriteriu }}
   ul
     li(v-for=  "bId in _blocuri")
       field(
@@ -10,8 +11,8 @@
         :label= "blocuri[bId].nume"
         :key=   "bId"
         :id=    "bId"
-        @input= "selecteazaToate(aparts(bId), $event)"
-        :value= "toateApsSel(aparts(bId))"
+        @change= "selecteazaToate(aparts(bId), $event)"
+        :checked= "toateApsSel(aparts(bId))"
         required= true
       )
       ul
@@ -21,8 +22,8 @@
             :key=   "scara",
             :label= "`${$t('scara._articulat')} ${scara}`"
             :id=    "`${bId}:${scara}`"
-            @input= "selecteazaToate(aparts(bId, i), $event)"
-            :value= "toateApsSel(aparts(bId, i))"
+            @change= "selecteazaToate(aparts(bId, i), $event)"
+            :checked= "toateApsSel(aparts(bId, i))"
             required= true
           )
           ul
@@ -32,8 +33,8 @@
                 :key=   "etaj",
                 :id=    "`${bId}:${scara}:${etaj}`"
                 :label= "`${$t('bloc.etajul')} ${etaj}`"
-                @input= "selecteazaToate(aparts(bId, i, etaj), $event)"
-                :value= "toateApsSel(aparts(bId, i, etaj))"
+                @change= "selecteazaToate(aparts(bId, i, etaj), $event)"
+                :checked= "toateApsSel(aparts(bId, i, etaj))"
                 required= true
               )
               ul
@@ -42,8 +43,8 @@
                     type=   "checkbox"
                     :key=   "ap._id"
                     :id=    "ap._id"
-                    :value= "value.indexOf(ap._id) > -1"
-                    @input=  "selecteaza(ap._id, $event)"
+                    :checked= "value.indexOf(ap._id) > -1"
+                    @change=  "selecteaza(ap._id, $event)"
                     :label= "`${ap.nr}. ${ap.proprietar}`"
                     required= true
                   )
@@ -80,9 +81,8 @@ export default {
     this.$options.components.field = require('form/field').default
   },
   methods: {
-    adaugaSterge (apId, flag) {
-      let { value } = this
-
+    adaugaSterge (value, apId, flag) {
+      this.debug(value, apId, flag)
       const index = value.indexOf(apId)
       if (flag) {
         if (index < 0) value.push(apId)
@@ -97,7 +97,7 @@ export default {
       let { value } = this
       const { adaugaSterge } = this
 
-      this.$emit('input', adaugaSterge(ap, flag))
+      this.$emit('input', adaugaSterge(value, ap, flag))
     },
     selecteazaToate (apartamente, flag) {
       if (!apartamente && !apartamente.length) return
@@ -108,18 +108,11 @@ export default {
       apartamente.forEach(ap => {
         const { _id } = ap
         if (!_id) return
-        value = adaugaSterge(_id, flag)
+        value = adaugaSterge(value, _id, flag)
       })
       this.$emit('input', value)
     },
-    toateApsSel (aps) {
-      let toate = true
-      if (!aps && !aps.length) toate = false
-      aps.forEach(ap => {
-        if (this.value.indexOf(ap._id) < 0) toate = false
-      })
-      return toate
-    },
+
     etaje (scaraId, blocId) {
       const e = []
       const { optiuni, blocuri, apartamente, debug } = this
@@ -172,10 +165,19 @@ export default {
     }
   },
   computed: {
-    inputSelected () {
-      const { value, debug } = this
-      debug('emitez input', value)
-      this.$emit('input', value)
+    toateApsSel (aps) {
+      let toate = true
+      const { value } = this
+
+      return aps => {
+        if (!aps && !aps.length) toate = false
+        aps.forEach(ap => {
+          const { _id } = ap
+          if (!_id) return
+          if (value.indexOf(_id) < 0) toate = false
+        })
+        return toate
+      }
     },
     _blocuri () {
       const b = []

@@ -11,6 +11,7 @@ nuxt-link.button(
 
 button(
   v-else-if=        "type === 'button' && !to",
+  type=             "button"
   @click=           "!dangerous ? $emit('click', $event) : promptUser()"
   :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
@@ -62,7 +63,8 @@ button
   line-height 20px
   white-space nowrap
   user-select none
-  box-shadow -5px -5px #03A9F4
+  max-width 300px
+  box-shadow inset 0 1px rgba(white, .5)
 
   &:before
     pointer-events none

@@ -34,6 +34,7 @@
     field(
       slot=     "right"
       type=     "search"
+      v-model=  "search"
       size=     "small"
       id=       "search"
       :placeholder=  "$t('defaults.search')"
@@ -90,6 +91,7 @@
       frm#main(
         v-if=       "modalContent && modalContent !== 'prompt'",
         :formData=  "formData(modalContent, this)",
+        :formName=  "modalContent"
         :type=      "modalContent.split('.')[1]"
       )
 
@@ -126,6 +128,7 @@ export default {
         name,
         author
       },
+      search: '',
       navItems: [
         {
           title: $t('navigation[0]'),

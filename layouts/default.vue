@@ -119,6 +119,7 @@ import { version, name, author } from '../package.json'
 
 export default {
   data () {
+    const { $t } = this
     return {
       app: {
         version,
@@ -127,15 +128,15 @@ export default {
       },
       navItems: [
         {
-          title: this.$t('navigation[0]'),
+          title: $t('navigation[0]'),
           url: '/dashboard'
         },
         {
-          title: this.$t('navigation[1]'),
+          title: $t('navigation[1]'),
           url: '/liste'
         },
         {
-          title: this.$t('navigation[2]'),
+          title: $t('navigation[2]'),
           url: '/community'
         }
       ]
@@ -155,7 +156,7 @@ export default {
         let { campuri, actiuni } = data
         if (!campuri) return
 
-        const { modalContent, modalData, $t, blocuri, apartamente, debug } = ctx
+        const { modalContent, modalData, blocuri, apartamente, debug } = ctx
 
         campuri = campuri.filter(camp => !camp.notInAddForm)
         campuri.forEach(camp => {
@@ -172,8 +173,6 @@ export default {
             }
           } 
           else if (path[1] === 'new') camp.value = camp.default || null
-
-          // if (camp.label.indexOf(path[0]) < 0) camp.label = `${path[0]}.${camp.label}`
 
           switch (camp.id) {
             case 'asociatieId':

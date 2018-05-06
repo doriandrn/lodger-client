@@ -93,6 +93,10 @@ export default {
       type: String,
       default: null
     },
+    hasResults: {
+      type: Boolean,
+      default: false
+    },
     selected: {
       type: Object,
       default () { return {
@@ -118,21 +122,24 @@ export default {
   },
   methods: {
     clickAway () {
-      if (this.type !== 'search') return
+      const { type, hasResults } = this
+      if (type !== 'search') return
+      if (!hasResults) return
+
       this.$emit('clickAway')
     },
     inchideModale () {
-      if (!this.modalOpen) return
-      this.closeModal()
+      const { modalOpen, closeModal } = this
+      if (modalOpen) closeModal()
     },
     handleInput (e) {
       let { value } = e.target
-      const { type, $emit, search } = this
+      const { type, search } = this
 
-      if (!value) value = null
-      if (type === 'checkbox') return !!value
+      if (value === undefined) value = null
+      // if (type === 'checkbox') return !!value ->> checkbox e pe change
       if (type !== 'search') {
-        $emit('input', type === 'number' ? Number(value) : value)
+        this.$emit('input', type === 'number' ? Number(value) : value)
         return
       }
       else search(value)
@@ -155,6 +162,7 @@ export default {
         if (searchTaxonomy && searchTaxonomy !== tax) return
         const iterator = searchMap[tax].entries()
         results[tax] = []
+
 
         for (let [ key, value ] of iterator) {
           const relevance = string_similarity(String(input), value)

@@ -22,12 +22,13 @@
     @change=      "$emit('change', $event)"
     
     :searchTaxonomy=    "searchTaxonomy"
+    :hasResults=        "hasResults"
     @newResults=        "results = $event"
     @selected=          "selected = $event"
     :selected=          "selectedResult"
     @keyEnter=          "selecteaza"
-    @keyDown=           "type === 'search' ? (indexRezultatSelectat < results[searchTaxonomy].length - 1 ? indexRezultatSelectat++ : indexRezultatSelectat = 0) : null"
-    @keyUp=             "type === 'search' ? (indexRezultatSelectat > 0 ? indexRezultatSelectat-- : indexRezultatSelectat = results[searchTaxonomy].length - 1) : null"
+    @keyDown=           "indexSelectat(1)"
+    @keyUp=             "indexSelectat(0)"
     :class=             "{ av: !!value }"
     @clickAway=         "clearResults"
   )
@@ -153,27 +154,39 @@ export default {
     hasResults () {
       const { type } = this
       if (type !== 'search') return
-      const { results, searchTaxonomy, debug } = this
-      debug('results', results)
-      if (!results) return false
 
+      const { results, resultsTaxes, searchTaxonomy, debug, taxes } = this
       let has = false
 
-      const taxes = Object.keys(results)
-      taxes.forEach(tax => {
-        debug(tax)
-        if (has) return
-        if (tax && results[tax] && results[tax].length > 0) has = true
-      })
+      if (!results) return has
 
+      taxes.forEach(tax => {
+        if (has) return
+        has = false
+        if (tax && results[tax]) {
+          if (results[tax].length > 0) has = true
+          return
+        }
+      })
+      
+      // debug('has', has)
       return has
+    },
+    taxes () {
+      const { results, type } = this
+      if (type !== 'search') return
+      return Object.keys(results)
     }
   },
   data () {
     // CUSTOM  only for search
     if (this.type !== 'search') return {}
     return {
-      results: {},
+      results: {
+        apartamente: [],
+        furnizori: [],
+        utilizatori: [] 
+      },
       indexRezultatSelectat: 0
     }
   },
@@ -293,7 +306,7 @@ export default {
   },
   methods: {
     /**
-     * Metoda doar pentru search
+     * Metode doar pentru search
      */
     selecteaza (e) {
       const { id, tax } = e
@@ -319,9 +332,28 @@ export default {
       this.$emit('input', rezultat.id)
       this.clearResults()
     },
+
     clearResults () {
-      if (this.type !== 'search') return
-      Object.keys(this.results).forEach(result => this.results[result] = [])
+      const { type } = this
+      if (type !== 'search') return
+
+      const { results } = this
+      Object.keys(results).forEach(result => results[result] = [])
+    },
+
+    indexSelectat (incDec) {
+      const { type } = this
+      if (type !== 'search') return
+
+      const { taxes, indexRezultatSelectat, results } = this
+
+      taxes.forEach(tax => {
+
+      })
+      //+
+      // type === 'search' ? (indexRezultatSelectat < results[searchTaxonomy].length - 1 ? indexRezultatSelectat++ : indexRezultatSelectat = 0) : null
+      // -
+      //type === 'search' ? (indexRezultatSelectat > 0 ? indexRezultatSelectat-- : indexRezultatSelectat = results[searchTaxonomy].length - 1) : null
     }
   }
 }

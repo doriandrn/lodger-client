@@ -60,22 +60,24 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'frm',
   mounted () {
+    const { $el } = this
     // move slot:footer items to form footer
-    const footerEls = this.$el.querySelectorAll('.field[data-slot]')
+    const footerEls = $el.querySelectorAll('.field[data-slot]')
     if (!footerEls) return
-    const footerActionsEl = this.$el.querySelector('.actions .left')
+    const footerActionsEl = $el.querySelector('.actions .left')
     for (const el of footerEls) {
       footerActionsEl.append(el)
     }
   },
   data () {
     let dynamicFormData = {}
-    const { campuri, $for } = this.formData
+    const { $t, formData: { campuri, $for }} = this
+    // const { campuri, $for } = this.formData
     if (!campuri) return dynamicFormData
     
     // Label-uri pt campuri => traduse
     campuri.forEach(camp => {
-      camp.label = this.$t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`)
+      camp.label = $t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`)
       if (camp.required) camp.v = `required|${camp.v || ''}`
     })
 

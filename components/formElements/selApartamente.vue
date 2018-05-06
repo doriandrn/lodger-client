@@ -43,11 +43,10 @@
                     :key=   "ap._id"
                     :id=    "ap._id"
                     :value= "value.indexOf(ap._id) > -1"
-                    @input=  "$event && value.indexOf(ap._id) < 0 ? value.push(ap._id) : value.splice(value.indexOf(ap._id), 1)"
+                    @input=  "selecteaza(ap._id, $event)"
                     :label= "`${ap.nr}. ${ap.proprietar}`"
                     required= true
                   )
-    //- li(v-for="apId, index in optiuni") {{ apartamente[apId].proprietar }}
 </template>
 
 <script>
@@ -81,25 +80,37 @@ export default {
     this.$options.components.field = require('form/field').default
   },
   methods: {
-    inputSelected (vechi, nou) {
-      this.$emit('input', nou)
-      return nou
+    adaugaSterge (apId, flag) {
+      let { value } = this
+
+      const index = value.indexOf(apId)
+      if (flag) {
+        if (index < 0) value.push(apId)
+      } else {
+        if (index > -1) value.splice(index, 1)
+      }
+
+      return value
+    },
+    selecteaza (ap, flag) {
+      if (!ap) return
+      let { value } = this
+      const { adaugaSterge } = this
+
+      this.$emit('input', adaugaSterge(ap, flag))
     },
     selecteazaToate (apartamente, flag) {
-      // this.debug(apartamente, flag)
       if (!apartamente && !apartamente.length) return
+
       let { value } = this
+      const { adaugaSterge } = this
+
       apartamente.forEach(ap => {
         const { _id } = ap
         if (!_id) return
-        const index = value.indexOf(_id)
-        if (flag) {
-          if (index < 0) value.push(_id)
-        } else {
-          if (index > -1) value.splice(index, 1)
-        }
+        value = adaugaSterge(_id, flag)
       })
-      this.value = value
+      this.$emit('input', value)
     },
     toateApsSel (aps) {
       let toate = true
@@ -156,14 +167,16 @@ export default {
           s[scara] = id
         })
       })
-      debug(s)
+
       return s
     }
   },
-  watch: {
-    value: 'inputSelected'
-  },
   computed: {
+    inputSelected () {
+      const { value, debug } = this
+      debug('emitez input', value)
+      this.$emit('input', value)
+    },
     _blocuri () {
       const b = []
       const { apartamente, blocuri, optiuni } = this

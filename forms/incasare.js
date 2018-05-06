@@ -9,6 +9,7 @@ export const campuri = [
   {
     id: 'suma',
     type: 'bani',
+    label: 'defaults.sum'
   },
   {
     id: 'la',

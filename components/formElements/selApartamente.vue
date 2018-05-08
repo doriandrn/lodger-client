@@ -112,6 +112,18 @@ export default {
       })
       this.$emit('input', value)
     },
+    toateApsSel (aps) {
+      let toate = true
+      const { value } = this
+
+      if (!aps && !aps.length) toate = false
+      aps.forEach(ap => {
+        const { _id } = ap
+        if (!_id) return
+        if (value.indexOf(_id) < 0) toate = false
+      })
+      return toate
+    },
 
     etaje (scaraId, blocId) {
       const e = []
@@ -165,20 +177,6 @@ export default {
     }
   },
   computed: {
-    toateApsSel (aps) {
-      let toate = true
-      const { value } = this
-
-      return aps => {
-        if (!aps && !aps.length) toate = false
-        aps.forEach(ap => {
-          const { _id } = ap
-          if (!_id) return
-          if (value.indexOf(_id) < 0) toate = false
-        })
-        return toate
-      }
-    },
     _blocuri () {
       const b = []
       const { apartamente, blocuri, optiuni } = this

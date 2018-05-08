@@ -1,12 +1,13 @@
 <template lang="pug">
 span.tooltip
-  ul.tooltip__preformatted
+  ul.tooltip__preformatted(v-if= "typeof text === 'object'")
     li(
       v-for="val, type in text"
       :data-type="type"
       :data-icon="handleIcon(type, val)"
     ) {{ val }}
       span.m2(v-if="type === 'suprafata'")
+  span(v-else-if="typeof text === 'string' && text") {{ text }}
   slot
 </template>
 

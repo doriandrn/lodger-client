@@ -64,6 +64,7 @@ export default {
 
 <style lang="stylus">
 @require '~styles/config'
+colors = config.palette
 
 .bloc
   display flex
@@ -96,25 +97,13 @@ export default {
   //         visibility visible
 
   &__add
-    // background-color: config.palette.borders !important
+    // background-color: colors.borders !important
     position absolute
     bottom -3px
     right 3px
     size 56px
     border-radius 50%
     margin -2px
-
-  // &__actiuni
-  //   display flex
-  //   flex-flow row nowrap
-
-  //   +desktop()
-  //     transition opacity .15s ease
-  //     opacity 0
-  //     visibility hidden
-
-  //   > *
-  //     margin 0 8px
 
   > .nume
     font-size 20px
@@ -157,7 +146,7 @@ export default {
 
   .scara
     width 100%
-    border: 1px solid config.palette.borders
+    border: 1px solid colors.borders
     counter-reset etaje
     position relative
 
@@ -178,7 +167,7 @@ export default {
         content ''
         width 1px
         height 40px
-        background: config.palette.borders
+        background: colors.borders
         position absolute
         top 0
         left 3px
@@ -197,7 +186,7 @@ export default {
       display flex
       position relative
       height 48px
-      flex-flow row-reverse nowrap
+      flex-flow row nowrap
 
       > button
         width 100%
@@ -205,9 +194,25 @@ export default {
         padding 8px
         border-radius 0
         box-shadow none
+        border-color: transparent
+        margin -1px
+
+        &:not(:first-child)
+          border-left: 1px solid colors.borders
 
         &.adauga
-          opacity 0
+          &:before
+            background-color transparent
+            transition background-color .1s ease
+
+        &:active
+        &:focus
+        &:hover
+          border-color: colors.tertiary
+          opacity 1
+
+          &:before
+            background-color: colors.primary
 
         em
           font-style normal
@@ -217,19 +222,17 @@ export default {
           margin-bottom 4px
 
         &:not([data-styl="unstyled"])
-          // background-color: lighten(config.palette.tertiary, 85%)
+          // background-color: lighten(colors.tertiary, 85%)
           background-color: transparent
           color: config.typography.palette.ui
-          border-color: transparent
           font-size 0
-          border-left: 1px solid config.palette.borders !important
-
+          
           &:hover
-            background white !important
-            color: config.typography.palette.headings !important
+            background-color transparent !important
+            color: config.typography.palette.headings
 
       &.ultim
-        border-color: config.palette.tertiary
+        border-color: colors.tertiary
 
       &:before
         content counter(etaje, upper-roman)
@@ -242,10 +245,10 @@ export default {
 
       &:first-child:before
         content 'P'
-        // background: config.palette.bgs.body
+        // background: colors.bgs.body
 
       &:not(:last-child)
-        border-top: 1px solid config.palette.borders
+        border-top: 1px solid colors.borders
 
       &:not(:first-child)
         counter-increment etaje
@@ -255,7 +258,7 @@ export default {
           opacity 1 !important
 
         &:before
-          color: config.palette.primary
+          color: colors.primary
 
   &__nr
     flex 1 1 100%

@@ -30,7 +30,7 @@ button(
 
   tooltip(
     v-if=   "tooltip"
-    :text=  "typeof tooltip !== 'boolean' ? tooltip : null"
+    :text=  "typeof tooltip !== 'boolean' ? tooltip : $slots.default[0].text"
   )
 
 input(
@@ -71,6 +71,7 @@ button
     background-color white
 
   &:hover
+  &:focus
   &:active
     border-color: config.palette.secondary
 

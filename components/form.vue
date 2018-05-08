@@ -235,10 +235,10 @@ form
 
   > .field
     flex 1 1 200px
-    margin: 0 (config.spacings.inBoxes/2) (config.spacings.inBoxes/2)
+    margin: 0 (config.spacings.inBoxes/2) 36px
 
     +desktop()
-      margin: 0 config.spacings.inBoxes config.spacings.inBoxes
+      margin: 0 config.spacings.inBoxes 36px
 
   label
     margin-bottom: (baseSpacingUnit*1.5)

@@ -81,6 +81,7 @@ export default {
     font-size 14px
     line-height 16px
     border: 1px solid config.palette.borders
+    border-left-width 2px
     // position absolute 0
     padding 0
     width 100%
@@ -129,6 +130,7 @@ export default {
     > ul
       background white
       height auto
+      border-left-color: config.typography.palette.light !important
 
     &:after
       background-color: config.typography.palette.headings !important

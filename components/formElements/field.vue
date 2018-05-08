@@ -469,10 +469,7 @@ textarea
   border 0
   min-width 32px
   border-bottom: 1px solid #c8c8c8
-  // border-radius: config.radiuses.buttons
-  // box-shadow inset 1px 2px 3px -1px rgba(black, .015) 
   transition all .15s ease-in-out
-  // background: palette.bgs.body
   padding 8px 4px
   width 100%
 
@@ -614,6 +611,7 @@ input:not([type="submit"])
       &:not([data-type="altselect"])
         &:not([data-type="scari"])
           // flex-direction row-reverse
+          height auto
           flex-flow column-reverse nowrap
           align-items flex-start
           justify-content flex-start

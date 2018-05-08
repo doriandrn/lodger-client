@@ -6,7 +6,7 @@ ul.toasts(
     v-for=      "toast in toasts",
     :key=       "toast.id",
     :data-type= "toast.type",
-    :data-icon=  "toast.type === 'succes' ? 'check' : 'alert-circle'"
+    :data-icon=  "toast.type === 'success' ? 'check' : 'alert-circle'"
   )
     h4(v-if="toast.heading") {{ $t( toast.heading ) }}
     p {{ $t( toast.text ) }}
@@ -37,6 +37,7 @@ iconBgWidth = 40px
   z-index 2
   display flex
   flex-flow column wrap
+  padding 0
 
   +above(m)
     max-width 340px
@@ -50,8 +51,8 @@ iconBgWidth = 40px
     background white
     align-items center
     border-left 1px solid
-    min-width 300px
-    padding-left 0
+    width auto
+    padding 0 64px 0 0
     position relative
     left 100%
     transition all .15s ease-in-out

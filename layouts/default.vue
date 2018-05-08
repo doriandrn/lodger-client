@@ -287,6 +287,10 @@ footerHeight = 24px
 
             &[data-sel]
               padding-top 20px
+
+            &[data-intializat]
+              &:before
+                content: '!'
       
       label
         font-size 9px

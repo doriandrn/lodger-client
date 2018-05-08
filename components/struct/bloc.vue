@@ -11,6 +11,8 @@ ol.scari(v-if="id")
           buton(
             v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
             :key=   "ap._id"
+            data-for= "ap"
+            @keyUp= "debug('butonsus')"
             :class= "{ ultimul: ap._id === ultimulApAdaugat}"
             @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
             :tooltip="apTooltip(ap._id)"
@@ -18,7 +20,9 @@ ol.scari(v-if="id")
             em.ap__nr {{ ap.nr }}
           buton.adauga(
             styl=   "unstyled"
+            data-for= "ap"
             tooltip
+            @keyUp= "debug('butonsus')"
             @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: Number(iScara), etaj: i } })",
             icon=   "plus-circle"
             icon-only
@@ -194,7 +198,7 @@ colors = config.palette
         padding 8px
         border-radius 0
         box-shadow none
-        border-color: transparent
+        border 1px solid transparent
         margin -1px
 
         &:not(:first-child)

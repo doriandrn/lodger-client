@@ -30,6 +30,9 @@
     :class=       "{ av: !!value }"
     @clickAway=   "clearResults"
   )
+  buton(
+    v-else-if=    "type === 'button'"
+  ) {{ label || text || '~' }}
   txtarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
     :placeholder= "placeholder",
@@ -116,7 +119,12 @@
     @selecteaza=      "selecteaza"
     :class=           "{ singleTax: searchTaxonomy }"
   )
-  span(v-if=           "type === 'search' && searchTaxonomy === 'apartamente' && indexRezultatSelectat > -1") Ultima incasare:
+
+  .selectat__detalii(v-if="selected._id")
+    apartament(
+      v-if= "type === 'search' && searchTaxonomy === 'apartamente' && indexRezultatSelectat > -1"
+      :apId="selected.id"
+    )
 </template>
 
 <script>
@@ -126,6 +134,7 @@ import slect from 'form/select'
 import altslect from 'form/altselect'
 import txtarea from 'form/textarea'
 import checkboxes from 'form/checkboxes'
+import buton from 'form/button'
 import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
@@ -134,6 +143,7 @@ import results from '~components/searchResults'
 import contoare from 'form/contoare'
 import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
+import apartament from 'struct/apartament'
 
 import { get_bigrams, string_similarity } from 'helpers/search'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -324,6 +334,7 @@ export default {
     inpt,
     slect,
     altslect,
+    buton,
     distribuire,
     labl,
     txtarea,

@@ -5,7 +5,7 @@ ul.incasari.zebra
       v-if="apartamente[incasare.deLa]"
       collapsable
     )
-      adresa(
+      ap(
         v-if=   "showAdresa"
         :apId=  "incasare.deLa"
       )
@@ -20,7 +20,7 @@ ul.incasari.zebra
 <script>
 import dateTime from '~components/dateTime'
 import split from '~components/split'
-import adresa from '~components/adresa'
+import ap from 'struct/apartament'
 import bani from '~components/bani'
 import { mapGetters } from 'vuex'
 
@@ -46,7 +46,7 @@ export default {
   components: {
     dateTime,
     split,
-    adresa,
+    ap,
     bani
   }
 }

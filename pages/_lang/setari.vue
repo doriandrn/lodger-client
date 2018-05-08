@@ -1,11 +1,17 @@
 <template lang="pug">
 sction.setari(:title="$t('defaults.settings')")
   tabs
-    tab(:title="$t('defaults.asociatie')") asoc
-      frm
+    tab(
+      v-for=  "tab in tabs"
+      :key=   "tab"
+      :title= "$t(`defaults.${tab}`)"
+    )
 
-    tab(:title="$t('defaults.user.profile')")
-      frm
+      frm(
+        v-for=      "sectiune, i in forms(tab)",
+        :key=       "i"
+        :formData=  "{ campuri: sectiune.campuri, for: i }"
+      )
 </template>
 
 <script>
@@ -16,15 +22,25 @@ import buton from 'form/button'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  computed: mapGetters({
+  data () {
+    return {
+      tabs: ['asociatie', 'utilizator']
+    }
+  },
+  computed: {
+    ...mapGetters({
     
-  }),
+    })
+  },
   components: {
     sction,
     frm,
     buton
   },
   methods: {
+    forms (tab) {
+      return require(`forms/${tab}.js`).setari
+    },
     ...mapActions({
       openModal: 'modal/open'
     })

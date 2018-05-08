@@ -8,7 +8,7 @@
         :class=   "{ selected: i === selectedIndex, irelevant: res.relevance < 0.25 }"
         @click=   "$emit('selecteaza', { id: res.id, tax })"
       )
-        adresa(
+        apartament(
           v-if=     "tax === 'apartamente'"
           :key=     "i"
           :apId=    "res.id"
@@ -26,7 +26,7 @@
 
 <script>
 import bani from '~components/bani'
-import adresa from '~components/adresa'
+import apartament from 'struct/apartament'
 import furnizor from '~components/furnizor'
 import { mapGetters } from 'vuex'
 
@@ -46,7 +46,7 @@ export default {
     }
   },
   components: {
-    adresa,
+    apartament,
     bani,
     furnizor
   }

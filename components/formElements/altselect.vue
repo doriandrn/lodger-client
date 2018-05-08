@@ -11,13 +11,22 @@
       :data-sel=    "value === key"
       :data-value=  "typeof options === 'object' ? option : key",
       @click=       "alege(option)"
-      :data-initializat= "id !== 'asociatieSwitch' ? null : asocInitProgr(option)"
-    ) {{ option }}
+      :data-icon=   "option.icon || id === 'asociatieSwitch' && asocInitProgr(option) < 100 ? 'alert-circle' : null || null"
+    )
+      split
+        span {{ option }}
+        progres(
+          slot= "right"
+          v-if= "id === 'asociatieSwitch'"
+          :procent= "asocInitProgr(option)"
+        )
     slot
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import split from '~components/split'
+import progres from '~components/progres'
 
 export default {
   methods: {
@@ -37,6 +46,10 @@ export default {
   computed: mapGetters({
     asociatii: 'asociatii'
   }),
+  components: {
+    progres,
+    split
+  },
   props: {
     id: {
       type: String,

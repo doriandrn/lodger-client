@@ -22,6 +22,7 @@ button(
   :data-dangerous=  "dangerous"
   :data-arrow=      "arrow"
   :class=           "{ iconOnly, rounded }"
+  @keyup.up=        "$emit('keyUp', $event)"
   tabIndex=     1
   )
   slot
@@ -159,10 +160,17 @@ export default {
   data () {
     if (!this.dangerous) return {}
     return {
-      prompted: false
+      prompted: false,
+      focusing: false
     }
   },
   computed: {
+    focusing () {
+      if (!document) return
+      const { activeElement } = document
+      if (!activeElement) return
+      return activeElement === this.$el
+    },
     ...mapGetters({
       modalContent: 'modal/content',
       _prompted: 'prompt/prompted'

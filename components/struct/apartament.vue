@@ -1,10 +1,10 @@
 <template lang="pug">
-nuxt-link.adresa(:to="`/apartament/${id}`")
-  nuxt-link.adresa__main(
+nuxt-link.apartament(:to="`/apartament/${id}`")
+  nuxt-link.apartament__adresa(
     v-if= "bloc",
     :to=  "`/bloc/${bloc._id}`"
   ) {{ bloc.nume }} / {{ scara }} ({{ etaj }})
-  .adresa__owner
+  .apartament__detalii
     span.ap__nr(v-if="nrAp") {{ nrAp }} 
     span.nume.proprietar {{ proprietar }}
 </template>
@@ -75,7 +75,7 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
   
-.adresa
+.apartament
   display flex
   flex-flow column wrap
   text-decoration none
@@ -83,14 +83,14 @@ export default {
   width 100%
   flex 1 1 100%
 
-  &__main
+  &__adresa
     font-weight 100
     text-transform uppercase
     margin-right 8px
     letter-spacing 2px
     font-size 10px
 
-  &__owner
+  &__detalii
     display flex
     flex-flow row nowrap
     align-items flex-start

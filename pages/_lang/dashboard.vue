@@ -125,7 +125,6 @@ import empty from '~components/empty'
 import dateTime from '~components/dateTime'
 import split from '~components/split'
 
-import adresa from '~components/adresa'
 import bani from '~components/bani'
 import servicii from '~components/servicii'
 import field from 'form/field'
@@ -146,7 +145,6 @@ export default {
   components: {
     blocuri,
     sction,
-    adresa,
     split,
     bani,
     widget,

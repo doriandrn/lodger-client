@@ -1,26 +1,59 @@
 <template lang="pug">
-sction#registru(
+sction.registru(
   :title=   "$t('registru.title')"
 )
-  tabs.registru
-    tab(:title="$t('registru.incasari')")
-      incasari(:incasari="incasari")
+  split.registru__controale
+    field(
+      v-for=  "optiune in optiuni",
+      :key=   "optiune",
+      type=   "checkbox"
+      :label= "$t(`registru.${optiune}`)"
+      required= true
+    )
+    span(
+      slot="right"
+    ) timp / suma  sageata
 
-    tab(:title="$t('registru.cheltuieli')")
-      p cheltuieli
+  .registru__data
+    incasari(:incasari="_incasari()")
+    buton incarca mai multe
+
 </template>
 
 <script>
 import sction from '~components/section'
+import split from '~components/split'
+import field from 'form/field'
+import buton from 'form/button'
 import incasari from '~components/incasari'
 import { mapGetters } from 'vuex'
 
 export default {
-  computed: mapGetters({
-    incasari: 'incasari'
-  }),
+  data () {
+    return {
+      optiuni: ['incasari', 'cheltuieli']
+    }
+  },
+  computed: {
+    ...mapGetters({
+      incasari: 'incasari'
+    })
+  },
+  methods: {
+    async _incasari () {
+      const { $db, debug } = this
+      const reslts = await $db.incasari.find({
+
+      }).exec()
+      debug(reslts)
+      return reslts
+    },
+  },
   components: {
     sction,
+    field,
+    buton,
+    split,
     incasari
   }
 }
@@ -32,18 +65,28 @@ colors = config.palette
 
 .registru
   width 100%
-  .tab
-    ul
-      list-style-type none
-      padding 0
-      max-width 639px
-      width 100%
-      flex 1 1 100%
-      margin 0 auto
 
-      li
-        background white
+  &__controale
+  &__data
+    max-width 639px
+    width 100%
+    margin 0 auto
+  
+  &__controale
+    flex 0 1 24px
+    margin-bottom 16px
 
-        &:not(:last-child)
-          border-bottom: 1px solid colors.borders
+  &__data
+    flex 1 1 100%
+
+  ul
+    list-style-type none
+    padding 0
+    
+
+    li
+      background white
+
+      &:not(:last-child)
+        border-bottom: 1px solid colors.borders
 </style>

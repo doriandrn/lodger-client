@@ -45,31 +45,33 @@ const makeCollection = data => {
   }
   let versionMustIncrease = false
 
-  Object.values(form.campuri).forEach(formItem => {
-    const { id, type, required, primary, step, encrypted, index, ref, indexRef } = formItem
+  campuri
+    .filter(camp => !camp.notInDb)
+    .forEach(formItem => {
+      const { id, type, required, primary, step, encrypted, index, ref, indexRef } = formItem
 
-    // this is new from previous schema
-    if (foundCachedProperties.length > 0 && foundCachedProperties.indexOf(id) < 0) {
-      debug('FOUND NEW ID', id)
-      schema.migrationStrategies[version] = function (oldDoc) {
-        oldDoc[id] = undefined
-        return oldDoc
+      // this is new from previous schema
+      if (foundCachedProperties.length > 0 && foundCachedProperties.indexOf(id) < 0) {
+        debug('FOUND NEW ID', id)
+        schema.migrationStrategies[version] = function (oldDoc) {
+          oldDoc[id] = undefined
+          return oldDoc
+        }
+        versionMustIncrease = true
       }
-      versionMustIncrease = true
-    }
 
-    schema.properties[id] = { type: getType(type) }
-    if (primary) Object.assign(schema.properties[id], { primary })
-    if (index) Object.assign(schema.properties[id], { index })
-    if (encrypted) Object.assign(schema.properties[id], { encrypted })
-    if (ref) {
-      const x = { ref, items: { type: 'string' } }
-      if (indexRef) Object.assign(x, { index: true })
-      Object.assign(schema.properties[id], x)
-    }
-    if (step) Object.assign(schema.properties[id], { multipleOf: step })
-    if (required) schema.required.push(id)
-  })
+      schema.properties[id] = { type: getType(type) }
+      if (primary) Object.assign(schema.properties[id], { primary })
+      if (index) Object.assign(schema.properties[id], { index })
+      if (encrypted) Object.assign(schema.properties[id], { encrypted })
+      if (ref) {
+        const x = { ref, items: { type: 'string' } }
+        if (indexRef) Object.assign(x, { index: true })
+        Object.assign(schema.properties[id], x)
+      }
+      if (step) Object.assign(schema.properties[id], { multipleOf: step })
+      if (required) schema.required.push(id)
+    })
 
   // if (versionMustIncrease) version += 1
   Object.assign(schema, { version })

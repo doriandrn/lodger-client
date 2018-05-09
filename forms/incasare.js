@@ -11,6 +11,12 @@ export const campuri = [
     type: 'bani',
     label: 'defaults.sum'
   },
+  // {
+  //   id: 'apSelectat',
+  //   type: 'detaliiApSelectat',
+  //   label: 'defaults.apSelectat',
+  //   notInDb: true
+  // },
   {
     id: 'la',
     index: true,
@@ -20,8 +26,8 @@ export const campuri = [
   {
     id: 'nrChitanta',
     type: 'number',
-    slot: 'footer',
-    value: getters => getters['asociatie/nrUltimaChitanta']+1
+    default: 1,
+    value: getters => Number(getters['asociatie/nrUltimaChitanta'] || 0) + 1
   },
   {
     id: 'asociatieId',

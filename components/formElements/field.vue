@@ -10,7 +10,8 @@
     v-if=         "['text', 'number', 'search', 'bani', 'checkbox', 'date'].indexOf(type) > -1",
     :type=        "type !== 'bani' ? type : 'number'",
     :placeholder= "placeholder",
-    :autocomplete="autocomplete",
+    :autocomplete="autocomplete ? 'on' : 'off'",
+    :autosuggest= "autosuggest"
     :id=          "id",
     :focus=       "focus",
     :required=    "required",
@@ -100,7 +101,7 @@
     :servicii=        "servicii"
   )
   p(v-else-if=        "type === 'contactFields'") contactFields
-  
+
   labl.field__label(
     v-show=         "!hideLabel && type !== 'scari' && scariCount < 2"
     :required=      "required"
@@ -119,12 +120,6 @@
     @selecteaza=      "selecteaza"
     :class=           "{ singleTax: searchTaxonomy }"
   )
-
-  .selectat__detalii(v-if="selected._id")
-    apartament(
-      v-if= "type === 'search' && searchTaxonomy === 'apartamente' && indexRezultatSelectat > -1"
-      :apId="selected.id"
-    )
 </template>
 
 <script>
@@ -303,6 +298,10 @@ export default {
       type: Boolean,
       default: false
     },
+    autosuggest: {
+      type: Boolean,
+      default: false
+    },
     searchTaxonomy: {
       type: String,
       default: null
@@ -331,21 +330,22 @@ export default {
     }
   },
   components: {
-    inpt,
-    slect,
     altslect,
+    apartament,
     buton,
-    distribuire,
-    labl,
-    txtarea,
     checkboxes,
     contoare,
+    distribuire,
     file,
+    inpt,
+    labl,
+    slect,
     radios,
+    results,
     scari,
     servicii,
     selApartamente,
-    results
+    txtarea
   },
   methods: {
     /**
@@ -534,6 +534,7 @@ input:not([type="submit"])
       align-self flex-start
 
   &[data-type="servicii"]
+  &[data-type="detaliiApSelectat"]
     flex 1 1 100%
 
   &[data-type="search"]

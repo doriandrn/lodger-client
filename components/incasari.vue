@@ -25,6 +25,11 @@ import bani from '~components/bani'
 import { mapGetters } from 'vuex'
 
 export default {
+  data () {
+    return {
+      index: 0
+    }
+  },
   computed: {
     ...mapGetters({
       blocuri: 'blocuri',
@@ -37,6 +42,10 @@ export default {
       default () {
         return []
       }
+    },
+    limita: {
+      type: Number,
+      default: 2
     },
     showAdresa: {
       type: Boolean,
@@ -62,7 +71,6 @@ export default {
   flex-flow column nowrap
 
   > li
-    max-width 480px
     margin 0 auto
     width 100%
 

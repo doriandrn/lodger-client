@@ -212,6 +212,12 @@ export default {
     'ReferenceError': 'Dorian, învață să programezi!!',
     'inContinuare': 'Alege ce dorești să faci în continuare'
   },
+  sort: {
+    label: 'Sortează după',
+    la: 'Data încasării / cheltuielii',
+    suma: 'Valoarea tranzacției',
+    nrChitanta: 'Numărul chitanței'
+  },
   feedback: {
     new: {
       title: 'Feedback',

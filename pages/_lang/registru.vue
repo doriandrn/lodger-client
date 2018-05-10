@@ -10,13 +10,24 @@ sction.registru(
       :label= "$t(`registru.${optiune}`)"
       required= true
     )
-    span(
-      slot="right"
-    ) timp / suma  sageata
+    .filtre(
+      slot= "right"
+    )
+      field(
+        type=     "radios",
+        label=    "sort.label"
+        required= true
+        v-model=  "sortFilter"
+        id=       "filtruSortare"
+        :options=  "{ timp: { label: 'sort.la' }, suma: { label: 'sort.suma' }, nrChintanta: { label: 'sort.nrChitanta' } }"
+      )
 
   .registru__data
-    incasari(:incasari="_incasari()")
-    buton incarca mai multe
+    incasari(:incasari="incasari")
+    buton(
+      v-if=   "_incasari && !incarcate"
+      @click= "index++"
+    ) incarca mai multe
 
 </template>
 
@@ -31,23 +42,41 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      optiuni: ['incasari', 'cheltuieli']
+      optiuni: ['incasari', 'cheltuieli'],
+      incasari: null,
+      incarcate: false,
+      sortFilter: 'timp',
+      index: 1,
+      limit: 3
     }
   },
   computed: {
     ...mapGetters({
-      incasari: 'incasari'
-    })
-  },
-  methods: {
-    async _incasari () {
-      const { $db, debug } = this
-      const reslts = await $db.incasari.find({
-
-      }).exec()
-      debug(reslts)
-      return reslts
+      asociatieActiva: 'asociatie/activa'
+    }),
+    findCriteria () {
+      const { asociatieActiva } = this
+      return { asociatieId: asociatieActiva }
     },
+    sortCriteria () {
+      return { la: -1 }
+    },
+    async _incasari () {
+      const { $db, index, limit, findCriteria, sortCriteria } = this
+      this.incarcate = false
+      let chgs
+      await $db.incasari.find(findCriteria).limit(limit*index).sort(sortCriteria).$.subscribe(async changes => {
+        if (!changes) return
+        this.incasari = changes
+        chgs = changes
+        if ( index > 1 ) this.incarcate = true
+      })
+      return chgs
+    }
+  },
+  async mounted () {
+    // const { $db, asociatieActiva, index } = this
+    const { _incasari } = this
   },
   components: {
     sction,
@@ -82,7 +111,7 @@ colors = config.palette
   ul
     list-style-type none
     padding 0
-    
+    margin-bottom 32px
 
     li
       background white

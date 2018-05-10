@@ -75,9 +75,9 @@ export default {
 
     if (!campuri) return dynamicFormData
     
-    // Label-uri pt campuri => traduse
+    // Label-uri pt campurile din modal + required validari
     campuri.forEach(camp => {
-      camp.label = $t(camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`)
+      camp.label = camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`
       if (camp.required) camp.v = `required|${camp.v || ''}`
     })
 

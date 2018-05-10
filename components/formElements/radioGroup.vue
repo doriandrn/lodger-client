@@ -13,19 +13,20 @@ div(
   )
     span.input__radio(
       v-for=          "option, index in options"
+      v-tooltip.top-center="options instanceof Array ? option : $t(option.label)"
     )
       input(
         type=       "radio",
         :value=     "index",
         :name=      "id",
-        :checked=   "Number(index) === value",
-        :disabled=  "disabled.indexOf(option) > -1"
-        :id=        "`${id}-${option}`",
-        @change=    "$emit('change', Number(index))"
+        :checked=   "options instanceof Array ? Number(index) === value : value === index",
+        :disabled=  "disabled && disabled.length && disabled.indexOf(option) > -1"
+        :id=        "option.label || option",
+        @change=    "$emit('change', index)"
       )
       label.label(
-        :for=   "`${id}-${option}`"
-      ) #[span] {{ option }}
+        :for=   "option.label || option"
+      ) #[span] {{ options instanceof Array ? option : $t(option.label) }}
 </template>
 
 <script>
@@ -56,7 +57,7 @@ export default {
       default: null
     },
     value: {
-      type: Number,
+      type: [Number, String],
       default: -1
     }
   }

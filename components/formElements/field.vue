@@ -106,7 +106,7 @@
     v-show=         "!hideLabel && type !== 'scari' && scariCount < 2"
     :required=      "required"
     :for=           "id"
-  ) {{ label }}
+  ) {{ _label }}
 
   p.field__message(v-if="message") {{ message }}
 
@@ -151,6 +151,11 @@ export default {
       'apartamente',
       'furnizori'
     ]),
+    _label () {
+      const { label } = this
+      if (!label) return
+      return this.$t(label)
+    },
     val () {
       const { type, searchTaxonomy, selected, debug } = this
       let { value } = this
@@ -511,7 +516,9 @@ input:not([type="submit"])
     font-weight 100
 
 .field
+  display flex
   position relative
+  align-items center // pt radios
 
   &[data-size="small"]
     input
@@ -617,17 +624,21 @@ input:not([type="submit"])
     display inline-flex
     flex-wrap nowrap
     cursor pointer
-        
+
+  &[data-type="radios"]
+    flex-direction row-reverse
+
   &:not([data-type="text"])
     &:not([data-type="textarea"])
       &:not([data-type="altselect"])
         &:not([data-type="scari"])
-          // flex-direction row-reverse
-          height auto
-          flex-flow column-reverse nowrap
-          align-items flex-start
-          justify-content flex-start
-          margin-top 0
+          &:not([data-type="radios"])
+            // flex-direction row-reverse
+            height auto
+            flex-flow column-reverse nowrap
+            align-items flex-start
+            justify-content flex-start
+            margin-top 0
 
   &--error
     .field

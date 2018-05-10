@@ -62,9 +62,8 @@ header
       &::placeholder
         opacity 1
     &:before
-      top 18px
+      top 7px
       left 11px
-      // left auto
-      // right 4px
+
 </style>
 

@@ -19,7 +19,7 @@ sction.registru(
         required= true
         v-model=  "sortFilter"
         id=       "filtruSortare"
-        :options=  "{ timp: { label: 'sort.la' }, suma: { label: 'sort.suma' }, nrChintanta: { label: 'sort.nrChitanta' } }"
+        :options=  "{ la: { label: 'sort.la' }, suma: { label: 'sort.suma' }, nrChintanta: { label: 'sort.nrChitanta' } }"
       )
 
   .registru__data
@@ -45,7 +45,7 @@ export default {
       optiuni: ['incasari', 'cheltuieli'],
       incasari: null,
       incarcate: false,
-      sortFilter: 'timp',
+      sortFilter: 'la',
       index: 1,
       limit: 3
     }
@@ -59,7 +59,8 @@ export default {
       return { asociatieId: asociatieActiva }
     },
     sortCriteria () {
-      return { la: -1 }
+      const { sortFilter } = this
+      return { [sortFilter]: -1 }
     },
     async _incasari () {
       const { $db, index, limit, findCriteria, sortCriteria } = this
@@ -107,6 +108,9 @@ colors = config.palette
 
   &__data
     flex 1 1 100%
+
+  .filtre
+    width 100%
 
   ul
     list-style-type none

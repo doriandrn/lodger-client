@@ -13,6 +13,7 @@
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
     :id=          "id",
+    :name=        "id"
     :focus=       "focus",
     :required=    "required",
     :min=         "type === 'number' ? min : null"
@@ -34,7 +35,7 @@
   buton(
     v-else-if=    "type === 'button'"
   ) {{ label || text || '~' }}
-  txtarea(
+  textarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
     :placeholder= "placeholder",
     :value=       "value",
@@ -42,7 +43,7 @@
     :required=    "required",
     :id=          "id",
   )
-  slect(
+  select(
     v-else-if=    "type === 'select'"
     :options=     "options"
     :value=       "value",
@@ -61,12 +62,13 @@
     :arrow=       "arrow"
   )
     li(v-if="id === 'asociatieSwitch'") {{ $t('asociatie.new.title') }}
+  
   scari(
-    v-else-if=    "type === 'scari' && typeof scariCount !== 'undefined'",
-    :scariCount=  "scariCount" 
+    v-else-if=    "type === 'scari'",
     :value=       "value",
     @input=       "$emit('input', $event)"
   )
+
   radios(
     v-else-if=    "type === 'radios'",
     :id=          "id",
@@ -103,7 +105,7 @@
   p(v-else-if=        "type === 'contactFields'") contactFields
 
   labl.field__label(
-    v-show=         "!hideLabel && type !== 'scari' && scariCount < 2"
+    v-show=         "!hideLabel"
     :required=      "required"
     :for=           "id"
   ) {{ _label }}
@@ -123,7 +125,6 @@
 </template>
 
 <script>
-import inpt from 'form/input'
 import labl from 'form/label'
 import slect from 'form/select'
 import altslect from 'form/altselect'
@@ -279,10 +280,7 @@ export default {
       type: String,
       default: null
     },
-    scariCount: {
-      type: Number,
-      default: null
-    },
+
     value: {
       type: [Boolean, String, Array, Object, Number],
       default: null
@@ -342,9 +340,7 @@ export default {
     contoare,
     distribuire,
     file,
-    inpt,
     labl,
-    slect,
     radios,
     results,
     scari,
@@ -486,7 +482,7 @@ textarea
   min-width 32px
   border-bottom: 1px solid #c8c8c8
   transition all .15s ease-in-out
-  padding 8px 4px
+  padding 8px 2px
   width 100%
 
   &::placeholder
@@ -533,6 +529,10 @@ input:not([type="submit"])
     flex-direction column-reverse 
     flex-wrap nowrap
     height auto
+
+    .field
+      margin-bottom 0
+      margin-top 0
 
     > label
       font-weight 600

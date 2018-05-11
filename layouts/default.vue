@@ -175,19 +175,19 @@ export default {
                 break
             }
           } 
-          else if (path[1] === 'new') camp.value = camp.default || null
+          // else if (path[1] === 'new') camp.value = camp.default || null
 
-          switch (camp.id) {
-            case 'asociatieId':
-              const { activa, idsAsociatii } = ctx
-              Object.assign(camp, {
-                options: idsAsociatii,
-                value: activa,
-                slot: 'footer',
-                size: 'small'
-              })
-              break
-          }
+          // switch (camp.id) {
+          //   case 'asociatieId':
+          //     const { activa, idsAsociatii } = ctx
+          //     Object.assign(camp, {
+          //       options: idsAsociatii,
+          //       value: activa,
+          //       slot: 'footer',
+          //       size: 'small'
+          //     })
+          //     break
+          // }
         })
         debug('form data', campuri)
         return { campuri, actiuni, $for: path[0] }

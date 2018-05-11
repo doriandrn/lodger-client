@@ -1,13 +1,13 @@
 <template lang="pug">
-field(
-  v-if =      "Number(scariCount) < 2",
-  type=       "number",
-  :label=     "$t('bloc.etaje')",
-  v-model=    "scari[0].etaje"
-  :required=  "true"
-)
+//- field(
+//-   v-if =      "scariCount && Number(scariCount) < 2",
+//-   type=       "number",
+//-   :label=     "$t('bloc.etaje')",
+//-   v-model=    "scari[0].etaje"
+//-   :required=  "true"
+//- )
 
-ul.scari.zebra(v-else)
+ul.scari.zebra
   li(
     v-for=          "scara, i in scari"
     :data-mansarda= "scara.mansarda"
@@ -35,7 +35,6 @@ ul.scari.zebra(v-else)
       hide-label
     )
     field(
-      v-if=       "scara.etaje > 4"
       :id=        "`lift-${i}`",
       type=       "checkbox",
       :label=     "$t('scara.lift')",

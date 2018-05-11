@@ -126,7 +126,7 @@ lrPad = 32px
     +above(m)
       padding-left 16px
       padding-right 16px
-    +above(l)
+    +above(xl)
       padding-left: lrPad
       padding-right: lrPad
   

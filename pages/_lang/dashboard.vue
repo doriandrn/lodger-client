@@ -65,7 +65,7 @@ sction#dash
     ) {{ $t('bloc.none.actions[0]') }}
 
     buton.init__next(
-      :disabled=  "!poateTreceLaUrmPas"
+      :disabled=  "poateTreceLaUrmPas < 0"
       size=       "large"
       @click=     "initprgrs++"
       arrow=      "right"
@@ -175,20 +175,28 @@ export default {
     },
     initMessage () {
       const pfix = 'asociatie.init'
-      let str = ''
       const { initprgrs, $t } = this
+      let str
+      let _continue = $t('asociatie.new.continuaInitializarea')
+
+
       switch (initprgrs) {
-        case -1: str = `${pfix}.start`; break
+        case -1:
+          _continue = `${pfix}.start`
+          break
         case 0: str = `${pfix}.servicii`; break
         case 1: str = `${pfix}.furnizori`; break
         case 2: str = `${pfix}.structura`; break
-        case 3: str = `${pfix}.financiar`; break
+        case 3:
+          str = `${pfix}.financiar`
+          _continue = $t('asociatie.new.confirmStruct')
+          break
       }
 
       return {
         titlu: `${str}.titlu`,
         mesaj: `${str}.mesaj`,
-        continue: initprgrs === 3 ? $t('asociatie.new.confirmStruct') : $t('asociatie.new.continuaInitializarea')
+        continue: _continue
       }
     },
     activa () {
@@ -318,11 +326,12 @@ export default {
     text-align center
     position fixed
     top 60px
-    left 16px
+    left 8px
 
     +desktop()
       position absolute
       top 0
+      left 16px
 
     &:before
       margin 0 auto 20px

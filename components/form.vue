@@ -22,7 +22,6 @@ form(@submit.prevent="validate(formName)")
     :searchTaxonomy="field.taxonomy"
     @change=        "handleChange(field['@change'], field.id, field.type, $event)"
 
-    :scariCount=    "field.type === 'scari' && typeof scariCount !== 'undefined' ? Number(scariCount) : null",
     :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
 
     v-model.trim=   "$data[field.id]"
@@ -57,41 +56,44 @@ import split from '~components/split'
 
 import { mapGetters, mapActions } from 'vuex'
 
+
 export default {
   name: 'frm',
-  mounted () {
-    const { $el } = this
-    // move slot:footer items to form footer
-    const footerEls = $el.querySelectorAll('.field[data-slot]')
-    if (!footerEls) return
-    const footerActionsEl = $el.querySelector('.actions .left')
-    for (const el of footerEls) {
-      footerActionsEl.append(el)
-    }
-  },
+  // mounted () {
+  //   const { $el } = this
+  //   // move slot:footer items to form footer
+  //   const footerEls = $el.querySelectorAll('.field[data-slot]')
+  //   if (!footerEls) return
+  //   const footerActionsEl = $el.querySelector('.actions .left')
+  //   for (const el of footerEls) {
+  //     footerActionsEl.append(el)
+  //   }
+  // },
   data () {
     let dynamicFormData = {}
-    const { $t, formData: { campuri, $for }} = this
+    const { debug, $t, modalData, formData: { campuri, $for }} = this
 
     if (!campuri) return dynamicFormData
+    debug('campuri', campuri)
     
     // Label-uri pt campurile din modal + required validari
     campuri.forEach(camp => {
-      camp.label = camp.label || `${$for ? `${$for}.new.` : ''}${camp.id}`
-      if (camp.required) camp.v = `required|${camp.v || ''}`
+      const { id, label, required, value } = camp
+      camp.label = label || `${$for ? `${$for}.new.` : ''}${id}`
+      if (required) camp.v = `required|${camp.v || ''}`
+      dynamicFormData[id] = null
+      if (value) {
+        dynamicFormData[id] = typeof value === 'function'
+          ? value(this.$store.getters)
+          : value
+      } else if (camp.default) {
+        dynamicFormData[id] = typeof camp.default === 'function'
+          ? camp.default(this.$store.getters)
+          : camp.default
+      }
     })
 
-    // Valorile implicite
-    campuri
-      .filter(field => !field.notInAddForm || !field.notInForm)
-      .map(field => field.id)
-      .forEach(fid => {
-        const test = campuri.filter(field => field.id === fid)[0]
-        dynamicFormData[fid] = typeof test.value === 'function' ? test.value(this.$store.getters) : test.value
-      })
-
     // data pasata prin modal
-    const modalData = this.$store.getters['modal/data']
     if (typeof modalData === 'object' && modalData) {
       Object.keys(modalData).forEach(data => {
         if (modalData[data] === 'undefined' || modalData === null) return

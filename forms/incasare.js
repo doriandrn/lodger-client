@@ -9,6 +9,7 @@ export const campuri = [
   {
     id: 'suma',
     type: 'bani',
+    index: true,
     label: 'defaults.sum'
   },
   // {
@@ -27,6 +28,7 @@ export const campuri = [
     id: 'nrChitanta',
     type: 'number',
     default: 1,
+    index: true,
     value: getters => Number(getters['asociatie/nrUltimaChitanta'] || 0) + 1
   },
   {

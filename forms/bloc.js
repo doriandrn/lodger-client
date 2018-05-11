@@ -6,14 +6,14 @@ export const campuri = [
     required: true,
     focus: true
   },
-  {
-    id: 'scariCount',
-    type: 'number',
-    required: true,
-    default: 1,
-    min: 0,
-    max: 20
-  },
+  // {
+  //   id: 'scariCount',
+  //   type: 'number',
+  //   required: true,
+  //   default: 1,
+  //   min: 0,
+  //   max: 20
+  // },
   {
     id: 'scari',
     type: 'scari',
@@ -30,7 +30,9 @@ export const campuri = [
     id: 'asociatieId',
     type: 'select',
     notInForm: true,
-    required: true
+    required: true,
+    value: g => g['asociatie/activa'],
+    options: g => g['asociatie/ids']
   }
 ]
 

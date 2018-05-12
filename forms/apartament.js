@@ -3,7 +3,7 @@ export const campuri = [
     id: 'nr',
     type: 'number',
     default: getters => {
-      const bloc = getters['modal/data'].bloc
+      const bloc = getters['etaj/selectat'].bloc
       console.log('blc', bloc)
       if (!bloc) return 1
       const ultimulApAdaugat = getters.apartamente[getters['apartament/ultim']]
@@ -31,6 +31,13 @@ export const campuri = [
     max: 10,
   },
   {
+    id: 'camere',
+    type: 'number',
+    default: 2,
+    max: 12,
+    min: 1
+  },
+  {
     id: 'proprietar',
     placeholder: 'Ion Barbu'
   },
@@ -39,20 +46,20 @@ export const campuri = [
     type: 'number',
     required: true,
     notInForm: true,
-    slot: 'footer'
+    value: getters => getters['etaj/selectat'].etaj
   },
   {
     id: 'bloc',
     required: true,
     notInForm: true,
-    slot: 'footer'
+    value: getters => getters['etaj/selectat'].bloc
   },
   {
     id: 'scara',
     type: 'number',
     required: true,
     notInForm: true,
-    slot: 'footer'
+    value: getters => getters['etaj/selectat'].scara
   },
   {
     id: 'balanta',

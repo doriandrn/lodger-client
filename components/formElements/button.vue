@@ -23,16 +23,12 @@ button(
   :data-arrow=      "arrow"
   :class=           "{ iconOnly, rounded }"
   @keyup.up=        "$emit('keyUp', $event)"
-  tabIndex=     1
-  )
+  tabIndex=         1
+  v-tooltip=        "_tooltip"
+)
   slot
   span.badge(v-if="$slots.badge")
     slot(name="badge")
-
-  tooltip(
-    v-if=   "tooltip"
-    :text=  "typeof tooltip !== 'boolean' ? tooltip : $slots.default[0].text"
-  )
 
 input(
   v-else-if=    "type === 'submit'",
@@ -45,18 +41,22 @@ input(
 
 <style lang="stylus">
 @require '~styles/config'
+// butTextColor = config.palette.primary
+butTextColor = #253a63
 
 input[type="submit"]
 button
 .button
-  background-color: config.palette.primary
-  border: 1px solid config.palette.primary
+  position relative
+  background-color white
+  border: 1px solid config.palette.borders
   border-radius: config.radiuses.buttons
-  // color: config.palette.primary
-  color white
+  color: butTextColor
+  // color white
   cursor pointer
   transition all .15s ease-in-out
   display flex
+  font-family: config.typography.fams.ui
   flex-flow row nowrap
   align-items center
   justify-content center
@@ -65,18 +65,22 @@ button
   white-space nowrap
   user-select none
   max-width 300px
-  box-shadow inset 0 1px rgba(white, .5)
+  // box-shadow inset 0 1px rgba(white, .5)
+  box-shadow 0 1px rgba(black, .05)
+  font-smoothing antialiased
 
   &:before
     pointer-events none
-    background-color white
+    background-color: butTextColor
 
-  &:hover
-  &:focus
-  &:active
-    border-color: config.palette.secondary
+  &:not(:disabled)
+    &:hover
+    &:focus
+    &:active
+      border-color: config.palette.secondary
+      top 1px
 
-  &[disabled]
+  &:disabled
     cursor default
     border-color: config.palette.borders
     background-color transparent
@@ -87,15 +91,13 @@ button
       &:after
         background-color: config.typography.palette.light
 
-  &:not([disabled])
-    &:not([data-styl="unstyled"])
-      &:not([data-styl="outline"])
-        &:hover
-          background-color: darken(config.palette.primary, 15%)
+  &[data-arrow]
+    &:after
+      background-color: butTextColor
 
   &[data-size="large"]
-    padding: 8px 31px
-    flex-basis 40px
+    padding: 16px 31px
+    // flex-basis 40px
 
   &[data-size="medium"]
     padding: (config.spacings.inBoxes/2) config.spacings.inBoxes
@@ -146,10 +148,6 @@ button
   &.rounded
     border-radius 50%
 
-  &[data-arrow]
-    &:after
-      background: config.typography.palette.light
-
 </style>
 
 <script>
@@ -165,6 +163,9 @@ export default {
     }
   },
   computed: {
+    _tooltip () {
+      return this.$slots.default[0].textContent
+    },
     focusing () {
       if (!document) return
       const { activeElement } = document
@@ -175,9 +176,6 @@ export default {
       modalContent: 'modal/content',
       _prompted: 'prompt/prompted'
     })
-  },
-  components: {
-    tooltip
   },
   methods: {
     ...mapActions({

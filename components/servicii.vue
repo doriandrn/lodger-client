@@ -128,7 +128,7 @@ serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff g
     &[data-sel]
       // border-color: config.palette.tertiary
       border-color: config.palette.borders
-      box-shadow 0px 2px 3px 1px rgba(black, .05)
+      // box-shadow 0px 2px 3px 1px rgba(black, .05)
       background white
 
       &:before

@@ -116,7 +116,8 @@ export default {
       locatari:'Nr. Locatari',
       balanta: 'Restant la zi',
       utilitati: 'Utilități',
-      contoare: 'Contoare'
+      contoare: 'Contoare',
+      camere: 'Camere',
     },
     edit: {
       title: 'Modifică apartamentul'

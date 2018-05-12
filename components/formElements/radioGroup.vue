@@ -13,15 +13,14 @@ div(
   )
     span.input__radio(
       v-for=          "option, index in options"
-      v-tooltip.top-center="options instanceof Array ? option : $t(option.label)"
+      v-tooltip= "{ content: $t(option.label), placement: tooltipsPosition }"
     )
       input(
         type=       "radio",
         :value=     "index",
         :name=      "id",
-        :checked=   "options instanceof Array ? Number(index) === value : value === index",
-        :disabled=  "disabled && disabled.length && disabled.indexOf(option) > -1"
-        :id=        "option.label || option",
+        :disabled=  "option.disabled"
+        :id=        "option.id || option.label",
         @change=    "$emit('change', index)"
       )
       label.label(
@@ -32,6 +31,13 @@ div(
 <script>
 import labl from 'form/label'
 export default {
+  computed: {
+    tooltipsPosition () {
+      const { id } = this
+      if (id === 'initprgrs') return 'right'
+      return 'top-center'
+    }
+  },
   components: {
     labl
   },
@@ -41,10 +47,6 @@ export default {
       default () {
         return {}
       }
-    },
-    disabled: {
-      type: Array,
-      default: () => []
     },
     id: {
       type: String,

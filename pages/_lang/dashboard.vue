@@ -7,15 +7,14 @@ sction#dash
       type=       "radios",
       icon=       "hard-drive"
       id=         "initprgrs"
-      v-model=    "initprgrs"
+      v-model.number=    "initprgrs"
       :label=     "null"
       :options=   "initOptions"
-      :disabled=  "disabledSteps",
       :required=  "true"
     )
 
-    h1 {{ $t( initMessage.titlu ) }}
-    p.intro(v-show="initprgrs !== 2 || !idsBlocuri.length") {{ $t( initMessage.mesaj ) }}
+    h1 {{ initMessage.titlu }}
+    p.intro(v-show="initprgrs !== 2 || !idsBlocuri.length") {{ initMessage.mesaj }}
     
     servicii(
       v-if=             "initprgrs === 0"
@@ -29,11 +28,11 @@ sction#dash
     )
 
     ul.furnizori(v-else-if= "initprgrs === 1")
-      li(
-        v-for=      "furnizor, furnizorId in furnizori"
-        :class=     "{ ultimul: furnizorId === ultimulFurnizorAdaugat }"
+      furnizor(
+        v-for=  "fId in Object.keys(furnizori)"
+        :id=    "fId"
+        :key=   "fId"
       )
-        span.nume {{ furnizor.nume }}
       li.nou
         buton(
           icon= "plus-circle",
@@ -107,6 +106,7 @@ sction#dash
   empty(
     v-else
     size=     "large"
+    _for=     "noasoc"
     :title=   "$t('asociatie.noneAdmind.heading')",
     :CTA=     "$t('asociatie.noneAdmind.CTA')",
     :actions= "{ newAsoc: $t('asociatie.noneAdmind.action') }"
@@ -128,6 +128,7 @@ import split from '~components/split'
 import bani from '~components/bani'
 import servicii from '~components/servicii'
 import field from 'form/field'
+import furnizor from '~components/furnizor'
 
 import typecheck from 'pg/widgets/typography'
 import butonIncaseaza from 'cc/butonIncaseaza'
@@ -155,6 +156,7 @@ export default {
     dateTime,
     servicii,
     butonIncaseaza,
+    furnizor,
 
     typecheck
   },
@@ -167,22 +169,42 @@ export default {
       return -1
     },
     initOptions () {
-      return [0, 1, 2, 3]
+      const { poateTreceLaUrmPas } = this
+      const pasi = {
+        0: {
+          id: 'servicii'
+        },
+        1: {
+          id: 'furnizori'
+        },
+        2: {
+          id: 'structura'
+        },
+        3: {
+          id: 'financiar'
+        }
+      }
+
+      // pasi inactivi
+      Object.keys(pasi).forEach(pas => {
+        if (pas > poateTreceLaUrmPas) {
+          pasi[pas].disabled = true
+        }
+        pasi[pas].label = `asociatie.init.${pasi[pas].id}.titlu`
+      })
+
+      return pasi
     },
-    disabledSteps () {
-      const { poateTreceLaUrmPas, initOptions } = this
-      return initOptions.filter(opt => opt > poateTreceLaUrmPas)
-    },
+
     initMessage () {
       const pfix = 'asociatie.init'
       const { initprgrs, $t } = this
       let str
-      let _continue = $t('asociatie.new.continuaInitializarea')
-
+      let _continue = 'asociatie.new.continuaInitializarea'
 
       switch (initprgrs) {
         case -1:
-          _continue = `${pfix}.start`
+          _continue = `${pfix}.start.mesaj`
           break
         case 0: str = `${pfix}.servicii`; break
         case 1: str = `${pfix}.furnizori`; break
@@ -193,9 +215,13 @@ export default {
           break
       }
 
+      const titlu = str ? $t(`${str}.titlu`) : null
+      const mesaj = str ? $t(`${str}.mesaj`) : null
+      _continue = $t(_continue)
+
       return {
-        titlu: `${str}.titlu`,
-        mesaj: `${str}.mesaj`,
+        titlu,
+        mesaj,
         continue: _continue
       }
     },
@@ -311,6 +337,7 @@ export default {
     height: auto
     display: inline-flex
     margin-top auto
+    margin-bottom 16px
 
   > *:not(.field)
     width 100%
@@ -327,10 +354,13 @@ export default {
     position fixed
     top 60px
     left 8px
+    flex-direction column
 
     +desktop()
       position absolute
       top 0
+
+    +above(m)
       left 16px
 
     &:before

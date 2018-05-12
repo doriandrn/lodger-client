@@ -1,8 +1,8 @@
 <template lang="pug">
 .empty
-  .empty__heading(v-if="title")
-    h2(v-if="size === 'large'") {{ title }}
-    h3(v-else) {{ title }}
+  .empty__ilstr(:data-for="_for") ilustratie
+  h2.empty__heading(v-if="title && size === 'large'") {{ title }}
+  h3.empty__heading(v-else-if="title && size !== 'large'") {{ title }}
   p(v-if="CTA") {{ CTA }}
   .actions
     buton(
@@ -20,6 +20,10 @@ import { mapActions } from 'vuex'
 
 export default {
   props: {
+    _for: {
+      type: String,
+      default: null
+    },
     title: {
       type: String,
       default: null
@@ -62,4 +66,8 @@ export default {
   > .actions
     justify-content center
     flex-basis auto !important
+
+  &__ilstr
+    &[data-for="noasoc"]
+      background yellow
 </style>

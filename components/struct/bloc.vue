@@ -23,7 +23,7 @@ ol.scari(v-if="id")
             data-for= "ap"
             tooltip
             @keyUp= "debug('butonsus')"
-            @click= "openModal({ id: 'apartament.new', data: { bloc: bloc._id, scara: Number(iScara), etaj: i } })",
+            @click= "selecteazaEtaj({ bloc: bloc._id, scara: Number(iScara), etaj: i, modificabil })",
             icon=   "plus-circle"
             icon-only
           ) {{ $t('apartament.new.title') }}
@@ -57,7 +57,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      openModal: 'modal/open'
+      openModal: 'modal/open',
+      selecteazaEtaj: 'etaj/selecteaza'
     })
   },
   components: {

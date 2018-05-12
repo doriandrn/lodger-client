@@ -5,6 +5,7 @@
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-results="hasResults",
   :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
+  :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
     v-if=         "['text', 'number', 'search', 'bani', 'checkbox', 'date'].indexOf(type) > -1",
@@ -75,7 +76,6 @@
     :value=       "value",
     @change=      "$emit('input', $event)"
     :options=     "options"
-    :disabled=    "disabled"
   )
   checkboxes(
     v-else-if=    "type === 'checkboxes'",
@@ -552,7 +552,7 @@ input:not([type="submit"])
 
     &:before
       position absolute
-      top 11px
+      top 8px
       left 0
       background-color: config.typography.palette.meta
 

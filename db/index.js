@@ -1,6 +1,9 @@
 // import 'babel-polyfill'
 import * as RxDB from 'rxdb'
 import { remoteUrl } from 'config'
+import Debug from 'debug'
+const debug = Debug('lodger:DB')
+// const debug = consola.withScope('db')
 
 RxDB.plugin(require('pouchdb-adapter-idb'))
 // RxDB.plugin(require('pouchdb-adapter-memory'))
@@ -10,7 +13,7 @@ RxDB.plugin(require('pouchdb-authentication'))
 import collections from './collections'
 
 const conInfo = {
-  name: 'lodger28',
+  name: 'lodger29',
   password: '10dg3rP@55',
   // adapter: 'memory',
   adapter: 'idb',
@@ -21,7 +24,7 @@ const conInfo = {
 const getdb = async (con) => await RxDB.create(con)
 const db = getdb(conInfo)
 
-console.log('DatabaseService: created database', db)
+debug('DatabaseService: created database', db)
 if (typeof window !== 'undefined') window['db'] = db // write to window for debugging
 
 export const { isRxDocument } = RxDB
@@ -30,18 +33,18 @@ export default (async function (dbdata) {
   const rdb = await db
   // show leadership in title
   rdb.waitForLeadership().then(() => {
-    console.log('isLeader now')
-    // document.title = '♛ ' + document.title
+    debug('isLeader now')
+    document.title = '♛ ' + document.title
   })
   // console.log('DatabaseService: creating database..')
   
 
   // create collections
-  console.log('DatabaseService: create collections')
+  debug('DatabaseService: create collections')
   await Promise.all(collections.map(colData => rdb.collection(colData)))
 
   // hooks
-  console.log('DatabaseService: add hooks')
+  debug('DatabaseService: add hooks')
   // db.collections.heroes.preInsert(function (docObj) {
   //   const color = docObj.color
   //   return db.collections.heroes.findOne({

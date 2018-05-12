@@ -5,7 +5,10 @@ sction.registru(
   split.registru__controale
     field(
       v-for=  "optiune in optiuni",
+      v-model=  "arata",
       :key=   "optiune",
+      :id=    "optiune"
+      :name=   "optiune"
       type=   "checkbox"
       :label= "$t(`registru.${optiune}`)"
       required= true
@@ -42,6 +45,7 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
+      arata: [],
       optiuni: ['incasari', 'cheltuieli'],
       incasari: null,
       incarcate: false,

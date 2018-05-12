@@ -137,7 +137,8 @@ lrPad = 32px
 
     +desktop()
       padding-top: config.spacings.inBoxes
-      // padding-bottom: config.spacings.inBoxes
+      padding-bottom: config.spacings.inBoxes
+
   &__title
     margin-bottom 0
   &__footer

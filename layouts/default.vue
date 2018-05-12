@@ -4,7 +4,7 @@
     logo
     
     field.switch(
-      v-if=     "idsAsociatii && idsAsociatii.length > 1"
+      v-if=     "administreazaCelPutinOAsociatie"
       v-model=  "idAsociatieActiva",
       id=       "asociatieSwitch"
       :label=    "$t('defaults.asociatia')"
@@ -15,6 +15,7 @@
     )
 
     nav(
+      v-if=   "administreazaCelPutinOAsociatie"
       data-orientation="horizontal"
     )
       li(
@@ -198,6 +199,10 @@ export default {
     idAsociatieActiva: {
       get () { return this.idsAsociatii.indexOf(this.activa) },
       set (name) { this.debug('asoc', name); this.schimbaAsociatieActiva(this.asociatii[name]) }
+    },
+    administreazaCelPutinOAsociatie () {
+      const { idsAsociatii } = this
+      return idsAsociatii && idsAsociatii.length > 1
     },
     ...mapGetters({
       asociatii: 'asociatii',

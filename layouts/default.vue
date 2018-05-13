@@ -286,8 +286,9 @@ footerHeight = 24px
         
         > ul
           border-color transparent
+
           > li
-            padding-left 32px
+            padding-left 30px
             text-transform capitalize
 
             &[data-sel]

@@ -24,7 +24,7 @@ div(
         @change=    "$emit('change', index)"
       )
       label.label(
-        :for=   "option.label || option"
+        :for=   "option.id || option.label"
       ) #[span] {{ options instanceof Array ? option : $t(option.label) }}
 </template>
 

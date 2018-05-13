@@ -18,7 +18,11 @@ servicii = apa electricitate gaze termoficare internet 'evacuare-gunoi-menajer'
 [data-arrow]
   &:after
     icon()
-    mask-image embedurl('~static/icons/ui/arrow-down.svg')
+    mask-image embedurl('~static/icons/ui/chevron-down.svg')
+
+&[data-drop]
+  &:after
+    mask-image embedurl('~static/icons/ui/chevron-down.svg')
 
 header[data-icon]
   .widget__title

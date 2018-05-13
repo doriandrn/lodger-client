@@ -13,7 +13,15 @@ ul.scari.zebra
     :data-mansarda= "scara.mansarda"
   )
     label.label Scara
-      strong {{ scari[i].id }}
+      field.scari__id(
+        :id=        "`id-${i}`",
+        type=       "text"
+        :label=     "$t('scara.new.name')",
+        v-model=    "scari[i].id"
+        :required=  "true",
+        @input=     "$emit('input', scari)"
+        hide-label
+      )
 
     field(
       :id=        "`scara-${i}`", 
@@ -25,15 +33,7 @@ ul.scari.zebra
       @input=     "$emit('input', scari)"
       hide-label
     )
-    field.scari__id(
-      :id=        "`id-${i}`",
-      type=       "text"
-      :label=     "$t('scara.new.name')",
-      v-model=    "scari[i].id"
-      :required=  "true",
-      @input=     "$emit('input', scari)"
-      hide-label
-    )
+    
     field(
       :id=        "`lift-${i}`",
       type=       "checkbox",
@@ -153,6 +153,7 @@ export default {
       white-space nowrap
       margin-right 32px
       flex 0 0 100px
+      align-items center
 
       > strong
         margin-left 4px

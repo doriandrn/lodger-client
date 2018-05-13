@@ -109,7 +109,7 @@ lrPad = 32px
       .actions
         flex-wrap nowrap
         position fixed
-        bottom 0
+        bottom -8px
         height 0
         margin 0
         // margin: config.spacings.inBoxes -20px -20px

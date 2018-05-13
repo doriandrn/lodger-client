@@ -1,47 +1,39 @@
 <template lang="pug">
 swiper.blocuri(
+  v-if=       "layout === 'interactiv'"
   ref=        "blocuriSwiper"
   :options=   "swiperOpts"
 )
-  swiper-slide.bloc(
+  swiper-slide(
     v-for=      "bloc, blocId in blocuri",
     :key=       "blocId",
-    :class=     "{ ultimul: blocId === ultimulBlocAdaugat }"
     :data-nume= "bloc.nume"
   )
     bloc(
-      :id=  "blocId"
+      :id=      "blocId",
+      :ultimul= "blocId === ultimulBlocAdaugat"
       modificabil
-  )|""
+    )
 
-    //- .bloc__actiuni
-    //-   buton(
-    //-     styl=   "unstyled"
-    //-     icon=   "edit"
-    //-     icon-only
-    //-     @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
-    //-     tooltip
-    //-   ) {{ $t('bloc.edit.title') }}
-    //-   buton(
-    //-     styl=     "unstyled"
-    //-     @click=   "stergeBloc(bloc._id)"
-    //-     icon=     "trash"
-    //-     icon-only
-    //-     tooltip
-    //-     dangerous
-    //-   ) {{ $t('bloc.delete') }}
-    
+.blocuri(v-else)
+  bloc(
+    v-for=    "bloc, blocId in blocuri"
+    :id=      "blocId",
+    :key=     "blocId"
+    :ultimul= "blocId === ultimulBlocAdaugat"
+    modificabil
+  )
 
-  .blocuri__tabs(slot="pagination")
-    .blocuri__list
-    buton.bloc__add(
-      icon=   "plus-circle",
-      slot=   "right"
-      @click= "openModal('bloc.new')"
-      size=   "medium"
+  //- .blocuri__tabs(slot="pagination")
+  //-   .blocuri__list
+  //-   buton.bloc__add(
+  //-     icon=   "plus-circle",
+  //-     slot=   "right"
+  //-     @click= "openModal('bloc.new')"
+  //-     size=   "medium"
 
-      icon-only
-    ) {{ $t('bloc.new.title') }}
+  //-     icon-only
+  //-   ) {{ $t('bloc.new.title') }}
 
   buton.urm.blocuri__nav(
     slot=     "button-next"
@@ -49,6 +41,7 @@ swiper.blocuri(
     styl=     "unstyled",
     rounded
   ) {{ $t('bloc.urmator') }}
+
   buton.ant.blocuri__nav(
     slot=     "button-prev"
     arrow=    "left"
@@ -66,6 +59,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   data () {
     return {
+      layout: 'interactiv',
       swiperOpts: {
         slideActiveClass: 'activ',
         pagination: {
@@ -126,6 +120,11 @@ export default {
 @require '~styles/config'
 
 drkr = rgba(black, .05)
+
+.swiper
+  .activ
+    > .bloc
+      opacity 1
 
 .blocuri
   fullflex()
@@ -273,4 +272,3 @@ drkr = rgba(black, .05)
           content ''
           bubble()
 </style>
-

@@ -1,32 +1,55 @@
 <template lang="pug">
-ol.scari(v-if="id")
-  li(v-for="scara, iScara in bloc.scari")
-    label.nume Scara {{ scara.id }}
-    .scara(
-      :data-lift=       "scara.lift"
-      :data-mansarda="  scara.mansarda"
-    )
-      ol.etaje
-        li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
-          buton(
-            v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
-            :key=   "ap._id"
-            data-for= "ap"
-            @keyUp= "debug('butonsus')"
-            :class= "{ ultimul: ap._id === ultimulApAdaugat}"
-            @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
-            :tooltip="apTooltip(ap._id)"
-          ) {{ ap.proprietar }}
-            em.ap__nr {{ ap.nr }}
-          buton.adauga(
-            styl=   "unstyled"
-            data-for= "ap"
-            tooltip
-            @keyUp= "debug('butonsus')"
-            @click= "selecteazaEtaj({ bloc: bloc._id, scara: Number(iScara), etaj: i, modificabil })",
-            icon=   "plus-circle"
-            icon-only
-          ) {{ $t('apartament.new.title') }}
+.bloc(
+  :class= "{ ultimul }"
+)
+  h3.bloc__title {{ bloc.nume }}
+  .bloc__actiuni
+    buton(
+      styl=   "unstyled"
+      icon=   "edit"
+      icon-only
+      @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
+      tooltip
+    ) {{ $t('bloc.edit.title') }}
+    buton(
+      styl=     "unstyled"
+      @click=   "stergeBloc(bloc._id)"
+      icon=     "trash"
+      icon-only
+      tooltip
+      dangerous
+    ) {{ $t('bloc.delete') }}
+
+  ol.scari(
+    v-if=   "bloc.scari && bloc.scari.length > 0"
+  )
+    li(v-for="scara, iScara in bloc.scari")
+      label.nume Scara {{ scara.id }}
+      .scara(
+        :data-lift=       "scara.lift"
+        :data-mansarda=   "scara.mansarda"
+      )
+        ol.etaje
+          li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
+            buton(
+              v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
+              :key=   "ap._id"
+              data-for= "ap"
+              @keyUp= "debug('butonsus')"
+              :class= "{ ultimul: ap._id === ultimulApAdaugat}"
+              @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
+              :tooltip="apTooltip(ap._id)"
+            ) {{ ap.proprietar }}
+              em.ap__nr {{ ap.nr }}
+            buton.adauga(
+              styl=   "unstyled"
+              data-for= "ap"
+              tooltip
+              @keyUp= "debug('butonsus')"
+              @click= "selecteazaEtaj({ bloc: bloc._id, scara: Number(iScara), etaj: i, modificabil })",
+              icon=   "plus-circle"
+              icon-only
+            ) {{ $t('apartament.new.title') }}
 </template>
 
 <script>
@@ -40,6 +63,10 @@ export default {
       default: null
     },
     modificabil: {
+      type: Boolean,
+      default: false
+    },
+    ultimul: {
       type: Boolean,
       default: false
     }
@@ -73,20 +100,20 @@ colors = config.palette
 
 .bloc
   display flex
-  flex-flow row wrap
+  flex-flow column nowrap
   margin auto 32px 0
   flex 1 1 100%
   align-items center
   justify-content center
   transition opacity .15s ease-in-out
 
-  &:not(.activ)
-    pointer-events none
-    opacity .35
+  &__title
+    margin-bottom 12px
 
-  &__actions
+  &__actiuni
     display flex
     flex-flow row nowrap
+    margin-bottom 32px
     
     > button
       &:not(:first-child)

@@ -46,20 +46,23 @@ export const campuri = [
     type: 'number',
     required: true,
     notInForm: true,
-    value: getters => getters['etaj/selectat'].etaj
+    default: getters => getters['etaj/selectat'].etaj,
+    value: getters => getters['apartament/selectat'].etaj
   },
   {
     id: 'bloc',
     required: true,
     notInForm: true,
-    value: getters => getters['etaj/selectat'].bloc
+    default: getters => getters['etaj/selectat'].bloc,
+    value: getters => getters['apartament/selectat'].bloc
   },
   {
     id: 'scara',
     type: 'number',
     required: true,
     notInForm: true,
-    value: getters => getters['etaj/selectat'].scara
+    default: getters => getters['etaj/selectat'].scara,
+    value: getters => getters['apartament/selectat'].scara
   },
   {
     id: 'balanta',

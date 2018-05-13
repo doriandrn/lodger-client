@@ -2,7 +2,7 @@
 .altselect(
   :data-arrow=  "arrow"
   :id=          "id",
-  tabIndex= "-1"
+  tabIndex=     "-1"
 )
   ul
     li(
@@ -16,8 +16,8 @@
       split
         span {{ option }}
         progres(
-          slot= "right"
-          v-if= "id === 'asociatieSwitch'"
+          slot=     "right"
+          v-if=     "id === 'asociatieSwitch'"
           :procent= "asocInitProgr(option)"
         )
     slot
@@ -36,7 +36,8 @@ export default {
       this.$el.blur()
     },
     asocInitProgr (aId) {
-      const { asociatii, debug } = this
+      const { asociatii, debug, value } = this
+      if (aId === value) return
       const asociatie = asociatii[aId]
       if (!asociatie) return false
       if (!asociatie.servicii || !asociatie.servicii.length) return 0
@@ -120,6 +121,10 @@ export default {
       &[data-sel]
         color: config.typography.palette.headings
         order 1
+
+        .progres
+        &:before
+          display none
       
       &:not([data-sel])
         &:hover

@@ -93,6 +93,7 @@ button
 
   &[data-arrow]
     &:after
+      mask-image embedurl('~static/icons/ui/arrow-down.svg')
       background-color: butTextColor
 
   &[data-size="large"]
@@ -158,13 +159,20 @@ export default {
   data () {
     if (!this.dangerous) return {}
     return {
-      prompted: false,
-      focusing: false
+      prompted: false
     }
   },
   computed: {
     _tooltip () {
-      return this.$slots.default[0].textContent
+      const { tooltip } = this
+      if (!tooltip) return
+      if (typeof tooltip === 'boolean') return this.$slots.default[0].text
+      let content = ''
+      Object.keys(tooltip).forEach(k => {
+        content += `<li data-type="${k}">${tooltip[k]}</li>`
+      })
+      content = `<ul class="tooltip__list">${ content }</ul>`
+      return content
     },
     focusing () {
       if (!document) return

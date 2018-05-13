@@ -92,6 +92,7 @@ spacings = 16px
       margin 0
       display flex
       flex-flow row wrap
+      width 100%
 
       > li
         flex 1 1 100%

@@ -38,7 +38,7 @@ ul.scari.zebra
       :id=        "`lift-${i}`",
       type=       "checkbox",
       :label=     "$t('scara.lift')",
-      v-model=    "scari[i].lift",
+      v-model.bool=    "scari[i].lift",
       :required=  "true",
       @input=     "$emit('input', scari)"
     )
@@ -46,7 +46,7 @@ ul.scari.zebra
       :id=        "`mansarda-${i}`",
       type=       "checkbox",
       :label=     "$t('scara.mansarda')",
-      v-model=    "scari[i].mansarda",
+      v-model.bool=    "scari[i].mansarda",
       :required=  "true",
       @input=     "$emit('input', scari)"
     )

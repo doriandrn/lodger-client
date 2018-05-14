@@ -5,7 +5,7 @@ nuxt-link.button(
   :data-icon=   "icon",
   :data-size=   "size",
   :data-styl=       "styl",
-  tabIndex=     1
+  tabIndex=     0
 )
   slot
 
@@ -23,7 +23,7 @@ button(
   :data-arrow=      "arrow"
   :class=           "{ iconOnly, rounded }"
   @keyup.up=        "$emit('keyUp', $event)"
-  tabIndex=         1
+  tabIndex=         0
   v-tooltip=        "_tooltip"
 )
   slot

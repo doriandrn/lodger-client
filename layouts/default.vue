@@ -18,10 +18,11 @@
       v-if=   "administreazaCelPutinOAsociatie"
       data-orientation="horizontal"
     )
-      li(
-        v-for="item in navItems"
-      )
-        nuxt-link(:to="item.url") {{ item.title }}
+      ul
+        li(
+          v-for="item in navItems"
+        )
+          nuxt-link(:to="item.url") {{ item.title }}
 
     nuxt-link(
       to=       "/registru"
@@ -38,6 +39,7 @@
       v-model=  "search"
       size=     "small"
       id=       "search"
+      :label=  "$t('defaults.search')"
       :placeholder=  "$t('defaults.search')"
       hide-label
     )
@@ -265,6 +267,11 @@ footerHeight = 24px
 
       +above(xl)
         position relative
+        display block
+
+      ul
+        padding 0
+        list-style-type none
         display flex
         flex-flow row wrap
 

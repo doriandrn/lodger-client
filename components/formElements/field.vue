@@ -468,6 +468,7 @@ export default {
 @require '~styles/config'
 
 palette = config.palette
+typeColors = config.typography.palette
 
 input[type="text"]
 input[type="search"]
@@ -502,6 +503,77 @@ textarea
     &+.field__label
       moveFieldLabel()
 
+input[type="checkbox"]
+  appearance none
+  position absolute
+  opacity 0
+
+  &+label
+    height 24px
+    cursor pointer
+    position relative
+    margin-bottom 0
+    padding 4px // sa fie mai pushy
+    cursor pointer
+    color: typeColors.meta
+
+    &:before
+      icon('x')
+      background-color: typeColors.meta
+      position relative
+      margin-right 4px
+      top 1px
+
+    > span
+      size 12px
+      display block
+      border-radius 50%
+      border: 1px solid config.typography.palette.meta
+
+  &:checked
+    &+label
+      color: typeColors.headings
+      &:before
+        mask-image embedurl('~static/icons/ui/check.svg')
+        background-color: typeColors.headings
+      > span
+        background-image: embedurl('~static/icons/ui/stop-circle.svg', 'utf8')
+        background-size contain
+        background-repeat no-repeat
+        border-color transparent
+
+  &:disabled
+    &+label>span
+      opacity .25
+      cursor default
+  
+  &:hover
+  &:focus
+  &:active
+    cursor pointer
+
+    &+label
+      color: typeColors.headings
+
+      &:before
+        background-color: typeColors.headings
+
+.input__cbox
+  display flex
+  flex-flow column nowrap
+  margin 4px 4px 8px
+  height 12px
+
+  > input[type="checkbox"]
+    display none
+
+.radios
+  display flex
+  flex-flow row nowrap
+  align-items center
+  margin -4px
+  cursor default
+
 input:not([type="submit"])
   max-height 36px
 
@@ -528,6 +600,7 @@ input:not([type="submit"])
   &[data-type="scari"]
     flex-direction column-reverse 
     flex-wrap nowrap
+    flex-basis 100%
     height auto
 
     .field

@@ -18,8 +18,7 @@ div(
         type=       "checkbox",
         :value=     "index",
         :name=      "id",
-        :checked=   "Number(index) === value",
-        :disabled=  "disabled.indexOf(option) > -1"
+        :disabled=  "option.disabled"
         :id=        "`${id}-${option}`",
         @change=    "$emit('change', Number(index))"
       )
@@ -66,46 +65,5 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 
-input[type="checkbox"]
-  &+label
-    font-size 0
-    height 24px
-    cursor pointer
 
-    > span
-      size 12px
-      display block
-      border-radius 50%
-      border: 1px solid config.typography.palette.meta
-
-  &:checked
-    &+label
-      > span
-        background-image: embedurl('~static/icons/ui/stop-circle.svg', 'utf8')
-        background-size contain
-        background-repeat no-repeat
-        border-color transparent
-
-  &:disabled
-    &+label>span
-      opacity .25
-      cursor default
-  &:hover
-    cursor pointer
-
-.input__cbox
-  display flex
-  flex-flow column nowrap
-  margin 4px 4px 8px
-  height 12px
-
-  > input[type="checkbox"]
-    display none
-
-.radios
-  display flex
-  flex-flow row nowrap
-  align-items center
-  margin -4px
-  cursor default
 </style>

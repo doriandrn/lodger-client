@@ -248,9 +248,11 @@ footerHeight = 24px
 
   .actions
     width 100%
-    display flex
-    flex-flow row wrap
-    flex-basis 100%
+
+    &:not(.split)
+      display flex
+      flex-flow row wrap
+      flex-basis 100%
 
   > header
     position fixed 0 0 auto 0

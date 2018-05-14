@@ -2,7 +2,7 @@
 .bloc(
   :class= "{ ultimul }"
 )
-  h3.bloc__title {{ bloc.nume }}
+  h4.bloc__title {{ bloc.nume }}
   .bloc__actiuni
     buton(
       styl=   "unstyled"
@@ -32,21 +32,22 @@
         ol.etaje
           li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
             buton(
-              v-for=  "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
-              :key=   "ap._id"
-              data-for= "ap"
-              @keyUp= "debug('butonsus')"
-              :class= "{ ultimul: ap._id === ultimulApAdaugat}"
-              @click= "openModal({ id: 'apartament.edit', data: { _id: ap._id }})"
-              :tooltip="apTooltip(ap._id)"
+              v-for=      "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
+              :key=       "ap._id"
+              data-for=   "ap"
+              @keyUp=     "debug('butonsus')"
+              :class=     "{ ultimul: ap._id === ultimulApAdaugat}"
+              @click=     "selecteazaAp({ id: ap._id, modificabil })"
+              :tooltip=   "apTooltip(ap._id)"
             ) {{ ap.proprietar }}
               em.ap__nr {{ ap.nr }}
+            
             buton.adauga(
               styl=   "unstyled"
               data-for= "ap"
               tooltip
               @keyUp= "debug('butonsus')"
-              @click= "selecteazaEtaj({ bloc: bloc._id, scara: Number(iScara), etaj: i, modificabil })",
+              @click= "selecteazaAp({ id: null }); selecteazaEtaj({ bloc: bloc._id, scara: Number(iScara), etaj: i, modificabil })",
               icon=   "plus-circle"
               icon-only
             ) {{ $t('apartament.new.title') }}
@@ -85,7 +86,8 @@ export default {
   methods: {
     ...mapActions({
       openModal: 'modal/open',
-      selecteazaEtaj: 'etaj/selecteaza'
+      selecteazaEtaj: 'etaj/selecteaza',
+      selecteazaAp: 'apartament/selecteaza'
     })
   },
   components: {
@@ -109,6 +111,7 @@ colors = config.palette
 
   &__title
     margin-bottom 12px
+    text-transform uppercase
 
   &__actiuni
     display flex
@@ -251,7 +254,6 @@ colors = config.palette
           font-weight 100
           font-size 18px
           pointer-events none
-          margin-bottom 4px
 
         &:not([data-styl="unstyled"])
           // background-color: lighten(colors.tertiary, 85%)

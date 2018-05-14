@@ -8,6 +8,7 @@ if (!(process.env.NODE_ENV === 'production')) {
 
 Vue.use({
   install: (Vue, options) => {
-    Vue.prototype.debug = new Debug('lodger:main')
+    // console.log('PLUGININSTAL', this)
+    Vue.prototype.debug = new Debug(`lodger:main`)
   }
 })

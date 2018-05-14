@@ -56,19 +56,9 @@ import split from '~components/split'
 
 import { mapGetters, mapActions } from 'vuex'
 
-
 export default {
   name: 'frm',
-  // mounted () {
-  //   const { $el } = this
-  //   // move slot:footer items to form footer
-  //   const footerEls = $el.querySelectorAll('.field[data-slot]')
-  //   if (!footerEls) return
-  //   const footerActionsEl = $el.querySelector('.actions .left')
-  //   for (const el of footerEls) {
-  //     footerActionsEl.append(el)
-  //   }
-  // },
+
   data () {
     let dynamicFormData = {}
     const { debug, $t, modalData, formData: { campuri, $for }} = this
@@ -78,28 +68,31 @@ export default {
     
     // Label-uri pt campurile din modal + required validari
     campuri.forEach(camp => {
-      const { id, label, required, value } = camp
+      const { id, label, required } = camp
+      let { value } = camp
+      
+      // apply getters to funcs
+      if (typeof value === 'function') value = value(this.$store.getters)
+      if (typeof camp.default === 'function') camp.default = camp.default(this.$store.getters)
+
+      // label
       camp.label = label || `${$for ? `${$for}.new.` : ''}${id}`
+
+      // validarea de required
       if (required) camp.v = `required|${camp.v || ''}`
+
+      // valoarea finala
       dynamicFormData[id] = null
-      if (value) {
-        dynamicFormData[id] = typeof value === 'function'
-          ? value(this.$store.getters)
-          : value
-      } else if (camp.default) {
-        dynamicFormData[id] = typeof camp.default === 'function'
-          ? camp.default(this.$store.getters)
-          : camp.default
-      }
+      dynamicFormData[id] = value !== null && value !== undefined ? value : camp.default
     })
 
     // data pasata prin modal
-    if (typeof modalData === 'object' && modalData) {
-      Object.keys(modalData).forEach(data => {
-        if (modalData[data] === 'undefined' || modalData === null) return
-        dynamicFormData[data] = modalData[data]
-      })
-    }
+    // if (typeof modalData === 'object' && modalData) {
+    //   Object.keys(modalData).forEach(data => {
+    //     if (modalData[data] === 'undefined' || modalData === null) return
+    //     dynamicFormData[data] = modalData[data]
+    //   })
+    // }
 
     return dynamicFormData
   },
@@ -151,37 +144,9 @@ export default {
       adaugaFurnizor: 'furnizor/adauga',
       adaugaCheltuiala: 'cheltuiala/adauga',
       incaseaza: 'incasare/adauga',
-      modalClose: 'modal/close'
+      modalClose: 'modal/close',
+      trimiteFeedback: 'feedback/trimite'
     }),
-    trimiteFeedback (data) {
-      const issue = {
-        title: data.subiect || 'Test',
-        labels: [`${data.tip}`],
-        assignee: 'doriandrn',
-        body: `
-### Descriere
-${data.mesaj} (${this.topic})`
-      }
-
-      this.$axios.$post('https://api.github.com/repos/doriandrn/ui/issues', issue, {
-        headers: {
-          Accept: 'application/vnd.github.v3+json',
-          Authorization: 'token 8df7d1f0fcb5ec784664fbdd5a24eadb12a73daf'
-        }
-      })
-      .then(res => {
-        if (res.status === 201) {
-          this.debug('gh:api', res)
-          // this.sent = true
-          // this.gitRes.number = res.data.number
-          // this.gitRes.url = res.data.html_url
-        }
-      })
-      .catch(e => {
-        // this.attempted = false
-        // this.gitErrors.push(e)
-      })
-    },
     validate (scope) {
       this.$validator.validateAll(scope).then(valid => {
         console.log('valid', valid)

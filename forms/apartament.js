@@ -4,9 +4,9 @@ export const campuri = [
     type: 'number',
     default: getters => {
       const bloc = getters['etaj/selectat'].bloc
-      console.log('blc', bloc)
+
       if (!bloc) return 1
-      const ultimulApAdaugat = getters.apartamente[getters['apartament/ultim']]
+      const ultimulApAdaugat = getters['apartament/ultim']
       console.log('UA', ultimulApAdaugat)
       if (!ultimulApAdaugat || bloc !== ultimulApAdaugat.bloc) {
         const apsBloc = Object.values(getters.apartamente).filter(ap => ap.bloc === bloc)
@@ -15,13 +15,15 @@ export const campuri = [
       }
       return Number(ultimulApAdaugat.nr) + 1
     },
+    value: getters => getters['apartament/selectat'].nr,
     required: true
   },
   {
     id: 'suprafata',
     type: 'number',
     default: 0.01,
-    step: 0.01
+    step: 0.01,
+    value: getters => getters['apartament/selectat'].suprafata
   },
   {
     id: 'locatari',
@@ -29,17 +31,20 @@ export const campuri = [
     default: 2,
     min: 0,
     max: 10,
+    value: getters => getters['apartament/selectat'].locatari
   },
   {
     id: 'camere',
     type: 'number',
     default: 2,
     max: 12,
-    min: 1
+    min: 1,
+    value: getters => getters['apartament/selectat'].camere
   },
   {
     id: 'proprietar',
-    placeholder: 'Ion Barbu'
+    placeholder: 'Ion Barbu',
+    value: getters => getters['apartament/selectat'].proprietar
   },
   {
     id: 'etaj',
@@ -67,11 +72,13 @@ export const campuri = [
   {
     id: 'balanta',
     type: 'bani',
-    default: 0
+    default: 0,
+    value: getters => getters['apartament/selectat'].balanta
   },
   {
     id: 'contoare',
-    type: 'contoare'
+    type: 'contoare',
+    value: getters => getters['apartament/selectat'].contoare
   },
   {
     id: 'incasari',

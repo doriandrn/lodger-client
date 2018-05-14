@@ -1,6 +1,6 @@
 // import 'babel-polyfill'
 import * as RxDB from 'rxdb'
-import { remoteUrl } from 'config'
+import { remoteURL } from 'config'
 import Debug from 'debug'
 const debug = Debug('lodger:DB')
 // const debug = consola.withScope('db')
@@ -63,7 +63,7 @@ export default (async function (dbdata) {
     .filter(col => col.sync)
     .map(col => col.name)
     .map(colName => rdb[colName].sync({
-      remote: remoteUrl + colName + '/'
+      remote: remoteURL + colName + '/'
     }))
 
   return rdb

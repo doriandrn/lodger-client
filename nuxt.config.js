@@ -89,9 +89,46 @@ module.exports = {
       fs: 'commonjs fs'
     },
 
-    extend (config, { isDev, isClient }) {
-      if (isDev && isClient) {}
+    extend (config) {
       config.node = { fs: 'empty' }
+      console.error(config.module.rules)
+      const stylLoader = config.module.rules.filter(module => String(module.test).indexOf('styl') > -1)[0]
+      // stylLoader.options = {
+      //   context: __dirname,
+      //   stylus: {
+      //     use: stylusPlugins,
+      //     preferPathResolver: 'webpack'
+      //   }
+      // }
+      console.error('stylLoader', stylLoader.oneOf)
+      stylLoader.oneOf.forEach(one => {
+        const module = one.use.filter(o => o.loader === 'stylus-loader')[0]
+        if (!module) return
+        console.log(module, module.options)
+        module.options.context = __dirname
+        Object.assign(module.options, {
+          use: stylusPlugins,
+          preferPathResolver: 'webpack'
+        })
+        // one.use.push({})
+        console.error('uses', module)
+      })
+      // const styleModule = stylLoader.oneOf.filter(o => o.loader === 'stylus-loader')
+      // console.error('styleModule', styleModule)
+      // config.module.rules.push({
+      //   test: /\.pug$/,
+      //     oneOf: [
+      //       // this applies to <template lang="pug"> in Vue components
+      //       {
+      //         resourceQuery: /^\?vue/,
+      //         use: ['pug-plain-loader']
+      //       },
+      //       // // this applies to pug imports inside JavaScript
+      //       {
+      //         use: ['raw-loader', 'pug-plain-loader']
+      //       }
+      //     ]
+      // })
 
       // Extend aliases
       Object.assign(config.resolve.alias, {
@@ -110,16 +147,16 @@ module.exports = {
         '~components': resolve('components')
       })
     },
-    plugins: [
-      new webpack.LoaderOptionsPlugin({
-        options: {
-          context: __dirname,
-          stylus: {
-            use: stylusPlugins,
-            preferPathResolver: 'webpack'
-          }
-        }
-      })
-    ]
+    // plugins: [
+    //   new webpack.LoaderOptionsPlugin({
+    //     options: {
+    //       context: __dirname,
+    //       stylus: {
+    //         use: stylusPlugins,
+    //         preferPathResolver: 'webpack'
+    //       }
+    //     }
+    //   })
+    // ]
   }
 }

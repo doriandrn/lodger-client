@@ -14,7 +14,6 @@ sction#dash
     )
 
     h1 {{ initMessage.titlu }}
-    p.intro(v-show="initprgrs !== 2 || !idsBlocuri.length") {{ initMessage.mesaj }}
     
     servicii(
       v-if=             "initprgrs === 0"
@@ -170,6 +169,7 @@ export default {
     },
     initOptions () {
       const { poateTreceLaUrmPas } = this
+      const pfix = 'asociatie.init'
       const pasi = {
         0: {
           id: 'servicii'
@@ -190,7 +190,8 @@ export default {
         if (pas > poateTreceLaUrmPas) {
           pasi[pas].disabled = true
         }
-        pasi[pas].label = `asociatie.init.${pasi[pas].id}.titlu`
+        pasi[pas].label = `${pfix}.${pasi[pas].id}.titlu`
+        pasi[pas].desc = `${pfix}.${pasi[pas].id}.mesaj`
       })
 
       return pasi

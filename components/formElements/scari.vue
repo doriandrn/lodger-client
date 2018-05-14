@@ -50,12 +50,14 @@ ul.scari.zebra
       :required=  "true",
       @input=     "$emit('input', scari)"
     )
+  li(@click="scariCount++") adauga scara
 </template>
 
 <script>
 export default {
   data () {
     let scari = []
+
     const { value } = this
     if (!value) scari.push({
       id: '1',
@@ -73,16 +75,14 @@ export default {
         scari.push(x)
       })
     }
-    return { scari }
+
+    const scariCount = value.length
+    return { scari, scariCount }
   },
   beforeCreate () {
     this.$options.components.field = require('form/field').default
   },
   props: {
-    scariCount: {
-      type: Number,
-      default: 1
-    },
     value: {
       type: Array,
       default () {
@@ -119,7 +119,7 @@ export default {
   padding 0
   width 100%
   display flex
-  flex-flow column-reverse nowrap
+  flex-flow column nowrap
 
   &__id
     max-width 53px

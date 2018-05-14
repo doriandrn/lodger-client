@@ -1,8 +1,26 @@
+export const state = () => ({
+  selectat: {
+    id: null,
+    modificabil: false
+  }
+})
+
 export const mutations = {
-  incaseaza: (state, data) => {}
+  incaseaza: (state, data) => {},
+  selecteaza: (state, ap) => {
+    state.selectat = ap
+  }
+}
+
+export const actions = {
+  selecteaza: ({ commit, dispatch }, ap) => {
+    commit('selecteaza', ap)
+    if (ap.modificabil) dispatch('modal/open', 'apartament.edit', { root: true })
+  }
 }
 
 export const getters = {
+  selectat:(state, getters, rootState, rootGetters) => state.selectat.id ? rootGetters.apartamente[state.selectat.id] : {},
   data: (state, getters, rootGetters) => id => rootGetters.apartamente[id] || {},
   localizeaza: (state, getters, rootGetters) => {
     if (!rootGetters['apartamente']) return () => {}

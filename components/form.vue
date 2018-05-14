@@ -64,16 +64,16 @@ export default {
     const { debug, $t, modalData, formData: { campuri, $for }} = this
 
     if (!campuri) return dynamicFormData
-    debug('campuri', campuri)
     
     // Label-uri pt campurile din modal + required validari
     campuri.forEach(camp => {
       const { id, label, required } = camp
       let { value } = camp
+      let _def = camp.default
       
       // apply getters to funcs
       if (typeof value === 'function') value = value(this.$store.getters)
-      if (typeof camp.default === 'function') camp.default = camp.default(this.$store.getters)
+      if (typeof _def === 'function') _def = _def(this.$store.getters)
 
       // label
       camp.label = label || `${$for ? `${$for}.new.` : ''}${id}`
@@ -83,8 +83,10 @@ export default {
 
       // valoarea finala
       dynamicFormData[id] = null
-      dynamicFormData[id] = value !== null && value !== undefined ? value : camp.default
+      dynamicFormData[id] = value !== null && value !== undefined ? value : _def
     })
+
+    // debug('campuri', campuri)
 
     // data pasata prin modal
     // if (typeof modalData === 'object' && modalData) {

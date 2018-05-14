@@ -1,5 +1,11 @@
 export const campuri = [
   {
+    id: '_id',
+    notInDb: true, // skip it's already defiend by rxdb
+    notInForm: true,
+    value: getters => getters['apartament/selectat']._id
+  },
+  {
     id: 'nr',
     type: 'number',
     default: getters => {

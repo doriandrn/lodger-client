@@ -13,7 +13,7 @@ div(
   )
     span.input__radio(
       v-for=          "option, index in options"
-      v-tooltip= "{ content: $t(option.label), placement: tooltipsPosition }"
+      v-tooltip=      "{ content: $t(option.label), placement: tooltipsPosition }"
     )
       input(
         type=       "radio",

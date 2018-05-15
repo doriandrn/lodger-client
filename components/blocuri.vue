@@ -14,6 +14,19 @@ swiper.blocuri(
       :ultimul= "blocId === ultimulBlocAdaugat"
       modificabil
     )
+  buton.urm.blocuri__nav(
+    slot=     "button-next"
+    arrow=    "right"
+    styl=     "unstyled",
+    rounded
+  ) {{ $t('bloc.urmator') }}
+
+  buton.ant.blocuri__nav(
+    slot=     "button-prev"
+    arrow=    "left"
+    styl=     "unstyled",
+    rounded
+  ) {{ $t('bloc.anterior') }}
 
 .blocuri(v-else)
   bloc(
@@ -35,19 +48,6 @@ swiper.blocuri(
   //-     icon-only
   //-   ) {{ $t('bloc.new.title') }}
 
-  buton.urm.blocuri__nav(
-    slot=     "button-next"
-    arrow=    "right"
-    styl=     "unstyled",
-    rounded
-  ) {{ $t('bloc.urmator') }}
-
-  buton.ant.blocuri__nav(
-    slot=     "button-prev"
-    arrow=    "left"
-    styl=     "unstyled",
-    rounded
-  ) {{ $t('bloc.anterior') }}
 </template>
 
 <script>
@@ -136,7 +136,13 @@ drkr = rgba(black, .05)
   position relative
   margin-bottom 0
   margin-top auto
+  border-bottom: 1px solid config.palette.borders
   // margin: -(config.spacings.inBoxes)
+
+  .swiper
+    &-slide
+      width auto
+      margin-top auto
 
   +above(l)
     margin-bottom 32px

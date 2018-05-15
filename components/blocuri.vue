@@ -80,7 +80,7 @@ export default {
         centeredSlides: true,
         longSwipes: false,
         slidesPerView: 'auto',
-        // spaceBetween: 64,
+        spaceBetween: 64,
         loop: false,
         keyboard: true,
         navigation: {

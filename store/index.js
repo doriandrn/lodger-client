@@ -157,8 +157,10 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
       commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
     }
     debug('Adaugat: ', newItem)
-    const ss = `${what}.adaugat`
-    notificari.success(`${ss}.h`, `${ss}.p`)
+    const ss = `${what}.${payload._id ? 'updatat' : 'adaugat'}`
+    const heading = `${ss}.h`
+    const text = `${ss}.p`
+    notificari.success({ heading, text })
   } else {
   /**
    * DELETE

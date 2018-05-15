@@ -166,6 +166,10 @@ export default {
         value = ''
       }
 
+      if (type === 'checkbox') {
+        value = Boolean(value)
+      }
+
       if (value && selected && selected._id) {
         if (searchTaxonomy === 'apartamente') return selected.proprietar
         if (searchTaxonomy === 'furnizori') return selected.nume
@@ -423,6 +427,11 @@ export default {
       switch (type) {
         case 'search':
           this.results = search(value)
+          break
+
+        case 'checkbox':
+          value = Boolean(value)
+          value = !value
           break
 
         case 'number':

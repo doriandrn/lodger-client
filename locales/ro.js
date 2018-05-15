@@ -126,6 +126,12 @@ export default {
       heading: 'Apartament inexistent',
       mesaj: 'Acest apartament, fie că a fost șters sau niciodata creat, nu există...',
       actiuni: ['Încearcă recuperarea lui', 'Mergi la panoul de control', 'Adaugă un apartament']
+    },
+    adaugat: {
+      h: 'Apartament adăugat!'
+    },
+    updatat: {
+      h: 'Apartament actualizat!'
     }
   },
   incasare: {
@@ -181,7 +187,7 @@ export default {
     feedback: 'Reacționează!',
     prompt: {
       message: 'Ești sigur?',
-      confirm: 'Da',
+      confirm: 'Șterge',
       cancel: 'Nu chiar'
     },
     forms: {

@@ -3,12 +3,12 @@
   :class= "{ ultimul }"
 )
   h4.bloc__title {{ bloc.nume }}
-  .bloc__actiuni
+  .bloc__actiuni(v-if="modificabil")
     buton(
-      styl=   "unstyled"
-      icon=   "edit"
+      styl=     "unstyled"
+      icon=     "edit"
       icon-only
-      @click= "openModal({ id: 'bloc.edit', data: { _id: bloc._id }})"
+      @click=   "selecteazaBloc({ id: bloc._id, modificabil })"
       tooltip
     ) {{ $t('bloc.edit.title') }}
     buton(
@@ -86,6 +86,7 @@ export default {
   methods: {
     ...mapActions({
       openModal: 'modal/open',
+      selecteazaBloc: 'bloc/selecteaza',
       selecteazaEtaj: 'etaj/selecteaza',
       selecteazaAp: 'apartament/selecteaza'
     })
@@ -225,6 +226,7 @@ colors = config.palette
 
       > button
         width 100%
+        height 100%
         flex 1 1 100%
         padding 8px
         border-radius 0

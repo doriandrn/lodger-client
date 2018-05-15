@@ -35,20 +35,20 @@ ul.scari.zebra
     )
     
     field(
-      :id=        "`lift-${i}`",
-      type=       "checkbox",
-      :label=     "$t('scara.lift')",
-      v-model.bool=    "scari[i].lift",
-      :required=  "true",
-      @input=     "$emit('input', scari)"
+      :id=            "`lift-${i}`",
+      type=           "checkbox",
+      :label=         "$t('scara.lift')",
+      v-model.bool=   "scara.lift",
+      :checked=       "Boolean(scara.lift)"
+      :required=      "true"
     )
     field(
-      :id=        "`mansarda-${i}`",
-      type=       "checkbox",
-      :label=     "$t('scara.mansarda')",
-      v-model.bool=    "scari[i].mansarda",
-      :required=  "true",
-      @input=     "$emit('input', scari)"
+      :id=            "`mansarda-${i}`",
+      type=           "checkbox",
+      :label=         "$t('scara.mansarda')",
+      v-model.bool=   "scara.mansarda",
+      :checked=       "Boolean(scara.mansarda)"
+      :required=      "true"
     )
   li(@click="scariCount++") adauga scara
 </template>
@@ -91,25 +91,25 @@ export default {
     }
   },
   watch: {
-    scariCount: function (newVal, old) {
-      if (newVal < 0 || old < 0) return
-      let dif = 0
+    // scariCount: function (newVal, old) {
+    //   if (newVal < 0 || old < 0) return
+    //   let dif = 0
 
-      if (newVal > old) {
-        dif = newVal - old
-        for (let i = old; i < newVal; i++) {
-          if (i > 0) this.scari.push({ id: i+1, etaje: 1, lift: false, manssarda: false })
-        }
-      } else {
-        dif = old - newVal
-        for (let i = newVal; i < old; i++) {
-          if (i > 0) this.scari.splice(this.scari.length-1, 1)
-        }
-      }
-    },
-    scari: function () {
-      this.$emit('input', this.scari)
-    }
+    //   if (newVal > old) {
+    //     dif = newVal - old
+    //     for (let i = old; i < newVal; i++) {
+    //       if (i > 0) this.scari.push({ id: i+1, etaje: 1, lift: false, mansarda: false })
+    //     }
+    //   } else {
+    //     dif = old - newVal
+    //     for (let i = newVal; i < old; i++) {
+    //       if (i > 0) this.scari.splice(this.scari.length-1, 1)
+    //     }
+    //   }
+    // },
+    // scari: function () {
+    //   this.$emit('input', this.scari)
+    // }
   }
 }
 </script>

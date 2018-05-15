@@ -1,30 +1,31 @@
 export const campuri = [
   {
+    id: '_id',
+    notInDb: true,
+    notInForm: true,
+    value: g => g['bloc/selectat']._id
+  },
+  {
     id: 'nume',
     placeholder: 'ex. M11, COCOR-2, A3...',
     type: 'text',
     required: true,
-    focus: true
+    focus: true,
+    value: g => g['bloc/selectat'].nume
   },
-  // {
-  //   id: 'scariCount',
-  //   type: 'number',
-  //   required: true,
-  //   default: 1,
-  //   min: 0,
-  //   max: 20
-  // },
   {
     id: 'scari',
     type: 'scari',
     default: [{
       id: 1,
       etaje: 4
-    }]
+    }],
+    value: g => g['bloc/selectat'].scari
   },
   {
     id: 'adresa',
     type: 'textarea',
+    value: g => g['bloc/selectat'].adresa
   },
   {
     id: 'asociatieId',

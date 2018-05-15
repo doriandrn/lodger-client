@@ -37,7 +37,7 @@ const ldgSchema = {
 
 const notificari = {}
 ldgSchema.notificari.forEach(type => {
-  notificari[type] = ({ dispatch }) => (text, heading) => {
+  notificari[type] = ({ dispatch }) => ({ text, heading }) => {
     dispatch('@@toast/ADD_TOAST_MESSAGE', { type, heading, text })
   }
 })

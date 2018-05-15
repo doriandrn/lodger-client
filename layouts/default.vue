@@ -55,6 +55,7 @@
       buton(
         @click= "debug('cc')"
         styl= "unstyled"
+        icon= "contor"
       ) Citire contor
       buton(
         styl=   "unstyled"
@@ -62,6 +63,7 @@
       ) Cheltuială / Factură
       buton(
         styl=   "unstyled"
+        icon=   "asociatie"
         @click= "openModal('asociatie.new')"
       ) Asociație
 

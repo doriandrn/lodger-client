@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="21px" viewBox="0 0 25 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50 (54983) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+            <polyline id="Stroke-5107" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="21.5146 8.3335 21.5146 20.5005 2.5146 20.5005 2.5146 8.3125"></polyline>
+            <polygon id="Stroke-5108" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="12.515 17.5 4.515 17.5 4.515 11.5 12.515 11.5"></polygon>
+            <polygon id="Stroke-5109" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="19.515 20.5 14.515 20.5 14.515 11.5 19.515 11.5"></polygon>
+            <polygon id="Stroke-5110" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="21.5146 0.5 2.5146 0.5 0.5146 4.5 23.5146 4.5"></polygon>
+            <path d="M23.5146,5.5 C23.5146,7.157 22.1716,8.5 20.5146,8.5 C19.6886,8.5 19.0576,8.04 18.5146,7.5 C17.8066,8.625 16.4416,9.5 15.0146,9.5 C13.8186,9.5 12.7476,8.972 12.0146,8.14 C11.2826,8.972 10.2106,9.5 9.0146,9.5 C7.5876,9.5 6.2226,8.625 5.5146,7.5 C4.9726,8.04 4.3406,8.5 3.5146,8.5 C1.8576,8.5 0.5146,7.157 0.5146,5.5 L0.5146,4.5 L23.5146,4.5 L23.5146,5.5 L23.5146,5.5 Z" id="Stroke-5111" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"></path>
+            <polyline id="Stroke-5112" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="5.5146 7.5 5.5146 4.5 6.5146 0.5"></polyline>
+            <polyline id="Stroke-5113" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="12.0146 8.146 12.0146 4.5 12.0146 0.5"></polyline>
+            <polyline id="Stroke-5114" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" points="18.5146 7.5 18.5146 4.5 17.5146 0.5"></polyline>
+            <path d="M17.5146,16 C17.2386,16 17.0146,16.224 17.0146,16.5 C17.0146,16.777 17.2386,17 17.5146,17 C17.7906,17 18.0146,16.777 18.0146,16.5 C18.0146,16.224 17.7906,16 17.5146,16" id="Fill-5115" fill="#000000"></path>
+        </g>
+    </g>
+</svg>

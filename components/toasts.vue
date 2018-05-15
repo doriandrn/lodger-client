@@ -8,17 +8,20 @@ ul.toasts(
     :data-type= "toast.type",
     :data-icon=  "toast.type === 'success' ? 'check' : 'alert-circle'"
   )
-    h4(v-if="toast.heading") {{ $t( toast.heading ) }}
-    p {{ $t( toast.text ) }}
+    .toast__content
+      h5.toast__title(v-if="toast.text.heading") {{ $t( toast.text.heading ) }}
+      p(v-if="toast.text.text || toast.text") {{ $t( toast.text.text || toast.text ) }}
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 
 export default {
-  computed: mapGetters({
-    toasts: 'toastMessages'
-  })
+  computed: {
+    ...mapGetters({
+      toasts: 'toastMessages'
+    })
+  }
 }
 </script>
 
@@ -28,6 +31,14 @@ export default {
 types = info warn error success
 palette = config.palette
 iconBgWidth = 40px
+
+.toast
+  &__title
+    white-space nowrap
+    margin-bottom 0
+
+    &+p
+      margin-top 6px
 
 .toasts
   position fixed
@@ -52,7 +63,7 @@ iconBgWidth = 40px
     align-items center
     border-left 1px solid
     width auto
-    padding 0 64px 0 0
+    padding 10px 16px 10px 12px
     position relative
     left 100%
     transition all .15s ease-in-out
@@ -71,7 +82,7 @@ iconBgWidth = 40px
 
     p
       margin-bottom 0
-      color: config.typography.palette.headings
+      color: config.typography.palette.meta
 
     &:before
       flex-basis: iconBgWidth

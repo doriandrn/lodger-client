@@ -502,6 +502,7 @@ textarea
     opacity 0
     transition opacity .1s ease
   
+  &:active
   &:focus
     border-color: palette.primary
     color: palette.primary
@@ -511,6 +512,40 @@ textarea
 
     &+.field__label
       moveFieldLabel()
+
+input[type="radio"]
+  &+label
+    font-size 0
+    height 24px
+    cursor pointer
+
+    > span
+      size 12px
+      display block
+      border-radius 50%
+      border: 1px solid config.typography.palette.meta
+
+  &:hover
+  &:focus
+  &:active
+    &+label
+      > span
+        border-color: palette.primary
+
+  &:checked
+    &+label
+      > span
+        background-image: embedurl('~static/icons/ui/stop-circle.svg', 'utf8')
+        background-size contain
+        background-repeat no-repeat
+        border-color transparent
+
+  &:disabled
+    &+label>span
+      opacity .25
+      cursor default
+  &:hover
+    cursor pointer
 
 input[type="checkbox"]
   appearance none
@@ -582,6 +617,15 @@ input[type="checkbox"]
   align-items center
   margin -4px
   cursor default
+
+.input__radio
+  display flex
+  flex-flow column nowrap
+  margin 4px 4px 8px
+  height 12px
+
+  > input[type="radio"]
+    display none
 
 input:not([type="submit"])
   max-height 36px

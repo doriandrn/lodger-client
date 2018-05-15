@@ -23,7 +23,11 @@ const active = {}
 /** Store izemz
 */
 const getters = {}
-const actions = {}
+const actions = {
+  notificare: ({ dispatch }, notificare) => {
+    dispatch('@@toast/ADD_TOAST_MESSAGE', notificare)
+  }
+}
 const mutations = {}
 const _state = {}
 
@@ -160,7 +164,14 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
     const ss = `${what}.${payload._id ? 'updatat' : 'adaugat'}`
     const heading = `${ss}.h`
     const text = `${ss}.p`
-    notificari.success({ heading, text })
+    dispatch('notificare', {
+      type: 'success',
+      text: {
+        heading,
+        text
+      }
+    })
+    // notificari.success({ heading, text })
   } else {
   /**
    * DELETE
@@ -169,7 +180,7 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
     if (!tobedel) throw eroare(`${what}.notFoundToBeDeleted`)
     await tobedel.remove()
     if (what === 'asociatie') asociatieActiva = null
-    notificari.success('Dun')
+    // notificari.success('Dun')
     debug('Sters ', col)
   }
   // await handleFollowingMutations(what, payload, newItem, store, add)

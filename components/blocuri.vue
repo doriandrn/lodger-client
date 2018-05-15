@@ -143,7 +143,7 @@ drkr = rgba(black, .05)
 
   &:before
     content ''
-    position fixed 48px 0 42px
+    position fixed 48px 0 0
     background: linear-gradient(to right, drkr 0%, transparent 15%, transparent 85%, drkr 100%)
     z-index 5
     pointer-events none

@@ -69,16 +69,6 @@ const metode = {
 
 // DRY: la buatoane, daca au 'click', n-au nevoie de id
 const setari = {
-  periculoase: {
-    avansat: true,
-    campuri: [
-      {
-        type: 'button',
-        click: 'stergeAsociatie',
-
-      }
-    ]
-  },
   date: {
     campuri: [
       {
@@ -90,7 +80,17 @@ const setari = {
         click: 'importDb'
       }
     ]
-  }
+  },
+  periculoase: {
+    avansat: true,
+    campuri: [
+      {
+        type: 'button',
+        click: 'sterge',
+
+      }
+    ]
+  },
 }
 
 export { campuri, actiuni, metode, setari }

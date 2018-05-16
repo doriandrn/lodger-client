@@ -12,6 +12,7 @@ swiper.blocuri(
     bloc(
       :id=      "blocId",
       :ultimul= "blocId === ultimulBlocAdaugat"
+      :navigabil = "blocId === activ"
       modificabil
     )
   buton.urm.blocuri__nav(
@@ -56,27 +57,39 @@ import buton from 'form/button'
 
 import { mapActions, mapGetters } from 'vuex'
 
+let index = 0
+
 export default {
   data () {
     return {
       layout: 'interactiv',
+      swiperIndexBlocActiv: 0,
       swiperOpts: {
         slideActiveClass: 'activ',
-        pagination: {
-          el: '.blocuri__list',
-          clickable: true,
-          renderBullet: (i, cls) => {
-            const activ = this.blocuri[this.idsBlocuri[i]]
-            if (!activ) return
-            return `<span class="${cls}">
-              <label class="nume">${activ.nume}</label>
-              <span class="bloc__actions">
-                <button onclick="$nuxt.$store.dispatch('modal/open', { id: 'bloc.edit', data: { _id: '${activ._id}' } })" aria-label="${ this.$t('bloc.edit.title') }" data-tip="true" data-icon="edit" data-size="medium" data-styl="unstyled" class="iconOnly">${ this.$t('bloc.edit') }</button>
-              </span>
-            </span>`
+        on: {
+          slideChange: function () {
+            const { realIndex } = this
+            index = realIndex
           },
-          bulletActiveClass: 'activ'
+          slideChangeTransitionStart: () => {
+            this.swiperIndexBlocActiv = index
+          }
         },
+        // pagination: {
+        //   el: '.blocuri__list',
+        //   clickable: true,
+        //   renderBullet: (i, cls) => {
+        //     const activ = this.blocuri[this.idsBlocuri[i]]
+        //     if (!activ) return
+        //     return `<span class="${cls}">
+        //       <label class="nume">${activ.nume}</label>
+        //       <span class="bloc__actions">
+        //         <button onclick="$nuxt.$store.dispatch('modal/open', { id: 'bloc.edit', data: { _id: '${activ._id}' } })" aria-label="${ this.$t('bloc.edit.title') }" data-tip="true" data-icon="edit" data-size="medium" data-styl="unstyled" class="iconOnly">${ this.$t('bloc.edit') }</button>
+        //       </span>
+        //     </span>`
+        //   },
+        //   bulletActiveClass: 'activ'
+        // },
         centeredSlides: true,
         longSwipes: false,
         slidesPerView: 'auto',
@@ -95,7 +108,11 @@ export default {
     ...mapGetters({
       idsBlocuri: 'bloc/ids',
       ultimulBlocAdaugat: 'bloc/ultim'
-    })
+    }),
+    activ () {
+      const { idsBlocuri, swiperIndexBlocActiv } = this
+      return idsBlocuri[swiperIndexBlocActiv]
+    }
   },
   methods: {
     ...mapActions({

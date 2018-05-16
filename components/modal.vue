@@ -106,6 +106,19 @@ lrPad = 32px
       padding: lrPad
 
     form
+      &__content
+        margin: 0px (-(config.spacings.inBoxes/2)) -36px
+
+        +desktop()
+          margin: -(config.spacings.inBoxes)
+
+        > .field
+          flex 1 1 200px
+          margin: 0 (config.spacings.inBoxes/2) 36px
+
+          +desktop()
+            margin: 0 config.spacings.inBoxes 36px
+
       .actions
         flex-wrap nowrap
         position fixed

@@ -4,8 +4,8 @@ nuxt-link.button(
   :to=          "to",
   :data-icon=   "icon",
   :data-size=   "size",
-  :data-styl=       "styl",
-  tabIndex=     0
+  :data-styl=   "styl",
+  :tabIndex=    "tabIndex"
 )
   slot
 
@@ -227,6 +227,10 @@ export default {
     dangerous: {
       type: Boolean,
       default: null
+    },
+    tabIndex: {
+      type: Number,
+      default: 0
     },
     /*  Type
         Parameters: button | submit;

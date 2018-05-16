@@ -26,16 +26,18 @@
     @change=      "$emit('change', $event)"
 
     @keydown.enter= "selecteaza"
-    @keyup.tab=   "selecteaza"
-    @keyup.down=  "indexSelectat(1)"
-    @keyup.up=    "indexSelectat(0)"
+    @keyup.tab=     "selecteaza"
+    @keyup.down=    "indexSelectat(1)"
+    @keyup.up=      "indexSelectat(0)"
     @keydown.esc=   "inchideModale"
-    :class=       "{ av: !!value }"
-    @clickAway=   "clearResults"
+    :class=         "{ av: !!value }"
+    @clickAway=     "clearResults"
   )
   buton(
     v-else-if=    "type === 'button'"
-  ) {{ label || text || '~' }}
+    :dangerous=   "dangerous"
+    @click=       "handleClick"
+  ) {{ $t(label) || $(text) || '~' }}
   textarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
     :placeholder= "placeholder",
@@ -243,9 +245,17 @@ export default {
         return this.id
       }
     },
+    dangerous: {
+      type: Boolean,
+      default: null
+    },
     label: {
       type: String,
       default: 'Field Label'
+    },
+    click: {
+      type: String,
+      default: 'debug'
     },
     /* Hide Label enforces the input to display the label text as a placeholder */
     hideLabel: {
@@ -353,6 +363,9 @@ export default {
     txtarea
   },
   methods: {
+    ...mapActions({
+      sterge: 'asociatie/sterge'
+    }),
     /**
      * Metode doar pentru search
      */
@@ -418,6 +431,13 @@ export default {
       })
       
       return results
+    },
+
+    handleClick (e) {
+      const { click } = this
+      const f = this[click]
+      if (!f) return
+      f(this)
     },
 
     handleInput (e) {

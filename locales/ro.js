@@ -63,12 +63,20 @@ export default {
       balanta: 'Balanța casei la data preluării',
       dataDinLuna: 'Data din lună la care se generează listele de plată'
     },
-    adminZone: {
+    setari: {
       title: 'Zonă administrativă',
+      backupDb: 'Exportă / Salvează datele asociației',
+      importDb: 'Importă datele asociației',
       modify: 'Modifică datele asociației',
-      delete: 'Șterge asociația',
-      deletePrompt: 'Ești sigur că dorești să ștergi asociația [X]?',
-      dangerZone: 'Zona periculoasă'
+      sterge: 'Șterge asociația',
+      stergePrompt: 'Ești sigur că dorești să ștergi asociația [X]?',
+      periculoase: {
+        titlu: 'Zona periculoasă'
+      },
+      date: {
+        titlu: 'Bază de date',
+        desc: 'Exportă / importă datele asociației'
+      }
     }
   },
   bloc: {

@@ -1,42 +1,48 @@
 <template lang="pug">
-form(@submit.prevent="validate(formName)")
-  slot(name=        "beforeFields")
+form.form(@submit.prevent="validate(formName)")
+  h2.form__title(v-if="title") {{ $t( title ) }}
+  p.form__desc(v-if="desc") {{ $t( desc ) }}
 
-  field(
-    v-for=          "field in formData.campuri"
-    v-if=           "!field.notInForm"
+  .form__content
+    slot(name=        "beforeFields")
 
-    :key=           "`${field.type}-${field.id}`"
-    :id=            "field.id"
-    :type=          "field.type || 'text'"
-    :label=         "field.label"
-    :placeholder=   "field.type === 'bani' ? '0.00' : field.placeholder"
-    :focus=         "field.focus"
-    :required=      "field.required"
-    :min=           "field.min"
-    :max=           "field.max",
-    :step=          "field.type === 'bani' ? 0.01 : field.step",
-    :options=       "typeof field.options === 'function' ? field.options($store.getters) : field.options"
-    :value=         "field.value"
-    :data-slot=     "field.slot"
-    :searchTaxonomy="field.taxonomy"
-    @change=        "handleChange(field['@change'], field.id, field.type, $event)"
+    field(
+      v-for=          "field in formData.campuri"
+      v-if=           "!field.notInForm"
 
-    :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
+      :key=           "`${field.type}-${field.id}`"
+      :id=            "field.id"
+      :type=          "field.type || 'text'"
+      :label=         "field.label"
+      :placeholder=   "field.type === 'bani' ? '0.00' : field.placeholder"
+      :focus=         "field.focus"
+      :required=      "field.required"
+      :min=           "field.min"
+      :max=           "field.max",
+      :step=          "field.type === 'bani' ? 0.01 : field.step",
+      :options=       "typeof field.options === 'function' ? field.options($store.getters) : field.options"
+      :value=         "field.value"
+      :data-slot=     "field.slot"
+      :searchTaxonomy="field.taxonomy"
+      :click=         "field.click"
+      :dangerous=     "field.dangerous"
+      @change=        "handleChange(field['@change'], field.id, field.type, $event)"
 
-    v-model.trim=   "$data[field.id]"
+      :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
 
-    v-validate=     "field.v || null"
-    :data-vv-scope= "formName",
-    :data-vv-as=    "field.label"
-    :data-vv-name=  "field.id"
-    :error=         "errors.has(`${formName}.${field.id}`)"
-    :message=       "errors.first(`${formName}.${field.id}`)"
-  )
+      v-model.trim=   "$data[field.id]"
 
-  slot(name=        "afterFields")
+      v-validate=     "field.v || null"
+      :data-vv-scope= "formName",
+      :data-vv-as=    "field.label"
+      :data-vv-name=  "field.id"
+      :error=         "errors.has(`${formName}.${field.id}`)"
+      :message=       "errors.first(`${formName}.${field.id}`)"
+    )
 
-  split.actions
+    slot(name=        "afterFields")
+
+  split.actions(v-if="formData.actiuni")
     
     buton(
       type= "submit",
@@ -67,9 +73,11 @@ export default {
     
     // Label-uri pt campurile din modal + required validari
     campuri.forEach(camp => {
-      const { id, label, required } = camp
-      let { value } = camp
+      const { label, required, click } = camp
+      let { id, value } = camp
       let _def = camp.default
+
+      if (click && !id) camp.id = click
       
       // apply getters to funcs
       if (typeof value === 'function') value = value(this.$store.getters)
@@ -135,6 +143,14 @@ export default {
     formName: {
       type: String,
       default: 'unnamed'
+    },
+    title: {
+      type: String,
+      default: null
+    },
+    desc: {
+      type: String,
+      default: null
     }
   },
   methods: {
@@ -193,21 +209,36 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 
-form
+.form
   display flex
   flex-flow row wrap
-  justify-content center
-  margin: 0px (-(config.spacings.inBoxes/2)) -36px
+  width 100%
+  
+  &+.form
+    margin-top 32px
 
-  +desktop()
-    margin: -(config.spacings.inBoxes)
+  &__title
+    margin-right 16px
 
-  > .field
-    flex 1 1 200px
-    margin: 0 (config.spacings.inBoxes/2) 36px
+  &__title
+  &__desc
+    margin-bottom 0
+    flex 0 1 auto
 
-    +desktop()
-      margin: 0 config.spacings.inBoxes 36px
+    &+.form__content
+      border-top: 1px solid config.palette.borders
+      padding-top 24px
+      margin-top 12px
+
+  &__content
+    display flex
+    flex-flow row wrap
+    flex 1 0 100%
+    justify-content flex-start
+    margin 0 -16px
+
+    .field
+      margin 16px
 
   label
     margin-bottom: (baseSpacingUnit*1.5)

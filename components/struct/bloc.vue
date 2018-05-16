@@ -1,6 +1,6 @@
 <template lang="pug">
 .bloc(
-  :class= "{ ultimul }"
+  :class= "{ ultimul, navigabil }"
 )
   h4.bloc__title {{ bloc.nume }}
   .bloc__actiuni(v-if="modificabil")
@@ -43,6 +43,7 @@
               em.ap__nr {{ ap.nr }}
             
             buton.adauga(
+              v-if=   "modificabil"
               styl=   "unstyled"
               data-for= "ap"
               tooltip
@@ -66,6 +67,13 @@ export default {
     modificabil: {
       type: Boolean,
       default: false
+    },
+    /**
+     * face referire la tabindexurile de la butoane
+     */
+    navigabil: {
+      type: Boolean,
+      default: true
     },
     ultimul: {
       type: Boolean,

@@ -10,7 +10,7 @@
     @click=   "open = !open",
     :arrow=   "arrow"
     styl=     "unstyled"
-    tabIndex= 0
+    :tabIndex= "0"
   ) #[slot(name="beforeText")] {{ toggleText }}
     slot(name="buton")
   .dropdown__content

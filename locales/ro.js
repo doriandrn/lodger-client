@@ -76,6 +76,9 @@ export default {
       date: {
         titlu: 'Bază de date',
         desc: 'Exportă / importă datele asociației'
+      },
+      default: {
+        titlu: 'Bazice'
       }
     }
   },

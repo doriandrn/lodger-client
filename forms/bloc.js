@@ -32,7 +32,7 @@ export const campuri = [
     type: 'select',
     notInForm: true,
     required: true,
-    value: g => g['asociatie/activa'],
+    value: g => g['asociatie/activa']._id,
     options: g => g['asociatie/ids']
   }
 ]

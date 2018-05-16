@@ -107,7 +107,7 @@
   p(v-else-if=        "type === 'contactFields'") contactFields
 
   labl.field__label(
-    v-show=         "!hideLabel"
+    v-show=         "!hideLabel && type !== 'button'"
     :required=      "required"
     :for=           "id"
   ) {{ _label }}

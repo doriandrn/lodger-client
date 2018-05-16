@@ -41,8 +41,15 @@ export default {
   },
   methods: {
     forms (tab) {
-      const setari = require(`forms/${tab}.js`).setari
+      const form = require(`forms/${tab}.js`)
+      if (!form) return
+
+      const setari = form.setari
       if (!setari) return
+
+      setari.default = {
+        campuri: form.campuri
+      }
 
       // adauga labeluri n shit pt traduceri
       Object.keys(setari).forEach(sectiune => {
@@ -74,4 +81,5 @@ export default {
   .form
     border: 1px solid config.palette.borders
     padding 16px 24px
+    align-items center
 </style>

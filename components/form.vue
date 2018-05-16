@@ -43,7 +43,6 @@ form.form(@submit.prevent="validate(formName)")
     slot(name=        "afterFields")
 
   split.actions(v-if="formData.actiuni")
-    
     buton(
       type= "submit",
       size= "large"

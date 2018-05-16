@@ -1,44 +1,60 @@
 const campuri = [
   {
+    id: '_id',
+    notInDb: true,
+    notInForm: true,
+    value: g => g['asociatie/activa']._id
+  },
+  {
     id: 'name',
     required: true,
     focus: true,
-    primary: true
+    index: true,
+    value: g => g['asociatie/activa'].name,
+    v: 'length: 32'
   },
   {
-    id: 'idN'
+    id: 'idN',
+    value: g => g['asociatie/activa'].idN
   },
   {
     id: 'balanta',
     type: 'number',
-    notInAddForm: true
+    value: g => g['asociatie/activa'].balanta,
+    notInAddForm: true,
+    notInForm: true
   },
   {
     id: 'incasari',
     type: 'array',
     ref: 'incasari',
+    value: g => g['asociatie/activa'].incasari,
     notInForm: true
   },
   {
     id: 'utilizatori',
     type: 'array',
     ref: 'utilizatori',
+    value: g => g['asociatie/activa'].utilizatori,
     notInForm: true
   },
   {
     id: 'servicii',
     type: 'array',
     ref: 'servicii',
+    value: g => g['asociatie/activa'].servicii,
     notInForm: true
   },
   {
     id: 'furnizori',
     type: 'array',
     ref: 'furnizori',
+    value: g => g['asociatie/activa'].furnizori,
     notInForm: true
   },
   {
     id: 'filtreCheltuieli',
+    value: g => g['asociatie/activa'].filtreCheltuieli,
     type: 'array',
     notInForm: true
   }

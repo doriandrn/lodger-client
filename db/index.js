@@ -13,7 +13,7 @@ RxDB.plugin(require('pouchdb-authentication'))
 import collections from './collections'
 
 const conInfo = {
-  name: 'lodger29',
+  name: 'lodger30',
   password: '10dg3rP@55',
   // adapter: 'memory',
   adapter: 'idb',

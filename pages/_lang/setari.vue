@@ -55,6 +55,8 @@ export default {
         if (!campuri || !campuri.length) return
         campuri.forEach(camp => {
           camp.label = `${sectiune === 'default' ? `${tab}.new.` : tabSetari}${camp.click || camp.id}`
+          // if (camp.click) camp.click = `${tab}/${camp.click}`
+          camp['@click'] = `${tab}/${camp.click}`
           if (sectiune === 'periculoase') camp.dangerous = true
           if (sectiune === 'default') {
             camp['@change'] = `${tab}/updateaza`

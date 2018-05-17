@@ -182,10 +182,12 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
     })
     // notificari.success({ heading, text })
   } else {
-  /**
-   * DELETE
-   */
-    const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : { _id: payload }).exec()
+    /**
+    * DELETE
+    */
+    debug('PL', payload)
+    const tobedel = await col.findOne(what === 'serviciu' ? { denumire: payload } : payload).exec()
+    debug('de sters:', tobedel)
     if (!tobedel) throw eroare(`${what}.notFoundToBeDeleted`)
     await tobedel.remove()
     if (what === 'asociatie') asociatieActiva = null
@@ -205,7 +207,7 @@ function rxdb () {
         case 'blocuri':
         case 'incasari':
         case 'cheltuieli':
-          return { asociatieId: getters['asociatie/activa'] }
+          return { asociatieId: getters['asociatie/activa']._id }
 
         case 'apartament':
           return { bloc: { $in: getters['bloc/ids'] } }

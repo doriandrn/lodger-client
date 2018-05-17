@@ -65,8 +65,8 @@ export default {
     },
     setari: {
       title: 'Zonă administrativă',
-      backupDb: 'Exportă / Salvează datele asociației',
-      importDb: 'Importă datele asociației',
+      backupDb: 'Exportă',
+      importDb: 'Importă',
       modify: 'Modifică datele asociației',
       sterge: 'Șterge asociația',
       stergePrompt: 'Ești sigur că dorești să ștergi asociația [X]?',

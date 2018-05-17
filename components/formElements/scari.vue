@@ -40,7 +40,6 @@ ul.scari.zebra
       :label=         "$t('scara.lift')",
       v-model.bool=   "scara.lift",
       :checked=       "Boolean(scara.lift)"
-      :required=      "true"
     )
     field(
       :id=            "`mansarda-${i}`",
@@ -48,7 +47,6 @@ ul.scari.zebra
       :label=         "$t('scara.mansarda')",
       v-model.bool=   "scara.mansarda",
       :checked=       "Boolean(scara.mansarda)"
-      :required=      "true"
     )
   li(@click="scariCount++") adauga scara
 </template>

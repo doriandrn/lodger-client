@@ -23,6 +23,6 @@ export const actions = {
 export const getters = {
   selectat: (state, getters, rootState, rootGetters) => {
     const { id } = state.selectat
-    return rootGetters.blocuri[id]
+    return rootGetters.blocuri[id] || {}
   }
 }

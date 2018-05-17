@@ -112,8 +112,7 @@ const setari = {
     campuri: [
       {
         type: 'button',
-        click: 'sterge',
-
+        click: 'sterge'
       }
     ]
   },

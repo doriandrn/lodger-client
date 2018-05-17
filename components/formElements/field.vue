@@ -433,10 +433,20 @@ export default {
     },
 
     handleClick (e) {
-      const { click } = this
-      const f = this[click]
-      if (!f) return
-      f(this)
+      const { click, debug } = this
+      debug('click', click)
+      let what
+      if (click.indexOf('/')) {
+        what = click.split('/')[0]
+      }
+      if (what) {
+        const { _id } = this.$store.getters[`${what}/activa`]
+        this.$store.dispatch(click, { _id })
+      } else {
+        const f = this[click]
+        if (!f) return
+        f(this)
+      }
     },
 
     handleInput (e) {

@@ -108,6 +108,23 @@ export default {
     scara: 'Scară',
     scari: 'Scări'
   },
+  utilizator: {
+    new: {
+      nume: 'Nume complet',
+      emailPublic: 'E-mail public',
+      alteDetaliiContact: 'Alte detalii de contact'
+    },
+    setari: {
+      online: {
+        titlu: 'Cont online',
+        desc: 'Opțional, poți accesa datele tale de pe alt dispozitiv. Conectează acest cont.'
+      },
+      default: {
+        titlu: 'Profil public',
+        desc: ''
+      }
+    }
+  },
   cheltuiala: {
     new: {
       title: 'Cheltuială nouă',

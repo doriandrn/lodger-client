@@ -1,11 +1,12 @@
 export const campuri = [
   {
-    id: 'username',
-    required: true,
-    primary: true
+    id: '_id',
+    notInDb: true,
+    notInForm: true,
+    value: g => g[getter]._id
   },
   {
-    id: 'parola',
+    id: 'nume',
     required: true,
     encrypted: true
   },
@@ -24,3 +25,20 @@ export const campuri = [
     type: 'contactFields',
   }
 ]
+
+export const setari = {
+  online: {
+    campuri: [
+      {
+        id: 'parola',
+        required: false,
+        encrypted: true
+      },
+      {
+        id: 'social',
+        required: false,
+        encrypted: true
+      }
+    ]
+  }
+}

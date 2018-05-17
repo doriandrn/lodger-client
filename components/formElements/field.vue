@@ -460,7 +460,9 @@ export default {
         case 'text':
           if (transform) {
             debug(this, transform)
-            value = this[transform](value)
+            const filter = this.$options.filters[transform]
+            if (filter && typeof filter === 'function')
+              value = filter(value)
           }
           break
       }
@@ -789,7 +791,7 @@ input:not([type="submit"])
             height auto
             flex-flow column-reverse nowrap
             align-items flex-start
-            justify-content flex-start
+            justify-content flex-end
             margin-top 0
 
   &--error

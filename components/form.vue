@@ -250,6 +250,7 @@ export default {
     display flex
     flex-flow row wrap
     flex 1 0 100%
+    height 100%
     justify-content flex-start
     margin 0 -16px
 

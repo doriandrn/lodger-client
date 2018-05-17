@@ -22,7 +22,7 @@ sction#dash
       @modificaServiciu="debug($event); openModal({ id: 'serviciu.edit', data: $event })"
       @serviciuNou=     "openModal('serviciu.new')",
       :servicii=        "servicii",
-      :value=           "serviciiAsociatie",
+      :value=           "activa.servicii",
       :areAdauga=       "true"
     )
 
@@ -245,8 +245,7 @@ export default {
       incasari: 'incasari',
       ultimulFurnizorAdaugat: 'furnizor/ultim',
       servicii: 'servicii',
-      furnizori: 'furnizori',
-      serviciiAsociatie: 'asociatie/servicii'
+      furnizori: 'furnizori'
     })
   },
   methods: {
@@ -345,6 +344,7 @@ export default {
 
     &:not(h1):not(.intro):not(.blocuri)
       margin-bottom auto
+      margin-top auto
 
   .field[data-type="radios"]
     padding 0

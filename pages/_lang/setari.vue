@@ -29,11 +29,6 @@ export default {
       tabs: ['asociatie', 'utilizator']
     }
   },
-  computed: {
-    ...mapGetters({
-    
-    })
-  },
   components: {
     sction,
     frm,
@@ -48,20 +43,24 @@ export default {
       if (!setari) return
 
       setari.default = {
-        campuri: form.campuri
+        campuri: form.campuri.filter(camp => !camp.notInForm)
       }
 
       // adauga labeluri n shit pt traduceri
       Object.keys(setari).forEach(sectiune => {
-        const tabSetari = `${tab}.setari.`
+        let tabSetari = `${tab}.setari.`
         setari[sectiune].title = `${tabSetari}${sectiune}.titlu`
         setari[sectiune].desc = `${tabSetari}${sectiune}.desc`
         const { campuri } = setari[sectiune]
         if (!campuri || !campuri.length) return
         campuri.forEach(camp => {
-          camp.label = `${tabSetari}${camp.click || camp.id}`
-          camp.required = true
+          camp.label = `${sectiune === 'default' ? `${tab}.new.` : tabSetari}${camp.click || camp.id}`
           if (sectiune === 'periculoase') camp.dangerous = true
+          if (sectiune === 'default') {
+            camp['@change'] = `${tab}/updateaza`
+          } else {
+            camp.required = true
+          }
         })
       })
       

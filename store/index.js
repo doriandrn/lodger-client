@@ -54,6 +54,7 @@ defs.forEach((plural, singular) => {
   const SET_ULTIM = `${singular}/SET_ULTIM`
   const SET_ACTIV = `${singular}/SET_ACTIV`
   const UNSET_ACTIV = `${singular}/UNSET_ACTIV`
+  const UPDATEAZA = `${singular}/UPDATEAZA`
 
   Object.assign(_state, {
     [`${singular}/ultim`]: null,
@@ -65,12 +66,14 @@ defs.forEach((plural, singular) => {
     [STERGE]: (state, _id) => {},
     [SET_ULTIM]: (state, _id) => { state[`${singular}/ultim`] = _id },
     [SET_ACTIV]: (state, _id) => {},
+    [UPDATEAZA]: (state, camp) => {}
   })
   Object.assign(actions, {
     [`${singular}/adauga`]: ({ commit }, data) => { commit(ADAUGA, data) },
     [`${singular}/sterge`]: ({ commit }, _id) => { commit(STERGE, _id) },
     [`${singular}/set_activ`]: ({ commit }, _id) => { commit(SET_ACTIV, _id) },
-    [`${singular}/unset_activ`]: ({ commit }, _id) => { commit(UNSET_ACTIV, _id) }
+    [`${singular}/unset_activ`]: ({ commit }, _id) => { commit(UNSET_ACTIV, _id) },
+    [`${singular}/updateaza`]: ({ commit }, camp) => { commit(UPDATEAZA, camp) }
     // [`${singular}/set_ultimul_adaugat`]: ({ commit }, _id) => { commit(SET_ULTIM, _id) }
   })
   Object.assign(getters, {
@@ -96,6 +99,7 @@ const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
 
   const asociatie = isRxDocument(payload) ? payload : await db.asociatii.findOne().exec()
+  debug('sa: A', asociatie)
   if (!asociatie) return
   asociatieActiva = asociatie
   subscribe(ldgSchema.$asociatii)
@@ -119,6 +123,7 @@ const DBMethods = db => async ({ type, payload }) => {
   const col = db[defs.get(what)] // collection
   if (!col || !what) return
   debug('DBMethod:', type, payload)
+  debug('-> asociatieActiva', asociatieActiva)
 
   switch (what) {
     case 'asociatie':
@@ -224,18 +229,19 @@ function rxdb () {
           subscribe(o[key])
         }
 
-        subs[o[key]._singular] = db[k].find(findCriteria(k)).$.subscribe(items => {
+        subs[o[key]._singular] = db[k].find(findCriteria(k)).$.subscribe(async items => {
           if (!items) return
           if (!items.length) {
             if (k === 'servicii') predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
           }
 
+          commit(`set_${k}`, sanitizeDBItems(items))
+
           if (!asociatieActiva && k === 'asociatii') {
             const { _id } = items[0]
-            if (_id) dispatch('asociatie/schimba', _id)
+            debug('YAYAYOOOYOYOOYO', items[0])
+            commit('asociatie/SCHIMBA_ACTIVA', items[0])
           }
-
-          store.commit(`set_${k}`, sanitizeDBItems(items))
         })
       })
     }

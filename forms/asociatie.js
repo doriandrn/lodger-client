@@ -1,27 +1,29 @@
+const getter = 'asociatie/activa'
+
 const campuri = [
   {
     id: '_id',
     notInDb: true,
     notInForm: true,
-    value: g => g['asociatie/activa']._id
+    value: g => g[getter]._id
   },
   {
     id: 'name',
     required: true,
     focus: true,
     index: true,
-    value: g => g['asociatie/activa'].name,
+    value: g => g[getter].name,
     v: 'max:32|min:3',
     transform: 'capitalize'
   },
   {
     id: 'idN',
-    value: g => g['asociatie/activa'].idN
+    value: g => g[getter].idN
   },
   {
     id: 'balanta',
     type: 'number',
-    value: g => g['asociatie/activa'].balanta,
+    value: g => g[getter].balanta,
     notInAddForm: true,
     notInForm: true
   },
@@ -29,33 +31,33 @@ const campuri = [
     id: 'incasari',
     type: 'array',
     ref: 'incasari',
-    value: g => g['asociatie/activa'].incasari,
+    value: g => g[getter].incasari,
     notInForm: true
   },
   {
     id: 'utilizatori',
     type: 'array',
     ref: 'utilizatori',
-    value: g => g['asociatie/activa'].utilizatori,
+    value: g => g[getter].utilizatori,
     notInForm: true
   },
   {
     id: 'servicii',
     type: 'array',
     ref: 'servicii',
-    value: g => g['asociatie/activa'].servicii,
+    value: g => g[getter].servicii,
     notInForm: true
   },
   {
     id: 'furnizori',
     type: 'array',
     ref: 'furnizori',
-    value: g => g['asociatie/activa'].furnizori,
+    value: g => g[getter].furnizori,
     notInForm: true
   },
   {
     id: 'filtreCheltuieli',
-    value: g => g['asociatie/activa'].filtreCheltuieli,
+    value: g => g[getter].filtreCheltuieli,
     type: 'array',
     notInForm: true
   }
@@ -80,6 +82,13 @@ const metode = {
   },
   async TOGGLE_SERVICIU (servicii) {
     this.servicii = servicii
+    await this.save()
+  },
+  async UPDATEAZA (campuri) {
+    // TODO: nu permite updatarea anumitor chei
+    Object.keys(campuri).forEach(camp => {
+      this[camp] = campuri[camp]
+    })
     await this.save()
   }
 }

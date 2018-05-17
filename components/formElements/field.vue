@@ -110,7 +110,7 @@
     v-show=         "!hideLabel && type !== 'button'"
     :required=      "required"
     :for=           "id"
-  ) {{ _label }}
+  ) {{ $t( label ) }}
 
   p.field__message(v-if="message") {{ message }}
 
@@ -154,11 +154,6 @@ export default {
       'apartamente',
       'furnizori'
     ]),
-    _label () {
-      const { label } = this
-      if (!label) return
-      return this.$t(label)
-    },
     val () {
       const { type, searchTaxonomy, selected, debug } = this
       let { value } = this
@@ -244,6 +239,10 @@ export default {
       default () {
         return this.id
       }
+    },
+    transform: {
+      type: String,
+      default: null
     },
     dangerous: {
       type: Boolean,
@@ -442,7 +441,7 @@ export default {
 
     handleInput (e) {
       let { value, type } = e.target
-      const { search, debug } = this
+      const { search, transform, debug } = this
 
       switch (type) {
         case 'search':
@@ -456,6 +455,13 @@ export default {
 
         case 'number':
           value = Number(value)
+          break
+
+        case 'text':
+          if (transform) {
+            debug(this, transform)
+            value = this[transform](value)
+          }
           break
       }
 

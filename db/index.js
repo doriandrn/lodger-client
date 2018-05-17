@@ -34,7 +34,7 @@ export default (async function (dbdata) {
 
   // show leadership in title
   rdb.waitForLeadership().then(() => {
-    debug('♛ -> fereastra e leader')
+    debug('♛')
     document.title = '♛ ' + document.title
   })
 

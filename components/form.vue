@@ -1,6 +1,6 @@
 <template lang="pug">
-form.form(@submit.prevent="validate(formName)")
-  h2.form__title(v-if="title") {{ $t( title ) }}
+form.form(@submit.prevent="handleSubmit(formName)")
+  h5.form__title(v-if="title") {{ $t( title ) }}
   p.form__desc(v-if="desc") {{ $t( desc ) }}
 
   .form__content
@@ -26,7 +26,8 @@ form.form(@submit.prevent="validate(formName)")
       :searchTaxonomy="field.taxonomy"
       :click=         "field.click"
       :dangerous=     "field.dangerous"
-      @change=        "handleChange(field['@change'], field.id, field.type, $event)"
+      :transform=     "field.transform"
+      @change=        "handleChange(field['@change'], field.id, field.type, $event, formName)"
 
       :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
 
@@ -164,19 +165,35 @@ export default {
       modalClose: 'modal/close',
       trimiteFeedback: 'feedback/trimite'
     }),
-    validate (scope) {
+    async validate (scope) {
+      let v = false
       this.$validator.validateAll(scope).then(valid => {
-        console.log('valid', valid)
-        if (valid) this.handleSubmit()
+        if (valid) v = true
       })
+      return v
     },
-    handleChange (func, id, type, e) {
+    /**
+     * func = string = numele actiunii vuex, global
+     */
+    handleChange (func, id, type, e, scope) {
       if (!func) return
+      const { value } = e.target
+      if (value === 'undefined' || value === null) return
+
+      const valid = this.validate(scope)
+      if (!valid) {
+        this.debug(`camp invalid ${id}`)
+        return
+      }
+
       this.$store.dispatch(func, {
-        [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(e) : e
+        [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
       })
     },
-    handleSubmit () {
+    handleSubmit (scope) {
+      const valid = this.validate(scope)
+      if (!valid) return
+
       const { formData: { actiuni: { confirm } }, $data, debug } = this
       if (typeof this[confirm] !== 'function') {
         debug('Confirm nedefinit, neinregistrat', $data);
@@ -248,6 +265,7 @@ export default {
     display flex
     flex-flow row wrap
     height 36px
+    flex 1 1 auto
     // max-width 335px
 
     &[data-type="number"]

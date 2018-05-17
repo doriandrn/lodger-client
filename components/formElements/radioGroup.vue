@@ -20,6 +20,7 @@ div(
         :value=     "index",
         :name=      "id",
         :disabled=  "option.disabled"
+        :checked=   "String(index) === String(value)"
         :id=        "option.id || option.label",
         @change=    "$emit('change', index)"
       )

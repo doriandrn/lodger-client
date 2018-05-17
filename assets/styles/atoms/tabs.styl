@@ -1,3 +1,5 @@
+typ = config.typography.palette
+
 .tab
   flex 1 1 100%
   display flex
@@ -9,8 +11,9 @@
     display flex
     flex-flow row wrap
     padding 0
-    flex 0 1 25%
+    flex 0 1 265px
     align-content flex-start
+    margin-right 32px
 
     > li
       padding 10px 20px
@@ -19,14 +22,15 @@
       display flex
       flex-flow row nowrap
       align-items center
-      color: config.typography.palette.meta
+      color: typ.meta
       flex 1 1 100%
 
       &:before
-        background-color: config.typography.palette.meta
+        background-color: typ.meta
 
       &[aria-selected="true"]
-        font-weight bold
+        color: typ.headings
+        background white
   
   &s
     flex 1 1 100%

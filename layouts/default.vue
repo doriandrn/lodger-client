@@ -78,7 +78,7 @@
       ) {{ $t('defaults.asociatie') }}
 
   main
-    nuxt
+    nuxt(v-if=  "activa._id")
 
   footr
     p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}

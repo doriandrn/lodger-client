@@ -25,12 +25,12 @@ export const actions = {
    */
   schimba ({ commit, dispatch, rootGetters }, asocId) {
     if (!asocId || typeof asocId !== 'string') {
-      // console.error('asocid gresit', asocId)
+      console.error('asocid gresit', asocId)
       return
     }
     const asociatie = rootGetters.asociatii[asocId]
     if (!asociatie) {
-      // console.error('no asoc found asociatie.js store')
+      console.error('no asoc found asociatie.js store')
       return
     }
     commit('SCHIMBA_ACTIVA', asociatie)
@@ -50,7 +50,7 @@ export const getters = {
   moneda: state => state.moneda,
   apartamente: (state, getters, rs, rg) => rg['apartament/ids'].filter(ap => rg['bloc/ids'].indexOf(rg.apartamente[ap].bloc) > -1),
   balanta: (state, getters, rs, rg) => rg.asociatii && rs.asociatii.length > 0 && rg.asociatii[getters.activa] ? rg.asociatii[getters.activa].balanta : 0,
-  servicii: (state, getters, rs, rg) => rg.asociatii && rs.asociatii.length > 0 && rg.asociatii[getters.activa] && rg.asociatii[getters.activa].servicii ? rg.asociatii[getters.activa].servicii.filter(serv => Object.keys(rg.servicii).indexOf(serv) > -1) : [],
+  // servicii: (state, getters, rs, rg) => rg.asociatii && rs.asociatii.length > 0 && rg.asociatii[getters.activa] && rg.asociatii[getters.activa].servicii ? rg.asociatii[getters.activa].servicii.filter(serv => Object.keys(rg.servicii).indexOf(serv) > -1) : [],
   nrUltimaChitanta: (state, getters, rootGetters) => rootGetters.incasari && rootGetters.incasari.length > 0 ? rootGetters.incasari[0].nrChitanta : 0,
   defineste: state => state.initializata
 }

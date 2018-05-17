@@ -226,9 +226,6 @@ export default {
         continue: _continue
       }
     },
-    activa () {
-      return this.asociatii[this.activaId]
-    },
     aDefMacarUnServiciu () {
       if (!this.activa || !this.activa.servicii) return false
       return this.activa.servicii.length > 0
@@ -243,7 +240,7 @@ export default {
       asociatii: 'asociatii',
       idsAsociatii: 'asociatie/ids',
       apartamente: 'apartamente',
-      activaId: 'asociatie/activa',
+      activa: 'asociatie/activa',
       defineste: 'asociatie/defineste',
       incasari: 'incasari',
       ultimulFurnizorAdaugat: 'furnizor/ultim',
@@ -263,16 +260,17 @@ export default {
   },
   mounted () {
     this.initprgrs = this.poateTreceLaUrmPas
-    if (window && typeof window.addEventListener === 'function') {
-      window.addEventListener('keyup', e => {
-        console.log(e.keyCode)
-      })
-    }
+    // if (window && typeof window.addEventListener === 'function') {
+    //   window.addEventListener('keyup', e => {
+    //     console.log(e.keyCode)
+    //   })
+    // }
   },
   watch: {
-    activaId: function (oldV, newV) {
-      this.initprgrs = this.poateTreceLaUrmPas
-      this.debug('initprgrs', oldV, newV)
+    'activa._id': function (oldV, newV) {
+      const { poateTreceLaUrmPas, debug } = this
+      this.initprgrs = poateTreceLaUrmPas
+      debug('Init prgrs updatat! Pas maxim: ', poateTreceLaUrmPas)
     }
   }
 }

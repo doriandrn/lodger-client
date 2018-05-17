@@ -34,10 +34,10 @@ form.form(@submit.prevent="validate(formName)")
 
       v-validate=     "field.v || null"
       :data-vv-scope= "formName",
-      :data-vv-as=    "field.label"
+      :data-vv-as=    "$t( field.label )"
       :data-vv-name=  "field.id"
-      :error=         "errors.has(`${formName}.${field.id}`)"
-      :message=       "errors.first(`${formName}.${field.id}`)"
+      :error=         "errors.has(field.id, formName)"
+      :message=       "errors.first(field.id, formName)"
     )
 
     slot(name=        "afterFields")

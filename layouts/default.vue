@@ -4,14 +4,14 @@
     logo
     
     field.switch(
-      v-if=     "administreazaCelPutinOAsociatie"
-      v-model=  "idAsociatieActiva",
-      id=       "asociatieSwitch"
-      :label=    "$t('defaults.asociatia')"
-      type=     "altselect",
-      :options= "idsAsociatii"
-      :arrow=   "true"
-      required= true
+      v-if=       "administreazaCelPutinOAsociatie"
+      v-model=    "idAsociatieActiva",
+      id=         "asociatieSwitch"
+      label=      "defaults.asociatia"
+      type=       "altselect",
+      :options=   "switchOptions"
+      :arrow=     "true"
+      :required=  "true"
     )
 
     nav(
@@ -167,42 +167,57 @@ export default {
         const { modalContent, modalData, blocuri, apartamente, debug } = ctx
 
         campuri = campuri.filter(camp => !camp.notInAddForm)
-        campuri.forEach(camp => {
-          if (path[1] === 'edit' && typeof modalData === 'object') {
-            const iId = path[0] === 'serviciu' ? modalData.denumire : modalData._id
-            switch (path[0]) {
-              case 'bloc':
-                camp.value = blocuri[iId][camp.id]
-                break
+        // campuri.forEach(camp => {
+        //   if (path[1] === 'edit' && typeof modalData === 'object') {
+        //     const iId = path[0] === 'serviciu' ? modalData.denumire : modalData._id
+        //     switch (path[0]) {
+        //       case 'bloc':
+        //         camp.value = blocuri[iId][camp.id]
+        //         break
 
-              case 'apartament':
-                camp.value = apartamente[iId][camp.id]
-                break
-            }
-          } 
-          // else if (path[1] === 'new') camp.value = camp.default || null
+        //       case 'apartament':
+        //         camp.value = apartamente[iId][camp.id]
+        //         break
+        //     }
+        //   } 
+        //   // else if (path[1] === 'new') camp.value = camp.default || null
 
-          // switch (camp.id) {
-          //   case 'asociatieId':
-          //     const { activa, idsAsociatii } = ctx
-          //     Object.assign(camp, {
-          //       options: idsAsociatii,
-          //       value: activa,
-          //       slot: 'footer',
-          //       size: 'small'
-          //     })
-          //     break
-          // }
-        })
+        //   // switch (camp.id) {
+        //   //   case 'asociatieId':
+        //   //     const { activa, idsAsociatii } = ctx
+        //   //     Object.assign(camp, {
+        //   //       options: idsAsociatii,
+        //   //       value: activa,
+        //   //       slot: 'footer',
+        //   //       size: 'small'
+        //   //     })
+        //   //     break
+        //   // }
+        // })
         debug('form data', campuri)
         return { campuri, actiuni, $for: path[0] }
       }
     }
   },
   computed: {
+    // idAsociatieActiva () {
+    //   return this.activa._id
+    // },
+    switchOptions () {
+      const { idsAsociatii, asociatii } = this
+      const selector = {}
+      idsAsociatii.map(asoc => {
+        selector[asoc] = asociatii[asoc].name
+      })
+      return selector
+    },
     idAsociatieActiva: {
-      get () { return this.idsAsociatii.indexOf(this.activa) },
-      set (name) { this.debug('asoc', name); this.schimbaAsociatieActiva(this.asociatii[name]) }
+      get () { return this.activa._id },
+      set (asocId) {
+        this.debug('asoc', asocId)
+        if (typeof asocId !== 'string') return
+        this.schimbaAsociatieActiva(asocId)
+      }
     },
     administreazaCelPutinOAsociatie () {
       const { idsAsociatii } = this

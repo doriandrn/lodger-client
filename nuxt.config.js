@@ -46,6 +46,7 @@ module.exports = {
   plugins: [
     { src: '~plugins/debug' },
     { src: '~plugins/db' },
+    { src: '~plugins/filters' },
     { src: '~plugins/validate' },
     { src: '~plugins/tabs' },
     { src: '~plugins/portal' },

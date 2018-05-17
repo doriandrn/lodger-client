@@ -31,20 +31,19 @@ export const { isRxDocument } = RxDB
 
 export default (async function (dbdata) {
   const rdb = await db
+
   // show leadership in title
   rdb.waitForLeadership().then(() => {
-    debug('isLeader now')
+    debug('♛ -> fereastra e leader')
     document.title = '♛ ' + document.title
   })
-  // console.log('DatabaseService: creating database..')
-  
 
   // create collections
-  debug('DatabaseService: create collections')
+  debug('Creez colectiile')
   await Promise.all(collections.map(colData => rdb.collection(colData)))
 
   // hooks
-  debug('DatabaseService: add hooks')
+  // debug('Adaug Carlige')
   // db.collections.heroes.preInsert(function (docObj) {
   //   const color = docObj.color
   //   return db.collections.heroes.findOne({

@@ -11,7 +11,8 @@ const campuri = [
     focus: true,
     index: true,
     value: g => g['asociatie/activa'].name,
-    v: 'length: 32'
+    v: 'max:32|min:3',
+    transform: 'capitalize'
   },
   {
     id: 'idN',

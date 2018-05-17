@@ -1,11 +1,12 @@
 <template lang="pug">
 ul.servicii
+  p lol {{ value }}
   li(
     v-for=      "serviciu in servicii"
     :data-icon= "serviciu.denumire"
-    :data-sel=  "value && value.indexOf(serviciu.denumire) > -1"
+    :data-sel=  "value.indexOf(serviciu.denumire) > -1"
     :class=     "{ ultimul: ultimulAdaugat === serviciu._id, modificabil: modificabil(serviciu.denumire) }"
-    @click=     "toggleServiciu(serviciu.denumire)"
+    @click=     "toggleServiciu(serviciu.denumire); debug(value.indexOf(serviciu.denumire) > -1)"
     @keydown.enter=     "toggleServiciu(serviciu.denumire)"
     @keydown.space=     "toggleServiciu(serviciu.denumire)"
     tabIndex=   0

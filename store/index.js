@@ -6,7 +6,7 @@ import { ldgSchema, notificari, defs } from 'lodger'
 import { createModule } from 'vuex-toast'
 import { predefinite } from 'forms/serviciu'
 import { searchMap } from 'helpers/store'
-import { trm, traverse, spleet } from 'helpers/functions'
+import { trm, spleet } from 'helpers/functions'
 import { sanitizeDBItems } from 'helpers/db'
 import { isRxDocument } from 'db'
 
@@ -40,8 +40,8 @@ for (let [k, v] of defs) {
 
 let asociatieActiva
 
+// normalizarea datelor dupa chei - indecsi
 const dbKeys = {
-  asociatie: 'name',
   serviciu: 'denumire'
 }
 
@@ -94,20 +94,23 @@ Object.assign(_state, { active })
 // de exportat 
 const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
-  asociatieActiva = isRxDocument(payload) ? payload : await db.asociatii.findOne({ name: payload.name }).exec()
-  // debug('defSubs', defSubscriptions)
-  
-  // subs.forEach((sub, i) => { if (i < defSubscriptions.length) return
-  //   sub.unsubscribe()
-  // })
+
+  const asociatie = isRxDocument(payload) ? payload : await db.asociatii.findOne().exec()
+  if (!asociatie) return
+  asociatieActiva = asociatie
   subscribe(ldgSchema.$asociatii)
-  debug('subscribers', subs)
+  debug('schimbat asociatie, activa (rxdoc): ', asociatieActiva)
   return { asociatieActiva }
 }
 
+/**
+ * Sterge subscriberii de DB cand se demonteaza
+ * @param {*} subs - obiectul cu subscriberi
+ */
 const unsubscribeDBsubscribers = subs => async ({ type }) => {
   if (type !== 'DESTROYMAIN') return
-  subs= {}
+  // TODO: nu e ok, trebuie luat fiecare cheie si apelat .unsubsribe() si dupa sters
+  subs = {}
 }
 
 const DBMethods = db => async ({ type, payload }) => {
@@ -119,10 +122,9 @@ const DBMethods = db => async ({ type, payload }) => {
 
   switch (what) {
     case 'asociatie':
-      debug('DBM:asociatieActiva', asociatieActiva)
       if (asociatieActiva && typeof asociatieActiva[mutation] === 'function') {
         await asociatieActiva[mutation](payload)
-        debug('DUN')
+        debug(`Executat DB method: asociatieActiva[${mutation}]; Parametri: `, payload)
       }
       break
 
@@ -130,6 +132,7 @@ const DBMethods = db => async ({ type, payload }) => {
       if (mutation === 'incaseaza') {
         const ap = await db.apartamente.findOne({ _id: payload.deLa }).exec()
         ap.incaseaza(payload)
+        debug('Incasat si la apartament')
       }
       break
   }
@@ -146,6 +149,7 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
   // add = true, delete = false
   const add = type.indexOf('ADAUGA') > -1
   // debug('addOrDelete:add', add)
+  debug(`Urmeaza sa ${add ? 'adauga' : 'sterg'} ${what}`)
 
   /**
    * ADD
@@ -154,13 +158,13 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
     const newItem = await col[payload._id ? 'upsert' : 'insert']({ ...payload })
     if (!newItem) throw eroare('ceva a mers prost la adaugarea itemului')
     commit(`${what}/SET_ULTIM`, newItem._id)
-    if (what === 'asociatie') dispatch('asociatie/schimba', newItem)
+    if (what === 'asociatie') dispatch('asociatie/schimba', newItem._id)
     if (what === 'incasare') {
       const incasData = { id: newItem._id, suma: newItem.suma }
       commit('asociatie/incaseaza', incasData)
       commit('apartament/incaseaza', Object.assign(incasData, { deLa: payload.deLa }))
     }
-    debug('Adaugat: ', newItem)
+    debug('OK! Adaugat: ', newItem)
     const ss = `${what}.${payload._id ? 'updatat' : 'adaugat'}`
     const heading = `${ss}.h`
     const text = `${ss}.p`
@@ -180,11 +184,10 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
     if (!tobedel) throw eroare(`${what}.notFoundToBeDeleted`)
     await tobedel.remove()
     if (what === 'asociatie') asociatieActiva = null
-    // notificari.success('Dun')
-    debug('Sters ', col)
+    // TODO: notificare succes ca a fost sters
+    debug('OK! Sters: ', col)
   }
   // await handleFollowingMutations(what, payload, newItem, store, add)
-
 }
 
 function rxdb () {
@@ -218,8 +221,6 @@ function rxdb () {
         if (!db[k]) return
 
         if (k !== 'asociatii' && !subscribedTo(o[key])) {
-          // subscribers.push(o[key]._singular)
-          // debug('inscriu', o[key])
           subscribe(o[key])
         }
 
@@ -229,12 +230,11 @@ function rxdb () {
             if (k === 'servicii') predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
           }
 
-          if (!asociatieActiva) {
-            // subscribers = []
-            dispatch('asociatie/schimba', items[0])
+          if (!asociatieActiva && k === 'asociatii') {
+            const { _id } = items[0]
+            if (_id) dispatch('asociatie/schimba', _id)
           }
-          // if (pre) pre(k, items)
-          // debug('XXSUBS', subs)
+
           store.commit(`set_${k}`, sanitizeDBItems(items))
         })
       })

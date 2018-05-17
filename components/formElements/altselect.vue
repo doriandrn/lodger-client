@@ -4,13 +4,13 @@
   :id=          "id",
   tabIndex=     "-1"
 )
-  ul
+  ul.altselect__options
     li(
       v-for=        "option, key in options",
       :tabIndex=    "value === key ? 0 : -1"
       :data-sel=    "value === key"
-      :data-value=  "typeof options === 'object' ? option : key",
-      @click=       "alege(option)"
+      :data-value=  "key",
+      @click=       "alege(key)"
       :data-icon=   "option.icon || id === 'asociatieSwitch' && asocInitProgr(option) < 100 ? 'alert-circle' : null || null"
     )
       split
@@ -31,8 +31,8 @@ import progres from '~components/progres'
 export default {
   methods: {
     alege (value) {
+      this.debug('ales', value)
       this.$emit('input', value)
-      this.debug(this)
       this.$el.blur()
     },
     asocInitProgr (aId) {

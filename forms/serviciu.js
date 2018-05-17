@@ -2,7 +2,7 @@ export const campuri = [
   {
     id: 'denumire',
     required: true,
-    isPrimary:true
+    isPrimary: true
   },
   {
     id: 'furnizori',

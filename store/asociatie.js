@@ -14,6 +14,8 @@ export const mutations = {
   },
   TOGGLE_SERVICIU: (state, id) => {},
   BACKUP: () => {},
+  EXPORT: () => {},
+  IMPORT: () => {},
   initBalanta: (state, data) => {},
   incaseaza: (state, data) => {}
 }
@@ -39,8 +41,8 @@ export const actions = {
   definesteStructura ({ commit }) {
     commit('DEFINESTE_STRUCTURA')
   },
-  backup ({ commit }) {
-    commit('BACKUP')
+  exportDb ({ commit }) {
+    commit('EXPORT')
   },
   toggleServiciu: ({ commit }, id) => { commit('TOGGLE_SERVICIU', id) }
 }

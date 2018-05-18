@@ -1,9 +1,8 @@
-// import 'babel-polyfill'
 import * as RxDB from 'rxdb'
 import { remoteURL } from 'config'
 import Debug from 'debug'
+
 const debug = Debug('lodger:DB')
-// const debug = consola.withScope('db')
 
 RxDB.plugin(require('pouchdb-adapter-idb'))
 // RxDB.plugin(require('pouchdb-adapter-memory'))

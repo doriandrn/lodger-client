@@ -13,8 +13,18 @@ swiper.blocuri(
       :id=      "blocId",
       :ultimul= "blocId === ultimulBlocAdaugat"
       :navigabil = "blocId === activ"
-      modificabil
+      :modificabil= "blocId === activ"
     )
+  .swiper-slide(
+    v-if=   "modificabile"
+  )
+    buton.bloc__add(
+      icon=   "plus-circle",
+      @click= "openModal('bloc.new')"
+      size=   "medium"
+
+      icon-only
+    ) {{ $t('bloc.new.title') }}
   buton.urm.blocuri__nav(
     slot=     "button-next"
     arrow=    "right"
@@ -40,14 +50,7 @@ swiper.blocuri(
 
   //- .blocuri__tabs(slot="pagination")
   //-   .blocuri__list
-  //-   buton.bloc__add(
-  //-     icon=   "plus-circle",
-  //-     slot=   "right"
-  //-     @click= "openModal('bloc.new')"
-  //-     size=   "medium"
-
-  //-     icon-only
-  //-   ) {{ $t('bloc.new.title') }}
+  
 
 </template>
 
@@ -124,6 +127,10 @@ export default {
     blocuri: {
       type: Object,
       default: () => {}
+    },
+    modificabile: {
+      type: Boolean,
+      default: true
     }
   },
   components: {
@@ -160,6 +167,7 @@ drkr = rgba(black, .05)
     &-slide
       width auto
       margin-top auto
+      display flex
 
   +above(l)
     margin-bottom 32px

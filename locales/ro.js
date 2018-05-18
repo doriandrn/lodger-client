@@ -65,7 +65,7 @@ export default {
     },
     setari: {
       title: 'Zonă administrativă',
-      backupDb: 'Exportă',
+      exportDb: 'Exportă',
       importDb: 'Importă',
       modify: 'Modifică datele asociației',
       sterge: 'Șterge asociația',

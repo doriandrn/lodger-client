@@ -265,7 +265,6 @@ export default {
   .field
     display flex
     flex-flow row wrap
-    height 36px
     flex 1 1 auto
     // max-width 335px
 

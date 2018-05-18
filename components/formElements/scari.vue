@@ -48,10 +48,20 @@ ul.scari.zebra
       v-model.bool=   "scara.mansarda",
       :checked=       "Boolean(scara.mansarda)"
     )
-  li(@click="scariCount++") adauga scara
+    buton(
+      @click=       "stergeScara(i)"
+      :disabled=    "scaraAreApartamente(i)"
+      icon=         "trash"
+      styl=         "unstyled"
+      icon-only
+      tooltip
+    ) {{ $t('bloc.scara.sterge') }}
+  buton(@click="scari.push({ id: scari.length + 1, etaje: 1, lift: false, mansarda: false })") adauga scara
 </template>
 
 <script>
+import buton from 'form/button'
+
 export default {
   data () {
     let scari = []
@@ -74,11 +84,22 @@ export default {
       })
     }
 
-    const scariCount = value.length
-    return { scari, scariCount }
+    return { scari }
   },
   beforeCreate () {
     this.$options.components.field = require('form/field').default
+  },
+  components: {
+    buton
+  },
+  methods: {
+    stergeScara (id) {
+      this.debug('stergescara', id)
+    },
+    scaraAreApartamente (id) {
+      this.debug('sap', id)
+      return true
+    }
   },
   props: {
     value: {
@@ -105,9 +126,9 @@ export default {
     //     }
     //   }
     // },
-    // scari: function () {
-    //   this.$emit('input', this.scari)
-    // }
+    scari: function () {
+      this.$emit('input', this.scari)
+    }
   }
 }
 </script>

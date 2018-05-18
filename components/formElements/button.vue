@@ -81,7 +81,6 @@ button
       top 1px
 
   &:disabled
-    cursor default
     border-color: config.palette.borders
     background-color transparent
     color: config.typography.palette.light
@@ -89,6 +88,17 @@ button
 
     &[data-arrow]
       &:after
+        background-color: config.typography.palette.light
+
+    &[data-icon]
+      &:before
+        background-color: config.typography.palette.light
+
+    &:hover
+    &:focus
+    &:active
+      &[data-arrow]:after
+      &[data-icon]:before
         background-color: config.typography.palette.light
 
   &[data-arrow]
@@ -164,9 +174,12 @@ export default {
   },
   computed: {
     _tooltip () {
-      const { tooltip } = this
+      const { tooltip, debug } = this
       if (!tooltip) return
-      if (typeof tooltip === 'boolean') return this.$slots.default[0].text
+
+      const { text } = this.$slots.default[0]
+      debug('tooltip type: ', typeof tooltip)
+      if (typeof tooltip === 'boolean') return text
       let content = ''
       Object.keys(tooltip).forEach(k => {
         const icon = (k => {

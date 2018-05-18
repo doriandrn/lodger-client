@@ -607,10 +607,14 @@ input[type="checkbox"]
       top 1px
 
     > span
-      size 12px
-      display block
-      border-radius 50%
-      border: 1px solid config.typography.palette.meta
+      &:not(.input__optional)
+        size 12px
+        display block
+        border-radius 50%
+        border: 1px solid config.typography.palette.meta
+
+    .input__optional
+      display none
 
   &:checked
     &+label
@@ -665,9 +669,6 @@ input[type="checkbox"]
   > input[type="radio"]
     display none
 
-input:not([type="submit"])
-  max-height 36px
-
 .input
   &__optional
     margin-left 4px
@@ -689,9 +690,9 @@ input:not([type="submit"])
       padding-left 20px 
 
   &[data-type="scari"]
-    flex-direction column-reverse 
-    flex-wrap nowrap
-    flex-basis 100%
+    flex-direction column-reverse !important
+    flex-wrap nowrap !important
+    flex-basis 100% !important
     height auto
 
     .field
@@ -701,7 +702,7 @@ input:not([type="submit"])
     > label
       font-weight 600
       margin-bottom 16px
-      flex 1 1 38px
+      flex 0 0 14px
       align-self flex-start
 
   &[data-type="servicii"]
@@ -802,7 +803,7 @@ input:not([type="submit"])
             flex-flow column-reverse nowrap
             align-items flex-start
             justify-content flex-end
-            margin-top 0
+            // margin-top 0
 
   &--error
     .field

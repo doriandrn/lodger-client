@@ -99,7 +99,7 @@ const setari = {
     campuri: [
       {
         type: 'button',
-        click: 'backupDb',
+        click: 'exportDb',
       },
       {
         type: 'button',

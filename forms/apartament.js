@@ -27,7 +27,7 @@ export const campuri = [
   {
     id: 'suprafata',
     type: 'number',
-    default: 0.01,
+    default: null,
     step: 0.01,
     value: getters => getters['apartament/selectat'].suprafata
   },
@@ -78,7 +78,7 @@ export const campuri = [
   {
     id: 'balanta',
     type: 'bani',
-    default: 0,
+    default: null,
     value: getters => getters['apartament/selectat'].balanta
   },
   {

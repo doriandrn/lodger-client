@@ -1,6 +1,7 @@
 import Db from 'db'
 import Debug from 'debug'
 import createPersistedState from 'vuex-persistedstate'
+import FileSaver from 'file-saver'
 
 import { ldgSchema, notificari, defs } from 'lodger'
 import { createModule } from 'vuex-toast'
@@ -127,9 +128,20 @@ const DBMethods = db => async ({ type, payload }) => {
 
   switch (what) {
     case 'asociatie':
-      if (asociatieActiva && typeof asociatieActiva[mutation] === 'function') {
-        await asociatieActiva[mutation](payload)
-        debug(`Executat DB method: asociatieActiva[${mutation}]; Parametri: `, payload)
+      if (asociatieActiva) {
+        if (typeof asociatieActiva[mutation] === 'function') {
+          await asociatieActiva[mutation](payload)
+          debug(`Executat DB method: asociatieActiva[${mutation}]; Parametri: `, payload)
+        }
+        if (mutation === 'EXPORT') {
+          // TODO: fiecare colectie, nu doar asociatiile
+          col.dump().then(json => {
+            debug('exportez', json)
+            // TODO: nu merge
+            const file = new File(JSON.stringify(json), 'export.lodger', { type: "text/json;charset=utf-8" })
+            FileSaver.saveAs(file)
+          })
+        }
       }
       break
 

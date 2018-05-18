@@ -39,6 +39,7 @@
               :class=     "{ ultimul: ap._id === ultimulApAdaugat}"
               @click=     "selecteazaAp({ id: ap._id, modificabil })"
               :tooltip=   "apTooltip(ap._id)"
+              :disabled=  "!navigabil"
             ) {{ ap.proprietar }}
               em.ap__nr {{ ap.nr }}
             
@@ -142,12 +143,13 @@ colors = config.palette
 
   &__add
     // background-color: colors.borders !important
-    position absolute
-    bottom -3px
-    right 3px
-    size 56px
-    border-radius 50%
-    margin -2px
+    
+    // position absolute
+    // bottom -3px
+    // right 3px
+    // size 56px
+    // border-radius 50%
+    // margin -2px
 
   > .nume
     font-size 20px
@@ -250,14 +252,15 @@ colors = config.palette
             background-color transparent
             transition background-color .1s ease
 
-        &:active
-        &:focus
-        &:hover
-          border-color: colors.tertiary
-          opacity 1
+        &:not(:disabled)
+          &:active
+          &:focus
+          &:hover
+            border-color: colors.tertiary
+            opacity 1
 
-          &:before
-            background-color: colors.primary
+            &:before
+              background-color: colors.primary
 
         em
           font-style normal

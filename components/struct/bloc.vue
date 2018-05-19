@@ -200,6 +200,12 @@ colors = config.palette
     counter-reset etaje
     position relative
 
+    &[data-mansarda]
+      > ol.etaje
+        > li:last-child
+          &:before
+            content 'M'
+
     &[data-lift]
       > ol.etaje
         margin-left 8px

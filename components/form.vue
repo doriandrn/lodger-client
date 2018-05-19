@@ -87,7 +87,7 @@ export default {
       camp.label = label || `${$for ? `${$for}.new.` : ''}${id}`
 
       // validarea de required
-      if (required) camp.v = `required|${camp.v || ''}`
+      if (required || (camp.v && camp.v.indexOf('required') < 0)) camp.v = `required|${camp.v || ''}`
 
       // valoarea finala
       dynamicFormData[id] = null

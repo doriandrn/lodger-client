@@ -1,12 +1,4 @@
 <template lang="pug">
-//- field(
-//-   v-if =      "scariCount && Number(scariCount) < 2",
-//-   type=       "number",
-//-   :label=     "$t('bloc.etaje')",
-//-   v-model=    "scari[0].etaje"
-//-   :required=  "true"
-//- )
-
 ul.scari.zebra
   li(
     v-for=          "scara, i in scari"
@@ -14,39 +6,42 @@ ul.scari.zebra
   )
     label.label Scara
       field.scari__id(
-        :id=        "`id-${i}`",
-        type=       "text"
-        :label=     "$t('scara.new.name')",
-        v-model=    "scari[i].id"
-        :required=  "true",
-        @input=     "$emit('input', scari)"
-        hide-label
+        :id=          "`id-${i}`",
+        type=         "text"
+        label=        "scara.new.name",
+        v-model=      "scara.id"
+        :required=    "true",
+        @input=       "$emit('input', scari)"
+        :hide-label=  "i > 0"
       )
 
     field(
-      :id=        "`scara-${i}`", 
-      type=       "number"
-      :label=     "$t('bloc.etaje')"
-      data-for=   "etaje",
-      v-model=    "scari[i].etaje",
-      :required=  "true",
-      @input=     "$emit('input', scari)"
-      hide-label
+      :id=          "`scara-${i}`", 
+      type=         "number"
+      label=        "bloc.etaje"
+      data-for=     "etaje",
+      :required=    "true",
+      @input=       "schimbaEtaje(scara, $event, scara.mansarda)"
+      :value=       "etaje(i, scara.mansarda)"
+      :hide-label=  "i > 0"
     )
     
     field(
       :id=            "`lift-${i}`",
       type=           "checkbox",
-      :label=         "$t('scara.lift')",
-      v-model.bool=   "scari[i].lift",
-      :checked=       "Boolean(scara.lift)"
+      label=          "scara.lift",
+      v-model.bool=   "scara.lift",
+      :checked=       "scara.lift"
+      @input=         "$emit('input', scari)"
     )
+
     field(
       :id=            "`mansarda-${i}`",
       type=           "checkbox",
-      :label=         "$t('scara.mansarda')",
-      v-model.bool=   "scari[i].mansarda",
-      :checked=       "Boolean(scara.mansarda)"
+      label=          "scara.mansarda",
+      v-model.bool=   "scara.mansarda",
+      :checked=       "scara.mansarda"
+      @input=         "$emit('input', scari)"
     )
     buton(
       @click=       "stergeScara(i)"
@@ -56,7 +51,10 @@ ul.scari.zebra
       icon-only
       tooltip
     ) {{ $t('bloc.scara.sterge') }}
-  buton(@click="scari.push({ id: scari.length + 1, etaje: 1, lift: false, mansarda: false })") adauga scara
+  buton(
+    size=     "small"
+    @click=   "scari.push({ id: scari.length + 1, etaje: 1, lift: false, mansarda: false })"
+  ) adauga scara
 </template>
 
 <script>
@@ -93,12 +91,26 @@ export default {
     buton
   },
   methods: {
+    // TODO: implementeaza
     stergeScara (id) {
       this.debug('stergescara', id)
     },
+    // TODO: implementeaza
     scaraAreApartamente (id) {
-      this.debug('sap', id)
+      this.debug('scara `${id}` are apartamente', true)
       return true
+    },
+    etaje (i, cuMansarda) {
+      const { value } = this
+
+      if (cuMansarda) return Number(value[i].etaje) - 1
+      return Number(value[i].etaje)
+    },
+    schimbaEtaje (scara, val, cuMansarda) {
+      const { debug } = this
+      debug('schimbaEtaje', val)
+      scara.etaje = cuMansarda ? Number(val) + 1 : Number(val)
+      this.$emit('input', this.scari)
     }
   },
   props: {
@@ -161,6 +173,7 @@ export default {
           content '+ M'
           position absolute
           left 16px
+          bottom 9px
           z-index 0
           pointer-events none
           font-weight 100
@@ -176,4 +189,7 @@ export default {
 
       > strong
         margin-left 4px
+
+    &+button
+      margin-top 12px
 </style>

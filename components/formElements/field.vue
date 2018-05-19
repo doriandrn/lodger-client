@@ -23,7 +23,7 @@
     :value=       "val",
     :checked=     "checked"
     @input=       "handleInput",
-    @change=      "$emit('change', $event)"
+    @change=      "handleChange"
 
     @keydown.enter= "selecteaza"
     @keyup.tab=     "selecteaza"
@@ -478,6 +478,21 @@ export default {
           break
       }
 
+      this.$emit('input', value)
+    },
+
+    handleChange (e) {
+      let { value, type, debug } = this
+
+      if (type === 'checkbox') {
+        value = Boolean(value)
+        debug(value)
+        value = !value
+        debug(value)
+      }
+
+      debug(e.target.value, type, e)
+      // this.$emit('change', e)
       this.$emit('input', value)
     },
 

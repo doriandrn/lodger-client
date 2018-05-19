@@ -160,13 +160,19 @@ drkr = rgba(black, .05)
   position relative
   margin-bottom 0
   margin-top auto
-  border-bottom: 1px solid config.palette.borders
+  // border-bottom: 1px solid config.palette.borders
   // margin: -(config.spacings.inBoxes)
+
+  .bloc
+    margin 0 32px
+    flex 1 1 100%
+    height 100%
+    align-items center
+    justify-content center
 
   .swiper
     &-slide
       width auto
-      margin-top auto
       display flex
 
   +above(l)
@@ -180,8 +186,18 @@ drkr = rgba(black, .05)
     pointer-events none
     border-top-radius 50%
 
+  &:after
+    content ''
+    position absolute
+    bottom 1px
+    left -100%
+    right - 100%
+    background: config.palette.borders
+    height 1px
+
   > div
     z-index 4
+    align-items flex-end
 
   &__nav
     position fixed

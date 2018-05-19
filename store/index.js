@@ -137,7 +137,7 @@ const DBMethods = db => async ({ type, payload }) => {
           // TODO: fiecare colectie, nu doar asociatiile
           col.dump().then(json => {
             debug('exportez', json)
-            // TODO: nu merge
+            // TODO: nu merge, JSON 2 YML
             const file = new File(JSON.stringify(json), 'export.lodger', { type: "text/json;charset=utf-8" })
             FileSaver.saveAs(file)
           })

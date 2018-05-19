@@ -15,14 +15,16 @@
     )
 
     nav(
-      v-if=   "administreazaCelPutinOAsociatie"
       data-orientation="horizontal"
     )
-      ul
+      ul(v-if=   "administreazaCelPutinOAsociatie")
         li(
           v-for="item in navItems"
         )
           nuxt-link(:to="item.url") {{ item.title }}
+      ul(v-else)
+        li
+          nuxt-link(to="/dashboard") {{ $t( 'asociatie.init.title' ) }} - {{ $t( 'defaults.asociatia' ) }} {{ activa.name }}
 
     nuxt-link(
       to=       "/registru"

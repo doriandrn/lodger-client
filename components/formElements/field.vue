@@ -459,9 +459,10 @@ export default {
           break
 
         case 'checkbox':
-          value = Boolean(value)
-          value = !value
-          break
+          return
+          // value = Boolean(value)
+          // value = !value
+          // break
 
         case 'number':
           value = Number(value)
@@ -528,7 +529,7 @@ textarea
   background-color transparent
   border 0
   min-width 32px
-  border-bottom: 1px solid #c8c8c8
+  border-bottom: 1px solid config.palette.borders
   transition all .15s ease-in-out
   padding 8px 2px
   width 100%

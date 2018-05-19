@@ -1,24 +1,25 @@
 <template lang="pug">
 .bloc(
-  :class= "{ ultimul, navigabil }"
+  :class= "{ ultimul, nenavigabil: !navigabil }"
 )
-  h4.bloc__title {{ bloc.nume }}
-  .bloc__actiuni(v-if="modificabil")
-    buton(
-      styl=     "unstyled"
-      icon=     "edit"
-      icon-only
-      @click=   "selecteazaBloc({ id: bloc._id, modificabil })"
-      tooltip
-    ) {{ $t('bloc.edit.title') }}
-    buton(
-      styl=     "unstyled"
-      @click=   "stergeBloc(bloc._id)"
-      icon=     "trash"
-      icon-only
-      tooltip
-      dangerous
-    ) {{ $t('bloc.delete') }}
+  .bloc__heading
+    h4.bloc__title {{ bloc.nume }}
+    .bloc__actiuni(v-if="modificabil")
+      buton(
+        styl=     "unstyled"
+        icon=     "edit"
+        icon-only
+        @click=   "selecteazaBloc({ id: bloc._id, modificabil })"
+        tooltip
+      ) {{ $t('bloc.edit.title') }}
+      buton(
+        styl=     "unstyled"
+        @click=   "stergeBloc(bloc._id)"
+        icon=     "trash"
+        icon-only
+        tooltip
+        dangerous
+      ) {{ $t('bloc.delete') }}
 
   ol.scari(
     v-if=   "bloc.scari && bloc.scari.length > 0"
@@ -113,48 +114,55 @@ colors = config.palette
 .bloc
   display flex
   flex-flow column nowrap
-  margin auto 32px 0
-  flex 1 1 100%
-  align-items center
-  justify-content center
   transition opacity .15s ease-in-out
 
   &__title
     margin-bottom 12px
     text-transform uppercase
+    user-select none
+
+  &__heading
+    display flex
+    flex-flow column nowrap
+    margin-bottom 32px
+    align-items center
 
   &__actiuni
     display flex
     flex-flow row nowrap
-    margin-bottom 32px
     
     > button
       &:not(:first-child)
         margin-left 8px
 
-    
-
-  // &:hover
-  //   .bloc
-  //     &__actiuni
-  //       +desktop()
-  //         opacity 1
-  //         visibility visible
-
   &__add
-    // background-color: colors.borders !important
-    
-    // position absolute
-    // bottom -3px
-    // right 3px
-    // size 56px
-    // border-radius 50%
-    // margin -2px
-
   > .nume
     font-size 20px
     text-align center
     margin-bottom 12px
+
+  &:not(.nenavigabil)
+    .etaj
+      &:hover
+        button.adauga
+          opacity 1 !important
+
+        &:before
+          color: colors.primary
+
+    > .scari
+      > li
+        &:hover
+          > .nume
+            color: config.typography.palette.headings
+
+  &.nenavigabil
+    .etaje
+      background #f1f4f1
+
+    > .scari
+      > li > .nume
+        color: config.typography.palette.meta
 
   > .scari
     display flex
@@ -185,10 +193,6 @@ colors = config.palette
         // color: config.typography.palette.meta
         transition color .1s ease
         margin-bottom 8px
-
-      &:hover
-        > .nume
-          color: config.typography.palette.headings
 
   .scara
     width 100%
@@ -231,12 +235,12 @@ colors = config.palette
     > li
       display flex
       position relative
-      height 48px
+      // min-height 36px
+      min-height 48px
       flex-flow row nowrap
 
       > button
         width 100%
-        height 100%
         flex 1 1 100%
         padding 8px
         border-radius 0
@@ -267,6 +271,10 @@ colors = config.palette
           font-weight 100
           font-size 18px
           pointer-events none
+
+        &:disabled
+          em
+            color: config.typography.palette.light
 
         &:not([data-styl="unstyled"])
           // background-color: lighten(colors.tertiary, 85%)
@@ -299,13 +307,6 @@ colors = config.palette
 
       &:not(:first-child)
         counter-increment etaje
-
-      &:hover
-        button.adauga
-          opacity 1 !important
-
-        &:before
-          color: colors.primary
 
   &__nr
     flex 1 1 100%

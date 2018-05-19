@@ -44,9 +44,9 @@ config = {
             lh: baseSpacingUnit*8
           },
           h2: baseSpacingUnit*5
-          h3: baseSpacingUnit*5
-          h4: baseSpacingUnit*4
-          h5: baseSpacingUnit*4
+          h3: baseSpacingUnit*4
+          h4: baseSpacingUnit*3.5
+          h5: baseSpacingUnit*3.25
           h6: baseSpacingUnit*3
         }
       }
@@ -55,7 +55,6 @@ config = {
       ui: #666666
       headings: #202020
       paragraphs: #646464,
-      labels: #333,
       meta: #a7a6a5,
       light: #dedede
     }
@@ -77,6 +76,8 @@ config = {
 }
 
 config.palette.selectedItem = lighten(config.palette.tertiary, 95%)
+config.typography.palette.labels = darken(config.palette.primary, 55%)
+
 
 fullflex(cntr=false)
   display flex
@@ -96,7 +97,6 @@ bubble()
 
 moveFieldLabel()
   top -15px !important
-  font-size 10px
   left 0 !important
   // color: config.typography.palette.meta
 

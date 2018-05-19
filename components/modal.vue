@@ -105,7 +105,7 @@ lrPad = 32px
     +above(xl)
       padding: lrPad
 
-    form
+    .form
       &__content
         margin: 0px (-(config.spacings.inBoxes/2)) -36px
 

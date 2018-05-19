@@ -81,6 +81,8 @@ button
       top 1px
 
   &:disabled
+    cursor default
+    cursor not-allowed
     border-color: config.palette.borders
     background-color transparent
     color: config.typography.palette.light

@@ -106,7 +106,11 @@ export default {
     etajul: 'Etajul',
     parter: 'Parter',
     scara: 'Scară',
-    scari: 'Scări'
+    scari: 'Scări',
+    updatat: {
+      h: 'Bloc actualizat!',
+      p: 'Datele blocului [nume] au fost actualizate.'
+    }
   },
   utilizator: {
     new: {

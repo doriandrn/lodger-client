@@ -38,14 +38,14 @@ ul.scari.zebra
       :id=            "`lift-${i}`",
       type=           "checkbox",
       :label=         "$t('scara.lift')",
-      v-model.bool=   "scara.lift",
+      v-model.bool=   "scari[i].lift",
       :checked=       "Boolean(scara.lift)"
     )
     field(
       :id=            "`mansarda-${i}`",
       type=           "checkbox",
       :label=         "$t('scara.mansarda')",
-      v-model.bool=   "scara.mansarda",
+      v-model.bool=   "scari[i].mansarda",
       :checked=       "Boolean(scara.mansarda)"
     )
     buton(

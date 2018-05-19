@@ -36,9 +36,15 @@ iconBgWidth = 40px
   &__title
     white-space nowrap
     margin-bottom 0
+    flex 0 0 100%
 
     &+p
       margin-top 6px
+
+  &__content
+    display inline-flex
+    flex-flow row wrap
+    align-items flex-start
 
 .toasts
   position fixed
@@ -59,8 +65,8 @@ iconBgWidth = 40px
   > li
     display flex
     flex-flow row nowrap
-    background white
     align-items center
+    background white
     border-left 1px solid
     width auto
     padding 10px 16px 10px 12px

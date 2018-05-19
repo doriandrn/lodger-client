@@ -3,33 +3,34 @@ export const campuri = [
     id: '_id',
     notInDb: true, // skip it's already defiend by rxdb
     notInForm: true,
-    value: getters => getters['apartament/selectat']._id
+    value: g => g['apartament/selectat']._id
   },
   {
     id: 'nr',
     type: 'number',
-    default: getters => {
-      const bloc = getters['etaj/selectat'].bloc
+    default: g => {
+      //TODO: numerotare pentru hoteluri, 101 et 1, 201 et 2
+      const bloc = g['etaj/selectat'].bloc
 
       if (!bloc) return 1
-      const ultimulApAdaugat = getters['apartament/ultim']
-      console.log('UA', ultimulApAdaugat)
+      const ultimulApAdaugat = g['apartament/ultim']
+
       if (!ultimulApAdaugat || bloc !== ultimulApAdaugat.bloc) {
-        const apsBloc = Object.values(getters.apartamente).filter(ap => ap.bloc === bloc)
+        const apsBloc = Object.values(g.apartamente).filter(ap => ap.bloc === bloc)
         if (!apsBloc || !apsBloc.length) return 1
         return Number(apsBloc.sort((a, b) => a.nr > b.nr).reverse()[0].nr) + 1
       }
       return Number(ultimulApAdaugat.nr) + 1
     },
-    value: getters => getters['apartament/selectat'].nr,
+    value: g => g['apartament/selectat'].nr,
     required: true
   },
   {
     id: 'suprafata',
     type: 'number',
-    default: null,
+    default: null, // TODO: ia de la apartamentul de la etajul de dedesubt, in functie de cate ap sunt
     step: 0.01,
-    value: getters => getters['apartament/selectat'].suprafata
+    value: g => g['apartament/selectat'].suprafata
   },
   {
     id: 'locatari',
@@ -37,7 +38,7 @@ export const campuri = [
     default: 2,
     min: 0,
     max: 10,
-    value: getters => getters['apartament/selectat'].locatari
+    value: g => g['apartament/selectat'].locatari
   },
   {
     id: 'camere',
@@ -45,46 +46,46 @@ export const campuri = [
     default: 2,
     max: 12,
     min: 1,
-    value: getters => getters['apartament/selectat'].camere
+    value: g => g['apartament/selectat'].camere
   },
   {
     id: 'proprietar',
     placeholder: 'Ion Barbu',
-    value: getters => getters['apartament/selectat'].proprietar
+    value: g => g['apartament/selectat'].proprietar
   },
   {
     id: 'etaj',
     type: 'number',
     required: true,
     notInForm: true,
-    default: getters => getters['etaj/selectat'].etaj,
-    value: getters => getters['apartament/selectat'].etaj
+    default: g => g['etaj/selectat'].etaj,
+    value: g => g['apartament/selectat'].etaj
   },
   {
     id: 'bloc',
     required: true,
     notInForm: true,
-    default: getters => getters['etaj/selectat'].bloc,
-    value: getters => getters['apartament/selectat'].bloc
+    default: g => g['etaj/selectat'].bloc,
+    value: g => g['apartament/selectat'].bloc
   },
   {
     id: 'scara',
     type: 'number',
     required: true,
     notInForm: true,
-    default: getters => getters['etaj/selectat'].scara,
-    value: getters => getters['apartament/selectat'].scara
+    default: g => g['etaj/selectat'].scara,
+    value: g => g['apartament/selectat'].scara
   },
   {
     id: 'balanta',
     type: 'bani',
     default: null,
-    value: getters => getters['apartament/selectat'].balanta
+    value: g => g['apartament/selectat'].balanta
   },
   {
     id: 'contoare',
     type: 'contoare',
-    value: getters => getters['apartament/selectat'].contoare
+    value: g => g['apartament/selectat'].contoare
   },
   {
     id: 'incasari',

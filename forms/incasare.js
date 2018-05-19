@@ -12,12 +12,7 @@ export const campuri = [
     index: true,
     label: 'defaults.sum'
   },
-  // {
-  //   id: 'apSelectat',
-  //   type: 'detaliiApSelectat',
-  //   label: 'defaults.apSelectat',
-  //   notInDb: true
-  // },
+  // TODO: adauga moneda, si la cheltuieli
   {
     id: 'la',
     index: true,

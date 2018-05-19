@@ -214,6 +214,10 @@ export default {
     overflow auto
     max-height 360px
 
+  .field
+    &[data-type="checkbox"]
+      margin 0
+
 .check
   &__apartament
     input[type="checkbox"]:checked

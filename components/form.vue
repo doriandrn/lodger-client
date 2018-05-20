@@ -45,6 +45,13 @@ form.form(@submit.prevent="handleSubmit(formName)")
 
   split.actions(v-if="formData.actiuni")
     buton(
+      v-if= "formData.$for === 'apartament' && $store.getters['apartament/selectat']._id"
+      size= "small"
+      styl= "unstyled"
+      icon= "trash"
+      dangerous
+    ) {{ $t('defaults.sterge') }}
+    buton(
       type= "submit",
       size= "large"
       icon= "plus-circle"

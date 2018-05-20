@@ -187,7 +187,7 @@ export default {
         const icon = (k => {
           if (k === 'suprafata') return 'square'
         })(k)
-        content += `<li ${icon ? `data-icon="${icon}"` : ''} data-type="${k}">${k === 'proprietar' ? `<h6>${tooltip[k]}</h6>` : tooltip[k]}</li>`
+        if (tooltip[k] !== undefined) content += `<li ${icon ? `data-icon="${icon}"` : ''} data-type="${k}">${k === 'proprietar' ? `<h6>${tooltip[k]}</h6>` : tooltip[k]}</li>`
       })
       content = `<ul class="tooltip__list">${ content }</ul>`
       return content

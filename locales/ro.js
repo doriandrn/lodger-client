@@ -234,7 +234,8 @@ export default {
     optional: 'opțional',
     search: 'Caută',
     sum: 'Suma',
-    settings: 'Setări'
+    settings: 'Setări',
+    sterge: 'Șterge'
   },
   scara: {
     _articulat: 'Scara',

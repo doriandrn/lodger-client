@@ -8,6 +8,7 @@ export const campuri = [
   {
     id: 'nume',
     placeholder: 'ex. M11, COCOR-2, A3...',
+    transform: 'uppercase:all',
     type: 'text',
     required: true,
     focus: true,
@@ -18,7 +19,9 @@ export const campuri = [
     type: 'scari',
     default: [{
       id: 1,
-      etaje: 4
+      etaje: 4,
+      lift: false,
+      mansarda: false
     }],
     value: g => g['bloc/selectat'].scari
   },

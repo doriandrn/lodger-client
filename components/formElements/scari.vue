@@ -97,7 +97,7 @@ export default {
     },
     // TODO: implementeaza
     scaraAreApartamente (id) {
-      this.debug('scara `${id}` are apartamente', true)
+      this.debug(`scara ${id} are apartamente NEIMPL`, true)
       return true
     },
     etaje (i, cuMansarda) {

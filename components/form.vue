@@ -202,12 +202,13 @@ export default {
       const manipulatedData = {}
       Object.keys($data).forEach(what => {
         let value = $data[what]
-         // adauga data la indecsii numiti 'la'
+         // TODO: adauga data la indecsii numiti 'la'
         if (what === 'la') value = Date.now()
         if (value === null || value === 'undefined') return
 
         manipulatedData[what] = value
       })
+      // TODO: verifica daca s-a schimbat ceva, altfel n-are sens sa apelezi confirmu
       debug('Final form data, submitted: ', manipulatedData)
       this[confirm](manipulatedData)
       this.modalClose()

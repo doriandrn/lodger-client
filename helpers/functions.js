@@ -23,8 +23,8 @@ export const spleet = str => {
  * @param {*} filters  the object containing the filters ($options.filters)
  */
 export const transformOnInput = (filtersList, value, filters, debug) => {
-  if (!filtersList) return
   let val = value
+  if (!filtersList) return val
   const _filters = filtersList.split('|')
   _filters.forEach(_filter => {
     let filter = _filter

@@ -10,17 +10,16 @@ export const campuri = [
     type: 'number',
     default: g => {
       //TODO: numerotare pentru hoteluri, 101 et 1, 201 et 2
-      const bloc = g['etaj/selectat'].bloc
+      const { apartamente } = g['bloc/selectat']
+      if (!apartamente || !apartamente.length) return 1
 
-      if (!bloc) return 1
-      const ultimulApAdaugat = g['apartament/ultim']
+      // TODO: asta e pt hoteluri, daca toate ap de pe etaj la scara
+      const sortate = apartamente
+        .map(ap => g.apartamente[ap].nr)
+        .sort((a, b) => Number(a) - Number(b))
+        .reverse()
 
-      if (!ultimulApAdaugat || bloc !== ultimulApAdaugat.bloc) {
-        const apsBloc = Object.values(g.apartamente).filter(ap => ap.bloc === bloc)
-        if (!apsBloc || !apsBloc.length) return 1
-        return Number(apsBloc.sort((a, b) => a.nr > b.nr).reverse()[0].nr) + 1
-      }
-      return Number(ultimulApAdaugat.nr) + 1
+      return sortate[0] + 1
     },
     value: g => g['apartament/selectat'].nr,
     required: true
@@ -29,6 +28,7 @@ export const campuri = [
     id: 'proprietar',
     placeholder: 'Ion Barbu',
     transform: 'capitalize',
+    v: 'alpha_spaces',
     value: g => g['apartament/selectat'].proprietar
   },
   {

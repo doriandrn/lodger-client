@@ -25,19 +25,19 @@ swiper.blocuri(
 
       icon-only
     ) {{ $t('bloc.new.title') }}
-  buton.urm.blocuri__nav(
-    slot=     "button-next"
-    arrow=    "right"
-    styl=     "unstyled",
-    rounded
-  ) {{ $t('bloc.urmator') }}
+  //- buton.urm.blocuri__nav(
+  //-   slot=     "button-next"
+  //-   arrow=    "right"
+  //-   styl=     "unstyled",
+  //-   rounded
+  //- ) {{ $t('bloc.urmator') }}
 
-  buton.ant.blocuri__nav(
-    slot=     "button-prev"
-    arrow=    "left"
-    styl=     "unstyled",
-    rounded
-  ) {{ $t('bloc.anterior') }}
+  //- buton.ant.blocuri__nav(
+  //-   slot=     "button-prev"
+  //-   arrow=    "left"
+  //-   styl=     "unstyled",
+  //-   rounded
+  //- ) {{ $t('bloc.anterior') }}
 
 .blocuri(v-else)
   bloc(
@@ -76,6 +76,10 @@ export default {
           },
           slideChangeTransitionStart: () => {
             this.swiperIndexBlocActiv = index
+            this.selecteazaBloc({ id: this.idsBlocuri[index], modificabil: false })
+          },
+          init: () => {
+            this.selecteazaBloc({ id: this.idsBlocuri[this.swiperIndexBlocActiv], modificabil: false})
           }
         },
         // pagination: {
@@ -120,7 +124,8 @@ export default {
   methods: {
     ...mapActions({
       openModal: 'modal/open',
-      stergeBloc: 'bloc/sterge'
+      stergeBloc: 'bloc/sterge',
+      selecteazaBloc: 'bloc/selecteaza'
     })
   },
   props: {
@@ -180,19 +185,20 @@ drkr = rgba(black, .05)
   +above(l)
     margin-bottom 32px
 
-  &:before
-    content ''
-    position fixed 48px 0 0
-    background: linear-gradient(to right, drkr 0%, transparent 15%, transparent 85%, drkr 100%)
-    z-index 5
-    pointer-events none
-    border-top-radius 50%
+  // &:before
+  //   content ''
+  //   position fixed 48px 0 0
+  //   background: linear-gradient(to right, drkr 0%, transparent 15%, transparent 85%, drkr 100%)
+  //   z-index 5
+  //   pointer-events none
+  //   border-top-radius 50%
 
   &:after
     content ''
     position absolute
     bottom 1px
     left -100%
+    z-index 1
     right - 100%
     background: config.palette.borders
     height 1px

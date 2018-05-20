@@ -11,7 +11,7 @@
         :label= "blocuri[bId].nume"
         :key=   "bId"
         :id=    "bId"
-        @change= "selecteazaToate(aparts(bId), $event)"
+        @input= "selecteazaToate(aparts(bId), $event)"
         :checked= "toateApsSel(aparts(bId))"
         required= true
       )
@@ -22,7 +22,7 @@
             :key=   "scara",
             :label= "`${$t('scara._articulat')} ${scara}`"
             :id=    "`${bId}:${scara}`"
-            @change= "selecteazaToate(aparts(bId, i), $event)"
+            @input= "selecteazaToate(aparts(bId, i), $event)"
             :checked= "toateApsSel(aparts(bId, i))"
             required= true
           )
@@ -33,7 +33,7 @@
                 :key=   "etaj",
                 :id=    "`${bId}:${scara}:${etaj}`"
                 :label= "`${$t('bloc.etajul')} ${etaj}`"
-                @change= "selecteazaToate(aparts(bId, i, etaj), $event)"
+                @input= "selecteazaToate(aparts(bId, i, etaj), $event)"
                 :checked= "toateApsSel(aparts(bId, i, etaj))"
                 required= true
               )
@@ -44,7 +44,7 @@
                     :key=   "ap._id"
                     :id=    "ap._id"
                     :checked= "value.indexOf(ap._id) > -1"
-                    @change=  "selecteaza(ap._id, $event)"
+                    @input=  "selecteaza(ap._id, $event)"
                     :label= "`${ap.nr}. ${ap.proprietar}`"
                     required= true
                   )

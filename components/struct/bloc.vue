@@ -247,6 +247,7 @@ colors = config.palette
 
       > button
         width 100%
+        max-width 100%
         flex 1 1 100%
         padding 8px
         border-radius 0

@@ -180,7 +180,7 @@ export default {
       if (!tooltip) return
 
       const { text } = this.$slots.default[0]
-      debug('tooltip type: ', typeof tooltip)
+      // debug('tooltip type: ', typeof tooltip)
       if (typeof tooltip === 'boolean') return text
       let content = ''
       Object.keys(tooltip).forEach(k => {

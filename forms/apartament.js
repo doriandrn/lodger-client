@@ -51,6 +51,7 @@ export const campuri = [
   {
     id: 'proprietar',
     placeholder: 'Ion Barbu',
+    transform: 'capitalize',
     value: g => g['apartament/selectat'].proprietar
   },
   {

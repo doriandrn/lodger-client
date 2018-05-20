@@ -144,6 +144,7 @@ import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 
 import { get_bigrams, string_similarity } from 'helpers/search'
+import { transformOnInput } from 'helpers/functions'
 import { mixin as clickaway } from 'vue-clickaway'
 import { mapActions, mapGetters } from 'vuex'
 
@@ -451,7 +452,7 @@ export default {
 
     handleInput (e) {
       let { value, type } = e.target
-      const { search, transform, debug } = this
+      const { search, transform, debug, $options: { filters } } = this
 
       switch (type) {
         case 'search':
@@ -469,12 +470,7 @@ export default {
           break
 
         case 'text':
-          if (transform) {
-            debug(this, transform)
-            const filter = this.$options.filters[transform]
-            if (filter && typeof filter === 'function')
-              value = filter(value)
-          }
+          value = transformOnInput(transform, value, filters, debug)
           break
       }
 

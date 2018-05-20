@@ -23,6 +23,13 @@ export const actions = {
 export const getters = {
   selectat: (state, getters, rootState, rootGetters) => {
     const { id } = state.selectat
-    return rootGetters.blocuri[id] || {}
+    let bloc = rootGetters.blocuri[id] || {}
+    const { _id } = bloc
+    if (!_id) return bloc
+    Object.assign(bloc, {
+      apartamente: rootState.apartamente.filter(ap => ap.bloc === _id).map(ap => ap._id)
+    })
+
+    return bloc
   }
 }

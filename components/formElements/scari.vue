@@ -4,16 +4,15 @@ ul.scari.zebra
     v-for=          "scara, i in scari"
     :data-mansarda= "scara.mansarda"
   )
-    label.label Scara
-      field.scari__id(
-        :id=          "`id-${i}`",
-        type=         "text"
-        label=        "scara.new.name",
-        v-model=      "scara.id"
-        :required=    "true",
-        @input=       "$emit('input', scari)"
-        :hide-label=  "i > 0"
-      )
+    field.scari__id(
+      :id=          "`id-${i}`",
+      type=         "text"
+      label=        "scara.new.name",
+      v-model=      "scara.id"
+      :required=    "true",
+      @input=       "$emit('input', scari)"
+      :hide-label=  "i > 0"
+    )
 
     field(
       :id=          "`scara-${i}`", 
@@ -24,6 +23,8 @@ ul.scari.zebra
       @input=       "schimbaEtaje(scara, $event, scara.mansarda)"
       :value=       "etaje(i, scara.mansarda)"
       :hide-label=  "i > 0"
+      :min=         "ultimulEtajDinScaraCuApartamente(i, scara.mansarda)"
+      :max=          "124"
     )
     
     field(
@@ -50,11 +51,15 @@ ul.scari.zebra
       styl=         "unstyled"
       icon-only
       tooltip
-    ) {{ $t('bloc.scara.sterge') }}
+    ) {{ $t('scara.sterge') }}
   buton(
+    v-if=     "scari.length < 14"
     size=     "small"
+    icon=     "plus"
     @click=   "scari.push({ id: scari.length + 1, etaje: 1, lift: false, mansarda: false })"
-  ) adauga scara
+    icon-only
+    tooltip
+  ) {{ $t('scara.new.title') }}
 </template>
 
 <script>
@@ -95,10 +100,8 @@ export default {
     stergeScara (id) {
       this.debug('stergescara', id)
     },
-    // TODO: implementeaza
     scaraAreApartamente (id) {
-      this.debug(`scara ${id} are apartamente NEIMPL`, true)
-      return true
+      return this.ultimulEtajDinScaraCuApartamente(id) > -1
     },
     etaje (i, cuMansarda) {
       const { value } = this
@@ -111,6 +114,22 @@ export default {
       debug('schimbaEtaje', val)
       scara.etaje = cuMansarda ? Number(val) + 1 : Number(val)
       this.$emit('input', this.scari)
+    },
+    ultimulEtajDinScaraCuApartamente (index, cuMansarda) {
+      const { scari } = this
+      const { apartamente } = this.$store.getters['bloc/selectat']
+      if (!apartamente || !apartamente.length) return -1
+      const etaje = []
+      apartamente.forEach(apId => {
+        const { etaj, scara } = this.$store.getters.apartamente[apId]
+        if (scara !== index) return
+        if (etaje.indexOf(etaj) > -1) return
+        etaje.push(etaj)
+      })
+
+      const max = etaje.sort((a, b) => Number(b) > Number(a))[0]
+
+      return cuMansarda ? max - 1 : max
     }
   },
   props: {
@@ -153,12 +172,12 @@ export default {
   flex-flow column nowrap
 
   &__id
-    max-width 53px
+    max-width 108px
 
   > li
     display flex
     margin 0 -20px
-    padding 0 12px
+    padding 4px 12px
     flex-flow row nowrap
     flex 0 0 100%
     align-items center
@@ -172,7 +191,7 @@ export default {
         &:before
           content '+ M'
           position absolute
-          left 16px
+          right 0
           bottom 9px
           z-index 0
           pointer-events none

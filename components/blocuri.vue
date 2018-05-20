@@ -174,6 +174,8 @@ drkr = rgba(black, .05)
     &-slide
       width auto
       display flex
+      max-width 100%
+      overflow auto
 
   +above(l)
     margin-bottom 32px

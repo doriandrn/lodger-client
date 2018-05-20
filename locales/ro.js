@@ -239,8 +239,10 @@ export default {
   scara: {
     _articulat: 'Scara',
     new: {
-      name: 'Id'
+      name: 'Id',
+      title: 'Adaugă scară'
     },
+    sterge: 'Șterge scara',
     lift: 'Ascensor',
     mansarda: 'Mansardă'
   },

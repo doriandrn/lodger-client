@@ -26,6 +26,12 @@ export const campuri = [
     required: true
   },
   {
+    id: 'proprietar',
+    placeholder: 'Ion Barbu',
+    transform: 'capitalize',
+    value: g => g['apartament/selectat'].proprietar
+  },
+  {
     id: 'suprafata',
     type: 'number',
     default: null, // TODO: ia de la apartamentul de la etajul de dedesubt, in functie de cate ap sunt
@@ -47,12 +53,6 @@ export const campuri = [
     max: 12,
     min: 1,
     value: g => g['apartament/selectat'].camere
-  },
-  {
-    id: 'proprietar',
-    placeholder: 'Ion Barbu',
-    transform: 'capitalize',
-    value: g => g['apartament/selectat'].proprietar
   },
   {
     id: 'etaj',

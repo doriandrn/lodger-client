@@ -25,7 +25,7 @@
     v-if=   "bloc.scari && bloc.scari.length > 0"
   )
     li(v-for="scara, iScara in bloc.scari")
-      label.nume Scara {{ scara.id }}
+      label.nume {{ scara.id }}
       .scara(
         :data-lift=       "scara.lift"
         :data-mansarda=   "scara.mansarda"

@@ -98,8 +98,8 @@ lrPad = 32px
 
   &__content
     position relative
-    flex 1 1 50%
-    overflow visible
+    flex 1 1 100%
+    overflow auto
     padding 20px
 
     +above(xl)
@@ -131,6 +131,10 @@ lrPad = 32px
 
         input[type="submit"]
           min-width 120px
+
+  $.overflow
+    .modal__content
+      overflow visible
 
   &__footer
   &__header

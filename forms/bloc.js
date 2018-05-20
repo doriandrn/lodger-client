@@ -11,6 +11,7 @@ export const campuri = [
     transform: 'uppercase:all',
     type: 'text',
     required: true,
+    v: 'min:1|max:20',
     focus: true,
     value: g => g['bloc/selectat'].nume
   },

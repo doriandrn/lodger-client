@@ -713,7 +713,7 @@ input[type="checkbox"]
 
     > label
       font-weight 600
-      margin-bottom 16px
+      margin-bottom 32px
       flex 0 0 14px
       align-self flex-start
 

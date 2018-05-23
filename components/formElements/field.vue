@@ -425,7 +425,7 @@ export default {
         }
 
         results[tax] = results[tax]
-          .sort((a, b) => a.relevance > b.relevance)
+          .sort((a, b) => Number(a.relevance) - Number(b.relevance))
           .reverse()
           .slice(0, 6)
       })

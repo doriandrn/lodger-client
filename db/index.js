@@ -1,5 +1,5 @@
 import * as RxDB from 'rxdb'
-import { remoteURL } from 'config'
+import { remoteURL } from 'cfg'
 import Debug from 'debug'
 
 const debug = Debug('lodger:DB')

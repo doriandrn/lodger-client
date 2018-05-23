@@ -5,32 +5,45 @@
     ul
       li(
         v-for=    "res, i in results[tax]"
-        :class=   "{ selected: i === selectedIndex, irelevant: res.relevance < 0.25 }"
+        v-if=     "res.relevance > sugestiiSubRelevanta"
+        :data-sel=   "i === selectedIndex"
         @click=   "$emit('selecteaza', { id: res.id, tax })"
       )
-        apartament(
+        split(
           v-if=     "tax === 'apartamente'"
-          :key=     "i"
-          :apId=    "res.id"
+          v-tooltip=  "'nume n shit'"
         )
-        bani.restanta(
-          v-if=       "modalContent === 'incasare.new' && tax === 'apartamente'"
-          :valoare=   "aps[res.id].balanta"
-        )
+          apartament(
+            :key=     "i"
+            :apId=    "res.id"
+            clickabil=false
+          )
+          bani.restanta(
+            slot=       "right"
+            v-if=       "modalContent === 'incasare.new' && tax === 'apartamente'"
+            :valoare=   "aps[res.id].balanta"
+          )
         furnizor(
           v-if= "tax === 'furnizori'"
           :key= "res.id"
           :id=  "res.id"
         )
+
 </template>
 
 <script>
 import bani from '~components/bani'
 import apartament from 'struct/apartament'
 import furnizor from '~components/furnizor'
+import split from '~components/split'
 import { mapGetters } from 'vuex'
 
 export default {
+  data () {
+    return {
+      sugestiiSubRelevanta: .05
+    }
+  },
   computed: mapGetters({
     modalContent: 'modal/content',
     aps: 'apartamente'
@@ -48,7 +61,8 @@ export default {
   components: {
     apartament,
     bani,
-    furnizor
+    furnizor,
+    split
   }
 }
 </script>
@@ -99,9 +113,9 @@ spacings = 16px
         display flex
         flex-flow row nowrap
         position relative
+        cursor pointer
 
-        > a
-        > span
+        > *
           flex 1 0 100%
           padding: (spacings/2) (spacings*1.5)
           text-transform capitalize
@@ -115,7 +129,7 @@ spacings = 16px
 
           &:hover
             color: config.typography.palette.headings
-            background-color: config.palette.highlight
+            background-color: config.palette.selectedItem
 
         &.irelevant
           > a

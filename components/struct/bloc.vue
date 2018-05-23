@@ -2,24 +2,10 @@
 .bloc(
   :class= "{ ultimul, nenavigabil: !navigabil }"
 )
-  .bloc__heading
-    h4.bloc__title {{ bloc.nume }}
-    .bloc__actiuni(v-if="modificabil")
-      buton(
-        styl=     "unstyled"
-        icon=     "edit"
-        icon-only
-        @click=   "selecteazaBloc({ id: bloc._id, modificabil })"
-        tooltip
-      ) {{ $t('bloc.edit.title') }}
-      buton(
-        styl=     "unstyled"
-        @click=   "stergeBloc(bloc._id)"
-        icon=     "trash"
-        icon-only
-        tooltip
-        dangerous
-      ) {{ $t('bloc.delete') }}
+  headingBloc(
+    v-if=   "showHeading"
+    :bloc=  "bloc"
+  )
 
   ol.scari(
     v-if=   "bloc.scari && bloc.scari.length > 0"
@@ -59,6 +45,7 @@
 <script>
 import buton from 'form/button'
 import { mapGetters, mapActions } from 'vuex'
+import headingBloc from 'cc/headingActiuniBloc'
 
 export default {
   props: {
@@ -78,6 +65,10 @@ export default {
       default: true
     },
     ultimul: {
+      type: Boolean,
+      default: false
+    },
+    showHeading: {
       type: Boolean,
       default: false
     }
@@ -102,7 +93,8 @@ export default {
     })
   },
   components: {
-    buton
+    buton,
+    headingBloc
   }
 }
 </script>

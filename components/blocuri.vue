@@ -1,62 +1,65 @@
 <template lang="pug">
-swiper.blocuri(
-  v-if=       "layout === 'interactiv'"
-  ref=        "blocuriSwiper"
-  :options=   "swiperOpts"
-)
-  swiper-slide(
-    v-for=      "bloc, blocId in blocuri",
-    :key=       "blocId",
-    :data-nume= "bloc.nume"
+.blocuri__container
+  bloc-heading
+  swiper.blocuri(
+    v-if=       "layout === 'interactiv'"
+    ref=        "blocuriSwiper"
+    :options=   "swiperOpts"
   )
-    bloc(
-      :id=      "blocId",
-      :ultimul= "blocId === ultimulBlocAdaugat"
-      :navigabil = "blocId === activ"
-      :modificabil= "blocId === activ"
+    swiper-slide(
+      v-for=      "bloc, blocId in blocuri",
+      :key=       "blocId",
+      :data-nume= "bloc.nume"
     )
-  .swiper-slide(
-    v-if=   "modificabile"
-  )
-    buton.bloc__add(
-      icon=   "plus-circle",
-      @click= "openModal('bloc.new')"
-      size=   "medium"
+      bloc(
+        :id=          "blocId",
+        :ultimul=     "blocId === ultimulBlocAdaugat"
+        :navigabil =  "blocId === activ"
+        :modificabil= "blocId === activ"
+      )
+    .swiper-slide(
+      v-if=   "modificabile"
+    )
+      buton.bloc__add(
+        icon=   "plus-circle",
+        @click= "openModal('bloc.new')"
+        size=   "medium"
 
-      icon-only
-    ) {{ $t('bloc.new.title') }}
-  //- buton.urm.blocuri__nav(
-  //-   slot=     "button-next"
-  //-   arrow=    "right"
-  //-   styl=     "unstyled",
-  //-   rounded
-  //- ) {{ $t('bloc.urmator') }}
+        icon-only
+      ) {{ $t('bloc.new.title') }}
+    //- buton.urm.blocuri__nav(
+    //-   slot=     "button-next"
+    //-   arrow=    "right"
+    //-   styl=     "unstyled",
+    //-   rounded
+    //- ) {{ $t('bloc.urmator') }}
 
-  //- buton.ant.blocuri__nav(
-  //-   slot=     "button-prev"
-  //-   arrow=    "left"
-  //-   styl=     "unstyled",
-  //-   rounded
-  //- ) {{ $t('bloc.anterior') }}
+    //- buton.ant.blocuri__nav(
+    //-   slot=     "button-prev"
+    //-   arrow=    "left"
+    //-   styl=     "unstyled",
+    //-   rounded
+    //- ) {{ $t('bloc.anterior') }}
 
-.blocuri(v-else)
-  bloc(
-    v-for=    "bloc, blocId in blocuri"
-    :id=      "blocId",
-    :key=     "blocId"
-    :ultimul= "blocId === ultimulBlocAdaugat"
-    modificabil
-  )
+  .blocuri(v-else)
+    bloc(
+      v-for=    "bloc, blocId in blocuri"
+      :id=      "blocId",
+      :key=     "blocId"
+      :ultimul= "blocId === ultimulBlocAdaugat"
+      modificabil
+    )
 
-  //- .blocuri__tabs(slot="pagination")
-  //-   .blocuri__list
-  
+    //- .blocuri__tabs(slot="pagination")
+    //-   .blocuri__list
+    
 
 </template>
 
 <script>
 import bloc from 'struct/bloc'
 import buton from 'form/button'
+import blocHeading from 'cc/headingActiuniBloc'
 
 import { mapActions, mapGetters } from 'vuex'
 
@@ -140,7 +143,8 @@ export default {
   },
   components: {
     bloc,
-    buton
+    buton,
+    blocHeading
   }
 }
 </script>
@@ -168,6 +172,13 @@ drkr = rgba(black, .05)
   // border-bottom: 1px solid config.palette.borders
   // margin: -(config.spacings.inBoxes)
 
+  +above(l)
+    margin-bottom 32px
+
+  &__container
+    display flex
+    flex-flow column nowrap
+
   .bloc
     margin 0 32px
     flex 1 1 100%
@@ -182,8 +193,7 @@ drkr = rgba(black, .05)
       max-width 100%
       overflow auto
 
-  +above(l)
-    margin-bottom 32px
+  
 
   // &:before
   //   content ''

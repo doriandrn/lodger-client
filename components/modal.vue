@@ -1,7 +1,7 @@
 <template lang="pug">
 transition(name="modal")
   .modal(
-    :class= "{'modal--hasFooter': $slots.footer }"
+    :class= "{'modal--hasFooter': $slots.footer, overflow: shouldOverflow }"
     v-focus
   )
     .modal__backdrop(@click="inchide")
@@ -25,9 +25,14 @@ export default {
   methods: mapActions({
     inchide: 'modal/close'
   }),
-  computed: mapGetters({
-    modalContent: 'modal/content'
-  }),
+  computed: {
+    shouldOverflow () {
+      return this.modalContent === 'incasare.new'
+    },
+    ...mapGetters({
+      modalContent: 'modal/content'
+    })
+  },
   directives: {
     focus: {
       componentUpdated: (el, binding) => {
@@ -140,7 +145,7 @@ lrPad = 32px
         input[type="submit"]
           min-width 120px
 
-  $.overflow
+  &.overflow
     .modal__content
       overflow visible
 

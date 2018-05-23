@@ -160,8 +160,7 @@ export default {
       actiuni: ['Încearcă recuperarea lui', 'Mergi la panoul de control', 'Adaugă un apartament']
     },
     adaugat: {
-      h: 'Apartament adăugat!',
-      p: 'Apartamentul [nume] a fost adăugat la blocul asta! bla balbalbla lbal blalbalblalb alb lalb alblalblal bla.'
+      h: 'Apartament adăugat!'
     },
     updatat: {
       h: 'Apartament actualizat!'

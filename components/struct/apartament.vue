@@ -1,9 +1,17 @@
 <template lang="pug">
-nuxt-link.apartament(:to="`/apartament/${id}`")
+nuxt-link.apartament(
+  v-if= "clickabil"
+  :to=  "`/apartament/${id}`"
+)
   nuxt-link.apartament__adresa(
     v-if= "bloc",
     :to=  "`/bloc/${bloc._id}`"
   ) {{ bloc.nume }} / {{ scara }} ({{ etaj }})
+  .apartament__detalii
+    span.ap__nr(v-if="nrAp") {{ nrAp }} 
+    span.nume.proprietar {{ proprietar }}
+span.apartament(v-else)
+  span.apartament__adresa(v-if="bloc") {{ bloc.nume }} / {{ scara }} ({{ etaj }})
   .apartament__detalii
     span.ap__nr(v-if="nrAp") {{ nrAp }} 
     span.nume.proprietar {{ proprietar }}
@@ -46,28 +54,11 @@ export default {
       type: String,
       required: true,
       default: null
+    },
+    clickabil: {
+      type: Boolean,
+      default: false
     }
-    // bloc: {
-    //   type: Object,
-    //   default () {
-    //     return {
-    //       '_id': -1,
-    //       nume: 'Nedefinit'
-    //     }
-    //   }
-    // },
-    // scara: {
-    //   type: String,
-    //   default: null
-    // },
-    // etaj: {
-    //   type: Number,
-    //   default: 0
-    // },
-    // nrAp: {
-    //   type: String,
-    //   default: null
-    // }
   }
 }
 </script>

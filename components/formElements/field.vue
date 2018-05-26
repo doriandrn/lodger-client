@@ -488,8 +488,11 @@ export default {
       }
 
       debug(e.target.value, type, e)
-      // this.$emit('change', e)
-      this.$emit('input', value)
+      if (['radio', 'checkbox'].indexOf(type) > -1) {
+        this.$emit('input', value)
+        return
+      }
+      this.$emit('change', e)
     },
 
     clickAway () {

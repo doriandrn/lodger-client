@@ -45,7 +45,7 @@ form.form(@submit.prevent="handleSubmit(formName)")
 
   split.actions(v-if="formData.actiuni")
     buton(
-      v-if= "formData.$for === 'apartament' && $store.getters['apartament/selectat']._id"
+      v-if= "formData.$for === 'apartament' && $store.getters['apartament/selectat']"
       size= "small"
       styl= "unstyled"
       icon= "trash"
@@ -186,6 +186,7 @@ export default {
       if (!func) return
       const { value } = e.target
       if (value === 'undefined' || value === null) return
+      this.debug('yayo')
 
       const valid = this.validate(scope)
       if (!valid) {

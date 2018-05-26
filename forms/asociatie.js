@@ -1,24 +1,26 @@
 const getter = 'asociatie/activa'
+const modalOpen = 'modal/open'
+const modalContent = 'modal/content'
 
 const campuri = [
   {
     id: '_id',
     notInDb: true,
     notInForm: true,
-    value: g => g[getter]._id
+    value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter]._id,
   },
   {
     id: 'name',
     required: true,
     focus: true,
     index: true,
-    value: g => g[getter].name,
+    value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter].name,
     v: 'max:32|min:3',
     transform: 'capitalize'
   },
   {
     id: 'idN',
-    value: g => g[getter].idN
+    value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter].idN,
   },
   {
     id: 'balanta',

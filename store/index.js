@@ -12,7 +12,7 @@ import { sanitizeDBItems } from 'helpers/db'
 import { isRxDocument } from 'db'
 
 const debug = Debug('lodger:rxstore')
-
+debug('process', process)
 /**
   Subscriberii la actiunile din DB
 */
@@ -47,36 +47,64 @@ const dbKeys = {
 }
 
 /**
+ * Metode share-uite pentru toate colectiile
+ */
+const metodeComune = {
+  defaults: {
+    selecteaza: 'selectat',
+    set_ultim: 'ultim'
+  },
+  db: {
+    adauga: 'adaugat',
+    sterge: 'sters',
+    updateaza: 'updatat',
+    set_activ: 'activ'
+  }
+}
+
+let toateMetodele = []
+Object.values(metodeComune).forEach(metode => {
+  toateMetodele = toateMetodele.concat(Object.keys(metode))
+})
+
+debug('toateMetodele', toateMetodele)
+
+/**
  * Normalize DB items (based on defs) and pass them to store
 */
 defs.forEach((plural, singular) => {
-  const ADAUGA = `${singular}/ADAUGA`
-  const STERGE = `${singular}/STERGE`
-  const SET_ULTIM = `${singular}/SET_ULTIM`
-  const SET_ACTIV = `${singular}/SET_ACTIV`
-  const UNSET_ACTIV = `${singular}/UNSET_ACTIV`
-  const UPDATEAZA = `${singular}/UPDATEAZA`
+  const { defaults } = metodeComune
+  const mut = numeMetoda => `${singular}/${String(numeMetoda).toUpperCase()}`
+
+  toateMetodele
+    .forEach(numeMetoda => {
+      const mutatie = mut(numeMetoda)
+      const actiune = `${singular}/${numeMetoda}`
+
+      Object.assign(mutations, { [mutatie]: (state, params) => {} })
+      Object.assign(actions, { [actiune]: ({ commit }, data) => { commit(mutatie, data) } })
+    })
+
+  Object.keys(defaults).forEach(numeMetoda => {
+    const stat = `${singular}/${defaults[numeMetoda]}`
+    const mutatie = mut(numeMetoda)
+
+    Object.assign(_state, { [stat]: null })
+
+    mutations[mutatie] = (state, id) => {
+      state[stat] = id
+    }
+  })
 
   Object.assign(_state, {
-    [`${singular}/ultim`]: null,
     [plural]: []
   })
+
   Object.assign(mutations, {
     [updateMutationName(plural)]: (state, data) => state[plural] = data,
-    [ADAUGA]: (state, data) => {},
-    [STERGE]: (state, _id) => {},
-    [SET_ULTIM]: (state, _id) => { state[`${singular}/ultim`] = _id },
-    [SET_ACTIV]: (state, _id) => {},
-    [UPDATEAZA]: (state, camp) => {}
+    // [SET_ULTIM]: (state, _id) => { state[`${singular}/ultim`] = _id },
   })
-  Object.assign(actions, {
-    [`${singular}/adauga`]: ({ commit }, data) => { commit(ADAUGA, data) },
-    [`${singular}/sterge`]: ({ commit }, _id) => { commit(STERGE, _id) },
-    [`${singular}/set_activ`]: ({ commit }, _id) => { commit(SET_ACTIV, _id) },
-    [`${singular}/unset_activ`]: ({ commit }, _id) => { commit(UNSET_ACTIV, _id) },
-    [`${singular}/updateaza`]: ({ commit }, camp) => { commit(UPDATEAZA, camp) }
-    // [`${singular}/set_ultimul_adaugat`]: ({ commit }, _id) => { commit(SET_ULTIM, _id) }
-  })
+
   Object.assign(getters, {
     [`${singular}/ultim`]: state => state[`${singular}/ultim`],
     [plural]: state => {
@@ -98,9 +126,8 @@ Object.assign(_state, { active })
 // de exportat 
 const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
-
   const asociatie = isRxDocument(payload) ? payload : await db.asociatii.findOne().exec()
-  debug('sa: A', asociatie)
+
   if (!asociatie) return
   asociatieActiva = asociatie
   subscribe(ldgSchema.$asociatii)
@@ -114,14 +141,14 @@ const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
  */
 const unsubscribeDBsubscribers = subs => async ({ type }) => {
   if (type !== 'DESTROYMAIN') return
-  // TODO: nu e ok, trebuie luat fiecare cheie si apelat .unsubsribe() si dupa sters
+  // TODO: nu e ok, trebuie luata fiecare cheie si apelat .unsubsribe() si dupa sters
   subs = {}
 }
 
 const DBMethods = db => async ({ type, payload }) => {
   if (type.indexOf('/') < 0) return
   const { what, mutation } = spleet(type)
-  const col = db[defs.get(what)] // collection
+  const col = db[defs.get(what)]
   if (!col || !what) return
   debug('DBMethod:', type, payload)
   debug('-> asociatieActiva', asociatieActiva)

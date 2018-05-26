@@ -26,7 +26,7 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      tabs: ['asociatie', 'utilizator']
+      tabs: ['asociatie', 'utilizator', 'preferinte']
     }
   },
   components: {
@@ -39,8 +39,9 @@ export default {
       const form = require(`forms/${tab}.js`)
       if (!form) return
 
-      const setari = form.setari
-      if (!setari) return
+      const setari = { ...form.setari }
+      this.debug('setari', setari)
+      if (!setari || !form.campuri || form.campuri.length < 0) return
 
       setari.default = {
         campuri: form.campuri.filter(camp => !camp.notInForm)

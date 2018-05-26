@@ -26,6 +26,16 @@ export const campuri = [
   }
 ]
 
+export const metode = {
+  async UPDATEAZA(campuri) {
+    // TODO: nu permite updatarea anumitor chei
+    Object.keys(campuri).forEach(camp => {
+      this[camp] = campuri[camp]
+    })
+    await this.save()
+  }
+}
+
 export const setari = {
   online: {
     campuri: [

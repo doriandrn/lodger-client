@@ -6,7 +6,7 @@
       styl=     "unstyled"
       icon=     "edit"
       icon-only
-      @click=   "selecteazaBloc({ id: bloc._id, modificabil })"
+      @click=   "openModal('bloc.edit')"
       tooltip
     ) {{ $t('bloc.edit.title') }}
     buton(
@@ -21,6 +21,8 @@
 
 <script>
 import buton from 'form/button'
+import { mapActions } from 'vuex'
+
 export default {
   components: {
     buton
@@ -36,6 +38,12 @@ export default {
       type: Boolean,
       default: true
     }
+  },
+  methods: {
+    ...mapActions({
+      selecteazaBloc: 'bloc/selecteaza',
+      openModal: 'modal/open'
+    })
   }
 }
 </script>

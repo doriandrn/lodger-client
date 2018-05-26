@@ -222,6 +222,7 @@ export default {
       confirm: 'Șterge',
       cancel: 'Nu chiar'
     },
+    preferinte: 'Preferințe',
     forms: {
       add: 'Adaugă',
       edit: 'Modifică'

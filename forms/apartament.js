@@ -77,6 +77,7 @@ export const campuri = [
     default: g => g['etaj/selectat'].scara,
     value: g => g['apartament/selectat'].scara
   },
+  // TODO: fa-l required la urmatorul change de db
   {
     id: 'balanta',
     type: 'bani',

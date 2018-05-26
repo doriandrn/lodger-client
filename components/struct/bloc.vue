@@ -24,7 +24,7 @@
               data-for=   "ap"
               @keyUp=     "debug('butonsus')"
               :class=     "{ ultimul: ap._id === ultimulApAdaugat}"
-              @click=     "selecteazaAp({ id: ap._id, modificabil })"
+              @click=     "selecteazaAp(ap._id); if (modificabil) openModal('apartament.edit')"
               :tooltip=   "apTooltip(ap._id)"
               :disabled=  "!navigabil"
             ) {{ ap.proprietar }}
@@ -87,7 +87,6 @@ export default {
   methods: {
     ...mapActions({
       openModal: 'modal/open',
-      selecteazaBloc: 'bloc/selecteaza',
       selecteazaEtaj: 'etaj/selecteaza',
       selecteazaAp: 'apartament/selecteaza'
     })

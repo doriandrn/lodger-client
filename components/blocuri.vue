@@ -79,10 +79,10 @@ export default {
           },
           slideChangeTransitionStart: () => {
             this.swiperIndexBlocActiv = index
-            this.selecteazaBloc({ id: this.idsBlocuri[index], modificabil: false })
+            this.selecteazaBloc(this.idsBlocuri[index])
           },
           init: () => {
-            this.selecteazaBloc({ id: this.idsBlocuri[this.swiperIndexBlocActiv], modificabil: false})
+            this.selecteazaBloc(this.activ)
           }
         },
         // pagination: {

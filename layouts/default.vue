@@ -27,6 +27,7 @@
           nuxt-link(to="/dashboard") {{ $t( 'asociatie.init.title' ) }} - {{ $t( 'defaults.asociatia' ) }} {{ activa.name }}
 
     nuxt-link(
+      v-if=     "balanta"
       to=       "/registru"
       slot=     "right"
     )
@@ -145,10 +146,10 @@ export default {
           title: $t('navigation[1]'),
           url: '/liste'
         },
-        {
-          title: $t('navigation[2]'),
-          url: '/community'
-        }
+        // {
+        //   title: $t('navigation[2]'),
+        //   url: '/community'
+        // }
       ]
     }
   },
@@ -213,6 +214,9 @@ export default {
       })
       return selector
     },
+    balanta () {
+      return this.activa.balanta
+    },
     idAsociatieActiva: {
       get () { return this.activa._id },
       set (asocId) {
@@ -230,7 +234,6 @@ export default {
       blocuri: 'blocuri',
       idsAsociatii: 'asociatie/ids', 
       activa: 'asociatie/activa',
-      balanta: 'asociatie/balanta',
       apartamente: 'apartamente',
       modalOpen: 'modal/open',
       modalContent: 'modal/content',

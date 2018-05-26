@@ -57,12 +57,13 @@ export default (async function (dbdata) {
   // })
   // await insertPredefinedDocs(db)
 
-  collections
-    .filter(col => col.sync)
-    .map(col => col.name)
-    .map(colName => rdb[colName].sync({
-      remote: remoteURL + colName + '/'
-    }))
+  // TODO: activeaza la loc pt sync, ai server pe 10101 veziin package.json
+  // collections
+  //   .filter(col => col.sync)
+  //   .map(col => col.name)
+  //   .map(colName => rdb[colName].sync({
+  //     remote: remoteURL + colName + '/'
+  //   }))
 
   return rdb
 })()

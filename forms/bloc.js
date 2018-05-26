@@ -1,9 +1,11 @@
+const bs = 'bloc/selectat'
+
 export const campuri = [
   {
     id: '_id',
     notInDb: true,
     notInForm: true,
-    value: g => g['bloc/selectat']._id
+    value: g => g[bs]._id
   },
   {
     id: 'nume',
@@ -13,7 +15,7 @@ export const campuri = [
     required: true,
     v: 'min:1|max:20',
     focus: true,
-    value: g => g['bloc/selectat'].nume
+    value: g => g[bs].nume
   },
   {
     id: 'scari',
@@ -24,12 +26,12 @@ export const campuri = [
       lift: false,
       mansarda: false
     }],
-    value: g => g['bloc/selectat'].scari
+    value: g => g[bs].scari
   },
   {
     id: 'adresa',
     type: 'textarea',
-    value: g => g['bloc/selectat'].adresa
+    value: g => g[bs].adresa
   },
   {
     id: 'asociatieId',

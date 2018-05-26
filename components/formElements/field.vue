@@ -19,7 +19,7 @@
     :required=    "required",
     :min=         "type === 'number' ? min : null"
     :max=         "type === 'number' ? max : null"
-    :step=        "type === 'number' ? step : null"
+    :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
     :value=       "val",
     :checked=     "checked"
     @input=       "handleInput",

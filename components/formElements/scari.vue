@@ -105,6 +105,7 @@ export default {
     },
     etaje (i, cuMansarda) {
       const { value } = this
+      if (value === undefined) return
 
       if (cuMansarda) return Number(value[i].etaje) - 1
       return Number(value[i].etaje)
@@ -116,8 +117,10 @@ export default {
       this.$emit('input', this.scari)
     },
     ultimulEtajDinScaraCuApartamente (index, cuMansarda) {
-      const { scari } = this
-      const { apartamente } = this.$store.getters['bloc/selectat']
+      const { scari, $store: { getters } } = this
+      const blocActiv = getters['bloc/selectat']
+      if (!blocActiv) return
+      const { apartamente } = blocActiv
       if (!apartamente || !apartamente.length) return -1
       const etaje = []
       apartamente.forEach(apId => {

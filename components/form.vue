@@ -74,20 +74,33 @@ export default {
 
   data () {
     let dynamicFormData = {}
-    const { debug, $t, modalData, formData: { campuri, $for }} = this
-
+    const { debug, $t, formName, formData: { campuri, $for }} = this
     if (!campuri) return dynamicFormData
+    const isNewForm = formName.indexOf('.new') > 0
     
     // Label-uri pt campurile din modal + required validari
     campuri.forEach(camp => {
-      const { label, required, click } = camp
+      const { label, required, click, notInForm, notInDb } = camp
       let { id, value } = camp
       let _def = camp.default
 
       if (click && !id) camp.id = click
       
       // apply getters to funcs
-      if (typeof value === 'function') value = value(this.$store.getters)
+      if (isNewForm) {
+        debug('new form')
+        if (!notInForm || notInDb) value = null
+      }
+
+      if (typeof value === 'function') {
+        try {
+          value = value(this.$store.getters)
+        } catch (e) {
+          value = null
+          debug('no val ->', e)
+        }
+      }
+     
       if (typeof _def === 'function') _def = _def(this.$store.getters)
 
       // label
@@ -100,16 +113,6 @@ export default {
       dynamicFormData[id] = null
       dynamicFormData[id] = value !== null && value !== undefined ? value : _def
     })
-
-    // debug('campuri', campuri)
-
-    // data pasata prin modal
-    // if (typeof modalData === 'object' && modalData) {
-    //   Object.keys(modalData).forEach(data => {
-    //     if (modalData[data] === 'undefined' || modalData === null) return
-    //     dynamicFormData[data] = modalData[data]
-    //   })
-    // }
 
     return dynamicFormData
   },
@@ -186,7 +189,6 @@ export default {
       if (!func) return
       const { value } = e.target
       if (value === 'undefined' || value === null) return
-      this.debug('yayo')
 
       const valid = this.validate(scope)
       if (!valid) {

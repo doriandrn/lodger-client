@@ -213,6 +213,8 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
     const ss = `${what}.${payload._id ? 'updatat' : 'adaugat'}`
     const heading = `${ss}.h`
     const text = `${ss}.p`
+    // selecteaza un item dupa ce a fost adaugat / updatat
+    dispatch(`${what}/selecteaza`, payload._id || newItem._id)
     dispatch('notificare', {
       type: 'success',
       text: {
@@ -220,7 +222,6 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
         text
       }
     })
-    // notificari.success({ heading, text })
   } else {
     /**
     * DELETE

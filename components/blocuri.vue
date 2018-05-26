@@ -72,6 +72,7 @@ export default {
       swiperIndexBlocActiv: 0,
       swiperOpts: {
         slideActiveClass: 'activ',
+        slideToClickedSlide: true,
         on: {
           slideChange: function () {
             const { realIndex } = this
@@ -117,11 +118,28 @@ export default {
   computed: {
     ...mapGetters({
       idsBlocuri: 'bloc/ids',
+      blocSelectat: 'bloc/selectat',
       ultimulBlocAdaugat: 'bloc/ultim'
     }),
     activ () {
       const { idsBlocuri, swiperIndexBlocActiv } = this
       return idsBlocuri[swiperIndexBlocActiv]
+    }
+  },
+  watch: {
+    idsBlocuri (dupa, inainte) {
+      if (inainte === dupa) return
+      const { blocSelectat, activ, debug, layout } = this
+      if (!blocSelectat) return
+      if (layout !== 'interactiv') return
+      const { _id } = blocSelectat
+      if (!_id) return
+      if (activ === _id) return
+      debug('id-uri', activ, _id)
+      const { swiper } = this.$refs.blocuriSwiper
+      const newIndex = dupa.indexOf(_id)
+      swiper.slideTo(newIndex)
+      debug('sunt diferite, schimbat', newIndex, dupa)
     }
   },
   methods: {

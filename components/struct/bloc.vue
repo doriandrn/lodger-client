@@ -132,6 +132,11 @@ colors = config.palette
     text-align center
     margin-bottom 12px
 
+  &__add
+    min-width 160px
+    margin-top auto
+    margin-bottom 0
+
   &:not(.nenavigabil)
     .etaj
       &:hover
@@ -200,6 +205,7 @@ colors = config.palette
     &[data-lift]
       > ol.etaje
         margin-left 8px
+        border-left: 1px solid colors.borders
 
       &:before
         content ''

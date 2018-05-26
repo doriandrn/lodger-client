@@ -24,7 +24,7 @@
           nuxt-link(:to="item.url") {{ item.title }}
       ul(v-else)
         li
-          nuxt-link(to="/dashboard") {{ $t( 'asociatie.init.title' ) }} - {{ $t( 'defaults.asociatia' ) }} {{ activa.name }}
+          nuxt-link(to="/dashboard") {{ navInitializare }}
 
     nuxt-link(
       v-if=     "balanta"
@@ -81,7 +81,7 @@
       ) {{ $t('defaults.asociatie') }}
 
   main
-    nuxt(v-if=  "activa._id")
+    nuxt
 
   footr
     p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
@@ -213,6 +213,11 @@ export default {
         selector[asoc] = asociatii[asoc].name
       })
       return selector
+    },
+    navInitializare () {
+      const { $t, activa } = this
+      if (!activa || !activa._id) return $t('navigation[0]')
+      return `${ $t( 'asociatie.init.title' ) } - ${ $t( 'defaults.asociatia' ) } ${ activa.name }`
     },
     balanta () {
       return this.activa.balanta

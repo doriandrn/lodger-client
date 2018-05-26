@@ -4,9 +4,8 @@ export const state = () => ({
 })
 
 export const mutations = {
-  SCHIMBA_ACTIVA: (state, asocData) => {
-    state.activa = asocData._id
-    // state.$activa = data
+  SCHIMBA_ACTIVA: (state, id) => {
+    state.activa = id
   },
   DEFINESTE_STRUCTURA: (state) => {
     state.initializata = 0
@@ -24,17 +23,13 @@ export const actions = {
    *  schimba
    *  primeste id ca parametru si trimite toata asociatia pt mutatie -> pt store
    */
-  schimba ({ commit, dispatch, rootGetters }, asocId) {
+  schimba ({ commit, dispatch, getters }, asocId) {
     if (!asocId || typeof asocId !== 'string') {
-      console.error('asocid gresit', asocId)
+      debug('Nu am schimbat asociatia: asocId gresit:', asocId)
       return
     }
-    const asociatie = rootGetters.asociatii[asocId]
-    if (!asociatie) {
-      console.error(`Nicio asociatie gasita cu id-ul ${asocId}; Nu am schimbat`)
-      return
-    }
-    commit('SCHIMBA_ACTIVA', asociatie)
+
+    commit('SCHIMBA_ACTIVA', asocId)
   },
   initBalanta ({ commit }, data) { commit('initBalanta', data) },
   definesteStructura ({ commit }) {

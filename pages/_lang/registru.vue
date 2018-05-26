@@ -4,13 +4,13 @@ sction.registru(
 )
   split.registru__controale
     field(
-      v-for=  "optiune in optiuni",
+      v-for=    "optiune in optiuni",
       v-model=  "arata",
-      :key=   "optiune",
-      :id=    "optiune"
-      :name=   "optiune"
-      type=   "checkbox"
-      :label= "$t(`registru.${optiune}`)"
+      :key=     "optiune",
+      :id=      "optiune"
+      :name=    "optiune"
+      type=     "checkbox"
+      :label=   "$t(`registru.${optiune}`)"
       required= true
     )
     .filtre(
@@ -19,14 +19,16 @@ sction.registru(
       field(
         type=     "radios",
         label=    "sort.label"
-        required= true
         v-model=  "sortFilter"
         id=       "filtruSortare"
         :options=  "{ la: { label: 'sort.la' }, suma: { label: 'sort.suma' }, nrChintanta: { label: 'sort.nrChitanta' } }"
+        required= true
       )
 
   .registru__data
-    incasari(:incasari="incasari")
+    incasari(
+      :incasari="incasari"
+    )
     buton(
       v-if=   "_incasari && !incarcate"
       @click= "index++"
@@ -60,7 +62,7 @@ export default {
     }),
     findCriteria () {
       const { asociatieActiva } = this
-      return { asociatieId: asociatieActiva }
+      return { asociatieId: asociatieActiva._id }
     },
     sortCriteria () {
       const { sortFilter } = this

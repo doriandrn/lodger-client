@@ -249,7 +249,7 @@ export default {
   },
   erori: {
     'Error': 'Ne pare rău, a apărut o eroare :(',
-    '404': 'Această resursă este inaccesibilă',
+    '404': 'Resursă inaccesibilă',
     '500': 'Eroare de server',
     'TypeError': 'Dorian, învață să programezi!!',
     'ReferenceError': 'Dorian, învață să programezi!!',

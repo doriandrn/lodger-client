@@ -141,6 +141,7 @@ const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
  */
 const unsubscribeDBsubscribers = subs => async ({ type }) => {
   if (type !== 'DESTROYMAIN') return
+  debug('subscriberii la destrymain', subs)
   // TODO: nu e ok, trebuie luata fiecare cheie si apelat .unsubsribe() si dupa sters
   subs = {}
 }
@@ -272,16 +273,16 @@ function rxdb () {
 
         subs[o[key]._singular] = db[k].find(findCriteria(k)).$.subscribe(async items => {
           if (!items) return
-          if (!items.length) {
+          if (items.length < -1) {
             if (k === 'servicii') predefinite.forEach(async denumire => { await db[k].insert({ denumire }) })
+            return
           }
 
           commit(`set_${k}`, sanitizeDBItems(items))
 
           if (!asociatieActiva && k === 'asociatii') {
-            const { _id } = items[0]
-            debug('YAYAYOOOYOYOOYO', items[0])
-            commit('asociatie/SCHIMBA_ACTIVA', items[0])
+            const asociatie = items[0]
+            if (asociatie) commit('asociatie/SCHIMBA_ACTIVA', asociatie._id)
           }
         })
       })

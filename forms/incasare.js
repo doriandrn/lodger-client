@@ -27,8 +27,15 @@ export const campuri = [
     value: getters => Number(getters['asociatie/nrUltimaChitanta'] || 0) + 1
   },
   {
+    id: 'moneda',
+    notInForm: true,
+    required: true,
+    value: getters => getters['asociatie/activa'].moneda
+  },
+  {
     id: 'asociatieId',
-    notInForm: true
+    notInForm: true,
+    required: true
   }
 ]
 

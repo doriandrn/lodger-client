@@ -23,6 +23,12 @@ export const campuri = [
     id: 'apartamenteEligibile',
     type: 'selApartamente',
     options: getters => getters['asociatie/apartamente']
+  },
+  {
+    id: 'moneda',
+    notInForm: true,
+    required: true,
+    value: getters => getters['asociatie/activa'].moneda
   }
 ]
 

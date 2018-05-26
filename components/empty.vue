@@ -68,6 +68,11 @@ export default {
     flex-basis auto !important
 
   &__ilstr
+    width 380px
+    height 200px
+    background-size cover
+    background-repeat no-repeat
+    
     &[data-for="noasoc"]
-      background yellow
+      background-image embedurl('~static/ils/illustration-emptystate-desk.png')
 </style>

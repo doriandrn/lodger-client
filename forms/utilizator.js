@@ -8,10 +8,12 @@ export const campuri = [
   {
     id: 'nume',
     required: true,
-    encrypted: true
+    encrypted: true,
+    value: g => g[getter].nume
   },
   {
-    id: 'emailPublic'
+    id: 'emailPublic',
+    value: g => g[getter].emailPublic
   },
   {
     id: 'rol',

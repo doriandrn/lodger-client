@@ -117,7 +117,9 @@ defs.forEach((plural, singular) => {
 })
 
 Object.assign(getters, {
-  searchMap
+  searchMap,
+  locale: state => state.locale,
+  limbiChoose: () => ['ro', 'en']
 })
 
 Object.assign(_state, { active })
@@ -126,12 +128,14 @@ Object.assign(_state, { active })
 // de exportat 
 const schimbaAsociatie = (subs, subscribe, db) => async ({ type, payload }) => {
   if (type.indexOf('SCHIMBA_ACTIVA') < 0) return
-  const asociatie = isRxDocument(payload) ? payload : await db.asociatii.findOne().exec()
+  // const asociatie = isRxDocument(payload) ? payload : await db.asociatii.findOne().exec()
+  const asociatie = await db.asociatii.findOne({ _id: payload }).exec()
 
   if (!asociatie) return
   asociatieActiva = asociatie
   subscribe(ldgSchema.$asociatii)
-  debug('schimbat asociatie, activa (rxdoc): ', asociatieActiva)
+  const { _id, name } = asociatie
+  debug('schimbat asociatie, activa (rxdoc): ', { _id, name })
   return { asociatieActiva }
 }
 
@@ -153,7 +157,7 @@ const DBMethods = db => async ({ type, payload }) => {
   if (!col || !what) return
   debug('DBMethod:', type, payload)
   debug('-> asociatieActiva', asociatieActiva)
-
+  
   switch (what) {
     case 'asociatie':
       if (asociatieActiva) {
@@ -176,7 +180,7 @@ const DBMethods = db => async ({ type, payload }) => {
     case 'apartament':
       if (mutation === 'incaseaza') {
         const ap = await db.apartamente.findOne({ _id: payload.deLa }).exec()
-        ap.incaseaza(payload)
+        await ap.incaseaza(payload)
         debug('Incasat si la apartament')
       }
       break
@@ -212,7 +216,8 @@ const addDelete = (db, { commit, dispatch, getters }) => async ({ type, payload 
     debug('OK! Adaugat: ', newItem)
     const ss = `${what}.${payload._id ? 'updatat' : 'adaugat'}`
     const heading = `${ss}.h`
-    const text = `${ss}.p`
+    // const text = `${ss}.p`
+    const text = ''
     // selecteaza un item dupa ce a fost adaugat / updatat
     dispatch(`${what}/selecteaza`, payload._id || newItem._id)
     dispatch('notificare', {

@@ -12,7 +12,7 @@ nuxt-link.button(
 button(
   v-else-if=        "type === 'button' && !to",
   type=             "button"
-  @click=           "!dangerous ? $emit('click', $event) : promptUser()"
+  @click=           "handleClick"
   :disabled=        "disabled"
   :aria-label=      "$slots.default[0].text",
   :data-icon=       "icon",
@@ -38,6 +38,167 @@ input(
   :disabled=    "disabled"
 )
 </template>
+
+<script>
+import { mapActions, mapGetters } from 'vuex'
+import tooltip from '~components/tooltip'
+
+export default {
+  data () {
+    if (!this.dangerous) return {}
+    return {
+      prompted: false
+    }
+  },
+  computed: {
+    _tooltip () {
+      const { tooltip, debug } = this
+      if (!tooltip) return
+
+      const { text } = this.$slots.default[0]
+      // debug('tooltip type: ', typeof tooltip)
+      if (typeof tooltip === 'boolean') return text
+      let content = ''
+      Object.keys(tooltip).forEach(k => {
+        const icon = (k => {
+          if (k === 'suprafata') return 'square'
+        })(k)
+        if (tooltip[k] !== undefined) content += `<li ${icon ? `data-icon="${icon}"` : ''} data-type="${k}">${k === 'proprietar' ? `<h6>${tooltip[k]}</h6>` : tooltip[k]}</li>`
+      })
+      return `<ul class="tooltip__list">${ content }</ul>`
+    },
+    focusing () {
+      if (!document) return
+      const { activeElement } = document
+      if (!activeElement) return
+      return activeElement === this.$el
+    },
+    ...mapGetters({
+      modalContent: 'modal/content',
+      _prompted: 'prompt/prompted'
+    })
+  },
+  methods: {
+    ...mapActions({
+      newPrompt: 'prompt/new'
+    }),
+    async promptUser () {
+      this.prompted = true
+      this.newPrompt(this.prompt)
+    },
+    handleClick (e) {
+      const { dangerous, disabled, promptUser } = this
+      if (disabled) return
+      if (dangerous) {
+        promptUser()
+        return
+      }
+      this.$emit('click', e)
+    }
+  },
+  watch: {
+    _prompted: function (newVal) {
+      if (!this.prompted) return
+      if (!newVal) {
+        this.$emit('click', this.$event)
+        this.prompted = false
+      }
+    }
+  },
+  props: {
+    /*  Button Size
+        Parameters: small | medium | large;
+        Default: none
+    */
+    size: {
+      type: String,
+      default: 'medium'
+    },
+    prompt: {
+      type: Object,
+      default () {
+        return {
+          type: 'warning',
+          message: this.$t('defaults.prompt.message')
+        }
+      }
+    },
+    dangerous: {
+      type: Boolean,
+      default: null
+    },
+    tabIndex: {
+      type: Number,
+      default: 0
+    },
+    /*  Type
+        Parameters: button | submit;
+        Default: button
+    */
+    type: {
+      type: String,
+      default: 'button'
+    },
+    /*  Button Color
+        Parameters: green | red | gray
+        Default: none; -> blue
+    */
+    color: {
+      type: String,
+      default: null
+    },
+    /*  Button Icon
+        Parameters: [ICONNAME]
+        Default: none; -> doesn't use an icon
+    */
+    icon: {
+      type: String,
+      default: null
+    },
+    iconOnly: {
+      type: Boolean,
+      default: null
+    },
+    rounded: {
+      type: Boolean,
+      default: null
+    },
+    /*  Disabled?
+        Parameters: true | false
+        Default: false; -> blue
+    */
+    disabled: {
+      type: Boolean,
+      default: null
+    },
+    /*  Stylings - transitions, effects, etc.
+     *  Parameters
+     */
+    styl: {
+      type: String,
+      default: null
+    },
+
+    /* Arrow (::After) */
+    arrow: {
+      type: [Boolean, String],
+      default: null
+    },
+    // tooltip position or bottom by default
+    tooltip: {
+      type: [Boolean, String, Object],
+      default: null
+    },
+    /* link to nuxt page */
+    to: {
+      type: [String, Object],
+      default () {
+        return null
+      }
+    }
+  }
+}
+</script>
 
 <style lang="stylus">
 @require '~styles/config'
@@ -162,156 +323,3 @@ button
     border-radius 50%
 
 </style>
-
-<script>
-import { mapActions, mapGetters } from 'vuex'
-import tooltip from '~components/tooltip'
-
-export default {
-  data () {
-    if (!this.dangerous) return {}
-    return {
-      prompted: false
-    }
-  },
-  computed: {
-    _tooltip () {
-      const { tooltip, debug } = this
-      if (!tooltip) return
-
-      const { text } = this.$slots.default[0]
-      // debug('tooltip type: ', typeof tooltip)
-      if (typeof tooltip === 'boolean') return text
-      let content = ''
-      Object.keys(tooltip).forEach(k => {
-        const icon = (k => {
-          if (k === 'suprafata') return 'square'
-        })(k)
-        if (tooltip[k] !== undefined) content += `<li ${icon ? `data-icon="${icon}"` : ''} data-type="${k}">${k === 'proprietar' ? `<h6>${tooltip[k]}</h6>` : tooltip[k]}</li>`
-      })
-      content = `<ul class="tooltip__list">${ content }</ul>`
-      return content
-    },
-    focusing () {
-      if (!document) return
-      const { activeElement } = document
-      if (!activeElement) return
-      return activeElement === this.$el
-    },
-    ...mapGetters({
-      modalContent: 'modal/content',
-      _prompted: 'prompt/prompted'
-    })
-  },
-  methods: {
-    ...mapActions({
-      newPrompt: 'prompt/new'
-    }),
-    async promptUser () {
-      this.prompted = true
-      this.newPrompt(this.prompt)
-    }
-  },
-  watch: {
-    _prompted: function (newVal) {
-      if (!this.prompted) return
-      if (!newVal) {
-        this.$emit('click', this.$event)
-        this.prompted = false
-      }
-    }
-  },
-  props: {
-    /*  Button Size
-        Parameters: small | medium | large;
-        Default: none
-    */
-    size: {
-      type: String,
-      default: 'medium'
-    },
-    prompt: {
-      type: Object,
-      default () {
-        return {
-          type: 'warning',
-          message: this.$t('defaults.prompt.message')
-        }
-      }
-    },
-    dangerous: {
-      type: Boolean,
-      default: null
-    },
-    tabIndex: {
-      type: Number,
-      default: 0
-    },
-    /*  Type
-        Parameters: button | submit;
-        Default: button
-    */
-    type: {
-      type: String,
-      default: 'button'
-    },
-    /*  Button Color
-        Parameters: green | red | gray
-        Default: none; -> blue
-    */
-    color: {
-      type: String,
-      default: null
-    },
-    /*  Button Icon
-        Parameters: [ICONNAME]
-        Default: none; -> doesn't use an icon
-    */
-    icon: {
-      type: String,
-      default: null
-    },
-    iconOnly: {
-      type: Boolean,
-      default: null
-    },
-    rounded: {
-      type: Boolean,
-      default: null
-    },
-    /*  Disabled?
-        Parameters: true | false
-        Default: false; -> blue
-    */
-    disabled: {
-      type: Boolean,
-      default: null
-    },
-    /*  Stylings - transitions, effects, etc.
-     *  Parameters
-     */
-    styl: {
-      type: String,
-      default: null
-    },
-
-    /* Arrow (::After) */
-    arrow: {
-      type: [Boolean, String],
-      default: null
-    },
-    // tooltip position or bottom by default
-    tooltip: {
-      type: [Boolean, String, Object],
-      default: null
-    },
-    /* link to nuxt page */
-    to: {
-      type: [String, Object],
-      default () {
-        return null
-      }
-    }
-  }
-}
-</script>

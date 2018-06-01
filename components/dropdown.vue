@@ -103,6 +103,7 @@ shadow = -1px 2px rgba(black, .05)
     &[data-arrow]
       &:after
         position relative
+        mask-image embedurl('~static/icons/ui/chevron-down.svg')
         transition transform .15s ease-in-out
   &__main
     border 2px solid white
@@ -153,7 +154,7 @@ shadow = -1px 2px rgba(black, .05)
         > button
         > a
           &:hover
-            background-color: colors.highlight
+            background-color: colors.selectedItem
     .dropdown
       &__toggle
         background: colors.bgs.body

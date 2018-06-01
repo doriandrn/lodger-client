@@ -1,5 +1,5 @@
 <template lang="pug">
-.bloc__heading
+.bloc__heading(v-if="bloc && bloc.nume")
   h4.bloc__title {{ bloc.nume }}
   .bloc__actiuni(v-if="modificabil")
     buton(
@@ -21,19 +21,16 @@
 
 <script>
 import buton from 'form/button'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
     buton
   },
+  computed: mapGetters({
+    bloc: 'bloc/selectat'
+  }),
   props: {
-    bloc: {
-      type: Object,
-      default () {
-        return {}
-      }
-    },
     modificabil: {
       type: Boolean,
       default: true

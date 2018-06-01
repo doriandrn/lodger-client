@@ -1,6 +1,6 @@
 <template lang="pug">
 .blocuri__container
-  bloc-heading
+  bloc-heading(v-if="idsBlocuri && swiperIndexBlocActiv < idsBlocuri.length")
   swiper.blocuri(
     v-if=       "layout === 'interactiv'"
     ref=        "blocuriSwiper"

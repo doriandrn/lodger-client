@@ -109,7 +109,9 @@ export default {
     scari: 'Scări',
     updatat: {
       h: 'Bloc actualizat!',
-      p: 'Datele blocului [nume] au fost actualizate.'
+    },
+    adaugat: {
+      h: 'Bloc adăugat!'
     }
   },
   utilizator: {

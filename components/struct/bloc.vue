@@ -15,6 +15,7 @@
       .scara(
         :data-lift=       "scara.lift"
         :data-mansarda=   "scara.mansarda"
+        :class=           "{ mare: scara.etaje.length > 11 }"
       )
         ol.etaje
           li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
@@ -166,18 +167,18 @@ colors = config.palette
     justify-content center
     padding 0
     margin auto auto 0
-    flex 1 1 100%
+    flex 0 0 100%
 
     +above(l)
       flex-direction row
 
     > li
-      min-width 160px
+      display flex
       flex-flow column nowrap
       align-items flex-start
       justify-content flex-start
       margin auto 4px 0
-      display flex
+      min-width 160px
 
       &:not(:last-child)
         margin-bottom 32px
@@ -195,6 +196,10 @@ colors = config.palette
     border: 1px solid colors.borders
     counter-reset etaje
     position relative
+    max-height 50vh
+
+    &.mare
+      overflow auto
 
     &[data-mansarda]
       > ol.etaje
@@ -250,7 +255,7 @@ colors = config.palette
         border-radius 0
         box-shadow none
         border 1px solid transparent
-        margin -1px
+        // margin -1px
 
         &:not(:first-child)
           border-left: 1px solid colors.borders

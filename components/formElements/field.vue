@@ -46,7 +46,7 @@
     :required=    "required",
     :id=          "id",
   )
-  select(
+  slect(
     v-else-if=    "type === 'select'"
     :options=     "options"
     :value=       "value",
@@ -112,7 +112,10 @@
     :for=           "id"
   ) {{ $t( label ) }}
 
-  p.field__message(v-if="message") {{ message }}
+  //- p.field__message(v-if="message") {{ message }}
+  span.field__limit(
+    v-if= "type === 'text' && textLengthLimit > 0 && val"
+  ) {{ val.length }} / {{ textLengthLimit }}
 
   slot
 
@@ -344,6 +347,14 @@ export default {
     error: {
       type: Boolean,
       default: false
+    },
+    textLengthLimit: {
+      type: Number,
+      default: -1
+    },
+    valid: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -360,6 +371,7 @@ export default {
     scari,
     servicii,
     selApartamente,
+    slect,
     txtarea
   },
   methods: {
@@ -478,13 +490,13 @@ export default {
     },
 
     handleChange (e) {
-      let { value, type, debug } = this
+      let { value, type, debug, valid } = this
+
+      if (!valid) return
 
       if (type === 'checkbox') {
         value = Boolean(value)
-        debug(value)
         value = !value
-        debug(value)
       }
 
       debug(e.target.value, type, e)
@@ -545,7 +557,7 @@ textarea
   min-width 32px
   border-bottom: 1px solid config.palette.borders
   transition all .15s ease-in-out
-  padding 8px 2px
+  padding 8px 0
   width 100%
 
   &::placeholder
@@ -565,6 +577,14 @@ textarea
 
     &+.field__label
       moveFieldLabel()
+
+input[type="text"]
+  &:focus
+  &:active
+    padding-right 48px // pt field limit
+    &+.field__label+.field__limit
+      opacity 1
+      visibility visible
 
 input[type="radio"]
   &+label
@@ -783,6 +803,15 @@ input[type="checkbox"]
     user-select none
     flex 1 1 24px
 
+  &__limit
+    user-select none
+    position absolute
+    right 0
+    color: config.typography.palette.meta
+    opacity 0
+    font-size 10px
+    visibility hidden
+
   &[data-type="text"]
   &[data-type="textarea"]
   &[data-type="number"]
@@ -808,17 +837,20 @@ input[type="checkbox"]
   &[data-type="radios"]
     flex-direction row-reverse
 
-  &:not([data-type="text"])
-    &:not([data-type="textarea"])
-      &:not([data-type="altselect"])
-        &:not([data-type="scari"])
-          &:not([data-type="radios"])
-            // flex-direction row-reverse
-            height auto
-            flex-flow column-reverse nowrap
-            align-items flex-start
-            justify-content flex-end
-            // margin-top 0
+  // &:not([data-type="text"])
+  //   &:not([data-type="textarea"])
+  //     &:not([data-type="altselect"])
+  //       &:not([data-type="scari"])
+  //         &:not([data-type="radios"])
+  //           // flex-direction row-reverse
+  //           height auto
+  //           flex-flow column-reverse nowrap
+  //           align-items flex-start
+  //           justify-content flex-end
+  //           // margin-top 0
+
+  &[data-vv-name="nr"]
+    flex 0 0 60px !important
 
   &--error
     .field

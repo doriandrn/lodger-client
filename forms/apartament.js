@@ -28,7 +28,7 @@ export const campuri = [
     id: 'proprietar',
     placeholder: 'Ion Barbu',
     transform: 'capitalize',
-    v: 'alpha_spaces',
+    v: 'alpha_spaces|max:32',
     value: g => g['apartament/selectat'].proprietar
   },
   {

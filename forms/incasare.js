@@ -35,7 +35,8 @@ export const campuri = [
   {
     id: 'asociatieId',
     notInForm: true,
-    required: true
+    required: true,
+    value: g => g['asociatie/activa']._id
   }
 ]
 

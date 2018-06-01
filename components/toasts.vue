@@ -10,7 +10,7 @@ ul.toasts(
   )
     .toast__content
       h5.toast__title(v-if="toast.text.heading") {{ $t( toast.text.heading ) }}
-      p(v-if="toast.text.text || toast.text") {{ $t( toast.text.text || toast.text ) }}
+      p(v-if="toast.text.text") {{ $t( toast.text.text ) }}
 </template>
 
 <script>
@@ -30,7 +30,7 @@ export default {
 
 types = info warn error success
 palette = config.palette
-iconBgWidth = 40px
+iconBgWidth = 20px
 
 .toast
   &__title
@@ -69,7 +69,7 @@ iconBgWidth = 40px
     background white
     border-left 1px solid
     width auto
-    padding 10px 16px 10px 12px
+    padding 8px 24px 8px 12px
     position relative
     left 100%
     transition all .15s ease-in-out
@@ -92,8 +92,8 @@ iconBgWidth = 40px
 
     &:before
       flex-basis: iconBgWidth
-      height 40px
-      mask-size 20px
+      height: iconBgWidth
+      mask-size 14px
       flex-shrink 0
       margin-right 12px
       z-index 2

@@ -1,6 +1,7 @@
 <template lang="pug">
 sction.setari(:title="$t('defaults.settings')")
-  tabs
+
+  tabs(v-if="asociatieActiva && asociatieActiva._id")
     tab(
       v-for=  "tab in tabs"
       :key=   "tab"
@@ -8,11 +9,11 @@ sction.setari(:title="$t('defaults.settings')")
     )
 
       frm(
-        v-for=      "sectiune, i in forms(tab)",
-        :key=       "i"
+        v-for=      "sectiune, i in formularSetari(tab)",
+        :key=       "`${asociatieActiva._id}:${i}`"
         :title=     "sectiune.title"
         :desc=      "sectiune.desc"
-        :formData=  "{ campuri: sectiune.campuri, for: i }"
+        :formData=  "{ campuri: campuri(sectiune), for: i }"
       )
 </template>
 
@@ -29,23 +30,34 @@ export default {
       tabs: ['asociatie', 'utilizator', 'preferinte']
     }
   },
+  computed: {
+    ...mapGetters({
+      asociatieActiva: 'asociatie/activa'
+    }),
+    campuri () {
+      return sectiune => sectiune.campuri
+    }
+  },
   components: {
     sction,
     frm,
     buton
   },
   methods: {
-    forms (tab) {
+    ...mapActions({
+      openModal: 'modal/open'
+    }),
+    formularSetari (tab) {
       const form = require(`forms/${tab}.js`)
       if (!form) return
 
       const setari = { ...form.setari }
-      this.debug('setari', setari)
-      if (!setari || !form.campuri || form.campuri.length < 0) return
-
-      setari.default = {
-        campuri: form.campuri.filter(camp => !camp.notInForm)
+      if (form.campuri && form.campuri.length > -1) {
+        setari.default = {
+          campuri: form.campuri.filter(camp => !camp.notInForm)
+        }
       }
+      this.debug('setari dupa merge cu campuri', setari)
 
       // adauga labeluri n shit pt traduceri
       Object.keys(setari).forEach(sectiune => {
@@ -56,8 +68,7 @@ export default {
         if (!campuri || !campuri.length) return
         campuri.forEach(camp => {
           camp.label = `${sectiune === 'default' ? `${tab}.new.` : tabSetari}${camp.click || camp.id}`
-          // if (camp.click) camp.click = `${tab}/${camp.click}`
-          camp['@click'] = `${tab}/${camp.click}`
+          camp['@click'] = camp.click ? `${tab}/${camp.click}` : null
           if (sectiune === 'periculoase') camp.dangerous = true
           if (sectiune === 'default') {
             camp['@change'] = `${tab}/updateaza`
@@ -68,10 +79,7 @@ export default {
       })
       
       return setari
-    },
-    ...mapActions({
-      openModal: 'modal/open'
-    })
+    }
   }
 }
 </script>

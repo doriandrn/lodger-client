@@ -34,10 +34,12 @@ form.form(@submit.prevent="handleSubmit(formName)")
       v-model.trim=   "$data[field.id]"
 
       v-validate=     "field.v || null"
+      :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
       :data-vv-scope= "formName",
       :data-vv-as=    "$t( field.label )"
       :data-vv-name=  "field.id"
       :error=         "errors.has(field.id, formName)"
+      :valid=         "!errors.has(field.id, formName)"
       :message=       "errors.first(field.id, formName)"
     )
 
@@ -53,7 +55,6 @@ form.form(@submit.prevent="handleSubmit(formName)")
     ) {{ $t('defaults.sterge') }}
     buton(
       type= "submit",
-      size= "large"
       icon= "plus-circle"
       slot= "right"
     ) {{ type === 'new' ? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
@@ -88,7 +89,6 @@ export default {
       
       // apply getters to funcs
       if (isNewForm) {
-        debug('new form')
         if (!notInForm || notInDb) value = null
       }
 
@@ -117,12 +117,11 @@ export default {
     return dynamicFormData
   },
   mounted () {
-    this.debug('FORM MOUNT')
+    this.debug('FORM MOUNT3d')
   },
   computed: {
     ...mapGetters({
-      modalContent: 'modal/content',
-      modalData: 'modal/data'
+      modalContent: 'modal/content'
     }),
   },
   props: {
@@ -254,7 +253,7 @@ export default {
 
     &+.form__content
       border-top: 1px solid config.palette.borders
-      padding-top 24px
+      padding-top 12px
       margin-top 12px
 
   &__content
@@ -276,7 +275,9 @@ export default {
   .field
     display flex
     flex-flow row wrap
-    flex 1 1 auto
+    align-items flex-start
+    justify-content flex-start
+    flex 1 1
     // max-width 335px
 
     &[data-type="number"]

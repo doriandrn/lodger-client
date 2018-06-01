@@ -110,6 +110,7 @@ const setari = {
     ]
   },
   periculoase: {
+    order: -1,
     avansat: true,
     campuri: [
       {

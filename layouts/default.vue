@@ -170,34 +170,7 @@ export default {
         const { modalContent, modalData, blocuri, apartamente, debug } = ctx
 
         campuri = campuri.filter(camp => !camp.notInAddForm)
-        // campuri.forEach(camp => {
-        //   if (path[1] === 'edit' && typeof modalData === 'object') {
-        //     const iId = path[0] === 'serviciu' ? modalData.denumire : modalData._id
-        //     switch (path[0]) {
-        //       case 'bloc':
-        //         camp.value = blocuri[iId][camp.id]
-        //         break
-
-        //       case 'apartament':
-        //         camp.value = apartamente[iId][camp.id]
-        //         break
-        //     }
-        //   } 
-        //   // else if (path[1] === 'new') camp.value = camp.default || null
-
-        //   // switch (camp.id) {
-        //   //   case 'asociatieId':
-        //   //     const { activa, idsAsociatii } = ctx
-        //   //     Object.assign(camp, {
-        //   //       options: idsAsociatii,
-        //   //       value: activa,
-        //   //       slot: 'footer',
-        //   //       size: 'small'
-        //   //     })
-        //   //     break
-        //   // }
-        // })
-        debug('form data', campuri)
+        debug(`${path[0]} Form data: `, campuri)
         return { campuri, actiuni, $for: path[0] }
       }
     }
@@ -334,6 +307,12 @@ footerHeight = 24px
               background-color #aaa
               position absolute
               left 12px
+
+            > span
+              display block
+              position relative
+              font-size 12px
+              line-height 13px
       
       label
         font-size 9px

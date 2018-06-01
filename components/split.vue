@@ -36,6 +36,9 @@ export default {
   .left
     flex 1 1 100%
 
+    > *
+      flex 1 1 auto
+
   .right
     margin-left auto
     flex 1 1 55%

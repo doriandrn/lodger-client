@@ -176,9 +176,6 @@ export default {
     }
   },
   computed: {
-    // idAsociatieActiva () {
-    //   return this.activa._id
-    // },
     switchOptions () {
       const { idsAsociatii, asociatii } = this
       const selector = {}
@@ -280,18 +277,14 @@ footerHeight = 24px
 
     .switch
       position relative
-      display flex
-      flex-flow column-reverse wrap
-      padding-top 8px
-      padding-bottom 8px
-      padding-right 42px
-      height 100%
+      padding-left 0
       margin-left 0
+      height 100%
 
       .altselect
-        position absolute 0 0 auto
+        // position absolute 0 0 auto
         padding 0 !important
-        max-height 54px
+        // max-height 54px
         
         > ul
           border-color transparent

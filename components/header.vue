@@ -50,6 +50,7 @@ header
     font-weight 700
     font-size 0
     top 1px
+    flex 0 0 32px !important
 
     a
       color: config.typography.palette.headings

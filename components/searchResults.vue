@@ -1,6 +1,9 @@
 <template lang="pug">
 .results(data-box-arrow)
-  .results__section(v-for="tax in Object.keys(results)")
+  .results__section(
+    v-for=  "tax in Object.keys(results)"
+    v-if=   "results[tax].length > 0"
+  )
     h6.results__heading {{ tax }}
     ul
       li(
@@ -41,7 +44,8 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      sugestiiSubRelevanta: .05
+      // sugestiiSubRelevanta: .05
+      sugestiiSubRelevanta: -1
     }
   },
   computed: mapGetters({

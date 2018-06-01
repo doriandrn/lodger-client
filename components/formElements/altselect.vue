@@ -13,14 +13,14 @@
       @click=       "alege(key)"
       :data-icon=   "option.icon || id === 'asociatieSwitch' && asocInitProgr(option) < 100 ? 'alert-circle' : null || null"
     )
-      split(v-if=     "value !== key")
-        span {{ option }}
-        progres(
-          slot=     "right"
-          v-if=     "id === 'asociatieSwitch'"
-          :procent= "asocInitProgr(option)"
-        )
-      span(v-else) {{ option }}
+      span {{ option }}
+      //- split(v-if=     "value !== key")
+        //- progres(
+        //-   slot=     "right"
+        //-   v-if=     "id === 'asociatieSwitch'"
+        //-   :procent= "asocInitProgr(option)"
+        //- )
+      //- span(v-else) {{ option }}
     slot
 </template>
 

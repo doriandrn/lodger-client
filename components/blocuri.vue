@@ -1,6 +1,6 @@
 <template lang="pug">
 .blocuri__container
-  bloc-heading(v-if="idsBlocuri && swiperIndexBlocActiv < idsBlocuri.length")
+  //- bloc-heading(v-if="idsBlocuri && swiperIndexBlocActiv < idsBlocuri.length")
   swiper.blocuri(
     v-if=       "layout === 'interactiv'"
     ref=        "blocuriSwiper"
@@ -59,7 +59,7 @@
 <script>
 import bloc from 'struct/bloc'
 import buton from 'form/button'
-import blocHeading from 'cc/headingActiuniBloc'
+// import blocHeading from 'cc/headingActiuniBloc'
 
 import { mapActions, mapGetters } from 'vuex'
 
@@ -162,7 +162,7 @@ export default {
   components: {
     bloc,
     buton,
-    blocHeading
+    // blocHeading
   }
 }
 </script>
@@ -203,6 +203,7 @@ drkr = rgba(black, .05)
     height 100%
     align-items center
     justify-content center
+    overflow-y hidden
 
   .swiper
     &-slide

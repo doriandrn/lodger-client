@@ -2,10 +2,16 @@
 .bloc(
   :class= "{ ultimul, nenavigabil: !navigabil }"
 )
-  headingBloc(
-    v-if=   "showHeading"
-    :bloc=  "bloc"
-  )
+  h4.bloc__title
+    span(
+      v-if=       "modificabil"
+      v-tooltip=  "modifica"
+      @click=     "openModal('bloc.edit')"
+    ) {{ bloc.nume }}
+    nuxt-link(
+      :to="`/bloc/${bloc._id}`"
+      v-else
+    ) {{ bloc.nume }}
 
   ol.scari(
     v-if=   "bloc.scari && bloc.scari.length > 0"
@@ -15,7 +21,7 @@
       .scara(
         :data-lift=       "scara.lift"
         :data-mansarda=   "scara.mansarda"
-        :class=           "{ mare: scara.etaje.length > 11 }"
+        :class=           "{ mare: scara.etaje > 9 }"
       )
         ol.etaje
           li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
@@ -46,7 +52,6 @@
 <script>
 import buton from 'form/button'
 import { mapGetters, mapActions } from 'vuex'
-import headingBloc from 'cc/headingActiuniBloc'
 
 export default {
   props: {
@@ -94,7 +99,6 @@ export default {
   },
   components: {
     buton,
-    headingBloc
   }
 }
 </script>
@@ -112,6 +116,14 @@ colors = config.palette
     margin-bottom 12px
     text-transform uppercase
     user-select none
+
+    > span
+      cursor pointer
+
+      &:hover
+      &:focus
+      &:active
+        text-decoration underline
 
   &__heading
     display flex

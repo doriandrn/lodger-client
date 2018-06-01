@@ -10,8 +10,9 @@ nuxt-link.apartament(
   .apartament__detalii
     span.ap__nr(v-if="nrAp") {{ nrAp }} 
     span.nume.proprietar {{ proprietar }}
-span.apartament(v-else)
-  span.apartament__adresa(v-if="bloc") {{ bloc.nume }} / {{ scara }} ({{ etaj }})
+
+.apartament(v-else)
+  .apartament__adresa(v-if="bloc") {{ bloc.nume }} / {{ scara }} ({{ etaj }})
   .apartament__detalii
     span.ap__nr(v-if="nrAp") {{ nrAp }} 
     span.nume.proprietar {{ proprietar }}
@@ -67,12 +68,13 @@ export default {
 @require '~styles/config'
   
 .apartament
-  display flex
-  flex-flow column wrap
-  text-decoration none
-  line-height 20px
-  width 100%
-  flex 1 1 100%
+  // am comentat pt search results
+  // display flex
+  // flex-flow column wrap
+  // text-decoration none
+  // line-height 20px
+  // width 100%
+  // flex 1 1 100%
 
   &__adresa
     font-weight 100

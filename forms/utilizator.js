@@ -25,6 +25,10 @@ export const campuri = [
   {
     id: 'alteDetaliiContact',
     type: 'contactFields',
+  },
+  {
+    id: 'preferinte',
+    type: 'object'
   }
 ]
 

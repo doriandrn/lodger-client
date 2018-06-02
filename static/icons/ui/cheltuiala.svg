@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="14px" viewBox="0 0 25 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linejoin="round">
+        <g id="Group" stroke="#000000">
+            <path d="M7.8799,8.8779 L7.3629,9.5039" id="Stroke-6460" stroke-linecap="round"></path>
+            <path d="M11.498,4.4976 L10.981,5.1226" id="Stroke-6461" stroke-linecap="round"></path>
+            <polygon id="Stroke-6463" stroke-linecap="round" points="19.5127 2.5 10.5127 11.5 0.5127 11.5 9.5127 2.5"></polygon>
+            <polyline id="Stroke-6464" stroke-linecap="round" points="19.5127 5 11.0127 13.5 0.5127 13.5"></polyline>
+            <polyline id="Stroke-6465" points="18.0127 6.5 23.5127 6.5 23.5127 0.5 0.5127 0.5 0.5127 6.5 5.5127 6.5"></polyline>
+        </g>
+    </g>
+</svg>

@@ -742,7 +742,7 @@ input[type="checkbox"]
 
   &[data-type="servicii"]
   &[data-type="detaliiApSelectat"]
-    flex 1 1 100%
+    flex 0 0 100% !important
 
   &[data-type="search"]
     position relative

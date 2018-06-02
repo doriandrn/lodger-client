@@ -1,10 +1,16 @@
+const incasare = 'încasare'
+const asociatie = 'asociație'
+const cheltuiala = 'cheltuială'
+
 export default {
   dashboard: {
     title: 'Panou de control',
     actions: {
       title: 'Acțiuni',
-      cashIn: 'Încasează',
-      spend: 'Adaugă o cheltuială'
+      incasare,
+      cheltuiala,
+      asociatie,
+      citireContor: 'Citire Contor'
     },
     statistics: {
       title: 'Statistici',
@@ -96,7 +102,7 @@ export default {
       scari: 'Structura scărilor'
     },
     edit: {
-      title: 'Modifică blocul'
+      title: 'Modifică datele blocului'
     },
     anterior: 'Blocul anterior',
     urmator: 'Blocul următor',

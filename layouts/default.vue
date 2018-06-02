@@ -47,38 +47,13 @@
       hide-label
     )
 
-    dropdown(
-      slot=       "right",
-      icon=       "plus",
-      :toggleText=   "$t('defaults.add')"
-    )
-      butonIncaseaza(
-        styl= "unstyled"
-      )
-      buton(
-        @click= "debug('cc')"
-        styl= "unstyled"
-        icon= "contor"
-      ) Citire contor
-      buton(
-        styl=   "unstyled"
-        @click= "openModal('cheltuiala.new')"
-      ) Cheltuială / Factură
-      buton(
-        styl=   "unstyled"
-        icon=   "asociatie"
-        @click= "openModal('asociatie.new')"
-      ) Asociație
-
-    dropdown(
-      slot=         "right",
-      icon=         "settings"
-      :toggleText=   "$t('settings')"
-    )
-      buton(
-        styl=   "unstyled"
-        to=     "/setari#asociatie"
-      ) {{ $t('defaults.asociatie') }}
+    buton(
+      styl=   "unstyled"
+      icon=   "settings"
+      slot=   "right"
+      to=     "/setari#asociatie"
+      icon-only
+    ) {{ $t('settings.title') }}
 
   main
     nuxt
@@ -280,22 +255,14 @@ footerHeight = 24px
       padding-left 0
       margin-left 0
       height 100%
+      max-width 250px
 
-      .altselect
-        // position absolute 0 0 auto
-        padding 0 !important
-        // max-height 54px
-        
+      .altselect    
+        max-height 48px    
         > ul
           border-color transparent
 
           > li
-            padding-left 30px
-            text-transform capitalize
-
-            &[data-sel]
-              padding-top 20px
-
             &:before
               background-color #aaa
               position absolute
@@ -304,8 +271,9 @@ footerHeight = 24px
             > span
               display block
               position relative
-              font-size 12px
-              line-height 13px
+              font-size 13px
+              line-height 16px
+              white-space nowrap
       
       label
         font-size 9px
@@ -318,6 +286,10 @@ footerHeight = 24px
         pointer-events none
         color: config.typography.palette.meta
         z-index 21
+
+        position absolute
+        top 4px
+        left 24px
 
       select
         position absolute 0

@@ -1,6 +1,6 @@
 <template lang="pug">
-span.furnizor(v-if="furnizor")
-  span.nume.furnizor__nume {{ furnizor.nume }}
+.furnizor(v-if="furnizor")
+  h6.nume.furnizor__nume {{ furnizor.nume }}
 </template>
 
 <script>
@@ -25,5 +25,6 @@ export default {
 </script>
 
 <style lang="stylus">
-
+.furnizor
+  padding 4px 8px
 </style>

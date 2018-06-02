@@ -62,6 +62,12 @@ const campuri = [
     value: g => g[getter].filtreCheltuieli,
     type: 'array',
     notInForm: true
+  },
+  {
+    id: 'preferinte',
+    value: g => g[getter].preferinte,
+    type: 'object',
+    notInForm: true
   }
 ]
 

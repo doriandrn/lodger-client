@@ -4,6 +4,7 @@ export const setari = {
       {
         id: 'limba',
         type: 'select',
+        '@change': 'schimbaLimba',
         value: g => g.locale,
         options: g => g.limbiChoose
       },

@@ -3,9 +3,12 @@ nuxt-link.button(
   v-if=         "to",
   :to=          "to",
   :data-icon=   "icon",
+  :class=           "{ iconOnly, rounded }"
   :data-size=   "size",
   :data-styl=   "styl",
   :tabIndex=    "tabIndex"
+  :data-arrow=      "arrow"
+  :title=      "$slots.default[0].text",
 )
   slot
 
@@ -56,9 +59,9 @@ export default {
       if (!tooltip) return
 
       const { text } = this.$slots.default[0]
-      // debug('tooltip type: ', typeof tooltip)
       if (typeof tooltip === 'boolean') return text
       let content = ''
+
       Object.keys(tooltip).forEach(k => {
         const icon = (k => {
           if (k === 'suprafata') return 'square'
@@ -257,6 +260,9 @@ button
       &:before
         background-color: config.typography.palette.light
 
+      &.iconOnly
+        font-size 0
+
     &:hover
     &:focus
     &:active
@@ -272,6 +278,16 @@ button
   &[data-size="large"]
     padding: 16px 31px
     // flex-basis 40px
+
+    &[data-styl="square"]
+      flex-flow column nowrap
+      text-transform capitalize
+
+      &:before
+        size 24px
+        mask-size 24px
+        margin-right 0
+        margin-bottom 8px
 
   &[data-size="medium"]
     padding: (config.spacings.inBoxes/2) config.spacings.inBoxes

@@ -97,12 +97,11 @@ export default {
     line-height 16px
     border: 1px solid config.palette.borders
     border-left-width 2px
-    // position absolute 0
+
     padding 0
     width 100%
     cursor pointer
-    height 36px
-    // box-shadow 0px 1px 2px rgba(#8B7070, .1)
+
     color: config.typography.palette.ui
     transition all .15s ease
     display flex

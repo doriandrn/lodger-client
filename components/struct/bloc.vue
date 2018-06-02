@@ -5,7 +5,7 @@
   h4.bloc__title
     span(
       v-if=       "modificabil"
-      v-tooltip=  "modifica"
+      v-tooltip=  "$t('bloc.edit.title')"
       @click=     "openModal('bloc.edit')"
     ) {{ bloc.nume }}
     nuxt-link(

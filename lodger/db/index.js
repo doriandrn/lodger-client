@@ -1,27 +1,22 @@
 import * as RxDB from 'rxdb'
-import { remoteURL } from 'cfg'
+import { remoteURL, dbCon } from '../config'
 import Debug from 'debug'
 
 const debug = Debug('lodger:DB')
 
-RxDB.plugin(require('pouchdb-adapter-idb'))
-// RxDB.plugin(require('pouchdb-adapter-memory'))
+if (process.env.NODE_ENV === 'test') {
+  RxDB.plugin(require('pouchdb-adapter-memory'))
+} else {
+  RxDB.plugin(require('pouchdb-adapter-idb'))
+}
+
 RxDB.plugin(require('pouchdb-adapter-http'))
 RxDB.plugin(require('pouchdb-authentication'))
 
 import collections from './collections'
 
-const conInfo = {
-  name: 'lodger32',
-  password: '10dg3rP@55',
-  adapter: 'idb',
-  multiInstance: false
-  // adapter: 'memory',
-  // ignoreDuplicate: true
-}
-
 const getdb = async (con) => await RxDB.create(con)
-const db = getdb(conInfo)
+const db = getdb(dbCon)
 
 debug('DatabaseService: created database', db)
 if (typeof window !== 'undefined') window['db'] = db // write to window for debugging
@@ -34,7 +29,7 @@ export default (async function (dbdata) {
   // show leadership in title
   rdb.waitForLeadership().then(() => {
     debug('♛')
-    document.title = '♛ ' + document.title
+    // document.title = '♛ ' + document.title
   })
 
   // create collections

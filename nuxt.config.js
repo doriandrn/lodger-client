@@ -98,7 +98,6 @@ module.exports = {
       stylLoader.oneOf.forEach(one => {
         const module = one.use.filter(o => o.loader === 'stylus-loader')[0]
         if (!module) return
-        console.log(module, module.options)
         module.options.context = __dirname
         Object.assign(module.options, {
           use: stylusPlugins,
@@ -122,17 +121,6 @@ module.exports = {
         helpers: resolve('helpers'),
         '~components': resolve('components')
       })
-    },
-    // plugins: [
-    //   new webpack.LoaderOptionsPlugin({
-    //     options: {
-    //       context: __dirname,
-    //       stylus: {
-    //         use: stylusPlugins,
-    //         preferPathResolver: 'webpack'
-    //       }
-    //     }
-    //   })
-    // ]
+    }
   }
 }

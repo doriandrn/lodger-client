@@ -1,5 +1,10 @@
 import { searchables, defs } from 'lodger'
 
+/**
+ * Construieste un search map bazat pe stringuri dupa obiectele continute de taxonomie
+ * @param {*} state 
+ * @param {*} getters 
+ */
 const searchMap = (state, getters) => {
   const searchObjs = {}
   Object.keys(searchables).forEach(cat => {

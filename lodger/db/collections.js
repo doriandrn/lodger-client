@@ -1,5 +1,5 @@
 import Debug from 'debug'
-import { defs } from 'lodger'
+import { defs } from '../'
 // const fs = require('fs')
 
 const debug = Debug('lodger:db:collections')
@@ -26,7 +26,7 @@ const makeCollection = data => {
   //   console.info('dat smell of a fresh DB :)')
   // }
 
-  const form = require(`forms/${key}`)
+  const form = require(`../forms/${key}`)
   const { campuri, metode } = form
   const getType = type => {
     if (!type || ['text', 'textarea', 'select', 'search'].indexOf(type) > -1) return 'string'

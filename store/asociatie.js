@@ -43,6 +43,9 @@ export const actions = {
 
 export const getters = {
   activa: (state, getters, rs, rg) => rg.asociatii[state.activa] || {},
+  initializata: (state, getters, rs, rg) => {
+    
+  },
   moneda: state => state.moneda,
   apartamente: (state, getters, rs, rg) => rg['apartament/ids'].filter(ap => rg['bloc/ids'].indexOf(rg.apartamente[ap].bloc) > -1),
   // servicii: (state, getters, rs, rg) => rg.asociatii && rs.asociatii.length > 0 && rg.asociatii[getters.activa] && rg.asociatii[getters.activa].servicii ? rg.asociatii[getters.activa].servicii.filter(serv => Object.keys(rg.servicii).indexOf(serv) > -1) : [],

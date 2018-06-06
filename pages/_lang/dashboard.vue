@@ -21,7 +21,6 @@ sction#dash
 import sction from '~components/section'
 import widget from '~components/widget'
 import buton from 'form/button'
-import butonIncaseaza from 'cc/butonIncaseaza'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -55,7 +54,6 @@ export default {
   },
   components: {
     buton,
-    butonIncaseaza,
     sction,
     widget
   }

@@ -71,7 +71,7 @@ import sction from '~components/section'
 import widget from '~components/widget'
 import split from '~components/split'
 import bani from '~components/bani'
-import incaseaza from 'cc/butonIncaseaza'
+
 import incasari from '~components/incasari'
 
 import { mapGetters } from 'vuex'
@@ -100,8 +100,7 @@ export default {
     sction,
     widget,
     split,
-    incasari,
-    incaseaza
+    incasari
   },
   computed: {
     ap () {

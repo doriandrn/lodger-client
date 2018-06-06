@@ -147,7 +147,7 @@ import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 
 import { get_bigrams, string_similarity } from 'helpers/search'
-import { transformOnInput } from 'helpers/functions'
+import { filterOnInput } from 'lodger/plugins/nuxt'
 import { mixin as clickaway } from 'vue-clickaway'
 import { mapActions, mapGetters } from 'vuex'
 
@@ -482,7 +482,7 @@ export default {
           break
 
         case 'text':
-          value = transformOnInput(transform, value, filters, debug)
+          value = filterOnInput(transform, value, filters, debug)
           break
       }
 

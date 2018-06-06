@@ -1,3 +1,5 @@
+import { spleet } from '../../../../helpers/functions'
+
 const DBMethods = db => async ({ type, payload }) => {
   if (type.indexOf('/') < 0) return
   const { what, mutation } = spleet(type)

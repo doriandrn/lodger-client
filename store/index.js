@@ -3,7 +3,7 @@ import Debug from 'debug'
 import createPersistedState from 'vuex-persistedstate'
 import FileSaver from 'file-saver'
 
-import { ldgSchema, notificari, defs } from 'lodger'
+import { notificari, defs } from 'lodger'
 import { createModule } from 'vuex-toast'
 import { predefinite } from 'forms/serviciu'
 import { searchMap } from 'helpers/store'
@@ -33,7 +33,6 @@ const mutations = {}
 const _state = {}
 
 const updateMutationName = key => `set_${key}`
-const globalSubs = Object.keys(ldgSchema).filter(key => key.indexOf('$') === 0)
 
 for (let [k, v] of defs) {
   active[k] = null

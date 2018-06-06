@@ -88,7 +88,6 @@ import field from 'form/field'
 import furnizor from '~components/furnizor'
 
 import typecheck from 'pg/widgets/typography'
-import butonIncaseaza from 'cc/butonIncaseaza'
 
 import { mapGetters, mapActions } from 'vuex'
 
@@ -112,7 +111,6 @@ export default {
     frm,
     dateTime,
     servicii,
-    butonIncaseaza,
     furnizor,
 
     typecheck

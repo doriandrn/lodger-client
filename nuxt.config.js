@@ -107,19 +107,19 @@ module.exports = {
 
       // Extend aliases
       Object.assign(config.resolve.alias, {
-        cfg: resolve('cfg'),
+        '~components': resolve('components'),
         styles: resolve('assets/styles'),
         UI: resolve('components/UI'),
         widgets: resolve('components/widgets'),
         form: resolve('components/formElements'),
-        struct: resolve('components/struct'),
-        forms: resolve('forms'),
-        lodger: resolve('lodger.js'),
-        db: resolve('db'),
-        cc: resolve('components/composed'),
         pg: resolve('components/.playground'),
-        helpers: resolve('helpers'),
-        '~components': resolve('components')
+        struct: resolve('components/struct'),
+        
+        lodger: resolve('lodger'),
+        cfg: resolve('lodger/config'),
+        forms: resolve('lodger/forms'),
+        helpers: resolve('lodger/helpers'),
+        db: resolve('lodger/db'),
       })
     }
   }

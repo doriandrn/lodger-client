@@ -1,10 +1,12 @@
 import * as RxDB from 'rxdb'
 import { remoteURL, dbCon } from '../config'
+import collections from './collections'
 import Debug from 'debug'
 
 const debug = Debug('lodger:DB')
+const { NODE_ENV } = process.env
 
-if (process.env.NODE_ENV === 'test') {
+if (NODE_ENV === 'test') {
   RxDB.plugin(require('pouchdb-adapter-memory'))
 } else {
   RxDB.plugin(require('pouchdb-adapter-idb'))
@@ -13,17 +15,18 @@ if (process.env.NODE_ENV === 'test') {
 RxDB.plugin(require('pouchdb-adapter-http'))
 RxDB.plugin(require('pouchdb-authentication'))
 
-import collections from './collections'
-
 const getdb = async (con) => await RxDB.create(con)
 const db = getdb(dbCon)
 
 debug('DatabaseService: created database', db)
-if (typeof window !== 'undefined') window['db'] = db // write to window for debugging
+/** 
+ * Pentru acces usor la DB pe dev, 'db' in consola
+*/
+if (NODE_ENV === 'dev' && typeof window !== 'undefined') window['db'] = db
 
-export const { isRxDocument } = RxDB
+// export const { isRxDocument } = RxDB
 
-export default (async function (dbdata) {
+export default async function (dbdata) {
   const rdb = await db
 
   // show leadership in title
@@ -34,7 +37,16 @@ export default (async function (dbdata) {
 
   // create collections
   debug('Creez colectiile')
-  await Promise.all(collections.map(colData => rdb.collection(colData)))
+
+  collections.forEach(col => {
+    const { schema: { properties }, name } = col
+    // console.info(name, properties)
+  })
+  try {
+    await Promise.all(collections.map(colData => rdb.collection(colData)))
+  } catch (e) {
+    console.error('eroare la crearea colectiilor', e)
+  }
 
   // hooks
   // debug('Adaug Carlige')
@@ -61,4 +73,4 @@ export default (async function (dbdata) {
   //   }))
 
   return rdb
-})()
+}

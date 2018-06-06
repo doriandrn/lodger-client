@@ -95,7 +95,7 @@ import cale from '~components/cale'
 import bani from '~components/bani'
 import field from 'form/field'
 import buton from 'form/button'
-import butonIncaseaza from 'cc/butonIncaseaza'
+
 import toasts from '~components/toasts'
 import dropdown from '~components/dropdown'
 
@@ -205,7 +205,6 @@ export default {
     field,
     bani,
     toasts,
-    butonIncaseaza,
     dropdown
   }
 }

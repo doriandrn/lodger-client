@@ -11,9 +11,6 @@ ldgSchema.notificari.forEach(type => {
 const searchables = {}
 const defs = new Map()
 
-traverse(ldgSchema, (k, v) => {
-  if (v._cheiCautare && v._cheiCautare.length > 0) searchables[no$(k)] = v._cheiCautare
-  if (v._singular) defs.set(v._singular, no$(k))
-})
+
 
 export { searchables, notificari, defs }

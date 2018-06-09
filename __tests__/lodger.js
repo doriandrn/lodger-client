@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import rxdb from '../lodger/plugins/store/rxdb'
-import Db from '../lodger/db'
+
 Vue.use(Vuex)
-let db
+
 describe('Lodger STORE', () => {
+
   beforeAll(async () => {
-    db = await Db()
+    // db = await Db()
   })
   beforeEach(() => {
     jest.resetModules()
@@ -20,7 +21,6 @@ describe('Lodger STORE', () => {
   })
 
   describe('Plugin-urile se intializeaza ok', () => {
-
     /**
      * Plugin-ul de RXDB doar se inscrie la mutatiile store-ului.
      * Modificarile in DB se fac doar in urma unei mutatii;
@@ -28,7 +28,7 @@ describe('Lodger STORE', () => {
      */
     const rxdbStore = new Vuex.Store({
       state: () => ({ test: null }),
-      plugins: [rxdb(db)],
+      plugins: [rxdb()],
       actions: {
         test: ({ commit }, payload) => {
           commit('TEST', payload)
@@ -49,8 +49,8 @@ describe('Lodger STORE', () => {
     test('1. RXDB', async () => {
       const { dispatch, getters } = rxdbStore
       await dispatch('test')
+      // expect(db).toBeDefined()
       expect(getters.test).toBeTruthy()
-      expect(db).toBeDefined()
     })
 
     // test.todo('2. [Store] Persisted State')

@@ -24,7 +24,7 @@ debug('DatabaseService: created database', db)
 */
 if (NODE_ENV === 'dev' && typeof window !== 'undefined') window['db'] = db
 
-// export const { isRxDocument } = RxDB
+export const { isRxDocument } = RxDB
 
 export default async function (dbdata) {
   const rdb = await db
@@ -37,11 +37,12 @@ export default async function (dbdata) {
 
   // create collections
   debug('Creez colectiile')
-
-  collections.forEach(col => {
-    const { schema: { properties }, name } = col
-    // console.info(name, properties)
-  })
+  // console.dir(collections)
+  // console.info(rdb)
+  // collections.forEach(col => {
+  //   const { schema: { properties }, } = col
+  //   console.info(properties)
+  // })
   try {
     await Promise.all(collections.map(colData => rdb.collection(colData)))
   } catch (e) {

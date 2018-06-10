@@ -13,6 +13,11 @@ describe('Functii ajutatoare pt DB', () => {
       expect(toDBtype()).toBe('string')
     })
 
+    test('returneaza "string" daca input-ul e nestiut', () => {
+      expect(toDBtype('whatever')).toBe('string')
+
+    })
+
     test('returneaza "number" pentru valorile aferente', () => {
       expect(toDBtype('date-time')).toBe('number')
       expect(toDBtype('bani')).toBe('number')
@@ -26,8 +31,9 @@ describe('Functii ajutatoare pt DB', () => {
   })
 
   describe('getFormData', () => {
+    const formAsociatie = getFormData('asociatie')
+
     test('incarca si returneaza datele formului in functie de cheie', () => {
-      const formAsociatie = getFormData('asociatie')
       expect(formAsociatie.campuri).toBeDefined()
     })
 
@@ -37,6 +43,10 @@ describe('Functii ajutatoare pt DB', () => {
 
     test('arunca daca numele fisierului cerut nu poate fi gasit', () => {
       expect(() => { getFormData('unfisiercarenuexista') }).toThrow()
+    })
+
+    test('returneaza numele formularului', () => {
+      expect(formAsociatie.name).toBe('asociatie')
     })
   })
 
@@ -60,7 +70,7 @@ describe('Functii ajutatoare pt DB', () => {
     })
   })
 
-  describe('describeFieldForCollectionScehma', () => {
+  describe('addFieldToCollectionScehma', () => {
     test('arunca daca e apelat fara unu din cei 2 parametri', () => {
       expect(() => { addFieldToColSchema() }).toThrow('parametri insuficienti')
     })
@@ -71,11 +81,52 @@ describe('Functii ajutatoare pt DB', () => {
       expect(() => { addFieldToColSchema('bam bam', []) }).toThrow('parametri incorecti')
     })
 
+    test('adauga un camp la schema.properties', () => {
+      const schema = {}
+      const id = 'test'
+      addFieldToColSchema({ id }, schema)
+      expect(schema.properties).toBeDefined()
+      expect(schema.properties).toHaveProperty('id')
+    })
+
+    test('adauga un camp necesar la schema.required', () => {
+      const schema = {}
+      const id = 'test'
+      addFieldToColSchema({ id, required: true }, schema)
+      expect(schema.required).toBeDefined()
+      expect(schema.required instanceof Array).toBeTruthy()
+      expect(schema.required.indexOf(id)).toBeGreaterThan(-1)
+    })
+
   })
 
   describe('toCollectionField', () => {
+    const id = 'un field random'
     test('arunca daca - campul n-are ID', () => {
       expect(() => { toCollectionField({}) }).toThrow('camp fara id')
+    })
+
+    test('obiectul returnat are cheia = id', () => {
+      const testField = toCollectionField({ id })
+      expect(Object.keys(testField)[0]).toBe(id)
+    })
+
+    test('converteste tipul', () => {
+      expect(toCollectionField({
+        id,
+        type: 'bani'
+      })[id].type).toBe('number')
+    })
+
+    test('adauga referinta (ref) daca e data', () => {
+      const fieldCuReferinta = {
+        id,
+        ref: 'altaColectie'
+      }
+      const fieldCuReferintaTransformat = toCollectionField(fieldCuReferinta)[id]
+      expect(fieldCuReferintaTransformat).toHaveProperty('ref')
+
+      expect(typeof fieldCuReferintaTransformat.ref).toBe('object')
     })
   })
   
@@ -84,6 +135,16 @@ describe('Functii ajutatoare pt DB', () => {
       expect(() => { makeCollection() }).toThrow()
     })
 
-    // test()
+    test('face colectie', () => {
+      const formData = {
+        name: 'unFormularLodger',
+        campuri: [],
+        metode: []
+      }
+      const colectie = makeCollection(formData)
+      expect(colectie.schema).toBeDefined()
+      expect(colectie.name).toBe(formData.name)
+      expect(colectie.methods).toBe(formData.metode)
+    })
   })
 })

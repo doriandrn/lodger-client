@@ -9,22 +9,30 @@ const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
  * Schema noastra e mult mai detaliata
  * 
  * @param {string} type 
+ * @returns {string} - tipul primar, eg. 'string'
  */
 const toDBtype = type => {
-  if (!type || ['text', 'textarea', 'select', 'search'].indexOf(type) > -1) return 'string'
-  if (['date-time', 'bani', 'date'].indexOf(type) > -1) return 'number'
-  if (['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire', 'selApartamente'].indexOf(type) > -1) return 'array'
-  return type
+  const _default = 'string'
+  const strings = ['text', 'textarea', 'select', 'search']
+  const numbers = ['date-time', 'bani', 'date']
+  const arrays = ['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire', 'selApartamente']
+
+  if (!type || strings.indexOf(type) > -1) return _default
+  if (numbers.indexOf(type) > -1) return 'number'
+  if (arrays.indexOf(type) > -1) return 'array'
+  return _default
 }
 
 /**
  * Incarca si returneaza datele formularului dupa numele acestuia
  * 
  * @param {string} numeFormular 
+ * @returns {object} datele formularului
  */
-const getFormData = numeFormular => {
-  if (!numeFormular) throw new Error('getFormData( -- ) - apelat fara a cere vreun nume de formular')
-  return require(`../forms/${numeFormular}`)
+const getFormData = name => {
+  if (!name)
+    throw new Error('getFormData( -- ) - apelat fara a cere vreun nume de formular')
+  return Object.assign(require(`../forms/${name}`), { name })
 }
 
 /**
@@ -32,9 +40,12 @@ const getFormData = numeFormular => {
  * 
  * @param {string} name - numele colectiei
  * @param {string} schemaType - tipul (default: 'object')
+ * @returns {object} detaliile schemei
  */
 const collectionSchemaInitial = (name, schemaType) => {
-  if (!name) throw new Error('Niciun nume dat schemei')
+  if (!name)
+    throw new Error('Niciun nume dat schemei')
+
   const type = schemaType || 'object'
 
   return {
@@ -50,7 +61,8 @@ const collectionSchemaInitial = (name, schemaType) => {
 /**
  * Transforma / maniPULeAza un camp de-al nostru din forms intr-unu' compatibil RXDB
  * 
- * @param { Object } formItem - campul din formular
+ * @param {object} formItem - campul din formular
+ * @returns {object} campul transformat, ready pt rxdb
  */
 const toCollectionField = formItem => {
   if (!formItem.id)
@@ -73,10 +85,12 @@ const toCollectionField = formItem => {
     type,
     primary,
     index,
-    encrypted
+    encrypted,
+    required
   }
 
   if (step) Object.assign(descriereCamp, { multipleOf: step })
+  if (ref) Object.assign(descriereCamp, { ref })
 
   return {
     [id]: descriereCamp
@@ -88,15 +102,36 @@ const toCollectionField = formItem => {
  * 
  * @param {Object} formItem - campu'
  * @param {Object} schema - schema colectiei
+ * @returns {object} schema modificata
  */
 const addFieldToColSchema = (formItem, schema) => {
   if (!formItem || !schema)
     throw new Error('parametri insuficienti')
   if (typeof formItem !== 'object' || typeof schema !== 'object')
     throw new Error('parametri incorecti')
+
+  schema.properties = schema.properties || {}
+  schema.required = schema.required || []
   
   if (formItem.required) schema.required.push(formItem.id)
   Object.assign(schema.properties, formItem)
+  return schema
+}
+
+/**
+ * Face schema unei colectii din datele formularului
+ * 
+ * @param {*} param0 
+ * @returns {object} schema modificata
+ */
+const makeSchemaForCollection = ({ name, campuri }) => {
+  if (!name) throw new Error('makeCollection apelat fara nume')
+  const schema = collectionSchemaInitial(name)
+  campuri
+    .filter(camp => !camp.notInDb)
+    .forEach(camp => {
+      addFieldToColSchema(toCollectionField(camp), schema)
+    })
   return schema
 }
 
@@ -107,18 +142,12 @@ const addFieldToColSchema = (formItem, schema) => {
  * @param {object} data 
  * @returns {object} Datele colectiei pentru RXDB
  */
-const makeCollection = data => {
-  if (!data) throw new Error('makeCollection apelat fara data')
-  const { key, value } = data
-  const { campuri, metode } = getFormData(key)
-  const schema = collectionSchemaInitial(key)
-
-  campuri
-    .filter(camp => !camp.notInDb)
-    .forEach(addFieldToColSchema(formItem, schema))
+const makeCollection = (formData) => {
+  const { name, metode } = formData
+  const schema = makeSchemaForCollection(formData)
 
   return {
-    name: value,
+    name,
     schema,
     methods: metode,
     sync: true
@@ -128,7 +157,8 @@ const makeCollection = data => {
 export { 
   toDBtype,
   getFormData, 
-  sanitizeDBItems, 
+  sanitizeDBItems,
+  makeSchemaForCollection,
   makeCollection,
   collectionSchemaInitial,
   addFieldToColSchema,

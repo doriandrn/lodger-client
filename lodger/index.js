@@ -1,24 +1,7 @@
 import connectToDb from './db'
-import { traverse, no$ } from './helpers/functions'
-import schema from './schema'
 
 let initializat
-const definitii = new Map()
-const helperCautare = {}
-const notifica = ({ dispatch }) => ({ type, heading, text }) => {
-  dispatch('@@toast/ADD_TOAST_MESSAGE', { type, heading, text })
-}
-
 const { NODE_ENV } = process.env
-
-/**
- * Traverseaza recursiv schema si in functie de chei face chestii
- * k = key, v = value
- */
-traverse(schema, (k, v) => {
-  if (v._cheiCautare && v._cheiCautare.length > 0) helperCautare[no$(k)] = v._cheiCautare
-  if (v._singular) definitii.set(v._singular, no$(k))
-})
 
 /**
  * Creates an instance of Lodger.
@@ -51,15 +34,12 @@ export default class Lodger {
     return initializat
   }
 
-  static get definitii () {
-    return definitii
-  }
-
   /**
    * Functie de initializare / build
    * @param {object} config 
    */
   static async build (config) {
+    const colectii = []
     const _db = await connectToDb()
     if (!_db) throw new Error('DB nu s-a putut incarca')
 

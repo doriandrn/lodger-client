@@ -1,5 +1,5 @@
 import Debug from 'debug'
-import { defs } from '../'
+import { definitii } from '../index'
 // const fs = require('fs')
 
 const debug = Debug('lodger:db:collections')
@@ -8,10 +8,10 @@ const cols = []
 
 const makeCollection = data => {
   const { key, value } = data
-  const cachedSchemaFileName = `cache-schema-${key}`
-  let cachedSchema = null
-  let version = 0
-  let foundCachedProperties = []
+  // const cachedSchemaFileName = `cache-schema-${key}`
+  // let cachedSchema = null
+  // let version = 0
+  // let foundCachedProperties = []
 
   // try {
   //   let collectionCache = localStorage.getItem(cachedSchemaFileName)
@@ -44,7 +44,7 @@ const makeCollection = data => {
     required: [],
     migrationStrategies: {}
   }
-  let versionMustIncrease = false
+  // let versionMustIncrease = false
 
   campuri
     .filter(camp => !camp.notInDb)
@@ -94,7 +94,7 @@ const makeCollection = data => {
   }
 }
 
-for (let [key, value] of defs) {
+for (let [key, value] of definitii) {
   cols.push(makeCollection({ key, value }))
 }
 

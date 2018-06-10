@@ -1,10 +1,16 @@
-import Lodger from '../lodger/new'
+import Lodger from '../lodger/index'
 
 describe('ZA NEW LODGER', () => {
   let lodger
   beforeAll(async () => {
     lodger = await Lodger.build()
     // console.info(lodger)
+  })
+
+  describe('0. Preinitializare', () => {
+    test('Colectiile pt DB se fac ok', () => {
+      expect(lodger.collectii).toBeDefined()
+    })
   })
 
   describe('1. Initializare', () => {
@@ -25,6 +31,12 @@ describe('ZA NEW LODGER', () => {
     test('Helper-ul de cautare se populeaza', () => {
       const { helperCautare } = lodger
       expect(helperCautare).toBeDefined()
+      expect(helperCautare.apartamente).toBeDefined()
+    })
+
+    test('Functia de notificare', () => {
+      const { notifica } = lodger
+      expect(typeof notifica).toBe('function')
     })
   })
 })

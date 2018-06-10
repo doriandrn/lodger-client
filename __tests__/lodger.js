@@ -6,9 +6,9 @@ Vue.use(Vuex)
 
 describe('Lodger STORE', () => {
 
-  beforeAll(async () => {
-    // db = await Db()
-  })
+  // beforeAll(async () => {
+  //   // db = await Db()
+  // })
   beforeEach(() => {
     jest.resetModules()
   })

@@ -1,4 +1,5 @@
 const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
+import { definitii } from '../definitii'
 
 /**
  * Converteste tipurile campurilor 'noastre' in primare
@@ -29,10 +30,10 @@ const toDBtype = type => {
  * @param {string} numeFormular 
  * @returns {object} datele formularului
  */
-const getFormData = name => {
-  if (!name)
-    throw new Error('getFormData( -- ) - apelat fara a cere vreun nume de formular')
-  return Object.assign(require(`../forms/${name}`), { name })
+const getFormData = (id, name) => {
+  if (!id || !name)
+    throw new Error('parametri insuficienti')
+  return Object.assign(require(`../forms/${id}`), { name: id })
 }
 
 /**
@@ -126,7 +127,9 @@ const addFieldToColSchema = (formItem, schema) => {
  */
 const makeSchemaForCollection = ({ name, campuri }) => {
   if (!name) throw new Error('makeCollection apelat fara nume')
+
   const schema = collectionSchemaInitial(name)
+
   campuri
     .filter(camp => !camp.notInDb)
     .forEach(camp => {
@@ -143,11 +146,15 @@ const makeSchemaForCollection = ({ name, campuri }) => {
  * @returns {object} Datele colectiei pentru RXDB
  */
 const makeCollection = (formData) => {
-  const { name, metode } = formData
+  let { name, metode } = formData
+  const colNamePlural = definitii.get(name)
+
+  if (!colNamePlural)
+    throw new Error(`nume colectie: '${name}' negasit in definitii`)
   const schema = makeSchemaForCollection(formData)
 
   return {
-    name,
+    name: colNamePlural,
     schema,
     methods: metode,
     sync: true

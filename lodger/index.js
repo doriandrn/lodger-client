@@ -1,4 +1,5 @@
 import connectToDb from './db'
+import { definitii, helperCautare } from './definitii'
 
 let initializat
 const { NODE_ENV } = process.env
@@ -22,7 +23,7 @@ export default class Lodger {
       this._db = context._db
       this.definitii = definitii
       this.helperCautare = helperCautare
-      this.notifica = notifica
+      // this.notifica = notifica
     }
 
     /* Indicator initializare - flag */

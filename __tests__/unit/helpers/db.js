@@ -7,6 +7,8 @@ import {
   toCollectionField
 } from '../../../lodger/helpers/db'
 
+const singular = 'asociatie'
+const plural = 'asociatii'
 describe('Functii ajutatoare pt DB', () => {
   describe('toDBtype', () => {
     test('returneaza "string" daca e apelat fara parametru', () => {
@@ -31,7 +33,7 @@ describe('Functii ajutatoare pt DB', () => {
   })
 
   describe('getFormData', () => {
-    const formAsociatie = getFormData('asociatie')
+    const formAsociatie = getFormData(singular, plural)
 
     test('incarca si returneaza datele formului in functie de cheie', () => {
       expect(formAsociatie.campuri).toBeDefined()
@@ -46,22 +48,23 @@ describe('Functii ajutatoare pt DB', () => {
     })
 
     test('returneaza numele formularului', () => {
-      expect(formAsociatie.name).toBe('asociatie')
+      expect(formAsociatie.name).toBe(singular)
     })
   })
 
   describe('collectionSchemaInitial', () => {
-    const schemaColectieAsociatie = collectionSchemaInitial('numeColectie')
+    const schemaColectieAsociatie = collectionSchemaInitial(singular)
 
     test('arunca daca e apelata fara nume', () => {
       expect(() => { collectionSchemaInitial() }).toThrow()
     })
 
     test('returneaza elementele default ale unei scheme pt. colectie', () => {
-      
       expect(typeof schemaColectieAsociatie.properties).toBe('object')
-      expect(schemaColectieAsociatie.name).toBe('numeColectie')
-      expect(typeof schemaColectieAsociatie.properties).toBe('object')
+    })
+
+    test('returneaza singularul pentru nume', () => {
+      expect(schemaColectieAsociatie.name).toBe(singular)
     })
 
     test('contine cheia "required" pt elementele necesare', () => {
@@ -131,20 +134,24 @@ describe('Functii ajutatoare pt DB', () => {
   })
   
   describe('makeCollection', () => {
+    const formData = {
+      name: singular,
+      campuri: [],
+      metode: []
+    }
+    const colectie = makeCollection(formData)
     test('arunca daca e apelata fara parametru/i', () => {
       expect(() => { makeCollection() }).toThrow()
     })
 
     test('face colectie', () => {
-      const formData = {
-        name: 'unFormularLodger',
-        campuri: [],
-        metode: []
-      }
-      const colectie = makeCollection(formData)
+      
       expect(colectie.schema).toBeDefined()
-      expect(colectie.name).toBe(formData.name)
       expect(colectie.methods).toBe(formData.metode)
+    })
+
+    test('numele colectiei e la plural, al formularului la singular', () => {
+      expect(colectie.name !== formData.name).toBeTruthy()
     })
   })
 })

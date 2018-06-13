@@ -1,6 +1,4 @@
 import * as RxDB from 'rxdb'
-import { remoteURL, dbCon } from '../config'
-import collections from './collections'
 import Debug from 'debug'
 
 const debug = Debug('lodger:DB')
@@ -15,24 +13,26 @@ if (NODE_ENV === 'test') {
 RxDB.plugin(require('pouchdb-adapter-http'))
 RxDB.plugin(require('pouchdb-authentication'))
 
-const getdb = async (con) => await RxDB.create(con)
-const db = getdb(dbCon)
-
-debug('DatabaseService: created database', db)
 /** 
  * Pentru acces usor la DB pe dev, 'db' in consola
-*/
+ */
 if (NODE_ENV === 'dev' && typeof window !== 'undefined') window['db'] = db
 
 export const { isRxDocument } = RxDB
 
-export default async function (dbdata) {
-  const rdb = await db
+export default async function (dbdata, collections) {
+  const rdb = await RxDB.create(dbdata || {
+    name: 'ldg',
+    adapter: 'memory'
+  })
+  debug('DatabaseService: created database', rdb)
 
   // show leadership in title
   rdb.waitForLeadership().then(() => {
     debug('♛')
-    // document.title = '♛ ' + document.title
+    if (NODE_ENV === 'dev') {
+      document.title = '♛ ' + document.title
+    }
   })
 
   // create collections
@@ -43,6 +43,10 @@ export default async function (dbdata) {
   //   const { schema: { properties }, } = col
   //   console.info(properties)
   // })
+  if (!collections ||
+    (collections instanceof Array && collections.length < 0))
+      return rdb
+
   try {
     await Promise.all(collections.map(colData => rdb.collection(colData)))
   } catch (e) {

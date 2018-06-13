@@ -7,12 +7,6 @@ describe('ZA NEW LODGER', () => {
     // console.info(lodger)
   })
 
-  describe('0. Preinitializare', () => {
-    test('Colectiile pt DB se fac ok', () => {
-      expect(lodger.collectii).toBeDefined()
-    })
-  })
-
   describe('1. Initializare', () => {
     test('Getter-ul indica ok', () => {
       expect(lodger.initializat).toBeTruthy()
@@ -34,9 +28,9 @@ describe('ZA NEW LODGER', () => {
       expect(helperCautare.apartamente).toBeDefined()
     })
 
-    test('Functia de notificare', () => {
-      const { notifica } = lodger
-      expect(typeof notifica).toBe('function')
-    })
+    // test('Functia de notificare', () => {
+    //   const { notifica } = lodger
+    //   expect(typeof notifica).toBe('function')
+    // })
   })
 })

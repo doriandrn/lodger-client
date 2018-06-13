@@ -69,7 +69,7 @@ const toCollectionField = formItem => {
   if (!formItem.id)
     throw new Error('camp fara id')
 
-  const { id, required, primary, step, encrypted, index, indexRef } = formItem
+  const { id, step, indexRef } = formItem
   let { type, ref } = formItem
 
   type = toDBtype(type)
@@ -78,20 +78,24 @@ const toCollectionField = formItem => {
     items: {
       // Folosim doar id-uri pt. referinta intre obiecte, de aici 'string'
       type: 'string'
-    },
-    index: indexRef
+    }
   } : undefined
 
-  const descriereCamp = {
-    type,
-    primary,
-    index,
-    encrypted,
-    required
+  if (ref && indexRef) {
+    Object.assign(ref, { index: indexRef })
   }
 
+  const cheiImutabile = ['primary', 'index', 'encrypted', 'required']
+  const descriereCamp = {
+    type
+  }
+  cheiImutabile.forEach(cheie => {
+    if (!formItem[cheie]) return
+    Object.assign(descriereCamp, { [cheie]: formItem[cheie] })
+  })
+
   if (step) Object.assign(descriereCamp, { multipleOf: step })
-  if (ref) Object.assign(descriereCamp, { ref })
+  if (ref) Object.assign(descriereCamp, ref)
 
   return {
     [id]: descriereCamp
@@ -107,15 +111,15 @@ const toCollectionField = formItem => {
  */
 const addFieldToColSchema = (formItem, schema) => {
   if (!formItem || !schema)
-    throw new Error('parametri insuficienti')
+    throw new TypeError('parametri insuficienti')
   if (typeof formItem !== 'object' || typeof schema !== 'object')
-    throw new Error('parametri incorecti')
+    throw new TypeError('parametri incorecti')
 
   schema.properties = schema.properties || {}
   schema.required = schema.required || []
   
   if (formItem.required) schema.required.push(formItem.id)
-  Object.assign(schema.properties, formItem)
+  Object.assign(schema.properties, toCollectionField(formItem))
   return schema
 }
 
@@ -133,7 +137,7 @@ const makeSchemaForCollection = ({ name, campuri }) => {
   campuri
     .filter(camp => !camp.notInDb)
     .forEach(camp => {
-      addFieldToColSchema(toCollectionField(camp), schema)
+      addFieldToColSchema(camp, schema)
     })
   return schema
 }
@@ -152,13 +156,17 @@ const makeCollection = (formData) => {
   if (!colNamePlural)
     throw new Error(`nume colectie: '${name}' negasit in definitii`)
   const schema = makeSchemaForCollection(formData)
-
-  return {
+  const colectie = {
     name: colNamePlural,
     schema,
-    methods: metode,
     sync: true
   }
+
+  if (metode && metode instanceof Array && metode.length) {
+    Object.assign(colectie, { methods: metode })
+  }
+
+  return colectie
 }
 
 export { 

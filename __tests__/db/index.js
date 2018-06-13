@@ -1,9 +1,9 @@
-import collections from '../../lodger/db/collections'
+import Db from '../../lodger/db/index'
 
 describe('DB', () => {
-  describe('1. Colectiile', () => {
-    test('se instantiaza', () => {
-      expect(collections).toBeDefined()
-    })
+  test('se initializeaza fara nimic', async () => {
+    const emptyDb = await Db()
+    expect(emptyDb).toBeDefined()
+    await emptydb.destroy()
   })
 })

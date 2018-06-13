@@ -89,14 +89,15 @@ describe('Functii ajutatoare pt DB', () => {
       const id = 'test'
       addFieldToColSchema({ id }, schema)
       expect(schema.properties).toBeDefined()
-      expect(schema.properties).toHaveProperty('id')
+      expect(schema.properties[id]).toBeDefined()
     })
 
     test('adauga un camp necesar la schema.required', () => {
       const schema = {}
       const id = 'test'
       addFieldToColSchema({ id, required: true }, schema)
-      expect(schema.required).toBeDefined()
+
+      expect(schema.properties.test.required).toBeDefined()
       expect(schema.required instanceof Array).toBeTruthy()
       expect(schema.required.indexOf(id)).toBeGreaterThan(-1)
     })
@@ -105,12 +106,12 @@ describe('Functii ajutatoare pt DB', () => {
 
   describe('toCollectionField', () => {
     const id = 'un field random'
+    const testField = toCollectionField({ id })
     test('arunca daca - campul n-are ID', () => {
       expect(() => { toCollectionField({}) }).toThrow('camp fara id')
     })
 
     test('obiectul returnat are cheia = id', () => {
-      const testField = toCollectionField({ id })
       expect(Object.keys(testField)[0]).toBe(id)
     })
 
@@ -129,7 +130,14 @@ describe('Functii ajutatoare pt DB', () => {
       const fieldCuReferintaTransformat = toCollectionField(fieldCuReferinta)[id]
       expect(fieldCuReferintaTransformat).toHaveProperty('ref')
 
-      expect(typeof fieldCuReferintaTransformat.ref).toBe('object')
+      expect(typeof fieldCuReferintaTransformat.ref).toBe('string')
+      expect(fieldCuReferinta.ref.ref).toBeUndefined()
+    })
+
+    test('exclude cheile fara valoare / cu undefined', () => {
+      Object.values(testField[id]).forEach(field => {
+        expect(field).toBeDefined()
+      })
     })
   })
   
@@ -140,6 +148,7 @@ describe('Functii ajutatoare pt DB', () => {
       metode: []
     }
     const colectie = makeCollection(formData)
+    console.info(colectie)
     test('arunca daca e apelata fara parametru/i', () => {
       expect(() => { makeCollection() }).toThrow()
     })
@@ -147,7 +156,10 @@ describe('Functii ajutatoare pt DB', () => {
     test('face colectie', () => {
       
       expect(colectie.schema).toBeDefined()
-      expect(colectie.methods).toBe(formData.metode)
+    })
+
+    test('nu are metode (pt ca e gol si ar intoarce undef)', () => {
+      expect(colectie.methods).toBeUndefined()
     })
 
     test('numele colectiei e la plural, al formularului la singular', () => {

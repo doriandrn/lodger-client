@@ -1,10 +1,11 @@
 import Lodger from '../lodger/index'
+import * as lodgerConfig from '../lodger/config'
 
 describe('ZA NEW LODGER', () => {
   let lodger
   beforeAll(async () => {
-    lodger = await Lodger.build()
-    // console.info(lodger)
+    lodger = await Lodger.build(lodgerConfig)
+    console.info(lodger)
   })
 
   describe('1. Initializare', () => {
@@ -32,5 +33,10 @@ describe('ZA NEW LODGER', () => {
     //   const { notifica } = lodger
     //   expect(typeof notifica).toBe('function')
     // })
+  })
+
+  afterAll(async () => {
+    if (!lodger) return
+    lodger.destroy()
   })
 })

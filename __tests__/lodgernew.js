@@ -1,14 +1,18 @@
 import Lodger from '../lodger/index'
 import * as lodgerConfig from '../lodger/config'
 
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
 describe('ZA NEW LODGER', () => {
   let lodger
   beforeAll(async () => {
     lodger = await Lodger.build(lodgerConfig)
-    console.info(lodger)
+    console.error(lodger)
   })
 
-  describe('1. Initializare', () => {
+  describe('Initializare', () => {
     test('Getter-ul indica ok', () => {
       expect(lodger.initializat).toBeTruthy()
     })
@@ -16,23 +20,31 @@ describe('ZA NEW LODGER', () => {
     test('Se conecteaza la DB', () => {
       expect(lodger._db).toBeDefined()
     })
+  })
 
-    test('Definitiile se fac dupa schema', () => {
-      const { definitii } = lodger
-      expect(definitii instanceof Map).toBeTruthy()
-      expect(definitii.size).toBeGreaterThan(0)
+  // describe('Vuex plugin', () => {
+  //   // test('se ')
+  // })
+
+  describe('API', () => {
+    describe('CRUD', () => {
+      test('singularul e getter', () => {
+        expect(lodger.asociatie).toBeDefined()
+        expect(lodger.asociatie.adauga).toBeDefined()
+        console.info(lodger.asociatie.adauga)
+      })
+
+      test('Adauga', async () => {
+        const dateAsociatie = {
+          name: 'lola'
+        }
+        const asociatie = await lodger.asociatie.adauga(dateAsociatie)
+        expect(asociatie.name).toBe('lola')
+      })
+      test('listeaza asociatiile administrate', () => {
+        expect(lodger.asociatii).toBeDefined()
+      })
     })
-
-    test('Helper-ul de cautare se populeaza', () => {
-      const { helperCautare } = lodger
-      expect(helperCautare).toBeDefined()
-      expect(helperCautare.apartamente).toBeDefined()
-    })
-
-    // test('Functia de notificare', () => {
-    //   const { notifica } = lodger
-    //   expect(typeof notifica).toBe('function')
-    // })
   })
 
   afterAll(async () => {

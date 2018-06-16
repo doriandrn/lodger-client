@@ -1,5 +1,10 @@
-const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
 import { definitii } from '../definitii'
+/**
+ * Ingheata item-urile din DB in caz de e nevoie sa le paseze in state
+ * state-ul nu suporta chestii reactive, e el reactiv
+ * @param {*} items 
+ */
+const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
 
 /**
  * Converteste tipurile campurilor 'noastre' in primare
@@ -162,8 +167,10 @@ const makeCollection = (formData) => {
     sync: true
   }
 
-  if (metode && metode instanceof Array && metode.length) {
-    Object.assign(colectie, { methods: metode })
+  if (!metode) return colectie
+  const cheiMetode = Object.keys(metode)
+  if (metode && cheiMetode.length > -1) {
+    Object.assign(colectie, { methods: { ...metode } })
   }
 
   return colectie

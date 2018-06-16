@@ -145,10 +145,12 @@ describe('Functii ajutatoare pt DB', () => {
     const formData = {
       name: singular,
       campuri: [],
-      metode: []
+      metode: {
+        test: () => {}
+      }
     }
     const colectie = makeCollection(formData)
-    console.info(colectie)
+    console.info('colectie dupa makeCollection', colectie)
     test('arunca daca e apelata fara parametru/i', () => {
       expect(() => { makeCollection() }).toThrow()
     })
@@ -157,13 +159,12 @@ describe('Functii ajutatoare pt DB', () => {
       
       expect(colectie.schema).toBeDefined()
     })
-
-    test('nu are metode (pt ca e gol si ar intoarce undef)', () => {
-      expect(colectie.methods).toBeUndefined()
-    })
-
     test('numele colectiei e la plural, al formularului la singular', () => {
       expect(colectie.name !== formData.name).toBeTruthy()
+    })
+
+    test('pune metodele definite in form', () => {
+      expect(colectie.methods.test).toBeDefined()
     })
   })
 })

@@ -9,8 +9,7 @@ const store = new Vuex.Store({
 
 const { dispatch, getters } = store
 
-describe('Adauga o asociatie', () => {
-  dispatch('asociatie/adauga', { denumire: 'lola' })
+describe('Adauga o asociatie', async () => {
 
   // test('adauga doar cu denumire', () => {
   //   expect(rootGetters.asociatii['lola']).toBeDefined()
@@ -18,9 +17,9 @@ describe('Adauga o asociatie', () => {
   // test('este cea activa dupa adaugare', () => {
   //   expect(getters.activa).toBe('lola') //todo: no, e gresit, ia idu
   // })
-})
-
-test('schimba asociatia activa', () => {
-  dispatch('schimba', '123')
-  expect(store.state.activa).toBe('123')
+  await dispatch('asociatie/adauga', { denumire: 'lola' })
+  test('schimba asociatia activa', async () => {
+    await dispatch('schimba', '123')
+    expect(store.state.activa).toBe('123')
+  })
 })

@@ -20,17 +20,24 @@ export default class Lodger {
     }
     _db = context._db
 
-    // api-ul
+    /**
+     * API-ul principal
+     * Pentru fiecare definitie creeaza metode si getteri
+     */
+
+
     for (const [singular, plural] of definitii) {
       const colectie = _db[plural]
   
       Object.defineProperties(this, {
-        [singular]: {
-          value: { 
-            ... colectie._methods,
-            adauga: colectie.insert.bind(colectie)
-          }
-        },
+        // [singular]: {
+        //   value: {
+        //     adauga: colectie.insert.bind(colectie),
+        //     modifica: colectie.upsert.bind(colectie),
+        //     sterge: colectie.remove.bind(colectie),
+        //     ... colectie._methods,
+        //   }
+        // },
         [plural]: {
           get () {
             if (!arguments) {
@@ -50,7 +57,37 @@ export default class Lodger {
     initializat = true
     console.dir('api', api)
 
-    return this
+    // return this
+  }
+
+  /**
+   * Adaugă un item/document nou
+   * @param {object} date 
+   */
+  async adauga (date) {
+    if (typeof date !== 'object')
+      throw new Error('parametri incorecti')
+
+    const { ce } = date
+
+    if (!ce) {
+      throw new Error('taxonomie nedfinita')
+    }
+    if (!definitii.has(ce)) {
+      throw new Error('taxonomie incorecta')
+    }
+    if (Object.keys(date).length === 1) {
+      throw new Error('parametri insuficienti')
+    }
+    const plural = definitii.get(ce)
+    if (!plural) {
+      throw new Error(`${ce} e de negasit(a) in definitii`)
+    }
+    const colectie = _db[plural]
+    const metoda = date._id ? 'upsert' : 'insert'
+    delete date.ce
+
+    return await colectie[metoda](date)
   }
 
   get _db () {

@@ -17,7 +17,7 @@ describe('Adauga o asociatie', async () => {
   // test('este cea activa dupa adaugare', () => {
   //   expect(getters.activa).toBe('lola') //todo: no, e gresit, ia idu
   // })
-  await dispatch('asociatie/adauga', { denumire: 'lola' })
+  // await dispatch('asociatie/adauga', { denumire: 'lola' })
   test('schimba asociatia activa', async () => {
     await dispatch('schimba', '123')
     expect(store.state.activa).toBe('123')

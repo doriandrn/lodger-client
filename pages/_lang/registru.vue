@@ -71,14 +71,17 @@ export default {
     async _incasari () {
       const { $db, index, limit, findCriteria, sortCriteria } = this
       this.incarcate = false
-      let chgs
-      await $db.incasari.find(findCriteria).limit(limit*index).sort(sortCriteria).$.subscribe(async changes => {
-        if (!changes) return
-        this.incasari = changes
-        chgs = changes
-        if ( index > 1 ) this.incarcate = true
-      })
-      return chgs
+      // let chgs
+      // await $db.incasari.find(findCriteria).limit(limit*index).sort(sortCriteria).$.subscribe(async changes => {
+      //   if (!changes) return
+      //   this.incasari = changes
+      //   chgs = changes
+      //   if ( index > 1 ) this.incarcate = true
+      // })
+      const incasari = await lodger.incasari({ limit, sort, index, find })
+      this.incarcate = true
+      return incasari
+      // return chgs
     }
   },
   async mounted () {

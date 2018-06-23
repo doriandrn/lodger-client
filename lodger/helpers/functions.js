@@ -12,6 +12,25 @@ const traverse = function (o, fn) {
 }
 
 /**
+ * Criteriu default pentru o taxonmoie ceruta
+ * @param {string} taxonomie 
+ */
+const criteriuDefault = taxonomie => {
+  const criteriu = {}
+  switch (taxonomie) {
+    case 'blocuri':
+    case 'incasari':
+    case 'cheltuieli':
+      return { asociatieId: getters['asociatie/activa']._id }
+
+    case 'apartament':
+      return { bloc: { $in: getters['bloc/ids'] } }
+  }
+  // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
+  return
+}
+
+/**
  * Scoate '$' de la inceputul unui string
  * @param {string} str 
  */
@@ -49,4 +68,4 @@ const slugify = text => {
 }
 
 
-export { traverse, no$, spleet, slugify }
+export { traverse, no$, spleet, slugify, criteriuDefault }

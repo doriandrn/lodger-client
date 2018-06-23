@@ -17,13 +17,16 @@ describe('Functii ajutatoare pt DB', () => {
 
     test('returneaza "string" daca input-ul e nestiut', () => {
       expect(toDBtype('whatever')).toBe('string')
-
+      expect(toDBtype('string')).toBe('string')
+      expect(toDBtype(null)).toBe('string')
+      expect(toDBtype(undefined)).toBe('string')
     })
 
     test('returneaza "number" pentru valorile aferente', () => {
       expect(toDBtype('date-time')).toBe('number')
       expect(toDBtype('bani')).toBe('number')
       expect(toDBtype('date')).toBe('number')
+      expect(toDBtype('number')).toBe('number')
     })
 
     test('returneaza "array" pentru valorile aferente', () => {

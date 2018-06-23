@@ -20,7 +20,7 @@ const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
 const toDBtype = type => {
   const _default = 'string'
   const strings = ['text', 'textarea', 'select', 'search']
-  const numbers = ['date-time', 'bani', 'date']
+  const numbers = ['number', 'date-time', 'bani', 'date']
   const arrays = ['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire', 'selApartamente']
 
   if (!type || strings.indexOf(type) > -1) return _default

@@ -2,7 +2,8 @@ import {
   traverse,
   slugify,
   no$,
-  spleet
+  spleet,
+  criteriuDefault
 } from '../../../lodger/helpers/functions'
 
 describe('Functii ajutatoare', () => {
@@ -27,6 +28,15 @@ describe('Functii ajutatoare', () => {
     test('slugifica', () => {
       expect(slugify('Dorian haleste')).toBe('dorian-haleste')
       expect(slugify(32)).toBe('32')
+    })
+  })
+
+  describe('criteriu default de cautare al taxonomiilor', () => {
+    const cheiPrincipale = ['limit', 'index', 'sort', 'find']
+    test('returneaza default-ul din config - pentru orice taxonomie daca nu e ceruta', () => {
+      const getCriteriu = criteriuDefault()
+      expect(getCriteriu).toBe('object')
+      expect(Object.keys(getCriteriu)).toEqual(expect.arrayContaining(cheiPrincipale))
     })
   })
 

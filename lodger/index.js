@@ -1,10 +1,15 @@
 import connectToDb from './db'
+// import Vuex from 'vuex'
 import { definitii, helperCautare } from './definitii'
 import colectii  from './db/collections'
 
 let initializat
 let _db
-const api = {}
+let store
+const subscriberiPrincipali = {}
+
+const storeDecorator = () => {}
+
 const { NODE_ENV } = process.env
 
 /**
@@ -24,29 +29,25 @@ export default class Lodger {
      * API-ul principal
      * Pentru fiecare definitie creeaza metode si getteri
      */
-
-
     for (const [singular, plural] of definitii) {
       const colectie = _db[plural]
   
       Object.defineProperties(this, {
-        // [singular]: {
-        //   value: {
-        //     adauga: colectie.insert.bind(colectie),
-        //     modifica: colectie.upsert.bind(colectie),
-        //     sterge: colectie.remove.bind(colectie),
-        //     ... colectie._methods,
-        //   }
-        // },
         [plural]: {
+          // getterul custom cu criteri
+          // eg. lodger.asociatii({ querycautare })
           get () {
-            if (!arguments) {
-              return 'default search - limit etc'
-            }
-            // getterul custom cu criteri
-            // eg. lodger.asociatii({ querycautare })
-            return async criteriu => {
-              return await colectie.find(criteriu).exec()
+            return async ({ limit, index, sort, find }) => {
+              const paging = limit * (index || 1)
+              const rezultate = Object.create(null)
+              const documente = await colectie.find(find).limit(paging).sort(sort).exec()
+              for (const doc of documente) {
+                const { _data } = doc
+                const { _id } = _data
+                if (!_id) continue
+                Object.assign(rezultate, { [_id]: _data })
+              }
+              return rezultate
             }
           }
         }
@@ -55,9 +56,7 @@ export default class Lodger {
 
     /* Indicator initializare - flag */
     initializat = true
-    console.dir('api', api)
-
-    // return this
+    console.log('store', store)
   }
 
   /**
@@ -87,7 +86,12 @@ export default class Lodger {
     const metoda = date._id ? 'upsert' : 'insert'
     delete date.ce
 
-    return await colectie[metoda](date)
+    try {
+      const adaugat = await colectie[metoda](date)
+      return adaugat
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   get _db () {
@@ -98,16 +102,29 @@ export default class Lodger {
     return initializat
   }
 
+  get store () {
+    return store
+  }
+
   /**
    * Functie de initializare / build
    * @param {object} config 
    */
-  static async build (config) {
+  static async build (config, modules) {
     const dbConfig = config && config.dbCon ? config.dbCon : {}
     const _db = await connectToDb(dbConfig, colectii)
     if (!_db) throw new Error('DB nu s-a putut incarca')
+    const { store } = modules || { store: null }
+    return new Lodger(config, { _db, store })
+  }
 
-    return new Lodger(config, { _db })
+  /**
+   * functionalitatea de plugin
+   */
+  injectStore () {
+    return async Store => {
+      store = Store
+    }
   }
 
   async destroy () {

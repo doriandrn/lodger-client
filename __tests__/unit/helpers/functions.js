@@ -3,8 +3,10 @@ import {
   slugify,
   no$,
   spleet,
-  criteriuDefault
+  getCriteriu,
+  getCriteriuDefault
 } from '../../../lodger/helpers/functions'
+import lodgerConfig from '../../../lodger.config'
 
 describe('Functii ajutatoare', () => {
   describe('traverse', () => {
@@ -31,12 +33,44 @@ describe('Functii ajutatoare', () => {
     })
   })
 
-  describe('criteriu default de cautare al taxonomiilor', () => {
+  describe('getCriteriuDefault', () => {
     const cheiPrincipale = ['limit', 'index', 'sort', 'find']
     test('returneaza default-ul din config - pentru orice taxonomie daca nu e ceruta', () => {
-      const getCriteriu = criteriuDefault()
-      expect(getCriteriu).toBe('object')
-      expect(Object.keys(getCriteriu)).toEqual(expect.arrayContaining(cheiPrincipale))
+      const criteriu = getCriteriuDefault()
+      expect(typeof criteriu).toBe('object')
+      const chei = Object.keys(criteriu)
+      expect(chei).toEqual(expect.arrayContaining(cheiPrincipale))
+    })
+
+    test('returneaza criteriul cerut pentru taxonomie', () => {
+      const criteriuDefaultAsociatie = lodgerConfig.taxonomii.$asociatie.criteriu
+      const criteriu = getCriteriuDefault('asociatie')
+      expect(criteriu.limit).toBe(criteriuDefaultAsociatie.limit)
+    })
+  })
+
+  describe('getCriteriu', () => {
+    
+    test('suprascrie valorile cerute in query', () => {
+      const limit = 77
+      const sort = { la: 'lala' }
+      const criteriu = getCriteriu({
+        limit,
+        sort
+      })
+      expect(criteriu.limit).toBe(limit)
+      expect(criteriu.sort).toBe(sort)
+    })
+
+    test('arunca daca e cerut cu string sau altceva', () => {
+      expect(() => { getCriteriu('blabla') }).toThrow('criteriu incorect')
+      expect(() => { getCriteriu(23) }).toThrow('criteriu incorect')
+
+    })
+
+    test('returneaza criteriu default pt o taxonomie cunoscuta', () => {
+      const { limit, index, sort, find } = getCriteriu('asociatie')
+      expect(limit).toBe(asociatieConfig.limit)
     })
   })
 

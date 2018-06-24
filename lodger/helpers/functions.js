@@ -1,3 +1,6 @@
+import lodgerConfig from '../../lodger.config'
+const criteriuDefault = lodgerConfig.taxonomii.defaults.criteriu
+
 /**
  * Traverseaza un obiect cu o functie
  * 
@@ -11,23 +14,31 @@ const traverse = function (o, fn) {
   }
 }
 
+const getCriteriuDefault = (taxonomie) => {
+  if (!taxonomie) return criteriuDefault
+}
+
 /**
  * Criteriu default pentru o taxonmoie ceruta
  * @param {string} taxonomie 
  */
-const criteriuDefault = taxonomie => {
-  const criteriu = {}
+const getCriteriu = (criteriuCerut, taxonomie) => {
+  if (criteriuCerut && typeof criteriuCerut !== 'object') {
+    throw new Error('criteriu incorect')
+  }
+  const criteriu = taxonomie ? getCriteriuDefault(taxonomie) : { ...criteriuDefault }
+  Object.assign(criteriu, criteriuCerut)
   switch (taxonomie) {
     case 'blocuri':
     case 'incasari':
     case 'cheltuieli':
-      return { asociatieId: getters['asociatie/activa']._id }
+      Object.assign(criteriu.find, { asociatieId: getters['asociatie/activa']._id })
 
     case 'apartament':
-      return { bloc: { $in: getters['bloc/ids'] } }
+      Object.assign(criteriu.find, { bloc: { $in: getters['bloc/ids'] } })
   }
   // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
-  return
+  return criteriu
 }
 
 /**
@@ -67,5 +78,11 @@ const slugify = text => {
     .replace(/-+$/, '');            // Trim - from end of text
 }
 
-
-export { traverse, no$, spleet, slugify, criteriuDefault }
+export {
+  traverse,
+  no$,
+  spleet,
+  slugify,
+  getCriteriu,
+  getCriteriuDefault
+}

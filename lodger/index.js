@@ -1,6 +1,7 @@
 import connectToDb from './db'
 // import Vuex from 'vuex'
 import { definitii, helperCautare } from './definitii'
+import { getCriteriu } from './helpers/functions'
 import colectii  from './db/collections'
 
 let initializat
@@ -11,6 +12,8 @@ const subscriberiPrincipali = {}
 const storeDecorator = () => {}
 
 const { NODE_ENV } = process.env
+
+
 
 /**
  * Creates an instance of Lodger.
@@ -37,7 +40,8 @@ export default class Lodger {
           // getterul custom cu criteri
           // eg. lodger.asociatii({ querycautare })
           get () {
-            return async ({ limit, index, sort, find }) => {
+            return async (criteriu) => {
+              let { limit, index, sort, find } = getCriteriu(criteriu, plural)
               const paging = limit * (index || 1)
               const rezultate = Object.create(null)
               const documente = await colectie.find(find).limit(paging).sort(sort).exec()

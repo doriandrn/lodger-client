@@ -116,6 +116,7 @@ module.exports = {
         struct: resolve('components/struct'),
         
         lodger: resolve('lodger'),
+        'lodger-plugins': resolve('lodger/plugins'),
         cfg: resolve('lodger/config'),
         forms: resolve('lodger/forms'),
         helpers: resolve('lodger/helpers'),

@@ -3,10 +3,9 @@ import Debug from 'debug'
 import createPersistedState from 'vuex-persistedstate'
 import FileSaver from 'file-saver'
 
-import { notificari, defs } from 'lodger'
 import { createModule } from 'vuex-toast'
 import { predefinite } from 'forms/serviciu'
-import { searchMap } from 'helpers/store'
+import { searchMap } from '../lodger/plugins/search'
 import { trm, spleet } from 'helpers/functions'
 import { sanitizeDBItems } from 'helpers/db'
 import { isRxDocument } from 'db'
@@ -34,9 +33,9 @@ const _state = {}
 
 const updateMutationName = key => `set_${key}`
 
-for (let [k, v] of defs) {
-  active[k] = null
-}
+// for (let [k, v] of defs) {
+//   active[k] = null
+// }
 
 let asociatieActiva
 

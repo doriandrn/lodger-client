@@ -4,7 +4,7 @@ import {
   no$,
   spleet,
   getCriteriu,
-  getCriteriuDefault
+  getTaxonomyConfig
 } from '../../../lodger/helpers/functions'
 import lodgerConfig from '../../../lodger.config'
 
@@ -33,18 +33,34 @@ describe('Functii ajutatoare', () => {
     })
   })
 
-  describe('getCriteriuDefault', () => {
+  // describe('getTaxonomyConfig', () => {
+  //   const cheiPrincipale = ['limit', 'index', 'sort', 'find']
+  //   test('returneaza default-ul din config - pentru orice taxonomie daca nu e ceruta', () => {
+  //     const criteriu = getTaxonomyConfig()
+  //     expect(typeof criteriu).toBe('object')
+  //     const chei = Object.keys(criteriu)
+  //     expect(chei).toEqual(expect.arrayContaining(cheiPrincipale))
+  //   })
+
+  //   test('returneaza criteriul cerut pentru taxonomie', () => {
+  //     const criteriuDefaultAsociatie = lodgerConfig.taxonomii.$asociatie.criteriu
+  //     const criteriu = getTaxonomyConfig('asociatie')
+  //     expect(criteriu.limit).toBe(criteriuDefaultAsociatie.limit)
+  //   })
+  // })
+
+  describe('getTaxonomyConfig', () => {
     const cheiPrincipale = ['limit', 'index', 'sort', 'find']
     test('returneaza default-ul din config - pentru orice taxonomie daca nu e ceruta', () => {
-      const criteriu = getCriteriuDefault()
+      const { criteriu } = getTaxonomyConfig()
       expect(typeof criteriu).toBe('object')
       const chei = Object.keys(criteriu)
       expect(chei).toEqual(expect.arrayContaining(cheiPrincipale))
     })
 
     test('returneaza criteriul cerut pentru taxonomie', () => {
-      const criteriuDefaultAsociatie = lodgerConfig.taxonomii.$asociatie.criteriu
-      const criteriu = getCriteriuDefault('asociatie')
+      const criteriuDefaultAsociatie = lodgerConfig.taxonomii.asociatie.criteriu
+      const { criteriu } = getTaxonomyConfig('asociatie')
       expect(criteriu.limit).toBe(criteriuDefaultAsociatie.limit)
     })
   })
@@ -54,7 +70,7 @@ describe('Functii ajutatoare', () => {
     test('suprascrie valorile cerute in query', () => {
       const limit = 77
       const sort = { la: 'lala' }
-      const criteriu = getCriteriu({
+      const criteriu = getCriteriu('asociatie', {
         limit,
         sort
       })
@@ -70,7 +86,7 @@ describe('Functii ajutatoare', () => {
 
     test('returneaza criteriu default pt o taxonomie cunoscuta', () => {
       const { limit, index, sort, find } = getCriteriu('asociatie')
-      expect(limit).toBe(asociatieConfig.limit)
+      expect(limit).toBe(lodgerConfig.taxonomii.asociatie.criteriu.limit)
     })
   })
 

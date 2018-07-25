@@ -5,8 +5,9 @@ const helperCautare = {}
 const definitii = new Map()
 
 /**
- * Traverseaza recursiv schema si in functie de chei face chestii
- * k = key, v = value
+ * Traverseaza recursiv schema (un obiect)
+ * in functie de chei
+ * callback: k = key, v = value
  */
 traverse(schema, (k, v) => {
   if (v._cheiCautare && v._cheiCautare.length > 0) helperCautare[no$(k)] = v._cheiCautare

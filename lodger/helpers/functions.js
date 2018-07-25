@@ -1,5 +1,15 @@
 import lodgerConfig from '../../lodger.config'
-const criteriuDefault = lodgerConfig.taxonomii.defaults.criteriu
+// const criteriuDefault = lodgerConfig.taxonomii.defaults.criteriu
+const taxConfig = {
+  defaults: {
+    criteriu: {
+      limit: 10,
+      find: { },
+      sort: null,
+      index: 1
+    }
+  }
+}
 
 /**
  * Traverseaza un obiect cu o functie
@@ -14,20 +24,70 @@ const traverse = function (o, fn) {
   }
 }
 
-const getCriteriuDefault = (taxonomie) => {
-  if (!taxonomie) return criteriuDefault
+// /**
+//  * Returneaza 
+//  * @param {*} taxonomie 
+//  */
+// const getCriteriuDefault = (taxonomie) => {
+//   if (!taxonomie) return criteriuDefault
+//   const tax = no$(taxonomie)
+// }
+
+
+/**
+ * Returneaza config-ul pentru o taxonomie sau default
+ * 
+ * @param {string} taxonomie
+ */
+const getTaxonomyConfig = tax => {
+  const { defaults } = taxConfig
+  if (!tax) return defaults
+  const { taxonomii } = lodgerConfig
+  const config = taxonomii[tax]
+  return config ? config : defaults
 }
+
+// const criteriu = {
+//   get () {
+//     return taxonomie => {
+//       const criteriu = taxonomie
+//         ? getTaxonomyConfig(taxonomie)
+//         : { ...defaults }
+
+//       switch (taxonomie) {
+//         case 'blocuri':
+//         case 'incasari':
+//         case 'cheltuieli':
+//           Object.assign(criteriu.find, { asociatieId: getters['asociatie/activa']._id })
+
+//         case 'apartament':
+//           Object.assign(criteriu.find, { bloc: { $in: getters['bloc/ids'] } })
+//       }
+//       // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
+//       return criteriu      
+//     }
+//   },
+
+//   set (taxonomie, criteriu) {
+
+//   }
+// }
 
 /**
  * Criteriu default pentru o taxonmoie ceruta
  * @param {string} taxonomie 
+ * @param {object} criteriuCerut - poate fi diferit decat default
  */
-const getCriteriu = (criteriuCerut, taxonomie) => {
+const getCriteriu = (taxonomie, criteriuCerut) => {
   if (criteriuCerut && typeof criteriuCerut !== 'object') {
     throw new Error('criteriu incorect')
   }
-  const criteriu = taxonomie ? getCriteriuDefault(taxonomie) : { ...criteriuDefault }
-  Object.assign(criteriu, criteriuCerut)
+  const { defaults } = taxConfig
+  const criteriu = taxonomie
+    ? getTaxonomyConfig(taxonomie)
+    : { ...defaults }
+
+  if (criteriuCerut) Object.assign(criteriu, criteriuCerut)
   switch (taxonomie) {
     case 'blocuri':
     case 'incasari':
@@ -40,6 +100,7 @@ const getCriteriu = (criteriuCerut, taxonomie) => {
   // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
   return criteriu
 }
+
 
 /**
  * Scoate '$' de la inceputul unui string
@@ -84,5 +145,5 @@ export {
   spleet,
   slugify,
   getCriteriu,
-  getCriteriuDefault
+  getTaxonomyConfig
 }

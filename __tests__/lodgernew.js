@@ -8,18 +8,36 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 let lodger
-let store
+const store = new Vuex.Store({
+  plugins: [Lodger.injectStore()]
+})
+Lodger.use(store)
 
 beforeAll(async () => {
   lodger = await Lodger.build(lodgerConfig)
-  store = new Vuex.Store({
-    plugins: [lodger.injectStore()]
-  })
   console.log(lodger)
   console.log(Object.getOwnPropertyNames(lodger))
 })
 
 describe('ZA NEW LODGER', () => {
+
+  describe('Pluginuri - .use()', () => {
+    test('metoda e definita', () => {
+      expect(Lodger.use).toBeDefined()
+    })
+
+    test('arunca daca nu e obiect', () => {
+      expect(() => { Lodger.use('caca') }).toThrow('Definitie plugin incorectă')
+    })
+
+    test('foloseste un plugin', () => {
+      const name = 'unPluginPtLodger'
+      const plugin = { name }
+
+      Lodger.use(plugin)
+      expect(lodger[name]).toBeDefined()
+    })
+  })
 
   describe('Initializare', () => {
     test('Getter-ul indica ok', () => {
@@ -40,27 +58,29 @@ describe('ZA NEW LODGER', () => {
   //   // test('se ')
   // })
 
-  describe('API  CRUD  CU R D', () => {
+  describe('API -- CRUD (more lik CU R D)', () => {
     let testId = null
 
     describe('CU - Adauga / modifca / updateaza, 3 la 10lei', () => {
       test('arunca daca parametru nu este obiect', async () => {
         await expect(lodger.adauga('asociatie')).rejects.toThrow('parametri incorecti')
+        await expect(lodger.adauga(12)).rejects.toThrow('parametri incorecti')
+        await expect(lodger.adauga()).rejects.toThrow('parametri incorecti')
       })
 
-      test('arunca daca { ce } este nedefinit', async () => {
+      test('arunca daca taxonomia ({ ce }) este nedefinita', async () => {
         await expect(lodger.adauga({ name: 'ceva' })).rejects.toThrow()
       })
 
-      test('arunca daca { ce } este unul din definitii', async () => {
+      test('arunca daca taxonomia ({ ce }) nu este in definitii', async () => {
         await expect(lodger.adauga({ ce: 'masina' })).rejects.toThrow('taxonomie incorecta')
       })
 
-      test('arunca daca nu contine mai multi parametri decat { ce }', async () => {
+      test('arunca daca e cerut doar cu taxonomia ({ ce })', async () => {
         await expect(lodger.adauga({ ce: 'asociatie' })).rejects.toThrow('parametri insuficienti')
       })
 
-      test('arunca daca e o problema cu schema', async () => {
+      test('arunca daca schema nu se potriveste', async () => {
         // cheia nume nu exista, e 'name'
         const obiectGresit = {
           ce: 'asociatie',
@@ -82,6 +102,7 @@ describe('ZA NEW LODGER', () => {
       })
 
       test('Dupa adaugare, se comite mutatia de ultim', () => {
+        console.error('STORE', store.getters.asociatie)
         expect(store.getters.asociatie.ultima).toBe(testId)
       })
 

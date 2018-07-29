@@ -1,4 +1,5 @@
 import lodgerConfig from '../../lodger.config'
+import { CriteriuGetterTaxonomie, Taxonomie } from '../typings/defs';
 // const criteriuDefault = lodgerConfig.taxonomii.defaults.criteriu
 const taxConfig = {
   defaults: {
@@ -17,7 +18,7 @@ const taxConfig = {
  * @param {object} obiectul de traversat
  * @param {function} fn - callback -> cheie, valoare
  */
-const traverse = function (o, fn) {
+const traverse = function (o: object, fn: Function) {
   for (let i in o) {
     fn.apply(this, [i, o[i]])  
     if (o[i] !== null && typeof(o[i]) === "object") traverse(o[i], fn)
@@ -78,7 +79,7 @@ const getTaxonomyConfig = tax => {
  * @param {string} taxonomie 
  * @param {object} criteriuCerut - poate fi diferit decat default
  */
-const getCriteriu = (taxonomie, criteriuCerut) => {
+const getCriteriu = (taxonomie: Taxonomie, criteriuCerut: CriteriuGetterTaxonomie) => {
   if (criteriuCerut && typeof criteriuCerut !== 'object') {
     throw new Error('criteriu incorect')
   }

@@ -1,18 +1,22 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "jsx": "preserve",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "./*"
+      "lodger/*": [
+        "./lodger/*"
       ],
       "@/*": [
         "./*"
       ]
     },
+    "rootDirs": [
+      "lodger/"
+    ],
     "strict": true,
     "sourceMap": true,
     "noUnusedLocals": true,

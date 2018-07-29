@@ -1,10 +1,13 @@
 import { definitii } from '../definitii'
+import { RxDocument, RxCollection, RxSchema } from 'rxdb'
+import { KnownItemTypes, FormItem, Form, FormItemName } from '../typings/forms'
+
 /**
  * Ingheata item-urile din DB in caz de e nevoie sa le paseze in state
  * state-ul nu suporta chestii reactive, e el reactiv
  * @param {*} items 
  */
-const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
+const sanitizeDBItems = (items: RxCollection<any, [RxDocument<any>]>) => Object.freeze(Array(items).map((item: RxDocument<any>) => item._data))
 
 /**
  * Converteste tipurile campurilor 'noastre' in primare
@@ -17,17 +20,18 @@ const sanitizeDBItems = items => Object.freeze(items.map(item => item._data))
  * @param {string} type 
  * @returns {string} - tipul primar, eg. 'string'
  */
-const toDBtype = type => {
+const toDBtype = (type: KnownItemTypes): RxDBType => {
   const _default = 'string'
-  const strings = ['text', 'textarea', 'select', 'search']
-  const numbers = ['number', 'date-time', 'bani', 'date']
-  const arrays = ['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire', 'selApartamente']
+  // const strings = ['text', 'textarea', 'select', 'search']
+  // const numbers = ['number', 'date-time', 'bani', 'date']
+  // const arrays = ['scari', 'servicii', 'furnizori', 'contactFields', 'contoare', 'distribuire', 'selApartamente']
 
-  if (!type || strings.indexOf(type) > -1) return _default
-  if (numbers.indexOf(type) > -1) return 'number'
-  if (arrays.indexOf(type) > -1) return 'array'
+  // if (!type || strings.indexOf(type) > -1) return _default
+  // if (numbers.indexOf(type) > -1) return 'number'
+  // if (arrays.indexOf(type) > -1) return 'array'
   return _default
 }
+
 
 /**
  * Incarca si returneaza datele formularului dupa numele acestuia
@@ -35,28 +39,25 @@ const toDBtype = type => {
  * @param {string} numeFormular 
  * @returns {object} datele formularului
  */
-const getFormData = (id, name) => {
-  if (!id || !name)
+const getFormData = (name: FormItemName) => {
+  if (!name)
     throw new Error('parametri insuficienti')
-  return Object.assign(require(`../forms/${id}`), { name: id })
+  return Object.assign(require(`../forms/${name}`), { name })
 }
 
 /**
  * Initializeaza o schema default a unei colectii
  * 
  * @param {string} name - numele colectiei
- * @param {string} schemaType - tipul (default: 'object')
  * @returns {object} detaliile schemei
  */
-const collectionSchemaInitial = (name, schemaType) => {
+const collectionSchemaInitial = (name: string): RxSchema => {
   if (!name)
     throw new Error('Niciun nume dat schemei')
 
-  const type = schemaType || 'object'
-
   return {
     name,
-    type,
+    type: 'object',
     version: 0,
     autoMigrate: true,
     properties: {},
@@ -70,7 +71,7 @@ const collectionSchemaInitial = (name, schemaType) => {
  * @param {object} formItem - campul din formular
  * @returns {object} campul transformat, ready pt rxdb
  */
-const toCollectionField = formItem => {
+const toCollectionField = (formItem: FormItem) => {
   if (!formItem.id)
     throw new Error('camp fara id')
 
@@ -90,11 +91,11 @@ const toCollectionField = formItem => {
     Object.assign(ref, { index: indexRef })
   }
 
-  const cheiImutabile = ['primary', 'index', 'encrypted', 'required']
+  
   const descriereCamp = {
     type
   }
-  cheiImutabile.forEach(cheie => {
+  cheiImutabile.forEach(((cheie: string) => {
     if (!formItem[cheie]) return
     Object.assign(descriereCamp, { [cheie]: formItem[cheie] })
   })
@@ -114,7 +115,7 @@ const toCollectionField = formItem => {
  * @param {Object} schema - schema colectiei
  * @returns {object} schema modificata
  */
-const addFieldToColSchema = (formItem, schema) => {
+const addFieldToColSchema = (formItem: FormItem, schema: LodgerSchema) => {
   if (!formItem || !schema)
     throw new TypeError('parametri insuficienti')
   if (typeof formItem !== 'object' || typeof schema !== 'object')
@@ -134,7 +135,7 @@ const addFieldToColSchema = (formItem, schema) => {
  * @param {*} param0 
  * @returns {object} schema modificata
  */
-const makeSchemaForCollection = ({ name, campuri }) => {
+const makeSchemaForCollection = ({ name, campuri }: Form) => {
   if (!name) throw new Error('makeCollection apelat fara nume')
 
   const schema = collectionSchemaInitial(name)
@@ -154,7 +155,7 @@ const makeSchemaForCollection = ({ name, campuri }) => {
  * @param {object} data 
  * @returns {object} Datele colectiei pentru RXDB
  */
-const makeCollection = (formData) => {
+const makeCollection = (formData: Form) => {
   let { name, metode } = formData
   const colNamePlural = definitii.get(name)
 

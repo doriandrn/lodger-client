@@ -1,4 +1,8 @@
-export default {
+type LodgerSchema = {
+  [taxonomie: string]: any
+}
+
+const schema: LodgerSchema = {
   $asociatii: {
     _singular: 'asociatie',
     $incasari: {
@@ -32,3 +36,5 @@ export default {
   },
   notificari: ['error', 'warn', 'info', 'success']
 }
+
+export default schema

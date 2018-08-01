@@ -15,7 +15,7 @@
       ]
     },
     "rootDirs": [
-      "lodger/"
+      "./"
     ],
     "strict": true,
     "sourceMap": true,

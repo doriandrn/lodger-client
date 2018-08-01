@@ -20,7 +20,7 @@ module.exports = {
     'lodger/(.*)$': '<rootDir>/lodger/$1'
   },
   transform: {
-    '^.+\\.js$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.js?$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.ts?$': 'ts-jest'
   },
   // transformIgnorePatterns: ['/node_modules/', '/lodger/'],

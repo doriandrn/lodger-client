@@ -18,7 +18,7 @@ const taxConfig = {
  * @param {object} obiectul de traversat
  * @param {function} fn - callback -> cheie, valoare
  */
-const traverse = function (o: object, fn: Function) {
+function traverse (o: object, fn: Function) {
   for (let i in o) {
     fn.apply(this, [i, o[i]])  
     if (o[i] !== null && typeof(o[i]) === "object") traverse(o[i], fn)
@@ -40,7 +40,7 @@ const traverse = function (o: object, fn: Function) {
  * 
  * @param {string} taxonomie
  */
-const getTaxonomyConfig = tax => {
+const getTaxonomyConfig = (tax: Taxonomie) => {
   const { defaults } = taxConfig
   if (!tax) return defaults
   const { taxonomii } = lodgerConfig
@@ -107,7 +107,7 @@ const getCriteriu = (taxonomie: Taxonomie, criteriuCerut: CriteriuGetterTaxonomi
  * Scoate '$' de la inceputul unui string
  * @param {string} str 
  */
-const no$ = str => {
+const no$ = (str: string) => {
   if (typeof str !== 'string') return str
   if (str.indexOf('$') !== 0) return str
   return no$(str.replace('$', '').trim())

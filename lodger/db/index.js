@@ -1,5 +1,5 @@
 import * as RxDB from 'rxdb'
-import Debug from 'debug'
+import Debug from '../../../../Library/Caches/typescript/2.9/node_modules/@types/debug'
 
 const debug = Debug('lodger:DB')
 const { NODE_ENV } = process.env
@@ -12,8 +12,6 @@ if (NODE_ENV === 'test') {
 
 RxDB.plugin(require('pouchdb-adapter-http'))
 RxDB.plugin(require('pouchdb-authentication'))
-
-export const { isRxDocument } = RxDB
 
 export default async function (dbConfig, collections) {
   const defaultConfig = {

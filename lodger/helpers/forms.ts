@@ -1,64 +1,61 @@
-import { RxJsonSchema, RxCollection } from 'rxdb'
-import { FormData } from '../typings/forms'
+import { Item } from 'lodger/typings/forms'
+import { RxJsonSchema } from 'rxdb'
 
-export class FormError extends Error {
-  constructor(m: string) {
-    super(m)
+const toCollectionField = (formItem: Item) => {
+  if (!formItem.id)
+    throw new Error('camp fara id')
 
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, FormError.prototype)
+  const { id, step, indexRef } = formItem
+  let { type, ref } = formItem
+
+  type = toDBtype(type)
+  ref = ref ? {
+    ref,
+    items: {
+      // Folosim doar id-uri pt. referinta intre obiecte, de aici 'string'
+      type: 'string'
+    }
+  } : undefined
+
+  if (ref && indexRef) {
+    Object.assign(ref, { index: indexRef })
+  }
+
+
+  const descriereCamp = {
+    type
+  }
+  // cheiImutabile.forEach(((cheie: string) => {
+  //   if (!formItem[cheie]) return
+  //   Object.assign(descriereCamp, { [cheie]: formItem[cheie] })
+  // })
+
+  if (step) Object.assign(descriereCamp, { multipleOf: step })
+  if (ref) Object.assign(descriereCamp, ref)
+
+  return {
+    [id]: descriereCamp
   }
 }
 
-enum FormErrors {
-  invalidRequested = 'Invalid form requested.',
-  noData = 'Form is missing data'
-}
-type Without<T, K> = {
-  [L in Exclude<keyof T, K>]: T[L]
-}
-type ExcludedOverwrites = 'properties' | 'required' | 'title'
-type AllowedSchemaOverwrites = Without<RxJsonSchema, ExcludedOverwrites>
 
-export class Form {
-  readonly data?: FormData
-  readonly _schema?: RxJsonSchema
-  readonly _collection?: RxCollection
+/**
+ * Adauga un camp la schema unei colectii
+ * 
+ * @param {Object} formItem - campu'
+ * @param {Object} schema - schema colectiei
+ * @returns {object} schema modificata
+ */
+export const addFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
+  if (!formItem || !schema)
+    throw new TypeError('parametri insuficienti')
+  if (typeof formItem !== 'object' || typeof schema !== 'object')
+    throw new TypeError('parametri incorecti')
 
-  constructor(name: string) {
-    try {
-      this.data = Object.assign(require(`../forms/${name}`), { name })
-    } catch (e) {
-      throw new FormError(FormErrors.invalidRequested)
-    }
+  schema.properties = schema.properties || {}
+  schema.required = schema.required || []
 
-    this._schema = this.toRxSchema()
-  }
-  private toRxSchema(overwrites?: AllowedSchemaOverwrites): RxJsonSchema {
-    const { data } = this
-    if (!data) {
-      throw new FormError(FormErrors.noData)
-    }
-    const { name } = data
-    const startingSchema: RxJsonSchema = {
-      type: 'object',
-      version: 0,
-      title: name,
-      // name,
-      // autoMigrate: true,
-      properties: {},
-      required: []
-    }
-
-    const schema = startingSchema
-
-    if (overwrites) {
-      Object.assign(schema, overwrites)
-    }
-
-    return schema
-  }
-  toRxCollection(): RxCollection {
-    
-  }
+  if (formItem.required) schema.required.push(formItem.id)
+  Object.assign(schema.properties, toCollectionField(formItem))
+  return schema
 }

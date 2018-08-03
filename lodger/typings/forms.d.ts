@@ -1,7 +1,7 @@
 import { Taxonomie } from './defs'
 import { RxJsonSchema } from 'rxdb'
 
-type Strings = 'text' | 'textarea' | 'select' | 'search' | 'string'
+type Strings = 'text' | 'textarea' | 'select' | 'search' | 'string' | undefined
 type Numbers = 'number' | 'date-time' | 'bani' | 'date'
 type Arrays = 'array' | 'scari' | 'contactFields' | Taxonomie
 
@@ -18,7 +18,7 @@ type Item = {
   name?: ItemName,
   step?: number,
   index?: boolean,
-  type: KnownItemTypes,
+  type?: KnownItemTypes,
   ref?: ItemReference,
   items?: object,
   indexRef?: boolean,
@@ -37,5 +37,5 @@ export type FormData = {
   readonly methods?: FormMethods
 }
 
-type ExcludedOverwrites = 'properties' | 'required' | 'title'
+type ExcludedOverwrites = 'properties' | 'required' | 'title' | 'compoundIndexes'
 export type AllowedSchemaOverwrites = Without<RxJsonSchema, ExcludedOverwrites>

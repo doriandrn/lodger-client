@@ -25,6 +25,10 @@ type Bani = number
 
 type RxDBConfig = object
 
+type LodgerSchema = {
+  
+}
+
 type Config = {
   dbCon: RxDBConfig
 }
@@ -95,7 +99,16 @@ interface Asociatie {
 interface Apartament {}
 
 type Asociatii = Array<Asociatie>
-type Taxonomie = 'asociatii' | 'blocuri' | 'apartamente'
+
+declare enum Taxonomii {
+  Asociatii = 'asociatie',
+  Blocuri,
+  Apartamente,
+  Incasari,
+  Cheltuieli
+}
+
+type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
 
 // const enum Taxonomie {
 //   Asociatii,

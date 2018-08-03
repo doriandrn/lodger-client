@@ -1,26 +1,16 @@
 import lodgerConfig from '../../lodger.config'
 import { CriteriuGetterTaxonomie, Taxonomie } from '../typings/defs';
-// const criteriuDefault = lodgerConfig.taxonomii.defaults.criteriu
-const taxConfig = {
-  defaults: {
-    criteriu: {
-      limit: 10,
-      find: { },
-      sort: null,
-      index: 1
-    }
-  }
-}
 
+type TraversableObject = { [index: string]: TraversableObject }
 /**
  * Traverseaza un obiect cu o functie
  * 
  * @param {object} obiectul de traversat
  * @param {function} fn - callback -> cheie, valoare
  */
-function traverse (o: object, fn: Function) {
+function traverse (o: TraversableObject, fn: Function): void {
   for (let i in o) {
-    fn.apply(this, [i, o[i]])  
+    fn.apply(this, [i, o[i]])
     if (o[i] !== null && typeof(o[i]) === "object") traverse(o[i], fn)
   }
 }
@@ -41,9 +31,9 @@ function traverse (o: object, fn: Function) {
  * @param {string} taxonomie
  */
 const getTaxonomyConfig = (tax: Taxonomie) => {
-  const { defaults } = taxConfig
-  if (!tax) return defaults
   const { taxonomii } = lodgerConfig
+  const { defaults } = taxonomii
+  if (!tax) return defaults
   const config = taxonomii[tax]
   return config ? config : defaults
 }
@@ -90,9 +80,9 @@ const getCriteriu = (taxonomie: Taxonomie, criteriuCerut: CriteriuGetterTaxonomi
 
   if (criteriuCerut) Object.assign(criteriu, criteriuCerut)
   switch (taxonomie) {
-    case 'blocuri':
-    case 'incasari':
-    case 'cheltuieli':
+    case 'bloc':
+    case 'incasare':
+    case 'cheltuiala':
       Object.assign(criteriu.find, { asociatieId: getters['asociatie/activa']._id })
 
     case 'apartament':
@@ -107,7 +97,7 @@ const getCriteriu = (taxonomie: Taxonomie, criteriuCerut: CriteriuGetterTaxonomi
  * Scoate '$' de la inceputul unui string
  * @param {string} str 
  */
-const no$ = (str: string) => {
+const no$ = (str: string): string => {
   if (typeof str !== 'string') return str
   if (str.indexOf('$') !== 0) return str
   return no$(str.replace('$', '').trim())
@@ -117,7 +107,7 @@ const no$ = (str: string) => {
  * Imparte un string de mutatie ('asociatie/INCASEAZA')
  * @param {string} str
  */
-const spleet = str => {
+const spleet = (str: string) => {
   if (typeof str !== 'string' || str.indexOf('/') < 0) return str
   const split = String(str).split('/')
 
@@ -131,7 +121,7 @@ const spleet = str => {
  * slug-ifica... destul de descriptiv :)
  * @param {string} text 
  */
-const slugify = text => {
+const slugify = (text: string) => {
   return text.toString().toLowerCase()
     .replace(/\s+/g, '-')           // Replace spaces with -
     .replace(/[^\w\-]+/g, '')       // Remove all non-word chars

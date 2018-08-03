@@ -1,33 +1,30 @@
-import { RxJsonSchema } from 'rxdb'
+// import { RxJsonSchema } from 'rxdb'
 import { pushFieldToSchema } from 'lodger/helpers/forms'
 import { FormData, AllowedSchemaOverwrites } from 'lodger/typings/forms'
 import { Form } from 'lodger/lib/Form'
 
 /**
- * 
+ * Makes a RxSchema from a Lodger Form
  */
 export class Schema extends Form {
-  readonly defaultSchema: RxJsonSchema = {
-    type: 'object',
-    version: 0,
-    properties: {},
-    required: []
-  }
-  readonly schema?: RxJsonSchema
+  title: string
+  type: string = 'object'
+  version: number = 0
+  description?: string
+  properties: object = {}
+  required: string[] = []
 
-  constructor(data: FormData, overwrites?: AllowedSchemaOverwrites) {
+  constructor (data: FormData, overwrites?: AllowedSchemaOverwrites) {
     super(data)
-    const { name, fields, defaultSchema } = this
-    const schema = { ...defaultSchema }
-    Object.assign(schema, { title: name })
+    this.title = this.name
+
     if (overwrites) {
-      Object.assign(schema, overwrites)
+      Object.assign(this, overwrites)
     }
-    fields
+    this.fields
       .filter(field => !field.notInDb)
       .forEach(field => {
-        pushFieldToSchema(field, schema)
+        pushFieldToSchema(field, this)
       })
-    this.schema = schema
   }
 }

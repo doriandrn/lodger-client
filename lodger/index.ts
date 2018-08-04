@@ -7,12 +7,7 @@ export default class Lodger implements LodgerInit, LodgerPublicAPI {
   constructor (config: Config, context: ConstructContext) {
 
   }
-  asociatii (criteriu: CriteriuGetterTaxonomie) {
-    return criteriu
-  }
-  blocuri (criteriu: CriteriuGetterTaxonomie) {
-    return criteriu
-  }
+
   adauga (orice: Taxonomie) {
 
   }

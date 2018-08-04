@@ -2,17 +2,18 @@
 import { pushFieldToSchema } from 'lodger/helpers/forms'
 import { FormData, AllowedSchemaOverwrites } from 'lodger/typings/forms'
 import { Form } from 'lodger/lib/Form'
+import { Schema } from 'lodger/typings/lib/Schema'
+
+export default interface LodgerSchema extends Schema {}
 
 /**
  * Makes a RxSchema from a Lodger Form
  */
-export class Schema extends Form {
-  title: string
-  type: string = 'object'
-  version: number = 0
-  description?: string
-  properties: object = {}
-  required: string[] = []
+export default class LodgerSchema extends Form {
+  properties = {}
+  required = []
+  type = 'object'
+  version = 0
 
   constructor (data: FormData, overwrites?: AllowedSchemaOverwrites) {
     super(data)
@@ -26,5 +27,6 @@ export class Schema extends Form {
       .forEach(field => {
         pushFieldToSchema(field, this)
       })
+    return this
   }
 }

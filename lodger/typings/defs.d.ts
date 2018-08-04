@@ -11,6 +11,9 @@ type Social = {
   username: string
 }
 
+export type Singular = string
+export type Plural = string
+
 export type CriteriuGetterTaxonomie = string | object | null
 
 type DateContact = {

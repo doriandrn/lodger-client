@@ -3,35 +3,35 @@ type LodgerSchema = {
 }
 
 const schema: LodgerSchema = {
-  $asociatii: {
-    _singular: 'asociatie',
-    $incasari: {
-      _singular: 'incasare',
+  $asociatie: {
+    _plural: 'asociatii',
+    $incasare: {
+      _plural: 'incasari',
       _sortOptions: { la: -1 },
       _defaultLimit: 25
     },
-    $cheltuieli: {
-      _singular: 'cheltuiala',
+    $cheltuieala: {
+      _plural: 'cheltuieli',
       _sortOptions: { la: -1 },
       _defaultLimit: 25
     },
-    $blocuri: {
-      _singular: 'bloc',
-      $apartamente: {
-        _singular: 'apartament',
+    $bloc: {
+      _plural: 'blocuri',
+      $apartament: {
+        _plural: 'apartamente',
         _cheiCautare: ['bloc.nume', 'scara', 'nr', 'proprietar']
       }
     }
   },
-  $servicii: {
-    _singular: 'serviciu'
+  $serviciu: {
+    _plural: 'servicii'
   },
-  $furnizori: {
-    _singular: 'furnizor',
+  $furnizor: {
+    _plural: 'furnizori',
     _cheiCautare: ['nume']
   },
-  $utilizatori: {
-    _singular: 'utilizator',
+  $utilizator: {
+    _plural: 'utilizatori',
     _cheiCautare: ['username', 'emailPublic']
   },
   notificari: ['error', 'warn', 'info', 'success']

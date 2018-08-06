@@ -1,4 +1,6 @@
 import { RxDatabase } from "rxdb"
+import { DBConfig } from 'lodger/typings/lib/DB'
+import { Collection } from 'lodger/lib/Collection'
 
 type Organizatie = {
   nume: string,
@@ -26,14 +28,14 @@ type DateContact = {
 
 type Bani = number
 
-type RxDBConfig = object
 
 type LodgerSchema = {
   
 }
 
 type Config = {
-  dbCon: RxDBConfig
+  dbCon: DBConfig
+  collections: Collection[]
 }
 
 type ConstructContext = {

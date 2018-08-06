@@ -1,32 +1,50 @@
-// import { RxJsonSchema } from 'rxdb'
-import { pushFieldToSchema } from 'lodger/helpers/forms'
-import { FormData, AllowedSchemaOverwrites } from 'lodger/typings/forms'
-import { Form } from 'lodger/lib/Form'
-import { Schema } from 'lodger/typings/lib/Schema'
+// import { AllowedSchemaOverwrites } from 'lodger/typings/forms'
+// // import { SchemaErrors } from 'lodger/typings/lib/Schema'
 
-export default interface LodgerSchema extends Schema {}
+// import { pushFieldToSchema } from 'lodger/helpers/forms'
+// import { Form } from 'lodger/lib/Form'
+// import { RxSchema } from 'rxdb'
 
-/**
- * Makes a RxSchema from a Lodger Form
- */
-export default class LodgerSchema extends Form {
-  properties = {}
-  required = []
-  type = 'object'
-  version = 0
+// // export interface LodgerSchema extends Schema {
+// //   new(): LodgerSchema
+// // }
+// const SchemaError = Error
 
-  constructor (data: FormData, overwrites?: AllowedSchemaOverwrites) {
-    super(data)
-    this.title = this.name
+// enum Errors {
+//   invalidForm = 'Invalid form supplied'
+// }
 
-    if (overwrites) {
-      Object.assign(this, overwrites)
-    }
-    this.fields
-      .filter(field => !field.notInDb)
-      .forEach(field => {
-        pushFieldToSchema(field, this)
-      })
-    return this
-  }
-}
+// declare interface Schema extends RxSchema {
+//   description?: string
+//   new (): Schema
+// }
+
+
+// /**
+//  * Makes a RxSchema from a Lodger Form
+//  */
+// class Schema {
+//   title: string
+//   properties: object = {}
+//   required: string[] = []
+//   type: string = 'object'
+//   version: number = 0
+
+//   constructor (form: Form, overwrites?: AllowedSchemaOverwrites) {
+//     if ( !(form && (form instanceof Form)) ) {
+//       throw new SchemaError(Errors.invalidForm)
+//     }
+//     const { name, fields } = form
+//     this.title = name
+
+//     if (overwrites) {
+//       Object.assign(this, overwrites)
+//     }
+
+//     fields
+//       .filter(field => !field.notInDb)
+//       .forEach(field => { pushFieldToSchema(field, this) })
+//   }
+// }
+
+// export { Schema, Errors }

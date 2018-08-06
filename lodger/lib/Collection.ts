@@ -1,14 +1,37 @@
-import Schema from './Schema'
+import { Schema } from 'lodger/lib/Schema'
+import { Plural } from 'lodger/typings/defs'
 import { plural } from 'lodger/helpers/functions'
-import { FormData } from 'lodger/typings/forms'
-import { Collection } from 'lodger/typings/lib/Collection'
+// import { Collection } from 'lodger/typings/lib/Collection'
 
-export interface LodgerCollection extends Collection {}
+declare interface Collection {
+  new(): Collection
+}
 
-export class LodgerCollection {
-  constructor (data: FormData, sync?: boolean | undefined) {
-    const { title } = this.schema = new Schema(data)
-    this.name = plural(title)
-    this.sync = sync
+const CollectionError = Error
+
+enum Errors {
+  noName = 'Collection is missing a (plural) name'
+}
+
+type CollectionOptions = {
+  name: Plural,
+  sync?: boolean
+}
+
+class Collection {
+  name: Plural
+  sync?: boolean = false
+  schema: Schema
+  constructor (schema: Schema, config?: CollectionOptions) {
+    this.schema = schema
+
+    const { name, sync } = config
+    if (!name) {
+      throw new CollectionError(Errors.noName)
+    }
+    this.name = name
+    if (sync) this.sync = sync
   }
 }
+
+export { Collection, Errors }

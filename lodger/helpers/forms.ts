@@ -49,21 +49,17 @@ export const toSchemaField = (formItem: Item) => {
     Object.assign(ref, { index: indexRef })
   }
 
-  const descriereCamp = {
-    type
-  }
+  const field = { type }
 
   // cheiImutabile.forEach(((cheie: string) => {
   //   if (!formItem[cheie]) return
   //   Object.assign(descriereCamp, { [cheie]: formItem[cheie] })
   // })
 
-  if (step) Object.assign(descriereCamp, { multipleOf: step })
-  if (ref) Object.assign(descriereCamp, ref)
+  if (step) Object.assign(field, { multipleOf: step })
+  if (ref) Object.assign(field, ref)
 
-  return {
-    [id]: descriereCamp
-  }
+  return { [id]: field }
 }
 
 

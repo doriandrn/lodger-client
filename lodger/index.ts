@@ -1,7 +1,8 @@
 import { Config, ConstructContext, CriteriuGetterTaxonomie, Taxonomie, Plugin } from './typings/defs'
 import { LodgerPublicAPI, LodgerInit } from './typings'
-import connectToDb from './db'
-import colectii from './db/collections'
+// import connectToDb from './db'
+import { DB } from 'lodger/lib/DB'
+// import colectii from './db/collections'
 
 export default class Lodger implements LodgerInit, LodgerPublicAPI {
   constructor (config: Config, context: ConstructContext) {
@@ -16,8 +17,7 @@ export default class Lodger implements LodgerInit, LodgerPublicAPI {
    * @param {object} config 
    */
   static async build (config: Config) {
-    const dbConfig = config && config.dbCon ? config.dbCon : {}
-    const _db = await connectToDb(dbConfig, colectii)
+    const _db = new DB({})
     if (!_db) throw new Error('DB nu s-a putut incarca')
     // const { store } = modules || { store: null }
     return new Lodger(config, { _db })

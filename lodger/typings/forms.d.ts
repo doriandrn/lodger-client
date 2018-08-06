@@ -1,4 +1,4 @@
-import { Taxonomie } from './defs'
+import { Taxonomie, Plural } from './defs'
 import { RxJsonSchema } from 'rxdb'
 
 type Strings = 'text' | 'textarea' | 'select' | 'search' | 'string' | undefined
@@ -32,9 +32,11 @@ type FormName = string
 type FormMethods = Function[]
 
 export type FormData = {
-  readonly name: FormName
-  readonly fields: Fields
-  readonly methods?: FormMethods
+  name: FormName
+  fields: Fields
+  methods?: FormMethods
+  plural: Plural
+  sync?: boolean
 }
 
 type ExcludedOverwrites = 'properties' | 'required' | 'title' | 'compoundIndexes'

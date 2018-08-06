@@ -1,5 +1,5 @@
 import { RxDatabase, RxDatabaseCreator } from 'rxdb'
-import { Collection } from 'lodger/typings/lib/Collection'
+import { Collection } from 'lodger/lib/Collection'
 
 type DBDetails = RxDatabaseCreator
 

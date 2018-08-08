@@ -1,12 +1,66 @@
-import { Config, ConstructContext, CriteriuGetterTaxonomie, Taxonomie, Plugin } from './typings/defs'
-import { LodgerPublicAPI, LodgerInit } from './typings'
-// import connectToDb from './db'
-import { DB } from 'lodger/lib/DB'
-// import colectii from './db/collections'
+import * as RxDB from 'rxdb'
+import Debug from 'debug'
+import { BuildOptions, ConstructContext, Plugin } from './typings/defs'
+import { LodgerPublicAPI, LodgerInit } from 'lodger/typings'
+import { Form } from 'lodger/lib/Form'
+import { RxDatabase, RxCollection } from 'rxdb'
 
-export default class Lodger implements LodgerInit, LodgerPublicAPI {
-  constructor (config: Config, context: ConstructContext) {
+const { NODE_ENV } = process.env
+const buildOpts: BuildOptions = {
+  dbCon: {
+    name: 'Lodger',
+    adapter: 'memory'
+  }
+}
 
+enum Taxonomie {
+  asociatie,
+  bloc,
+  apartament,
+  incasare,
+  cheltuiala
+}
+
+enum Errors {
+  missingDB = 'Missing database',
+  invalidPluginDefinition = 'Invalid plugin definition'
+}
+
+/**
+ * Error logger for forms
+ */
+class LodgerError extends Error {
+  constructor(m: string) {
+    super(m)
+
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, LodgerError.prototype)
+  }
+}
+
+
+class Lodger implements LodgerInit, LodgerPublicAPI {
+  private readonly db: RxDatabase
+  private readonly forms: Form[]
+  private readonly collections: RxCollection<any>[]
+  // preferences: Preferences
+
+  constructor (context: ConstructContext) {
+    const { db, forms, collections } = context
+    const debug = Debug('lodger:new')
+    
+    if (!db) throw new LodgerError(Errors.missingDB)
+    this.db = db
+    this.forms = forms
+    this.collections = collections
+
+    debug('DB', this.db)
+    debug('forms', this.forms)
+    debug('collections', this.collections)
+    // Object.keys(context).forEach(assignable => {
+    //   if (!context[assignable]) return
+    //   Object.assign(this, assignable, { ...context[assignable] })
+    // })
   }
 
   adauga (orice: Taxonomie) {
@@ -14,13 +68,34 @@ export default class Lodger implements LodgerInit, LodgerPublicAPI {
   }
   /**
    * Functie de initializare / build
-   * @param {object} config 
+   * @param {object} options
    */
-  static async build (config: Config) {
-    const _db = new DB({})
-    if (!_db) throw new Error('DB nu s-a putut incarca')
-    // const { store } = modules || { store: null }
-    return new Lodger(config, { _db })
+  static async build (options?: BuildOptions) {
+    const debug = Debug('lodger:build')
+    debug('starting build')
+    if (options) {
+      Object.assign(buildOpts, { ...options })
+    }
+    const forms = Object.keys(Taxonomie).map(tax => Form.loadByName(Taxonomie[tax]))
+    const collections = forms.map(form => form.collection)
+    const { dbCon } = buildOpts
+    const db = await RxDB.create(dbCon)
+    
+    // show leadership in title
+    db.waitForLeadership().then(() => {
+      debug('♛')
+      if (NODE_ENV === 'dev') {
+        document.title = `♛ ${document.title}`
+      }
+    })
+    await Promise.all(collections.map(c => db.collection(c)))
+
+    return new Lodger({
+      db,
+      forms,
+      // store,
+      collections
+    })
   }
 
   /**
@@ -28,9 +103,16 @@ export default class Lodger implements LodgerInit, LodgerPublicAPI {
    * @param {*} plugin 
    */
   static use (plugin: Plugin) {
-    console.error('PLUGIN: ', plugin)
-    if (!plugin || typeof plugin !== 'object') throw new Error('Definitie plugin incorectă')
+    const debug = Debug('lodger:use')
+    if (!plugin || typeof plugin !== 'object') {
+      throw new LodgerError(Errors.invalidPluginDefinition)
+    }
     const { name } = plugin
-    console.info('ew plugin', name)
+    debug('using plugin', name)
   }
+}
+
+export {
+  Taxonomie,
+  Lodger
 }

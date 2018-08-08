@@ -2,7 +2,9 @@ const getter = 'asociatie/activa'
 const modalOpen = 'modal/open'
 const modalContent = 'modal/content'
 
-const campuri = [
+const plural = 'asociatii'
+
+const fields = [
   {
     id: '_id',
     notInDb: true,
@@ -77,7 +79,7 @@ const actiuni = {
   confirm: 'adaugaAsociatie'
 }
 
-const metode = {
+const methods = {
   async initBalanta (data) {
     this.balanta = data.balanta
     await this.save()
@@ -94,10 +96,10 @@ const metode = {
     this.servicii = servicii
     await this.save()
   },
-  async UPDATEAZA (campuri) {
+  async UPDATEAZA (fields) {
     // TODO: nu permite updatarea anumitor chei
-    Object.keys(campuri).forEach(camp => {
-      this[camp] = campuri[camp]
+    Object.keys(fields).forEach(camp => {
+      this[camp] = fields[camp]
     })
     await this.save()
   }
@@ -106,7 +108,7 @@ const metode = {
 // DRY: la buatoane, daca au 'click', n-au nevoie de id
 const setari = {
   date: {
-    campuri: [
+    fields: [
       {
         type: 'button',
         click: 'exportDb',
@@ -120,7 +122,7 @@ const setari = {
   periculoase: {
     order: -1,
     avansat: true,
-    campuri: [
+    fields: [
       {
         type: 'button',
         click: 'sterge'
@@ -129,4 +131,4 @@ const setari = {
   },
 }
 
-export { campuri, actiuni, metode, setari }
+export { fields, plural, actiuni, methods, setari }

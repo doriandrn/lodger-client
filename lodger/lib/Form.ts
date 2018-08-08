@@ -7,7 +7,7 @@
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
 import { pushFieldToSchema } from 'lodger/helpers/forms'
 import {
-  FormData,
+  LodgerForm,
   Fields,
   FormName,
   FormMethods
@@ -43,7 +43,8 @@ export class FormError extends Error {
  * Require path for known forms
  */
 const formsPath: string = `lodger/forms/${process.env.NODE_ENV === 'test'
-    ? `__mocks__`
+    // ? `__stubs__`
+    ? ''
     : ''
   }`
 
@@ -68,17 +69,20 @@ const defaultSchema: RxJsonSchema = {
 class Form {
   readonly name: FormName
   readonly fields: Fields
-  readonly methods: FormMethods
+  readonly methods?: FormMethods
   private readonly _plural: Plural
 
-  constructor (data: FormData) {
-    if (!data) throw new FormError(Errors.noData)
+  constructor (data: LodgerForm) {
+    if (!data) {
+      console.error(data)
+      throw new FormError(Errors.noData)
+    }
     const { fields, name, methods } = data
     if (!name) throw new FormError(Errors.missingName)
     if (!fields || !fields.length) throw new FormError(Errors.noData)
     this.name = name
     this.fields = fields
-    this.methods = methods || []
+    if (methods) this.methods = methods
     const _plural = plural(name) || data.plural
     if (!plural) {
       throw new FormError(Errors.missingPlural)
@@ -91,13 +95,15 @@ class Form {
    */
   get schema (): RxJsonSchema {
     const { name, fields } = this
-    const schema = { ...defaultSchema }
+    const schema: RxJsonSchema = { ...defaultSchema }
     schema.title = name
     fields
       .filter(field => !field.notInDb)
-      .forEach(field => { pushFieldToSchema(field, schema) })
+      .forEach(field => {
+        pushFieldToSchema(field, schema)
+      })
     
-    return schema
+    return <RxJsonSchema>schema
   }
 
   /**
@@ -106,7 +112,7 @@ class Form {
   get collection (): RxCollectionCreator {
     const { schema, _plural } = this
     const name = _plural
-    return { name, schema }
+    return <RxCollectionCreator>{ name, schema }
   }
 
   /**
@@ -121,6 +127,7 @@ class Form {
       if (form.default) form = form.default
       Object.assign(form, { name })
     } catch (e) {
+      console.error(e, name)
       throw new FormError(Errors.invalidRequested)
     }
     return new Form(form)

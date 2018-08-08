@@ -1,5 +1,4 @@
 import { Item, RxDBType, KnownItemTypes } from 'lodger/typings/forms'
-import { Schema } from 'lodger/lib/Schema'
 import { RxJsonSchema } from 'rxdb'
 import FormItemTypes from 'lodger/defs/FormItemTypes'
 
@@ -70,16 +69,23 @@ export const toSchemaField = (formItem: Item) => {
  * @param {Object} schema - schema colectiei
  * @returns {object} schema modificata
  */
-export const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema | Schema) => {
+export const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
   if (!formItem || !schema)
     throw new TypeError('parametri insuficienti')
   if (typeof formItem !== 'object' || typeof schema !== 'object')
     throw new TypeError('parametri incorecti')
 
-  schema.properties = schema.properties || {}
-  schema.required = schema.required || []
+  const { required, properties } = schema
 
-  if (formItem.required) schema.required.push(formItem.id)
+  schema.properties = properties || {}
+  schema.required = required || []
+  
+  const { id } = formItem
+  if (!id) {
+    throw new TypeError(`No ID supplied for formItem ${formItem}`)
+  }
+
+  if (formItem.required && required && required.indexOf(id) < 0) schema.required.push(id)
   Object.assign(schema.properties, toSchemaField(formItem))
   return schema
 }

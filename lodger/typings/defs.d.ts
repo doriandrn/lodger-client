@@ -1,6 +1,5 @@
-import { RxDatabase } from "rxdb"
-import { DBConfig } from 'lodger/typings/lib/DB'
-import { Collection } from 'lodger/lib/Collection'
+import { RxDatabase, RxDatabaseCreator } from "rxdb"
+import { Form } from 'lodger/lib/Form'
 
 type Organizatie = {
   nume: string,
@@ -33,13 +32,19 @@ type LodgerSchema = {
   
 }
 
-type Config = {
-  dbCon: DBConfig
-  collections: Collection[]
+type Module = {
+  name: string
+}
+
+type BuildOptions = {
+  dbCon: RxDatabaseCreator,
+  modules?: Module[]
 }
 
 type ConstructContext = {
-  _db: RxDatabase
+  db: RxDatabase,
+  forms: Form[],
+  [key: string]: any
 }
 
 interface Plugin {
@@ -105,15 +110,23 @@ interface Apartament {}
 
 type Asociatii = Array<Asociatie>
 
-declare enum Taxonomii {
-  Asociatii = 'asociatie',
-  Blocuri,
-  Apartamente,
-  Incasari,
-  Cheltuieli
+declare enum Languages {
+  en,
+  ro
 }
 
-type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
+interface UserPreferences {
+  language: Languages
+}
+
+interface ClientPreferences extends UserPreferences {}
+
+interface Preferences {
+  client: ClientPreferences,
+  user: UserPreferences,
+}
+
+// type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
 
 // const enum Taxonomie {
 //   Asociatii,

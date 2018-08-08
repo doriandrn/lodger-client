@@ -1,37 +1,38 @@
-import { Schema } from 'lodger/lib/Schema'
-import { Plural } from 'lodger/typings/defs'
-import { plural } from 'lodger/helpers/functions'
-// import { Collection } from 'lodger/typings/lib/Collection'
+// import { Schema } from 'lodger/lib/Schema'
+// import { Plural } from 'lodger/typings/defs'
 
-declare interface Collection {
-  new(): Collection
-}
+// declare interface Collection {
+//   new(): Collection
+// }
 
-const CollectionError = Error
+// const CollectionError = Error
 
-enum Errors {
-  noName = 'Collection is missing a (plural) name'
-}
+// enum Errors {
+//   noName = 'Collection is missing a (plural) name',
+//   noConfig = 'Configuration was not supplied'
+// }
 
-type CollectionOptions = {
-  name: Plural,
-  sync?: boolean
-}
+// type CollectionOptions = {
+//   name: Plural,
+//   sync?: boolean
+// }
 
-class Collection {
-  name: Plural
-  sync?: boolean = false
-  schema: Schema
-  constructor (schema: Schema, config?: CollectionOptions) {
-    this.schema = schema
+// class Collection {
+//   name: Plural
+//   sync?: boolean = false
+//   schema: Schema
+//   constructor (schema: Schema, config: CollectionOptions) {
+//     this.schema = schema
+//     if (!config) {
+//       throw new CollectionError(Errors.noConfig)
+//     }
+//     const { name, sync } = config
+//     if (!name) {
+//       throw new CollectionError(Errors.noName)
+//     }
+//     this.name = name
+//     if (sync) this.sync = sync
+//   }
+// }
 
-    const { name, sync } = config
-    if (!name) {
-      throw new CollectionError(Errors.noName)
-    }
-    this.name = name
-    if (sync) this.sync = sync
-  }
-}
-
-export { Collection, Errors }
+// export { Collection, Errors }

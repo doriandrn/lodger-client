@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@storybook/vue": "^3.4.10",
+    "@types/debug": "^0.0.30",
     "autoprefixer": "^9.1.0",
     "babel-eslint": "^8.2.6",
     "babel-jest": "^23.4.2",

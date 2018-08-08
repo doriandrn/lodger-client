@@ -31,7 +31,7 @@ type Fields = Item[]
 type FormName = string
 type FormMethods = Function[]
 
-export type FormData = {
+export interface LodgerForm {
   name: FormName
   fields: Fields
   methods?: FormMethods

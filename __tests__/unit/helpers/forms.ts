@@ -4,16 +4,19 @@ import {
   toSchemaField
 } from 'lodger/helpers/forms'
 
+import { fields, fieldsWithExcludedItems } from 'lodger/forms/__stubs__/playground'
+import { RxJsonSchema } from '../../../node_modules/rxdb';
+
 describe('Functii ajutatoare pt DB', () => {
   describe('toRxDBtype', () => {
-    test('returneaza "string" daca e apelat fara parametru', () => {
-      expect(toRxDBtype()).toBe('string')
-    })
+    // test('returneaza "string" daca e apelat fara parametru', () => {
+    //   expect(toRxDBtype()).toBe('string')
+    // })
 
     test('returneaza "string" daca input-ul e nestiut', () => {
-      expect(toRxDBtype('whatever')).toBe('string')
+      // expect(toRxDBtype('whatever')).toBe('string')
       expect(toRxDBtype('string')).toBe('string')
-      expect(toRxDBtype(null)).toBe('string')
+      // expect(toRxDBtype(null)).toBe('string')
       expect(toRxDBtype(undefined)).toBe('string')
     })
 
@@ -30,9 +33,17 @@ describe('Functii ajutatoare pt DB', () => {
     })
   })
 
-  describe('addFieldToCollectionScehma', () => {
+  describe('pushFieldToSchema', () => {
     test('arunca daca e apelat fara unu din cei 2 parametri', () => {
       expect(() => { pushFieldToSchema() }).toThrow('parametri insuficienti')
+    })
+
+    test('throws if field doesn t have an id', () => {
+      expect(pushFieldToSchema({ salut: 'yolo '})).toThrow('missing id')
+    })
+
+    test('throws if duplicated id detected', () => {
+      
     })
 
     test('arunca daca parametrii sunt diferiti de obiecte', () => {
@@ -41,6 +52,15 @@ describe('Functii ajutatoare pt DB', () => {
       expect(() => { pushFieldToSchema('bam bam', []) }).toThrow('parametri incorecti')
     })
 
+    test('adds required fields to required[]', () => {
+      const schema: RxJsonSchema = {}
+      fieldsWithExcludedItems.forEach(field => {
+        pushFieldToSchema(field, schema)
+      })
+      const { required, properties } = schema
+      expect(required).toContain('x2')
+      console.log(schema)
+    })
   })
 
   describe('toSchemaField', () => {

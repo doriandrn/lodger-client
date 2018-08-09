@@ -75,7 +75,6 @@ describe('Form', () => {
       test('returns a fully inited <Form> if found and ok', () => {
         const form = Form.loadByName('valid')
         expect(form.name).toBe('valid')
-        expect(form.fields.length).toBeGreaterThan(0)
       })
     })
   })

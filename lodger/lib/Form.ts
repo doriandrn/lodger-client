@@ -3,17 +3,18 @@
  * are quite diferrently structured
  * than a normal JsonSchema
  */
-
+import Debug from 'debug'
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
 import { pushFieldToSchema } from 'lodger/helpers/forms'
 import {
-  LodgerForm,
-  Fields,
-  FormName,
-  FormMethods
-} from '../typings/forms'
-import { Plural } from '../typings/defs';
-import { plural } from '../helpers/functions';
+  LodgerForm, FormName
+} from 'lodger/typings/forms'
+
+// import { plural } from 'lodger/helpers/functions';
+
+if (process.env.NODE_ENV === 'test') {
+  Debug.enable('Form:*')
+}
 
 /**
  * Form Errors Definition
@@ -48,12 +49,6 @@ const formsPath: string = `lodger/forms/${process.env.NODE_ENV === 'test'
     : ''
   }`
 
-// interface Schema extends RxJsonSchema {
-//   title: string,
-//   required: string[],
-//   type: string,
-//   version: number
-// }
 
 const defaultSchema: RxJsonSchema = {
   title: '',
@@ -67,34 +62,29 @@ const defaultSchema: RxJsonSchema = {
  * Form class
  */
 class Form {
-  readonly name: FormName
-  readonly fields: Fields
-  readonly methods?: FormMethods
-  private readonly _plural: Plural
+  name: FormName
 
-  constructor (data: LodgerForm) {
-    if (!data) {
+  constructor (
+    private data: LodgerForm,
+  ) {
+    if (!this.data) {
       console.error(data)
       throw new FormError(Errors.noData)
     }
-    const { fields, name, methods } = data
+    const { fields, name, plural } = this.data
     if (!name) throw new FormError(Errors.missingName)
     if (!fields || !fields.length) throw new FormError(Errors.noData)
-    this.name = name
-    this.fields = fields
-    if (methods) this.methods = methods
-    const _plural = plural(name) || data.plural
     if (!plural) {
       throw new FormError(Errors.missingPlural)
     }
-    this._plural = _plural
+    this.name = name
   }
 
   /**
    * A valid RxJsonSchema out of the form
    */
   get schema (): RxJsonSchema {
-    const { name, fields } = this
+    const { name, fields } = this.data
     const schema: RxJsonSchema = { ...defaultSchema }
     schema.title = name
     fields
@@ -110,8 +100,11 @@ class Form {
    * 
    */
   get collection (): RxCollectionCreator {
-    const { schema, _plural } = this
-    const name = _plural
+    const {
+      schema,
+      data: { plural }
+    } = this
+    const name = plural
     return <RxCollectionCreator>{ name, schema }
   }
 
@@ -121,13 +114,17 @@ class Form {
    * @param name 
    */
   static loadByName (name: string): Form {
+    const debug = Debug('lodger:Form')
+    debug.log = console.log.bind(console)
     let form
+    debug('loading', name)
     try {
       form = require(`${formsPath}/${name}`)
       if (form.default) form = form.default
       Object.assign(form, { name })
+      debug('loaded', name)
     } catch (e) {
-      console.error(e, name)
+      debug('failed to load', name)
       throw new FormError(Errors.invalidRequested)
     }
     return new Form(form)

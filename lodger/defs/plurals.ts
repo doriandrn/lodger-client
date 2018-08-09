@@ -19,9 +19,9 @@ const definePlural = (singular: Singular, plural: Plural) => {
  * in functie de chei
  * callback: k = key, v = value
  */
-// traverse(schema, (k: string, v: any) => {
-//   if (v._cheiCautare && v._cheiCautare.length > 0) helperCautare[no$(k)] = v._cheiCautare
-//   if (v._plural) definePlural(k, v._plural)
-// })
+traverse(schema, (k: string, v: any) => {
+  if (v._cheiCautare && v._cheiCautare.length > 0) helperCautare[no$(k)] = v._cheiCautare
+  if (v._plural) definePlural(k, v._plural)
+})
 
 export { plurals, helperCautare }

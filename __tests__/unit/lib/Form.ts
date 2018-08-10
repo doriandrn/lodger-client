@@ -1,7 +1,7 @@
-import { Form, Errors } from 'lodger/lib/Form'
+import { Form, Errors } from '../../../lodger/lib/Form'
 
-import { Fields } from 'lodger/typings/forms'
-import { stub1, stub2, fields, name } from 'lodger/forms/__stubs__/playground'
+import { Fields } from '../../../lodger/typings/forms'
+import { stub1, stub2, fields, name } from '../../../lodger/forms/__stubs__/playground'
 
 describe('Form', () => {
   const __stub1__ = new Form(stub1)
@@ -67,6 +67,9 @@ describe('Form', () => {
 
   describe('static .loadByName - Loads a form by name', () => {
     describe('invalid forms', () => {
+      test('throws if called with anything else than string', () => {
+        expect(() => Form.loadByName('')).toThrow(Errors.invalidName)
+      })
       test('throws for unknown filenames', () => {
         expect(() => Form.loadByName('ceva')).toThrow(Errors.invalidRequested)
       })

@@ -1,4 +1,6 @@
-export const campuri = [
+const plural = 'apartamente'
+
+const fields = [
   {
     id: '_id',
     notInDb: true, // skip it's already defiend by rxdb
@@ -103,12 +105,12 @@ export const campuri = [
   }
 ]
 
-export const actiuni = {
+const actions = {
   confirm: 'adaugaAp'
 }
 
-export const metode = {
-  async incaseaza (data) {
+const methods = {
+  async incaseaza (data: Incasare) {
     if (!this.balanta) this.balanta = 0
     let incasari = this.incasari || []
     this.balanta += data.suma
@@ -116,4 +118,11 @@ export const metode = {
     this.incasari = incasari
     await this.save()
   }
+}
+
+export {
+  fields,
+  plural,
+  actions,
+  methods
 }

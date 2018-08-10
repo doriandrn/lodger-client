@@ -1,5 +1,5 @@
-import { RxDatabase, RxDatabaseCreator, RxCollection } from "rxdb"
-import { Form } from 'lodger/lib/Form'
+import { RxDatabase, RxDatabaseCreator, RxCollection, RxCollectionCreator } from "rxdb"
+import { Form } from '../lib/Form'
 
 type Organizatie = {
   nume: string,
@@ -44,7 +44,7 @@ type BuildOptions = {
 type ConstructContext = {
   db: RxDatabase,
   forms: Form[],
-  collections: RxCollection<any>[],
+  collections: RxCollectionCreator[],
   [key: string]: any
 }
 

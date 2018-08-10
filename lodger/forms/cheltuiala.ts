@@ -1,4 +1,4 @@
-export const campuri = [
+const fields = [
   {
     id: 'catre',
     type: 'search',
@@ -32,4 +32,9 @@ export const campuri = [
   }
 ]
 
-export const actiuni = []
+const plural = 'cheltuieli'
+
+export {
+  plural,
+  fields
+}

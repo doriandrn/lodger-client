@@ -1,9 +1,11 @@
-export const campuri = [
+import { Fields } from 'lodger/typings/forms'
+
+const fields: Fields = [
   {
     id: 'deLa',
     required: true,
     type: 'search',
-    taxonomy: 'apartamente',
+    // taxonomy: 'apartamente',
     ref: 'apartamente'
   },
   {
@@ -40,6 +42,14 @@ export const campuri = [
   }
 ]
 
-export const actiuni = {
+const actions = {
   confirm: 'incaseaza'
+}
+
+const plural = 'incasari'
+
+export {
+  fields,
+  actions,
+  plural
 }

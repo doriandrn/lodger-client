@@ -1,9 +1,8 @@
 import * as RxDB from 'rxdb'
 import Debug from 'debug'
 import { BuildOptions, ConstructContext, Plugin } from './typings/defs'
-import { LodgerPublicAPI, LodgerInit } from 'lodger/typings'
-import { Form } from 'lodger/lib/Form'
-import { RxDatabase, RxCollection } from 'rxdb'
+import { LodgerPublicAPI, LodgerInit } from './typings/index'
+import { Form } from './lib/Form'
 
 const { NODE_ENV } = process.env
 const buildOpts: BuildOptions = {
@@ -26,6 +25,9 @@ enum Errors {
   invalidPluginDefinition = 'Invalid plugin definition'
 }
 
+if (NODE_ENV === 'test') {
+  Debug.enable('lodger:*')
+}
 /**
  * Error logger for forms
  */
@@ -40,27 +42,15 @@ class LodgerError extends Error {
 
 
 class Lodger implements LodgerInit, LodgerPublicAPI {
-  private readonly db: RxDatabase
-  private readonly forms: Form[]
-  private readonly collections: RxCollection<any>[]
-  // preferences: Preferences
-
-  constructor (context: ConstructContext) {
-    const { db, forms, collections } = context
+  constructor (
+    private context: ConstructContext
+  ) {
+    const { db } = this.context
     const debug = Debug('lodger:new')
     
     if (!db) throw new LodgerError(Errors.missingDB)
-    this.db = db
-    this.forms = forms
-    this.collections = collections
-
-    debug('DB', this.db)
-    debug('forms', this.forms)
-    debug('collections', this.collections)
-    // Object.keys(context).forEach(assignable => {
-    //   if (!context[assignable]) return
-    //   Object.assign(this, assignable, { ...context[assignable] })
-    // })
+    
+    debug('context', context)
   }
 
   adauga (orice: Taxonomie) {
@@ -76,7 +66,14 @@ class Lodger implements LodgerInit, LodgerPublicAPI {
     if (options) {
       Object.assign(buildOpts, { ...options })
     }
-    const forms = Object.keys(Taxonomie).map(tax => Form.loadByName(Taxonomie[tax]))
+    const taxonomii = []
+    for (var tax in Taxonomie) {
+      taxonomii.push(tax)
+      debug(tax)
+    }
+    debug('taxonomii', taxonomii)
+    const forms = taxonomii.map(tax => Form.loadByName(Taxonomie[tax]))
+    debug('FORMS', forms)
     const collections = forms.map(form => form.collection)
     const { dbCon } = buildOpts
     const db = await RxDB.create(dbCon)

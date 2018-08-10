@@ -1,6 +1,6 @@
 const bs = 'bloc/selectat'
 
-export const campuri = [
+const fields = [
   {
     id: '_id',
     notInDb: true,
@@ -43,6 +43,14 @@ export const campuri = [
   }
 ]
 
-export const actiuni = {
+const plural = 'blocuri'
+
+const actions = {
   confirm: 'adaugaBloc'
+}
+
+export {
+  plural,
+  fields,
+  actions
 }

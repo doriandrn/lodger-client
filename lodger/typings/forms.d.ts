@@ -16,15 +16,23 @@ type ItemReference = Plural<Taxonomie> | object
 type Item = {
   id: string,
   name?: ItemName,
+  label?: string
+
+  type?: KnownItemTypes,
+  required?: boolean,
+  encrypted?: boolean,
+  
+  default?: any
+  value?: any
+
   step?: number,
   index?: boolean,
-  type?: KnownItemTypes,
   ref?: ItemReference,
   items?: object,
   indexRef?: boolean,
-  required?: boolean,
-  encrypted?: boolean,
+
   notInDb?: boolean
+  notInForm?: boolean
 }
 
 type Fields = Item[]

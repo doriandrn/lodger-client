@@ -5,10 +5,10 @@
  */
 import Debug from 'debug'
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
-import { pushFieldToSchema } from 'lodger/helpers/forms'
+import { pushFieldToSchema } from '../helpers/forms'
 import {
   LodgerForm, FormName
-} from 'lodger/typings/forms'
+} from '../typings/forms'
 
 // import { plural } from 'lodger/helpers/functions';
 
@@ -23,7 +23,8 @@ if (process.env.NODE_ENV === 'test') {
  */
 enum Errors {
   invalidRequested = 'Invalid form requested',
-  noData = 'Form is missing data',
+  invalidName = 'Invalid name supplied',
+  noData = 'Form %% is missing data',
   missingName = 'Forms should have a name',
   missingPlural = 'A plural definition is required'
 }
@@ -32,7 +33,10 @@ enum Errors {
  * Error logger for forms
  */
 export class FormError extends Error {
-  constructor(m: string) {
+  constructor(m: string, details?: any) {
+    if (details) {
+      m = m.replace('%%', `"${JSON.parse(JSON.stringify(details))}"`)
+    }
     super(m)
 
     // Set the prototype explicitly.
@@ -73,7 +77,7 @@ class Form {
     }
     const { fields, name, plural } = this.data
     if (!name) throw new FormError(Errors.missingName)
-    if (!fields || !fields.length) throw new FormError(Errors.noData)
+    if (!fields || !fields.length) throw new FormError(Errors.noData, name)
     if (!plural) {
       throw new FormError(Errors.missingPlural)
     }

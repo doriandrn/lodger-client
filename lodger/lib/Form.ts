@@ -5,10 +5,11 @@
  */
 import Debug from 'debug'
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
-import { pushFieldToSchema } from '../helpers/forms'
+import { pushFieldToSchema } from 'lodger/helpers/forms'
+import { FormError } from 'lodger/lib/Errors'
 import {
   LodgerForm, FormName
-} from '../typings/forms'
+} from 'lodger/typings/forms'
 
 // import { plural } from 'lodger/helpers/functions';
 
@@ -22,26 +23,11 @@ if (process.env.NODE_ENV === 'test') {
  * TODO: account for translations
  */
 enum Errors {
-  invalidRequested = 'Invalid form requested',
+  invalidRequested = 'Invalid form requested: %%',
   invalidName = 'Invalid name supplied',
   noData = 'Form %% is missing data',
   missingName = 'Forms should have a name',
   missingPlural = 'A plural definition is required'
-}
-
-/**
- * Error logger for forms
- */
-export class FormError extends Error {
-  constructor(m: string, details?: any) {
-    if (details) {
-      m = m.replace('%%', `"${JSON.parse(JSON.stringify(details))}"`)
-    }
-    super(m)
-
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, FormError.prototype)
-  }
 }
 
 /**
@@ -71,10 +57,10 @@ class Form {
   constructor (
     private data: LodgerForm,
   ) {
-    if (!this.data) {
-      console.error(data)
-      throw new FormError(Errors.noData)
-    }
+    // if (!this.data) {
+    //   console.error(data)
+    //   throw new FormError(Errors.noData)
+    // }
     const { fields, name, plural } = this.data
     if (!name) throw new FormError(Errors.missingName)
     if (!fields || !fields.length) throw new FormError(Errors.noData, name)
@@ -119,17 +105,15 @@ class Form {
    */
   static loadByName (name: string): Form {
     const debug = Debug('lodger:Form')
-    debug.log = console.log.bind(console)
     let form
-    debug('loading', name)
+
     try {
       form = require(`${formsPath}/${name}`)
       if (form.default) form = form.default
       Object.assign(form, { name })
-      debug('loaded', name)
+      debug('✓', name)
     } catch (e) {
-      debug('failed to load', name)
-      throw new FormError(Errors.invalidRequested)
+      throw new FormError(Errors.invalidRequested, name)
     }
     return new Form(form)
   }

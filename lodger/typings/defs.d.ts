@@ -1,5 +1,7 @@
 import { RxDatabase, RxDatabaseCreator, RxCollection, RxCollectionCreator } from "rxdb"
 import { Form } from '../lib/Form'
+import { Store } from 'vuex'
+import { RootState } from "./index";
 
 type Organizatie = {
   nume: string,
@@ -39,13 +41,6 @@ type Module = {
 type BuildOptions = {
   dbCon: RxDatabaseCreator,
   modules?: Module[]
-}
-
-type ConstructContext = {
-  db: RxDatabase,
-  forms: Form[],
-  collections: RxCollectionCreator[],
-  [key: string]: any
 }
 
 interface Plugin {

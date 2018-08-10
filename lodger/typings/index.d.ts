@@ -1,19 +1,30 @@
 import { RxDocument, RxCollection } from 'rxdb'
-import { Taxonomie, Config } from './defs'
+import { BuildOptions, Asociatii } from './defs'
+import { Taxonomie } from 'lodger/index'
 
-interface LodgerPublicAPI {
-  readonly asociatii: RxCollection<any>,
-  readonly blocuri: RxCollection<any>,
+type ItemId = string
 
-  adauga(ce: Taxonomie, detalii: object): RxDocument<any>
+interface Lodger {
+  put (taxonomie: Taxonomie, data: object): RxDocument<any>
+  trash (id: ItemId, taxonmie: Taxonomie): boolean
+  
+  destroy (): Promise<void>
+  // [k: string]: RxCollection<any>
+
+  // asociatii (): Getter<Asociatii>
 }
 
-interface LodgerInit {
-  use (plugin: Plugin): boolean
-  build (config: Config): LodgerPublicAPI
+// interface LodgerInit {
+//   build (options?: BuildOptions): LodgerPublicAPI
+//   use (plugin: Plugin): boolean
+// }
+
+interface RootState {
+  version: string
 }
 
 export {
-  LodgerInit,
-  LodgerPublicAPI
+  Lodger,
+  // LodgerPublicAPI,
+  RootState
 }

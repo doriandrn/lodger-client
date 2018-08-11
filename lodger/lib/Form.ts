@@ -75,7 +75,7 @@ class Form {
    */
   get schema (): RxJsonSchema {
     const { name, fields } = this.data
-    const schema: RxJsonSchema = { ...defaultSchema }
+    const schema: RxJsonSchema = JSON.parse(JSON.stringify(defaultSchema))
     schema.title = name
     fields
       .filter(field => !field.notInDb)

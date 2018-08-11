@@ -17,7 +17,7 @@ type Social = {
 export type Singular = string
 export type Plural = string
 
-export type CriteriuGetterTaxonomie = string | object | null
+export type CriteriuGetterTaxonomii = string | object | null
 
 type DateContact = {
   emailPublic?: string,
@@ -102,7 +102,9 @@ interface Asociatie {
   tranzactii?: [Incasare | Cheltuiala]
 }
 
-interface Apartament {}
+interface Apartament {
+  _id: string
+}
 
 type Asociatii = Array<Asociatie>
 
@@ -121,6 +123,10 @@ interface Preferences {
   client: ClientPreferences,
   user: UserPreferences,
 }
+
+type PluralsMap = Map<Singular, Plural>
+
+type DateTaxonomie = Asociatie | Apartament
 
 // type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
 

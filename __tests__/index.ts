@@ -22,10 +22,31 @@ describe('Lodger', () => {
     })
   })
 
+  // describe('static use: plugin', async () => {
+  //   Lodger.use({
+  //     name: 'unPlugin'
+  //   })
+  //   const lodger = await Lodger.build()
+  //   expect(lodger.plugins.length).toBe(1)
+  //   await lodger.destroy()
+  // })
+
   describe('API', async () => {
     let lodger: Lodger
     beforeAll(async () => {
       lodger = await Lodger.build()
+    })
+
+    describe('put', () => {
+      test('adds a new assoc', async () => {
+        const name = 'bla'
+        await lodger.put('asociatie', {
+          name
+        })
+        expect(lodger.asociatii({ name: { $eq: name } }).length).toBe(1)
+      })
+
+      // test('')
     })
     
     test('mapeaza taxonomiile pt a fi apelate ca gettere', () => {

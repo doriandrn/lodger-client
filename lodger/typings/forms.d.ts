@@ -3,7 +3,7 @@ import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
 
 type Strings = 'text' | 'textarea' | 'select' | 'search' | 'string' | undefined
 type Numbers = 'number' | 'date-time' | 'bani' | 'date'
-type Arrays = 'array' | 'scari' | 'contactFields' | Taxonomie
+type Arrays = 'array' | 'scari' | 'contactFields' | Taxonomii
 
 type KnownItemTypes = Strings | Numbers | Arrays
 type cheiImutabile = 'primary' | 'index' | 'encrypted' | 'required'

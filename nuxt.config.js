@@ -1,5 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
+const tsconfig = require('./tsconfig.json')
+const tsLint = require('./tslint.json')
 
 const debug = !(process && process.env.NODE_ENV === 'production')
 
@@ -75,9 +77,14 @@ module.exports = {
   },
   modules: [
     '@nuxtjs/axios',
+    // 'nuxt-ts-module'
     // '@nuxtjs/proxy',
     // '@nuxtjs/pwa'
   ],
+  typescript: {
+    tsconfig,
+    tsLint
+  },
   /*
   ** Build configuration
   */

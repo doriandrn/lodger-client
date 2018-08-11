@@ -5,8 +5,8 @@ import { Taxonomie } from 'lodger/index'
 type ItemId = string
 
 interface Lodger {
-  put (taxonomie: Taxonomie, data: object): RxDocument<any>
-  trash (id: ItemId, taxonmie: Taxonomie): boolean
+  put (): RxDocument<any>
+  trash (): boolean
   
   destroy (): Promise<void>
   // [k: string]: RxCollection<any>

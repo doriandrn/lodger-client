@@ -4,6 +4,7 @@ node_modules
 # logs
 npm-debug.log
 log.txt
+*.log
 
 # Nuxt build
 .nuxt

@@ -1,4 +1,4 @@
-import { LodgerForm } from "lodger/typings/forms"
+import { LodgerForm } from "../../types/forms"
 
 /**
  * DO NOT CHANGE ANY OF THESE

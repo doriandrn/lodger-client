@@ -1,6 +1,6 @@
-import { Item, RxDBType, KnownItemTypes } from 'lodger/typings/forms'
+import { Item, RxDBType, KnownItemTypes } from '../types/forms'
 import { RxJsonSchema } from 'rxdb'
-import FormItemTypes from 'lodger/defs/FormItemTypes'
+import FormItemTypes from '../defs/FormItemTypes'
 
 /**
  * Converteste tipurile campurilor 'noastre' in primare

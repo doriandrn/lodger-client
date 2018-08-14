@@ -1,6 +1,5 @@
 import lodgerConfig from '../../lodger.config'
-import { CriteriuGetterTaxonomie, Taxonomie } from 'lodger/typings/defs'
-import { plurals } from 'lodger/defs/plurals'
+import { CriteriuGetterTaxonomie, Taxonomie } from '../types/defs'
 
 type TraversableObject = { [index: string]: TraversableObject }
 /**
@@ -25,8 +24,6 @@ function traverse (o: TraversableObject, fn: Function) {
 //   const tax = no$(taxonomie)
 // }
 
-
-const plural: Taxonomie<Plural> = (singular: Taxonomie<Singular>) => plurals.get(singular)
 
 /**
  * Returneaza config-ul pentru o taxonomie sau default
@@ -135,7 +132,6 @@ const slugify = (text: string) => {
 
 export {
   traverse,
-  plural,
   no$,
   spleet,
   slugify,

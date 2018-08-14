@@ -1,6 +1,6 @@
 import { Form, Errors } from '../../../lodger/lib/Form'
 
-import { Fields } from '../../../lodger/typings/forms'
+import { Fields } from '../../../lodger/types/forms'
 import { stub1, stub2, fields, name } from '../../../lodger/forms/__stubs__/playground'
 
 describe('Form', () => {

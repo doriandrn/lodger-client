@@ -77,7 +77,7 @@ module.exports = {
   },
   modules: [
     '@nuxtjs/axios',
-    // 'nuxt-ts-module'
+    'nuxt-ts-module'
     // '@nuxtjs/proxy',
     // '@nuxtjs/pwa'
   ],
@@ -89,10 +89,10 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    vendor: [
-      'moment',
-      'numeral'
-    ],
+    // vendor: [
+    //   'moment',
+    //   'numeral'
+    // ],
     externals: {
       fs: 'commonjs fs'
     },

@@ -40,6 +40,7 @@ type Module = {
 
 type BuildOptions = {
   dbCon: RxDatabaseCreator,
+  usePersistedState?: boolean
   modules?: Module[]
 }
 

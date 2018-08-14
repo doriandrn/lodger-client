@@ -1,19 +1,26 @@
 import * as RxDB from 'rxdb'
 import Debug from 'debug'
 import Vue from 'vue'
-import Vuex, { Store, StoreOptions, ModuleTree } from 'vuex'
+import Vuex, { Store, StoreOptions, ModuleTree, Module, ActionTree, GetterTree, MutationTree } from 'vuex'
 import { 
   BuildOptions,
   Plugin,
   PluralsMap,
   DateTaxonomie,
   CriteriuGetterTaxonomii
-} from './typings/defs'
-import { RootState } from './typings/index'
+} from './types/defs'
+import { RootState } from './types/index'
 import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
 import { version } from '../lodger.config'
 import { RxDatabase, RxCollectionCreator, RxCollection } from 'rxdb';
+
+type ItemID = string | null
+
+type TaxonomyState = {
+  selected: ItemID,
+  last: ItemID
+}
 
 const { NODE_ENV } = process.env
 
@@ -22,7 +29,8 @@ const buildOpts: BuildOptions = {
     name: 'Lodger/',
     adapter: NODE_ENV === 'test' ? 'memory' : 'idp',
     password: 'l0dg3rp4$$'
-  }
+  },
+  usePersistedState: false
 }
 
 enum Taxonomii {
@@ -53,7 +61,7 @@ class Lodger {
     private plurals: PluralsMap
   ) {
     const debug = Debug('lodger:new')
-    debug('db', db)
+    // debug('db', db)
 
     /**
      * Short API access for taxonomies
@@ -88,14 +96,16 @@ class Lodger {
   }
 
   async put (taxonomie: Taxonomii, data: DateTaxonomie) {
-    const debug = Debug('lodger:put')
+    // const debug = Debug('lodger:put')
     const plural = this.plurals.get(taxonomie)
     if (!plural) throw new LodgerError('noPlural')
-    const { _id } = data
+    let { _id } = data
     const colectie = this.db.collections[plural]
     const method = _id ? 'upsert' : 'insert'
     const { _data } = await colectie[method](data)
-    debug('should update store here', _data)
+    // debug('should update store here', _data)
+
+    await this.store.dispatch(`${taxonomie}/setLast`, _data._id)
     return _data
   }
 
@@ -103,6 +113,10 @@ class Lodger {
 
   private get plugins () {
     return plugins
+  }
+
+  get __getters () {
+    return this.store.getters
   }
 
   /**
@@ -131,9 +145,43 @@ class Lodger {
     })
     // debug('COLS', collections)
 
+    const namespaced: boolean = true
+
+    // const sharedStoreActions = {
+    //   select: 'selected',
+    //   set_last: 'lasties',
+    //   activate: 'active'
+    // }
+    
     taxonomii.forEach(tax => {
-      
+      const state: TaxonomyState = {
+        selected: null,
+        last: null
+      }
+      const getters: GetterTree<TaxonomyState, RootState > = {
+        last: (S: TaxonomyState) => S['last'],
+        selected: (S: TaxonomyState) => S['selected']
+      }
+
+      const actions: ActionTree<TaxonomyState, RootState> = {
+        select: ({ commit }, data) => commit('SELECTEAZA', data),
+        setLast: ({ commit }, data) => commit('RECENTLY_ADDED', data)
+      }
+      const mutations: MutationTree<TaxonomyState> = {
+        'SELECTEAZA': (s, id) => { s['selected'] = id },
+        'RECENTLY_ADDED': (s, id) => { s['last'] = id }
+      }
+
+      storeModules[tax] = <Module<TaxonomyState, RootState>>{
+        namespaced,
+        getters,
+        actions,
+        mutations,
+        state
+      }
     })
+
+    // debug('STORE MODULES', storeModules)
 
     /**
      * DB plugins

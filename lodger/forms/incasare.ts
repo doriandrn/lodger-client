@@ -1,4 +1,4 @@
-import { Fields } from 'lodger/typings/forms'
+import { Fields } from 'lodger/types/forms'
 
 const fields: Fields = [
   {

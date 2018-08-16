@@ -1,6 +1,6 @@
 import Lodger from '../lodger/index.ts'
 import { definitii } from '../lodger/definitii'
-import * as lodgerConfig from '../lodger/config'
+import * as lodgerConfig from '../lodger/config/index'
 import { isRxDocument, isRxCollection } from 'rxdb'
 
 import Vue from 'vue'

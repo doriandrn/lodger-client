@@ -17,7 +17,8 @@ module.exports = {
     'tsx'
   ],
   moduleNameMapper: {
-    'lodger/(.*)$': '<rootDir>/lodger/$1'
+    'lodger/(.*)$': '<rootDir>/lodger/$1',
+    '~/(.*)$': '<rootDir>/$1'
   },
   transform: {
     '^.+\\.js?$': '<rootDir>/node_modules/babel-jest',

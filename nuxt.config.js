@@ -1,7 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 const tsconfig = require('./tsconfig.json')
-const tsLint = require('./tslint.json')
+const tslint = require('./tslint.json')
 
 const debug = !(process && process.env.NODE_ENV === 'production')
 
@@ -83,7 +83,7 @@ module.exports = {
   ],
   typescript: {
     tsconfig,
-    tsLint
+    tslint
   },
   /*
   ** Build configuration

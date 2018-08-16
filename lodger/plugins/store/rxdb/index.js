@@ -1,4 +1,4 @@
-import Db from '../../../db'
+import Db from '../../../db/index'
 import CRUD from './methods/CRUD'
 import dynamic from './methods/dynamic'
 import unsubscribe from './methods/unsubscribe'

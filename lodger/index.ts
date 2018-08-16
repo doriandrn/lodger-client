@@ -1,4 +1,3 @@
-import * as RxDB from 'rxdb'
 import Debug from 'debug'
 import Vue from 'vue'
 import Vuex, { Store, StoreOptions, ModuleTree, Module, ActionTree, GetterTree, MutationTree } from 'vuex'
@@ -14,6 +13,8 @@ import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
 import { version } from '../lodger.config'
 import { RxDatabase, RxCollectionCreator, RxCollection } from 'rxdb';
+
+
 
 type ItemID = string | null
 
@@ -54,14 +55,42 @@ const plugins: Plugin[] = []
 
 Vue.use(Vuex)
 
+const loadForms = (taxonomies: Taxonomii[]) => taxonomies.map(tax => Form.loadByName(tax))
+
+const definePlurals = (taxonomies: Taxonomii[]) => {
+  if (!plurals) plurals = new Map()
+  if (plurals.size) return
+  taxonomies.forEach(tax => {
+
+  })
+}
+
+/**
+ * Private, internal stuff
+ * ** initialize on build **
+ * 
+ */
+let forms: Form[] | null = null
+let db: RxDatabase | null = null
+let store: Store<RootState> | null = null
+let plurals: PluralsMap | null = null
+
+/** A guarding function for the whole class, checks if above ones are properly setup before doing any action */
+type typeGuards = {
+  (): boolean
+}
+const privateGuard: typeGuards = () => {
+  if (!(Boolean(db) && Boolean(store) && Boolean(plurals)))
+    throw new LodgerError('invalidBuild')
+  return true
+}
+
+
+
+
 class Lodger {
-  constructor (
-    private db: RxDatabase,
-    private store: Store<RootState>,
-    private plurals: PluralsMap
-  ) {
+  constructor () {
     const debug = Debug('lodger:new')
-    // debug('db', db)
 
     /**
      * Short API access for taxonomies
@@ -95,21 +124,35 @@ class Lodger {
     // debug('plurals', plurals)
   }
 
+  @privateGuard()
   async put (taxonomie: Taxonomii, data: DateTaxonomie) {
-    // const debug = Debug('lodger:put')
-    const plural = this.plurals.get(taxonomie)
+    const debug = Debug('lodger:put')
+    const plural = plurals.get(taxonomie)
     if (!plural) throw new LodgerError('noPlural')
     let { _id } = data
-    const colectie = this.db.collections[plural]
+    const colectie = db.collections[plural]
     const method = _id ? 'upsert' : 'insert'
     const { _data } = await colectie[method](data)
     // debug('should update store here', _data)
 
-    await this.store.dispatch(`${taxonomie}/setLast`, _data._id)
+    await store.dispatch(`${taxonomie}/setLast`, _data._id)
     return _data
   }
 
-  // async trash (taxonomie, id) {}
+  async trash (taxonomie: Taxonomii, id: ItemID) {
+    const debug = Debug('lodger:trash')
+    try {
+      const plural = plurals.get(taxonomie)
+      const col = this.db[plural]
+      const doc = await col.findOne(id)
+      await doc.remove()
+      return true
+    } catch (e) {
+      debug('trash fail', e)
+    } finally {
+      return false
+    }
+  }
 
   private get plugins () {
     return plugins
@@ -119,30 +162,55 @@ class Lodger {
     return this.store.getters
   }
 
+  get preferences () {
+    const preferences = {
+      ... this.store.getters.preferences,
+      ... this.userPreferences
+    }
+    return preferences
+  }
+
   /**
-   * Functie de initializare / build
+   * Init / build function
+   * 
+   * Build steps: (order matters)
+   * 1. Lodger Forms
+   * 2. Plurals
+   * 3. DB
+   * 4. Store
+   * 
    * @param {object} options
+   * @returns {Lodger}
+   * 
    */
   static async build (options?: BuildOptions) {
+    let { dbCon } = options || buildOpts
     const debug = Debug('lodger:build')
     debug('building...')
+    
+    const taxonomii = Object.keys(Taxonomii).filter(x => (+x) + '' !== x)
+
+    forms = loadForms(taxonomii)
+    plurals = definePlurals(taxonomii)
+    const collections: RxCollectionCreator[] = forms.map(form => form.collection)
+    db = await DB.init(dbCon)
+
     if (options) {
       Object.assign(buildOpts, { ...options })
     }
-    const taxonomii = Object.keys(Taxonomii).filter(x => (+x) + '' !== x)
-    const plurals: PluralsMap = new Map()
+
     const storeModules: ModuleTree<RootState> = {}
     
     /**
      * DB + plurals
      */
-    const { dbCon } = buildOpts
-    const collections: RxCollectionCreator[] = taxonomii.map(tax => {
-      const { collection } = Form.loadByName(tax)
-      const { name } = collection
-      plurals.set(tax, name)
-      return collection
-    })
+    // const { dbCon } = buildOpts
+    // const collections: RxCollectionCreator[] = taxonomii.map(tax => {
+    //   const { collection } = Form.loadByName(tax)
+    //   const { name } = collection
+    //   plurals.set(tax, name)
+    //   return collection
+    // })
     // debug('COLS', collections)
 
     const namespaced: boolean = true
@@ -183,26 +251,8 @@ class Lodger {
 
     // debug('STORE MODULES', storeModules)
 
-    /**
-     * DB plugins
-     */
-    if (NODE_ENV === 'test') {
-      RxDB.plugin(require('pouchdb-adapter-memory'))
-    } else {
-      RxDB.plugin(require('pouchdb-adapter-idb'))
-    }
-
-    // RxDB.plugin(require('pouchdb-adapter-http'))
-    // RxDB.plugin(require('pouchdb-authentication'))
-    const db = await RxDB.create(dbCon)
     
-    // show leadership in title
-    db.waitForLeadership().then(() => {
-      if (NODE_ENV !== 'dev') return
-      document.title = `♛ ${document.title}`
-    })
-    await Promise.all(collections.map(c => db.collection(c)))
-
+    
 
     /**
      * Store

@@ -1,6 +1,6 @@
 import { RxDocument, RxCollection } from 'rxdb'
 import { BuildOptions, Asociatii } from './defs'
-import { Taxonomie } from 'lodger/index'
+import { Taxonomie } from '../index'
 
 type ItemId = string
 

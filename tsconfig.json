@@ -12,10 +12,16 @@
       ],
       "@/*": [
         "./*"
+      ],
+      "~/*": [
+        "./*"
       ]
     },
     "rootDirs": [
       "./"
+    ],
+    "types": [
+      "node"
     ],
     "strict": true,
     "sourceMap": true,

@@ -1,5 +1,6 @@
 import { Lodger } from '../lodger/index'
 import Debug from 'debug'
+
 Debug.enable('lodger:*')
 
 describe('static build', () => {

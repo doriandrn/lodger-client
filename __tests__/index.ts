@@ -5,8 +5,10 @@ Debug.enable('lodger:*')
 describe('Lodger', () => {
   describe('API', async () => {
     let lodger: Lodger
+    let getters: LodgerGetters
     beforeAll(async () => {
       lodger = await Lodger.build()
+      getters = lodger.__getters
     })
 
     let commonId: string | null = null
@@ -19,7 +21,7 @@ describe('Lodger', () => {
           name
         })
         expect(_id).toBeDefined()
-        const lastAddedId = lodger.__getters['asociatie/last']
+        const lastAddedId = getters['asociatie/last']
         expect(lastAddedId).toBe(_id)
         commonId = null
       })
@@ -27,10 +29,9 @@ describe('Lodger', () => {
     })
 
     describe('trash', () => {
-      test('deletes the prev added assoc', async () => {
-        await lodger.trash('asociatie', commonId)
-        const asocs = await lodger.asociatii.findOne({ _id: { $eq: commonId }})
-        expect(asocs).toBeUndefined()
+      test('deletes the prev added assoc', () => {
+        expect(async () => { await lodger.trash('asociatie', commonId) }).not.toThrow()
+        expect(getters['asociatie/ids']).not.toContain(commonId)
       })
     })
     

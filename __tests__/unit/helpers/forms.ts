@@ -2,10 +2,10 @@ import {
   toRxDBtype,
   pushFieldToSchema,
   toSchemaField
-} from 'lodger/helpers/forms'
+} from '../../../lodger/helpers/forms'
 
-import { fields, fieldsWithExcludedItems } from 'lodger/forms/__stubs__/playground'
-import { RxJsonSchema } from '../../../node_modules/rxdb';
+import { fields, fieldsWithExcludedItems } from '../../../lodger/forms/__stubs__/playground'
+import { RxJsonSchema } from 'rxdb';
 
 describe('Functii ajutatoare pt DB', () => {
   describe('toRxDBtype', () => {
@@ -43,7 +43,7 @@ describe('Functii ajutatoare pt DB', () => {
     })
 
     test('throws if duplicated id detected', () => {
-      
+
     })
 
     test('arunca daca parametrii sunt diferiti de obiecte', () => {

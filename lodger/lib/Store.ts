@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions, ModuleTree, Module, ActionTree, GetterTree, MutationTree } from 'vuex'
 import { RootState } from 'lodger/types/index'
-import { ItemID, Taxonomii } from 'lodger/types/main'
+import { Taxonomii } from 'lodger'
 import { version } from '../../lodger.config'
 Vue.use(Vuex)
 
@@ -46,6 +46,8 @@ export default function (taxonomii: Taxonomii[]) {
       state
     }
   })
+
+  // storeModules.preferences = <Module<ClientPrefrences, RootState>>
 
   
   /**

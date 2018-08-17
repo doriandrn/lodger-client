@@ -4,13 +4,6 @@ import { Store } from 'vuex'
 import { RootState } from 'lodger/types'
 
 declare global {
-  enum Taxonomii {
-    asociatie = 'asociatie',
-    bloc = 'bloc',
-    apartament = 'apartament',
-    incasare = 'incasare',
-    cheltuiala = 'cheltuiala'
-  }
   // type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
 
   type ItemID = string | null
@@ -130,8 +123,6 @@ declare global {
     language: Languages
   }
 
-  interface ClientPreferences extends UserPreferences {}
-
   interface Preferences {
     client: ClientPreferences,
     user: UserPreferences,
@@ -140,4 +131,8 @@ declare global {
   type PluralsMap = Map<Singular, Plural>
 
   type DateTaxonomie = Asociatie | Apartament
+
+  type ClientPreferences = {
+    
+  }
 }

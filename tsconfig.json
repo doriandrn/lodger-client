@@ -17,7 +17,8 @@
     ],
     "types": [
       "node",
-      "debug"
+      "debug",
+      "jest"
     ],
     "strict": true,
     "sourceMap": true,

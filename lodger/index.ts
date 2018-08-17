@@ -34,10 +34,7 @@ enum Errors {
   missingCoreDefinitions = 'Invalid Lodger build. Missing core definitions'
 }
 
-if (NODE_ENV === 'test') {
-  Debug.enable('lodger:*')
-}
-
+// Debug.enable(['test', 'dev'].indexOf(String(NODE_ENV)) >= -1 ? 'lodger:*' : null)
 
 const loadForms = (taxonomies: Taxonomii[]) => taxonomies.map((tax: Taxonomii) => Form.loadByName(tax))
 
@@ -62,41 +59,7 @@ let store: Store<RootState> | null = null
 let plurals: PluralsMap | null = null
 const plugins: Plugin[] = []
 
-/** A guarding function for the whole class, checks if above ones are properly setup before doing any action */
-// type typeGuards = {
-//   (): any
-// }
-// const privateGuard: typeGuards = () => {
-//   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-//     if (!(db && plurals && plurals.size)) {
-//       throw new LodgerError(Errors.missingCoreDefinitions)
-//     }
-//   }
-//   // if (!(Boolean(db) && Boolean(store) && Boolean(plurals)))
-//   //   throw new LodgerError('invalidBuild')
-//   // return true
-//   // return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-//   //   console.dir(target)
-//   //   console.error(target.prototype)
-//   //   for (const propertyName of Object.keys(target.prototype)) {
-//   //     console.info(target, propertyKey, descriptor)
-//   //     const descriptor = Object.getOwnPropertyDescriptor(target.prototype, propertyName);
-//   //     const isMethod = descriptor.value instanceof Function;
-//   //     if (!isMethod)
-//   //       continue;
 
-//   //     const originalMethod = descriptor.value;
-//   //     descriptor.value = function (...args: any[]) {
-//   //       console.info("The method args are: " + JSON.stringify(args));
-//   //       const result = originalMethod.apply(this, args);
-//   //       console.info("The return value is: " + result);
-//   //       return result;
-//   //     };
-
-//   //     Object.defineProperty(target.prototype, propertyName, descriptor);
-//   //   }
-//   // }
-// }
 
 class Lodger {
   constructor () {
@@ -112,7 +75,12 @@ class Lodger {
      * Short API access for taxonomies
      */
     for (const [singular, plural] of plurals) {
-      this[plural] = db.collections[plural]
+      Object.defineProperties(this, {
+        [plural]: {
+          value: db.collections[plural]
+        },
+        // [singular]: {}
+      })
     }
 
     for (const plugin of plugins) {
@@ -122,6 +90,12 @@ class Lodger {
     // debug('plurals', plurals)
   }
   
+  /**
+   * Adds / updates an entry in the DB
+   * 
+   * @param taxonomie 
+   * @param data 
+   */
   async put (taxonomie: Taxonomii, data: DateTaxonomie) {
     if (!db) throw new LodgerError(Errors.missingCoreDefinitions)
     const plural = plurals && plurals.size > 0 ? plurals.get(taxonomie) : null
@@ -136,6 +110,12 @@ class Lodger {
     return _data
   }
 
+  /**
+   * Removes a Document from the DB
+   * 
+   * @param taxonomie 
+   * @param id 
+   */
   async trash (taxonomie: Taxonomii, id: ItemID) {
     const debug = Debug('lodger:trash')
     if (!(plurals && db)) throw new LodgerError(Errors.missingCoreDefinitions)
@@ -143,8 +123,17 @@ class Lodger {
     if (!plural) throw new LodgerError('wtf')
     const col = db.collections[plural]
     const doc = await col.findOne(id)
+    debug(`deleting ${taxonomie} ID ${id}`)
     await doc.remove()
+    debug('deleted')
     return true
+  }
+
+  /**
+   * set
+   */
+  setPreference (preference: string, value: any) {
+    return 1
   }
 
   private get plugins () {
@@ -158,9 +147,9 @@ class Lodger {
 
   get preferences () {
     if (!(db && store)) throw new LodgerError(Errors.missingCoreDefinitions)
-    const preferences = {
-      ... store.getters.preferences,
-      ... db.preferences
+    const preferences: Preferences = {
+      client: store.getters.preferences,
+      user: db.collections['preferences']
     }
     return preferences
   }

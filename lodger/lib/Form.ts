@@ -53,6 +53,7 @@ const defaultSchema: RxJsonSchema = {
  */
 class Form {
   name: FormName
+  plural: Plural
 
   constructor (
     private data: LodgerForm,
@@ -68,6 +69,7 @@ class Form {
       throw new FormError(Errors.missingPlural)
     }
     this.name = name
+    this.plural = plural
   }
 
   /**

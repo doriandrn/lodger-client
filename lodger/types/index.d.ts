@@ -1,17 +1,18 @@
 import { RxDocument, RxCollection } from 'rxdb'
-import { BuildOptions, Asociatii } from './defs'
-import { Taxonomie } from '../index'
+import { Taxonomii } from 'lodger'
 
-type ItemId = string
+type GettersDBTaxonomii = {
+  [k in Taxonomii]: () => RxCollection<any>
+}
 
-interface Lodger {
-  put (): RxDocument<any>
-  trash (): boolean
-  
-  destroy (): Promise<void>
-  // [k: string]: RxCollection<any>
+declare global {
+  interface Lodger {
+    [k: string]: RxDocument<any> | boolean | Promise<void> | GettersDBTaxonomii
 
-  // asociatii (): Getter<Asociatii>
+    put (): RxDocument<any>
+    trash (): boolean
+    destroy (): Promise<void>
+  }
 }
 
 // interface LodgerInit {
@@ -25,6 +26,5 @@ interface RootState {
 
 export {
   Lodger,
-  // LodgerPublicAPI,
   RootState
 }

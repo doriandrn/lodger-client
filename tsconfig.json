@@ -7,21 +7,17 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "lodger/*": [
-        "./lodger/*"
-      ],
-      "@/*": [
-        "./*"
-      ],
-      "~/*": [
-        "./*"
-      ]
+      "lodger/*": [ "./lodger/*" ],
+      "@/*": [ "./*" ],
+      "~/*": [ "./*" ],
+      "types/*": [ "./lodger/types/*" ]
     },
     "rootDirs": [
       "./"
     ],
     "types": [
-      "node"
+      "node",
+      "debug"
     ],
     "strict": true,
     "sourceMap": true,

@@ -49,7 +49,7 @@ declare global {
     modules?: Module[]
   }
 
-  interface Plugin {
+  interface LodgerPlugin {
     name: string
   }
 

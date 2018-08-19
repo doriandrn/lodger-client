@@ -1,5 +1,6 @@
-import { Plural } from './defs'
+///<reference path="main.d.ts" />
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
+import { Taxonomii } from 'lodger/index'
 
 type Strings = 'text' | 'textarea' | 'select' | 'search' | 'string' | undefined
 type Numbers = 'number' | 'date-time' | 'bani' | 'date'
@@ -10,8 +11,8 @@ type cheiImutabile = 'primary' | 'index' | 'encrypted' | 'required'
 
 type ItemName = string
 
-type RxDBType = 'string' | 'number' | 'array'
-type ItemReference = Plural<Taxonomie> | object
+type RxDBType = 'string' | 'number' | 'array' | 'object'
+type ItemReference = Plural | object
 
 type Item = {
   id: string,

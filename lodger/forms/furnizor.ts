@@ -1,4 +1,4 @@
-export const campuri = [
+export const fields = [
   {
     id: 'nume',
     required: true
@@ -18,3 +18,5 @@ export const campuri = [
 export const actiuni = {
   confirm: 'adaugaFurnizor'
 }
+
+export const plural = 'furnizori'

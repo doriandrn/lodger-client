@@ -1,4 +1,4 @@
-import { Lodger } from '../lodger/index'
+import { Lodger, Errors } from '../lodger/index'
 import Debug from 'debug'
 Debug.enable('lodger:*')
 
@@ -27,6 +27,10 @@ describe('Lodger', () => {
 
         debug('LODGERICA', Object.getOwnPropertyNames(lodger))
       })
+
+      // test('adds a new bloc at prev created assoc', async () => {
+
+      // })
     })
 
     describe('trash', () => {
@@ -38,12 +42,43 @@ describe('Lodger', () => {
     
     test('mapeaza taxonomiile pt a fi apelate ca gettere', () => {
       expect(lodger.asociatii).toBeDefined()
+      expect(lodger.apartamente).toBeDefined()
     })
 
-    describe('set', () => {
-      test('sets a new preferences value', () => {
-        lodger.setPreference('client.locale', 'ro')
-        expect(lodger.preferences.client.locale).toBe('ro')
+    describe('setPreference', () => {
+      test('throws if starting taxonomy is not known', async () => {
+        // expect(async () => { await lodger.setPreference('caca.maca', null) }).toThrow()
+        try {
+          await lodger.setPreference('caca.maca', null)
+        } catch(e) {
+          expect(e).toBeDefined()
+          expect(String(e).indexOf(Errors.invalidPreferenceIndex)).toBeTruthy()
+        }
+      })
+      test('throws if invalid properties specified', async () => {
+        try {
+          await lodger.setPreference('client.', null)
+        } catch (e) {
+          expect(String(e).indexOf(Errors.invalidPropertySupplied)).toBeTruthy()
+        }
+
+
+        try {
+          await lodger.setPreference('client.xxx', 0)
+
+        } catch (e) {
+          expect(String(e).indexOf(Errors.invalidPropertySupplied)).toBeTruthy()
+        }
+      })
+
+      test('sets a new preferences value in store', async () => {
+        await lodger.setPreference('client.interface.fontSize', 3)
+        expect(lodger.preferences.client.fontSize).toBe(3)
+      })
+
+      test('sets a new preferences value in DB', async () => {
+        await lodger.setPreference('user.language', 'ro')
+        expect(lodger.preferences.user.language).toBe('ro')
       })
     })
 

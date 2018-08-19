@@ -1,6 +1,4 @@
-import lodgerConfig from '../../lodger.config'
-import { CriteriuGetterTaxonomie, Taxonomie } from '../types/defs'
-
+import { Taxonomii } from 'lodger'
 type TraversableObject = { [index: string]: TraversableObject }
 /**
  * Traverseaza un obiect cu o functie
@@ -30,8 +28,8 @@ function traverse (o: TraversableObject, fn: Function) {
  * 
  * @param {string} taxonomie
  */
-const getTaxonomyConfig = (tax: Taxonomie) => {
-  const { taxonomii } = lodgerConfig
+const getTaxonomyConfig = (tax: Taxonomii) => {
+  const { taxonomii } = this
   const { defaults } = taxonomii
   if (!tax) return defaults
   const config = taxonomii[tax]
@@ -66,10 +64,11 @@ const getTaxonomyConfig = (tax: Taxonomie) => {
 
 /**
  * Criteriu default pentru o taxonmoie ceruta
+ * 
  * @param {string} taxonomie 
  * @param {object} criteriuCerut - poate fi diferit decat default
  */
-const getCriteriu = (taxonomie: Taxonomie, criteriuCerut: CriteriuGetterTaxonomie) => {
+const getCriteriu = (taxonomie: Taxonomii, criteriuCerut: CriteriuGetterTaxonomie) => {
   if (criteriuCerut && typeof criteriuCerut !== 'object') {
     throw new Error('criteriu incorect')
   }

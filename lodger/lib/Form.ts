@@ -9,7 +9,7 @@ import { pushFieldToSchema } from 'lodger/helpers/forms'
 import { FormError } from 'lodger/lib/Errors'
 import {
   LodgerForm, FormName
-} from 'lodger/typings/forms'
+} from 'lodger/types/forms'
 
 // import { plural } from 'lodger/helpers/functions';
 
@@ -27,7 +27,7 @@ enum Errors {
   invalidName = 'Invalid name supplied',
   noData = 'Form %% is missing data',
   missingName = 'Forms should have a name',
-  missingPlural = 'A plural definition is required'
+  missingPlural = 'A plural definition is required for %%'
 }
 
 /**
@@ -66,7 +66,7 @@ class Form {
     if (!name) throw new FormError(Errors.missingName)
     if (!fields || !fields.length) throw new FormError(Errors.noData, name)
     if (!plural) {
-      throw new FormError(Errors.missingPlural)
+      throw new FormError(Errors.missingPlural, name)
     }
     this.name = name
     this.plural = plural

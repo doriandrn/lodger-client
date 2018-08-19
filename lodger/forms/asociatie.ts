@@ -21,10 +21,10 @@ const fields = [
     transform: 'capitalize'
   },
   {
-    id: 'idN',
-    type: 'number',
-    v: 'ro=cif|en=ssn', //TODO: stringu e doar de demo -> implement cif validation
-    value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter].idN,
+    id: 'organizatie',
+    type: 'object'
+    // v: 'ro=cif|en=ssn', //TODO: stringu e doar de demo -> implement cif validation
+    // value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter].idN,
   },
   {
     id: 'balanta',

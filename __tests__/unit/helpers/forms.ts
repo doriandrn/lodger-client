@@ -31,6 +31,10 @@ describe('Functii ajutatoare pt DB', () => {
       expect(toRxDBtype('furnizori')).toBe('array')
       expect(toRxDBtype('servicii')).toBe('array')
     })
+
+    test('returns object for object', () => {
+      expect(toRxDBtype('object')).toBe('object')
+    })
   })
 
   describe('pushFieldToSchema', () => {
@@ -39,7 +43,7 @@ describe('Functii ajutatoare pt DB', () => {
     })
 
     test('throws if field doesn t have an id', () => {
-      expect(pushFieldToSchema({ salut: 'yolo '})).toThrow('missing id')
+      expect(() => { pushFieldToSchema({ salut: 'yolo '}) }).toThrow()
     })
 
     test('throws if duplicated id detected', () => {
@@ -59,7 +63,6 @@ describe('Functii ajutatoare pt DB', () => {
       })
       const { required, properties } = schema
       expect(required).toContain('x2')
-      console.log(schema)
     })
   })
 
@@ -99,31 +102,4 @@ describe('Functii ajutatoare pt DB', () => {
       })
     })
   })
-  
-  // describe('makeCollection', () => {
-  //   const formData = {
-  //     name: singular,
-  //     campuri: [],
-  //     metode: {
-  //       test: () => {}
-  //     }
-  //   }
-  //   const colectie = makeCollection(formData)
-  //   console.info('colectie dupa makeCollection', colectie)
-  //   test('arunca daca e apelata fara parametru/i', () => {
-  //     expect(() => { makeCollection() }).toThrow()
-  //   })
-
-  //   test('face colectie', () => {
-      
-  //     expect(colectie.schema).toBeDefined()
-  //   })
-  //   test('numele colectiei e la plural, al formularului la singular', () => {
-  //     expect(colectie.name !== formData.name).toBeTruthy()
-  //   })
-
-  //   test('pune metodele definite in form', () => {
-  //     expect(colectie.methods.test).toBeDefined()
-  //   })
-  // })
 })

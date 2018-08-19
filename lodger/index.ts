@@ -4,6 +4,7 @@ import { RxDatabase, RxCollectionCreator } from 'rxdb'
 import { RootState } from 'lodger/types/index'
 
 import LodgerStore from 'lodger/lib/Store'
+import { getCriteriu } from 'lodger/helpers/functions'
 import DB from 'lodger/lib/DB'
 import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
@@ -15,7 +16,10 @@ enum Taxonomii {
   bloc = 'bloc',
   apartament = 'apartament',
   incasare = 'incasare',
-  cheltuiala = 'cheltuiala'
+  cheltuiala = 'cheltuiala',
+  serviciu = 'serviciu',
+  furnizor = 'furnizor',
+  utilizator = 'utilizator'
 }
 
 const buildOpts: BuildOptions = {
@@ -31,7 +35,9 @@ enum Errors {
   missingDB = 'Missing database',
   invalidPluginDefinition = 'Invalid plugin definition',
   pluralsAlreadyDefined = 'Plurals already defined, aborting',
-  missingCoreDefinitions = 'Invalid Lodger build. Missing core definitions'
+  missingCoreDefinitions = 'Invalid Lodger build. Missing core definitions',
+  invalidPreferenceIndex = 'Invalid preference index supplied',
+  invalidPropertySupplied = 'Invalid property supplied'
 }
 
 // Debug.enable(['test', 'dev'].indexOf(String(NODE_ENV)) >= -1 ? 'lodger:*' : null)
@@ -75,11 +81,34 @@ class Lodger {
      * Short API access for taxonomies
      */
     for (const [singular, plural] of plurals) {
+      // Object.defineProperties(this, {
+      //   [plural]: {
+      //     value: db.collections[plural].find
+      //   },
+      //   // [singular]: {}
+      // })
+      // this[plural] = db.collections[plural].find
+
       Object.defineProperties(this, {
         [plural]: {
-          value: db.collections[plural]
-        },
-        // [singular]: {}
+          // getterul custom cu criteri
+          // eg. lodger.asociatii({ querycautare })
+          get () {
+            return async (criteriu) => {
+              let { limit, index, sort, find } = getCriteriu(criteriu, plural)
+              const paging = limit * (index || 1)
+              const rezultate = Object.create(null)
+              const documente = await colectie.find(find).limit(paging).sort(sort).exec()
+              for (const doc of documente) {
+                const { _data } = doc
+                const { _id } = _data
+                if (!_id) continue
+                Object.assign(rezultate, { [_id]: _data })
+              }
+              return rezultate
+            }
+          }
+        }
       })
     }
 
@@ -130,10 +159,33 @@ class Lodger {
   }
 
   /**
-   * set
+   * Sets a preference either in DB or store
+   * 
    */
-  setPreference (preference: string, value: any) {
-    return 1
+  async setPreference (preference: string, value: any) {
+    const debug = Debug('lodger:set')
+    const allowedTaxonomies = ['client', 'user']
+    if (!preference) throw new LodgerError(Errors.invalidPreferenceIndex)
+    const taxonomy = preference.split('.')[0]
+    if (!taxonomy || allowedTaxonomies.indexOf(taxonomy) < 0) {
+      throw new LodgerError(Errors.invalidPreferenceIndex)
+    }
+
+    switch (taxonomy) {
+      case 'client':
+        if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
+        store.commit('updateClientPreference', {
+          path: preference.replace('client.', ''),
+          value
+        })
+
+        break
+      
+      case 'user':
+        if (!db) throw new LodgerError(Errors.missingCoreDefinitions)
+        // db.collections.utilizator....
+        break
+    }
   }
 
   private get plugins () {
@@ -215,5 +267,6 @@ class Lodger {
 
 export {
   Lodger,
+  Errors,
   Taxonomii
 }

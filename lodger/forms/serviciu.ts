@@ -1,4 +1,4 @@
-export const campuri = [
+const fields = [
   {
     id: 'denumire',
     required: true,
@@ -15,8 +15,17 @@ export const campuri = [
   }
 ]
 
-export const actiuni = {
+const plural = 'servicii'
+
+const actions = {
   confirm: 'adaugaServiciu'
 }
 
-export const predefinite = ['apa', 'electricitate', 'gaze', 'termoficare', 'internet', 'evacuare-gunoi-menajer']
+const predefinite = ['apa', 'electricitate', 'gaze', 'termoficare', 'internet', 'evacuare-gunoi-menajer']
+
+export {
+  fields,
+  plural,
+  actions,
+  predefinite
+}

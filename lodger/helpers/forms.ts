@@ -15,9 +15,10 @@ import FormItemTypes from '../defs/FormItemTypes'
  */
 export function toRxDBtype(type: KnownItemTypes): RxDBType {
   const _default = 'string'
-  const { strings, numbers, arrays } = FormItemTypes
+  const { strings, numbers, arrays, objects } = FormItemTypes
 
   if (!type || strings.indexOf(type) > -1) return _default
+  if (objects.indexOf(type) > -1) return 'object'
   if (numbers.indexOf(type) > -1) return 'number'
   if (arrays.indexOf(type) > -1) return 'array'
   return _default

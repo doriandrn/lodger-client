@@ -1,4 +1,4 @@
-export const campuri = [
+const fields = [
   {
     id: '_id',
     notInDb: true,
@@ -32,7 +32,9 @@ export const campuri = [
   }
 ]
 
-export const metode = {
+const plural = 'utilizatori'
+
+const methods = {
   async UPDATEAZA(campuri) {
     // TODO: nu permite updatarea anumitor chei
     Object.keys(campuri).forEach(camp => {
@@ -42,7 +44,7 @@ export const metode = {
   }
 }
 
-export const setari = {
+const settings = {
   online: {
     campuri: [
       {
@@ -57,4 +59,11 @@ export const setari = {
       }
     ]
   }
+}
+
+export {
+  fields,
+  plural,
+  methods,
+  settings
 }

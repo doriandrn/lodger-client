@@ -1,4 +1,5 @@
-import { Taxonomii } from 'lodger'
+import { Taxonomii } from 'lodger/index'
+import LodgerConfig from '../../lodger.config'
 type TraversableObject = { [index: string]: TraversableObject }
 /**
  * Traverseaza un obiect cu o functie
@@ -13,54 +14,18 @@ function traverse (o: TraversableObject, fn: Function) {
   }
 }
 
-// /**
-//  * Returneaza 
-//  * @param {*} taxonomie 
-//  */
-// const getCriteriuDefault = (taxonomie) => {
-//   if (!taxonomie) return criteriuDefault
-//   const tax = no$(taxonomie)
-// }
-
-
 /**
  * Returneaza config-ul pentru o taxonomie sau default
  * 
  * @param {string} taxonomie
  */
 const getTaxonomyConfig = (tax: Taxonomii) => {
-  const { taxonomii } = this
+  const { taxonomii } = LodgerConfig
   const { defaults } = taxonomii
   if (!tax) return defaults
   const config = taxonomii[tax]
   return config ? config : defaults
 }
-
-// const criteriu = {
-//   get () {
-//     return taxonomie => {
-//       const criteriu = taxonomie
-//         ? getTaxonomyConfig(taxonomie)
-//         : { ...defaults }
-
-//       switch (taxonomie) {
-//         case 'blocuri':
-//         case 'incasari':
-//         case 'cheltuieli':
-//           Object.assign(criteriu.find, { asociatieId: getters['asociatie/activa']._id })
-
-//         case 'apartament':
-//           Object.assign(criteriu.find, { bloc: { $in: getters['bloc/ids'] } })
-//       }
-//       // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
-//       return criteriu      
-//     }
-//   },
-
-//   set (taxonomie, criteriu) {
-
-//   }
-// }
 
 /**
  * Criteriu default pentru o taxonmoie ceruta
@@ -68,14 +33,18 @@ const getTaxonomyConfig = (tax: Taxonomii) => {
  * @param {string} taxonomie 
  * @param {object} criteriuCerut - poate fi diferit decat default
  */
-const getCriteriu = (taxonomie: Taxonomii, criteriuCerut: CriteriuGetterTaxonomie) => {
+const getCriteriu = (taxonomie: Taxonomii, criteriuCerut?: Criteriu) => {
   if (criteriuCerut && typeof criteriuCerut !== 'object') {
     throw new Error('criteriu incorect')
   }
-  const { defaults } = taxConfig
-  const criteriu = taxonomie
-    ? getTaxonomyConfig(taxonomie)
-    : { ...defaults }
+  if (Object.keys(Taxonomii).indexOf(taxonomie) < 0) {
+    throw new Error('taxonomie incorecta')
+  }
+  const { defaults } = LodgerConfig.taxonomii
+  let { criteriu } = defaults
+  criteriu = Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
+
+  console.info('criteriu', criteriu)
 
   if (criteriuCerut) Object.assign(criteriu, criteriuCerut)
   switch (taxonomie) {

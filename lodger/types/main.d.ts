@@ -22,7 +22,16 @@ declare global {
   export type Singular = string
   export type Plural = string
 
-  export type CriteriuGetterTaxonomii = string | object | null
+
+  type Criteriu = {
+    limit?: number,
+    index?: number,
+    sort?: Sort,
+    find?: Find
+  }
+
+  type Sort = {}
+  type Find = {} | null
 
   type DateContact = {
     emailPublic?: string,

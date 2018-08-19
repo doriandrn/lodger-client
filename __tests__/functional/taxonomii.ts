@@ -4,7 +4,7 @@ import faker from 'faker'
 
 let lodger: Lodger | undefined
 
-const asociatiiCount = 2
+const asociatiiCount = 20
 
 beforeAll(async () => {
   lodger = await Lodger.build()

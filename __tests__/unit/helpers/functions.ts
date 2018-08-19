@@ -79,8 +79,8 @@ describe('Functii ajutatoare', () => {
     })
 
     test('arunca daca e cerut cu string sau altceva', () => {
-      expect(() => { getCriteriu('blabla') }).toThrow('criteriu incorect')
-      expect(() => { getCriteriu(23) }).toThrow('criteriu incorect')
+      expect(() => { getCriteriu('blabla') }).toThrow('taxonomie incorecta')
+      expect(() => { getCriteriu(23) }).toThrow('taxonomie incorecta')
 
     })
 

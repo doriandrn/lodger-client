@@ -95,10 +95,17 @@ class Lodger {
           // eg. lodger.asociatii({ querycautare })
           get () {
             return async (criteriu) => {
-              let { limit, index, sort, find } = getCriteriu(criteriu, plural)
+              let { limit, index, sort, find } = getCriteriu(singular, criteriu)
+              console.error(limit, index, sort, find)
               const paging = limit * (index || 1)
               const rezultate = Object.create(null)
-              const documente = await colectie.find(find).limit(paging).sort(sort).exec()
+              const colectie = db.collections[plural]
+              const documente = await colectie
+                .find(find)
+                .limit(paging)
+                .sort(sort)
+                .exec()
+
               for (const doc of documente) {
                 const { _data } = doc
                 const { _id } = _data

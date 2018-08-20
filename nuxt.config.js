@@ -77,7 +77,8 @@ module.exports = {
   },
   modules: [
     '@nuxtjs/axios',
-    'nuxt-ts-module'
+    // 'typescript'
+    // 'nuxt-ts-module'
     // '@nuxtjs/proxy',
     // '@nuxtjs/pwa'
   ],
@@ -111,6 +112,18 @@ module.exports = {
           preferPathResolver: 'webpack'
         })
       })
+
+      // TS Support
+      config.module.rules.push({
+        loader: 'ts-loader',
+        test: new RegExp(/\.ts$/),
+        options: {
+          appendTsSuffixTo: [/\.vue$/]
+        }
+      })
+      if (config.resolve.extensions.indexOf('.ts') === -1) {
+        config.resolve.extensions.push('.ts')
+      }
 
       // Extend aliases
       Object.assign(config.resolve.alias, {

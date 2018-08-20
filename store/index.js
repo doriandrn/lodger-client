@@ -8,8 +8,8 @@ import { definitii } from 'lodger/definitii'
 import { predefinite } from 'forms/serviciu'
 import { searchMap } from '../lodger/plugins/search/index'
 import { trm, spleet } from 'helpers/functions'
-import { sanitizeDBItems } from 'helpers/db'
-import { isRxDocument } from 'db'
+// import { sanitizeDBItems } from 'helpers/db'
+import { isRxDocument } from 'rxdb'
 
 const debug = Debug('lodger:rxstore')
 debug('process', process)

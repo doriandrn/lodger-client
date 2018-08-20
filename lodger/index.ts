@@ -181,7 +181,7 @@ class Lodger {
     switch (taxonomy) {
       case 'client':
         if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
-        store.commit('updateClientPreference', {
+        store.commit('preferences/update', {
           path: preference.replace('client.', ''),
           value
         })

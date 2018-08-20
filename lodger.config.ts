@@ -1,15 +1,5 @@
 import { version } from './package.json'
 
-type Criteriu = {
-  limit?: number,
-  index?: number,
-  sort?: Sort,
-  find?: Find
-}
-
-type Sort = {}
-type Find = {} | null
-
 type LodgerConfig = {
   version: number,
   taxonomii: {

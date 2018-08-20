@@ -31,7 +31,7 @@
 // }
 
 
-export default function () {
+export function typescript () {
   this.nuxt.options.extensions.push('ts')
   this.extendBuild(config => {
     config.module.rules.push({

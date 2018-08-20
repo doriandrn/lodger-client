@@ -5,8 +5,9 @@ import { Taxonomii } from 'lodger/index'
 type Strings = 'text' | 'textarea' | 'select' | 'search' | 'string' | undefined
 type Numbers = 'number' | 'date-time' | 'bani' | 'date'
 type Arrays = 'array' | 'scari' | 'contactFields' | Taxonomii
+type Objects = 'object'
 
-type KnownItemTypes = Strings | Numbers | Arrays
+type KnownItemTypes = Strings | Numbers | Arrays | Objects
 type cheiImutabile = 'primary' | 'index' | 'encrypted' | 'required'
 
 type ItemName = string

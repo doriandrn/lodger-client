@@ -4,7 +4,7 @@ import createPersistedState from 'vuex-persistedstate'
 import FileSaver from 'file-saver'
 
 import { createModule } from 'vuex-toast'
-import { definitii } from 'lodger/definitii'
+// import { definitii } from 'lodger/definitii'
 import { predefinite } from 'forms/serviciu'
 import { searchMap } from '../lodger/plugins/search/index'
 import { trm, spleet } from 'helpers/functions'
@@ -71,7 +71,7 @@ debug('toateMetodele', toateMetodele)
 /**
  * Normalize DB items (based on defs) and pass them to store
 */
-definitii.forEach((plural, singular) => {
+Object.keys(Taxonomii).forEach((plural, singular) => {
   const { defaults } = metodeComune
   const mut = numeMetoda => `${singular}/${String(numeMetoda).toUpperCase()}`
 

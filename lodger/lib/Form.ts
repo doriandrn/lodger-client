@@ -7,11 +7,6 @@ import Debug from 'debug'
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
 import { pushFieldToSchema } from 'lodger/helpers/forms'
 import { FormError } from 'lodger/lib/Errors'
-import {
-  LodgerForm, FormName
-} from 'lodger/types/forms'
-
-// import { plural } from 'lodger/helpers/functions';
 
 if (process.env.NODE_ENV === 'test') {
   Debug.enable('Form:*')
@@ -79,6 +74,7 @@ class Form {
     const { name, fields } = this.data
     const schema: RxJsonSchema = JSON.parse(JSON.stringify(defaultSchema))
     schema.title = name
+
     fields
       .filter(field => !field.notInDb)
       .forEach(field => {
@@ -94,10 +90,10 @@ class Form {
   get collection (): RxCollectionCreator {
     const {
       schema,
-      data: { plural }
+      data: { plural, methods, statics }
     } = this
     const name = plural
-    return <RxCollectionCreator>{ name, schema }
+    return <RxCollectionCreator>{ name, schema, methods, statics }
   }
 
   /**

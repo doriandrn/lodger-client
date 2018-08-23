@@ -1,7 +1,8 @@
-import { version } from './package.json'
+// import { version } from './package'
+const version = require('./package.json').version || '0.0.1'
 
 type LodgerConfig = {
-  version: number,
+  version: string,
   taxonomii: {
     defaults: {
       criteriu: Criteriu

@@ -1,5 +1,3 @@
-import { Fields } from '../types/forms'
-
 const fields: Fields = [
   {
     id: 'deLa',

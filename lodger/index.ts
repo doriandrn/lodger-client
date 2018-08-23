@@ -1,7 +1,6 @@
 import Debug from 'debug'
 import { Store } from 'vuex'
 import { RxDatabase, RxCollectionCreator } from 'rxdb'
-import { RootState } from 'lodger/types/index'
 
 import LodgerStore from 'lodger/lib/Store'
 import { getCriteriu } from 'lodger/helpers/functions'
@@ -10,6 +9,16 @@ import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
 
 const { NODE_ENV } = process.env
+
+const buildOpts: BuildOptions = {
+  dbCon: {
+    name: 'Lodger/',
+    adapter: NODE_ENV === 'test' ? 'memory' : 'idp',
+    password: 'l0dg3rp4$$'
+  },
+  usePersistedState: false
+}
+
 
 enum Taxonomii {
   asociatie = 'asociatie',
@@ -22,14 +31,6 @@ enum Taxonomii {
   utilizator = 'utilizator'
 }
 
-const buildOpts: BuildOptions = {
-  dbCon: {
-    name: 'Lodger/',
-    adapter: NODE_ENV === 'test' ? 'memory' : 'idp',
-    password: 'l0dg3rp4$$'
-  },
-  usePersistedState: false
-}
 
 enum Errors {
   missingDB = 'Missing database',
@@ -65,8 +66,6 @@ let store: Store<RootState> | null = null
 let plurals: PluralsMap | null = null
 const plugins: Plugin[] = []
 
-
-
 class Lodger {
   constructor () {
     const debug = Debug('lodger:new')
@@ -94,10 +93,11 @@ class Lodger {
           // getterul custom cu criteri
           // eg. lodger.asociatii({ querycautare })
           get () {
-            return async (criteriu) => {
-              let { limit, index, sort, find } = getCriteriu(singular, criteriu)
-              console.error(limit, index, sort, find)
-              const paging = limit * (index || 1)
+            return async (criteriu?: Criteriu) => {
+              if (!db) throw new LodgerError(Errors.missingCoreDefinitions)
+              let { limit, index, sort, find } = getCriteriu(<Taxonomii>singular, criteriu)
+
+              const paging = Number(limit || 0) * (index || 1)
               const rezultate = Object.create(null)
               const colectie = db.collections[plural]
               const documente = await colectie
@@ -119,7 +119,7 @@ class Lodger {
       })
     }
 
-    for (const plugin of plugins) {
+    for (const plugin of this.plugins) {
       debug('loading plugin:', plugin)
     }
     debug('inited')
@@ -177,7 +177,7 @@ class Lodger {
     if (!taxonomy || allowedTaxonomies.indexOf(taxonomy) < 0) {
       throw new LodgerError(Errors.invalidPreferenceIndex)
     }
-
+    debug('setting preference', preference, value)
     switch (taxonomy) {
       case 'client':
         if (!store) throw new LodgerError(Errors.missingCoreDefinitions)

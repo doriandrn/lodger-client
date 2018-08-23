@@ -1,17 +1,24 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions, ModuleTree, Module, ActionTree, GetterTree, MutationTree } from 'vuex'
-import { RootState } from 'lodger/types/index'
 import { Taxonomii } from 'lodger'
-import { version } from '../../lodger.config'
+import lodgerConfig from '../../lodger.config'
+const { version } = lodgerConfig
 Vue.use(Vuex)
 
 const storeModules: ModuleTree<RootState> = {}
 const namespaced: boolean = true
 
-type TaxonomyState = {
-  selected: ItemID,
-  last: ItemID
+declare global {
+  interface TaxonomyState {
+    selected: ItemID,
+    last: ItemID
+  }
+
+  interface AsociatieState extends TaxonomyState {
+
+  }
 }
+
 
 // const sharedStoreActions = {
 //   select: 'selected',
@@ -46,9 +53,6 @@ export default function (taxonomii: Taxonomii[]) {
       state
     }
   })
-
-  // storeModules.preferences = <Module<ClientPrefrences, RootState>>
-
   
   /**
    * Store

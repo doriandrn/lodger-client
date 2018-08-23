@@ -1,18 +1,21 @@
-import { Form, Errors } from '../../../lodger/lib/Form'
-
-import { Fields } from '../../../lodger/types/forms'
-import { stub1, stub2, fields, name } from '../../../lodger/forms/__stubs__/playground'
+import { Form, Errors } from 'lodger/lib/Form'
+import { stub1, stub2, fields, name } from 'lodger/forms/__stubs__/playground'
 
 describe('Form', () => {
   const __stub1__ = new Form(stub1)
   const __stub2__ = new Form(stub2)
 
-  describe('new (form: LodgerForm)', () => {
+  describe('constructor (form: LodgerForm)', () => {
     describe('Invalid form(s)', () => {
       const name = 'aFormName'
+      const plural = 'formsCollection'
       test('throws if fields is empty', () => {
         const fields: Fields = []
-        expect(() => new Form({ name, fields })).toThrow(Errors.noData)
+        expect(() => new Form({
+          name,
+          plural,
+          fields
+        })).toThrow(Errors.noData)
       })
     })
 
@@ -60,8 +63,12 @@ describe('Form', () => {
   describe('collection (getter)', () => {
     test('makes collection', () => {
       const { collection } = __stub1__
-      console.log(collection)
       expect(collection).toBeDefined()
+    })
+
+    test('methods are passed in if existing', () => {
+      const { collection } = __stub1__
+      expect(collection.methods).toEqual(stub1.methods)
     })
   })
 
@@ -76,8 +83,8 @@ describe('Form', () => {
     })
     describe('valid forms', () => {
       test('returns a fully inited <Form> if found and ok', () => {
-        const form = Form.loadByName('valid')
-        expect(form.name).toBe('valid')
+        const form = Form.loadByName('asociatie')
+        expect(form.name).toBe('asociatie')
       })
     })
   })

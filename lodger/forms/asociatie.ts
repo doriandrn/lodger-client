@@ -79,12 +79,13 @@ const actiuni = {
   confirm: 'adaugaAsociatie'
 }
 
-const methods = {
-  async initBalanta (data) {
+
+const methods = <T>{
+  async initBalanta (data: {balanta: Bani}) {
     this.balanta = data.balanta
     await this.save()
   },
-  async incaseaza (data) {
+  async incaseaza (data: Incasare) {
     if (!this.balanta) this.balanta = 0
     let incasari = this.incasari || []
     this.balanta += data.suma

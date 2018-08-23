@@ -1,5 +1,3 @@
-import { LodgerForm } from "../../types/forms"
-
 /**
  * DO NOT CHANGE ANY OF THESE
  * as existing tests run on them
@@ -8,6 +6,12 @@ import { LodgerForm } from "../../types/forms"
  */
 const name = 'xx'
 const plural = 'xxs'
+
+const methods = {
+  async lol () {
+    // do nothing
+  }
+}
 
 const fields = [
   { id: 'x1' },
@@ -26,7 +30,8 @@ const fieldsWithExcludedItems = [
 const stub1: LodgerForm = {
   name,
   plural,
-  fields
+  fields,
+  methods
 }
 const stub2: LodgerForm = {
   name,

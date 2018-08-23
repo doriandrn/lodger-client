@@ -1,7 +1,6 @@
 import { RxDatabase, RxDatabaseCreator, RxCollection, RxCollectionCreator } from "rxdb"
 import { Form } from 'lodger/lib/Form'
 import { Store } from 'vuex'
-import { RootState } from 'lodger/types'
 
 declare global {
   // type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
@@ -63,7 +62,8 @@ declare global {
   }
 
   interface Incasare {
-
+    suma: Bani,
+    deLa: ItemID
   }
 
   type DistribuirePeApartamente = object
@@ -107,14 +107,16 @@ declare global {
   type Tranzactie = [Incasare & Cheltuiala]
 
   interface Asociatie {
-    _id: string,
-    name: string,
+    _id: string
+    name: string
+    balanta: Bani
+  
     organizatie?: Organizatie,
     // administratori: [Utilizator],
     utilizatori?: [Utilizator],
     servicii: [Serviciu],
     furnizori?: [Furnizor],
-    tranzactii?: [Incasare | Cheltuiala]
+    tranzactii?: Tranzactie[]
   }
 
   interface Apartament {
@@ -133,7 +135,7 @@ declare global {
   }
 
   interface Preferences {
-    client: ClientPreferences,
+    client: PreferencesState,
     user: UserPreferences,
   }
 
@@ -141,7 +143,4 @@ declare global {
 
   type DateTaxonomie = Asociatie | Apartament
 
-  type ClientPreferences = {
-    
-  }
 }

@@ -1,4 +1,3 @@
-import { Item, RxDBType, KnownItemTypes } from '../types/forms'
 import { RxJsonSchema } from 'rxdb'
 import FormItemTypes from '../defs/FormItemTypes'
 

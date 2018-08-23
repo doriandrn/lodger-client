@@ -1,4 +1,4 @@
-import { Taxonomii } from 'lodger/index'
+import { Taxonomii } from 'lodger'
 import LodgerConfig from '../../lodger.config'
 type TraversableObject = { [index: string]: TraversableObject }
 /**

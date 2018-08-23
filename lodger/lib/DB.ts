@@ -1,13 +1,13 @@
 import * as RxDB from 'rxdb'
 import Debug from 'debug'
-import memoryAdapter from 'pouchdb-adapter-memory'
-import idbAdapter from 'pouchdb-adapter-idb'
+// import memoryAdapter from 'pouchdb-adapter-memory'
+// import idbAdapter from 'pouchdb-adapter-idb'
 
 const debug = Debug('lodger:db')
 const { NODE_ENV } = process.env
 /**
-     * DB plugins
-     */
+ * DB plugins
+ */
 if (NODE_ENV === 'test') {
   RxDB.plugin(require('pouchdb-adapter-memory'))
 } else {

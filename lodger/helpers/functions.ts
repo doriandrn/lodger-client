@@ -1,4 +1,4 @@
-import { Taxonomii } from 'lodger'
+import { Taxonomii } from 'lodger/index'
 import LodgerConfig from '../../lodger.config'
 type TraversableObject = { [index: string]: TraversableObject }
 /**
@@ -43,10 +43,8 @@ const getCriteriu = (taxonomie: Taxonomii, criteriuCerut?: Criteriu) => {
   const { defaults } = LodgerConfig.taxonomii
   let { criteriu } = defaults
   criteriu = Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
-
-  console.info('criteriu', criteriu)
-
   if (criteriuCerut) Object.assign(criteriu, criteriuCerut)
+  console.info('criteriu', criteriu)
   switch (taxonomie) {
     case 'bloc':
     case 'incasare':

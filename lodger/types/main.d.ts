@@ -17,9 +17,9 @@ declare global {
     retea: string,
     username: string
   }
+  type Plural<T> = (s: T) => T
 
   export type Singular = string
-  export type Plural = string
 
 
   type Criteriu = {

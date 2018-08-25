@@ -1,6 +1,9 @@
 import Debug from 'debug'
 import { Store } from 'vuex'
-import { RxDatabase, RxCollectionCreator } from 'rxdb'
+import { RxDatabase, RxCollectionCreator, RxDocument } from 'rxdb'
+import fs from 'fs'
+import downloadsFolder from 'downloads-folder'
+import yaml from 'json2yaml'
 
 import LodgerStore from 'lodger/lib/Store'
 import { getCriteriu } from 'lodger/helpers/functions'
@@ -35,95 +38,110 @@ enum Taxonomii {
 enum Errors {
   missingDB = 'Missing database',
   invalidPluginDefinition = 'Invalid plugin definition',
-  pluralsAlreadyDefined = 'Plurals already defined, aborting',
+  pluralsAlreadyDefined = 'Plurals are already defined, aborting',
   missingCoreDefinitions = 'Invalid Lodger build. Missing core definitions',
   invalidPreferenceIndex = 'Invalid preference index supplied',
-  invalidPropertySupplied = 'Invalid property supplied'
+  invalidPropertySupplied = 'Invalid property supplied',
+  couldNotWriteFile = 'Cannot write file'
 }
 
 // Debug.enable(['test', 'dev'].indexOf(String(NODE_ENV)) >= -1 ? 'lodger:*' : null)
 
+// function plural<T>
+
 const loadForms = (taxonomies: Taxonomii[]) => taxonomies.map((tax: Taxonomii) => Form.loadByName(tax))
 
-const definePlurals = (forms: Form[]): PluralsMap => {
-  const plrls: PluralsMap = plurals || new Map()
-  if (plrls.size) throw new LodgerError(Errors.pluralsAlreadyDefined)
-  forms.forEach(form => {
-    const { name, plural } = form
-    plrls.set(name, plural)
-  })
-  return plrls
+type SubscribersList = {
+  main: Subscriber,
+  [k: string]: Subscriber
 }
 
-/**
- * Private, internal stuff
- * ** initialize on build **
- * 
- */
-let forms: Form[] | null = null
-let db: RxDatabase | null = null
-let store: Store<RootState> | null = null
-let plurals: PluralsMap | null = null
+type Subscriber = {
+  [k in Taxonomii]?: any
+}
+
+const singular = (tax: Plural<Taxonomii>) => {}
+
+// /**
+//  * Private, internal stuff
+//  * ** initialize on build **
+//  * 
+//  */
+// let forms: Form[] | undefined
+// let db: RxDatabase | undefined
+// let store: Store<RootState> | undefined
+// let plurals: PluralsMap | undefined
 const plugins: Plugin[] = []
 
 class Lodger {
-  constructor () {
+  constructor (
+    protected taxonomii: Taxonomii[],
+    protected forms: Form[],
+    private readonly plurals: PluralsMap,
+    protected db: RxDatabase,
+    protected store: Store<RootState>,
+    protected subscribers: SubscribersList
+  ) {
     const debug = Debug('lodger:new')
-    // debug('db', db)
-    // debug('store', store)
-    // debug('plurals', plurals)
-    if (!(db && plurals && plurals.size)) {
-      throw new LodgerError(Errors.missingCoreDefinitions)
-    }
+    // if (!(db && plurals && plurals.size)) {
+    //   throw new LodgerError(Errors.missingCoreDefinitions)
+    // }
     
-    /**
-     * Short API access for taxonomies
-     */
-    for (const [singular, plural] of plurals) {
-      // Object.defineProperties(this, {
-      //   [plural]: {
-      //     value: db.collections[plural].find
-      //   },
-      //   // [singular]: {}
-      // })
-      // this[plural] = db.collections[plural].find
+    // /**
+    //  * Short API access for taxonomies
+    //  */
+    // for (const [singular, plural] of plurals) {
 
-      Object.defineProperties(this, {
-        [plural]: {
-          // getterul custom cu criteri
-          // eg. lodger.asociatii({ querycautare })
-          get () {
-            return async (criteriu?: Criteriu) => {
-              if (!db) throw new LodgerError(Errors.missingCoreDefinitions)
-              let { limit, index, sort, find } = getCriteriu(<Taxonomii>singular, criteriu)
+    //   Object.defineProperties(this, {
+    //     [plural]: {
+    //       // getterul custom cu criteri
+    //       // eg. lodger.asociatii({ querycautare })
+    //       get () {
+    //         return async (criteriu?: Criteriu, subscriberName?: SubscriberName) => {
+              
+             
 
-              const paging = Number(limit || 0) * (index || 1)
-              const rezultate = Object.create(null)
-              const colectie = db.collections[plural]
-              const documente = await colectie
-                .find(find)
-                .limit(paging)
-                .sort(sort)
-                .exec()
+    //         }
+    //       }
+    //     }
+    //   })
+    // }
 
-              for (const doc of documente) {
-                const { _data } = doc
-                const { _id } = _data
-                if (!_id) continue
-                Object.assign(rezultate, { [_id]: _data })
-              }
-              return rezultate
-            }
-          }
+    // for (const plugin of this.plugins) {
+    //   debug('loading plugin:', plugin)
+    // }
+    // debug('inited', subscribers)
+  }
+
+  /**
+   * Updateaza datele subscriberi-lor,
+   * date folosite de getteri pentru a fi
+   * afisate in interfata
+   */
+  async $get (
+    taxonomie: Plural<Taxonomii>,
+    criteriu?: Criteriu,
+    subscriberName?: string
+  ) {
+    const { db, subscribers } = this
+    let { limit, index, sort, find } = getCriteriu(singular(taxonomie), criteriu)
+
+    const paging = Number(limit || 0) * (index || 1)
+
+    const colectie = db.collections[taxonomie]
+    const subscriber = <Subscriber>subscribers[subscriberName || 'main']
+
+    subscriber[taxonomie] = colectie
+      .find(find)
+      .limit(paging)
+      .sort(sort)
+      .$.subscribe(async schimbariInColectie => {
+        if (!schimbariInColectie) return
+        if (taxonomie === 'servicii' && schimbariInColectie.length < 0) {
+          // insertPredefinedServices()
         }
+        return schimbariInColectie.map((item: RxDocument<any>) => item._data)
       })
-    }
-
-    for (const plugin of this.plugins) {
-      debug('loading plugin:', plugin)
-    }
-    debug('inited')
-    // debug('plurals', plurals)
   }
   
   /**
@@ -133,8 +151,8 @@ class Lodger {
    * @param data 
    */
   async put (taxonomie: Taxonomii, data: DateTaxonomie) {
-    if (!db) throw new LodgerError(Errors.missingCoreDefinitions)
-    const plural = plurals && plurals.size > 0 ? plurals.get(taxonomie) : null
+    const { db, plurals, store } = this
+    const plural = plurals.get(taxonomie)
     if (!plural) throw new LodgerError('noPlural')
     let { _id } = data
     const colectie = db.collections[plural]
@@ -153,12 +171,12 @@ class Lodger {
    * @param id 
    */
   async trash (taxonomie: Taxonomii, id: ItemID) {
+    const { plurals, db } = this
     const debug = Debug('lodger:trash')
-    if (!(plurals && db)) throw new LodgerError(Errors.missingCoreDefinitions)
     const plural = plurals.get(taxonomie)
     if (!plural) throw new LodgerError('wtf')
     const col = db.collections[plural]
-    const doc = await col.findOne(id)
+    const doc: RxDocument<Taxonomii> = await col.findOne(id)
     debug(`deleting ${taxonomie} ID ${id}`)
     await doc.remove()
     debug('deleted')
@@ -171,6 +189,7 @@ class Lodger {
    */
   async setPreference (preference: string, value: any) {
     const debug = Debug('lodger:set')
+    const { db, store } = this
     const allowedTaxonomies = ['client', 'user']
     if (!preference) throw new LodgerError(Errors.invalidPreferenceIndex)
     const taxonomy = preference.split('.')[0]
@@ -180,7 +199,6 @@ class Lodger {
     debug('setting preference', preference, value)
     switch (taxonomy) {
       case 'client':
-        if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
         store.commit('preferences/update', {
           path: preference.replace('client.', ''),
           value
@@ -189,23 +207,34 @@ class Lodger {
         break
       
       case 'user':
-        if (!db) throw new LodgerError(Errors.missingCoreDefinitions)
         // db.collections.utilizator....
         break
     }
   }
 
+  /**
+   * Active plugins list
+   */
   private get plugins () {
     return plugins
   }
 
+  /**
+   * Lodger Getters
+   * All UI connects with this
+   * combines DB & Store getters
+   * 
+   */
   get __getters () {
+    const { db, store } = this
     if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
-    return store.getters
+    return {
+      ...store.getters
+    }
   }
 
   get preferences () {
-    if (!(db && store)) throw new LodgerError(Errors.missingCoreDefinitions)
+    const { db, store } = this
     const preferences: Preferences = {
       client: store.getters.preferences,
       user: db.collections['preferences']
@@ -233,17 +262,32 @@ class Lodger {
     
     const taxonomii: Taxonomii[] = <Taxonomii[]>Object.keys(Taxonomii)
 
-    forms = loadForms(taxonomii)
-    plurals = definePlurals(forms)
+    const forms = loadForms(taxonomii)
+    const plurals: PluralsMap = new Map()
+    forms.forEach(form => {
+      const { name, plural } = form
+      plurals.set(name, plural)
+    })
     const collections: RxCollectionCreator[] = forms.map(form => form.collection)
-    db = await DB(collections, dbCon)
-    store = LodgerStore(taxonomii)
+    const db = await DB(collections, dbCon)
+    const store = LodgerStore(taxonomii)
+    const subscribers: SubscribersList = {
+      main: {},
+      // altSubscriber: { ... }
+    }
 
     if (options) {
       Object.assign(buildOpts, { ...options })
     }
 
-    return new Lodger()
+    return new Lodger(
+      taxonomii,
+      forms,
+      plurals,
+      db,
+      store,
+      subscribers
+    )
   }
 
   /**
@@ -267,8 +311,33 @@ class Lodger {
    * 
    */
   async destroy () {
-    if (!db) return
-    await db.destroy()
+    await this.db.destroy()
+  }
+
+  /**
+   * Exports the DB
+   */
+  async export (path?: string, cryptedData?: boolean, filename?: string) {
+    const debug = Debug('lodger:export')
+    const json = await this.db.dump()
+    const extension = 'ldb'
+    if (!path) path = downloadsFolder()
+  
+    if (!filename) {
+      const date = new Date()
+      filename = `LdgDB-${date}`
+    }
+    fs.writeFile(`${path}/${filename}.${extension}`, yaml.stringify(json), (e: Error) => {
+      if (e) throw new LodgerError(Errors.couldNotWriteFile)
+      debug(`written ${filename}.${extension} in path`)
+    })
+  }
+
+  /**
+   * TODO!!
+   */
+  async import () {
+
   }
 }
 

@@ -13,17 +13,18 @@ beforeAll(async () => {
   lodger = await Lodger.build()
 })
 
-let ids = []
+const debug = Debug('lodger:functional')
 
 describe(`ASOCIATII`, async () => {
-  
+  let ids = []
+
   describe('PUT (add func)', () => {
-    beforeAll(() => {
-      ids = Array(asociatiiCount).fill().map(async (_, i) => {
+    beforeAll(async () => {
+      ids = await Promise.all(Array(asociatiiCount).fill().map(async (_, i) => {
         const name = faker.company.companyName()
         const cif = faker.random.number()
 
-        console.info('pun', name)
+        // debug('pun', name)
         const { _id } = await lodger.put('asociatie', {
           name,
           organizatie: {
@@ -31,35 +32,24 @@ describe(`ASOCIATII`, async () => {
           }
         })
 
-        console.info('pus', i, _id)
+        // debug('pus', i, _id)
         return _id
-      })
-      // for (let i = 1; i <= asociatiiCount; i++) {
-      //   const name = faker.company.companyName()
-      //   const cif = faker.random.number()
-
-      //   const { _id } = await lodger.put('asociatie', {
-      //     name,
-      //     organizatie: {
-      //       cif
-      //     }
-      //   })
-      //   console.info('pus', _id)
-      //   ids.push(_id)
-      // }
+      }))
     })
+
     test(`Listeaza cele ${asociatiiCount} asociatii`, async () => {
-      // await lodger.$get('asociatii')
+      // wait for QueryDetection events to update
+      await new Promise(resolve => setTimeout(resolve, 1000))
       const { asociatii } = lodger
-      console.log('LOLA', asociatii)
       expect(Object.keys(asociatii).length).toBe(asociatiiCount)
     })
 
     const limit = 5
-    // test(`Listeaza ${limit} asociatii specificate in 'limit'`, async () => {
-    //   await lodger.$get('asociatii', { limit })
-    //   expect(Object.keys(lodger.asociatii).length).toBe(limit)
-    // })
+    test(`Listeaza ${limit} asociatii specificate in 'limit'`, async () => {
+      await lodger.$get('asociatii', { limit })
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      expect(Object.keys(lodger.asociatii).length).toBe(limit)
+    })
 
     // test(`Listeaza ultimele ${limit} si le sorteaza dupa data`, async () => {
     //   const sort = {}
@@ -68,7 +58,7 @@ describe(`ASOCIATII`, async () => {
     // })
   })
 
-  console.info('/dun')
+  debug('/dun')
 })
 
 describe('BLOCURI', () => {

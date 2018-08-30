@@ -88,14 +88,17 @@ const handlerTaxonomyChanges = (taxonomie, changes, resolve) => {
   resolve(xx)
 }
 
-const $get = (
-  db: RxDatabase,
+function $get (
   taxonomie: Plural,
   criteriu ?: Criteriu,
   subscriberName ?: string
-) => {
+) {
   const debug = Debug('lodger:$get')
-  const { collections } = db
+
+  const { collections } = <RxDatabase>this
+  if (!collections) {
+    throw new LodgerError(Errors.missingCoreDefinitions)
+  }
   let { limit, index, sort, find } = getCriteriu(taxonomie, criteriu)
 
   const paging = Number(limit || 0) * (index || 1)
@@ -148,7 +151,7 @@ class Lodger {
     // for (const plugin of this.plugins) {
     //   debug('loading plugin:', plugin)
     // }
-    this.$get = $get
+    this.$get = $get.bind(db)
     // this.shortcus = shortcuts
     Object.keys(shortcuts).forEach(shortcut => {
       Object.defineProperty(this, shortcut, {
@@ -221,7 +224,7 @@ class Lodger {
     const colectie = db.collections[plural]
     const method = _id ? 'upsert' : 'insert'
     const { _data } = await colectie[method](data)
-    debug('pus', taxonomie, _data)
+    debug('pus', taxonomie)
     // debug('should update store here', _data)
 
     if (store) await store.dispatch(`${taxonomie}/setLast`, _data._id)
@@ -340,9 +343,7 @@ class Lodger {
       Object.assign(buildOpts, { ...options })
     }
 
-    for (const [s, p] of plurals) {
-      await $get(db, p)
-    }
+    for (const [s, p] of plurals) { await $get.call(db, p) }
 
     // plurals.forEach(async taxonomie => { 
     //   await $get(db, taxonomie)

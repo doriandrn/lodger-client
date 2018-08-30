@@ -59,9 +59,9 @@ describe('Functii ajutatoare', () => {
     })
 
     test('returneaza criteriul cerut pentru taxonomie', () => {
-      const criteriuDefaultAsociatie = lodgerConfig.taxonomii.asociatie.criteriu
-      const { criteriu } = getTaxonomyConfig('asociatie')
-      expect(criteriu.limit).toBe(criteriuDefaultAsociatie.limit)
+      const criteriuDefaultAsociatii = lodgerConfig.taxonomii.asociatii.criteriu
+      const { criteriu } = getTaxonomyConfig('asociatii')
+      expect(criteriu.limit).toBe(criteriuDefaultAsociatii.limit)
     })
   })
 
@@ -79,14 +79,14 @@ describe('Functii ajutatoare', () => {
     })
 
     test('arunca daca e cerut cu string sau altceva', () => {
-      expect(() => { getCriteriu('blabla') }).toThrow('taxonomie incorecta')
+      expect(() => { getCriteriu({}) }).toThrow('taxonomie incorecta')
       expect(() => { getCriteriu(23) }).toThrow('taxonomie incorecta')
 
     })
 
     test('returneaza criteriu default pt o taxonomie cunoscuta', () => {
-      const { limit, index, sort, find } = getCriteriu('asociatie')
-      expect(limit).toBe(lodgerConfig.taxonomii.asociatie.criteriu.limit)
+      const { limit, index, sort, find } = getCriteriu('asociatii')
+      expect(limit).toBe(lodgerConfig.taxonomii.asociatii.criteriu.limit)
     })
   })
 

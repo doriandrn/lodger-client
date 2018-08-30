@@ -19,7 +19,7 @@ function traverse (o: TraversableObject, fn: Function) {
  * 
  * @param {string} taxonomie
  */
-const getTaxonomyConfig = (tax: Taxonomii) => {
+const getTaxonomyConfig = (tax: Plural) => {
   const { taxonomii } = LodgerConfig
   const { defaults } = taxonomii
   if (!tax) return defaults
@@ -33,27 +33,26 @@ const getTaxonomyConfig = (tax: Taxonomii) => {
  * @param {string} taxonomie 
  * @param {object} criteriuCerut - poate fi diferit decat default
  */
-const getCriteriu = (taxonomie: Taxonomii, criteriuCerut?: Criteriu) => {
+const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
+  if (typeof taxonomie !== 'string') throw new Error('taxonomie incorecta')
   if (criteriuCerut && typeof criteriuCerut !== 'object') {
     throw new Error('criteriu incorect')
   }
-  if (Object.keys(Taxonomii).indexOf(taxonomie) < 0) {
-    throw new Error('taxonomie incorecta')
-  }
+
   const { defaults } = LodgerConfig.taxonomii
   let { criteriu } = defaults
   criteriu = Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
   if (criteriuCerut) Object.assign(criteriu, criteriuCerut)
-  console.info('criteriu', criteriu)
-  switch (taxonomie) {
-    case 'bloc':
-    case 'incasare':
-    case 'cheltuiala':
-      Object.assign(criteriu.find, { asociatieId: getters['asociatie/activa']._id })
+  // console.info('criteriu', criteriu, criteriuCerut)
+  // switch (taxonomie) {
+  //   case 'blocuri':
+  //   case 'incasari':
+  //   case 'cheltuieli':
+  //     Object.assign(criteriu.find, { asociatieId: g => g['asociatie/activa']._id })
 
-    case 'apartament':
-      Object.assign(criteriu.find, { bloc: { $in: getters['bloc/ids'] } })
-  }
+  //   case 'apartamente':
+  //     Object.assign(criteriu.find, { bloc: { $in: g => g['bloc/ids'] } })
+  // }
   // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
   return criteriu
 }

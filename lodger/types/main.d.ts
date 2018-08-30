@@ -1,6 +1,7 @@
 import { RxDatabase, RxDatabaseCreator, RxCollection, RxCollectionCreator } from "rxdb"
 import { Form } from 'lodger/lib/Form'
 import { Store } from 'vuex'
+import { Taxonomii } from "../index";
 
 declare global {
   // type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
@@ -17,7 +18,7 @@ declare global {
     retea: string,
     username: string
   }
-  type Plural<T> = (s: T) => T
+  type Plural<K extends string, Taxonomii> = (k: K) => K
 
   export type Singular = string
 
@@ -139,7 +140,7 @@ declare global {
     user: UserPreferences,
   }
 
-  type PluralsMap = Map<Singular, Plural>
+  type PluralsMap = Map<Taxonomii, Plural<Taxonomii>>
 
   type DateTaxonomie = Asociatie | Apartament
 

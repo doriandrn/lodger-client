@@ -14,6 +14,8 @@ if (NODE_ENV === 'test') {
   RxDB.plugin(require('pouchdb-adapter-idb'))
 }
 
+RxDB.QueryChangeDetector.enable()
+// RxDB.QueryChangeDetector.enableDebugging()
 // RxDB.plugin(require('pouchdb-adapter-http'))
 // RxDB.plugin(require('pouchdb-authentication'))
 

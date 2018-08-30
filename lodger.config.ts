@@ -22,7 +22,7 @@ const taxonomii = {
       find: null
     }
   },
-  asociatie: {
+  asociatii: {
     criteriu: {
       limit: 100
     }

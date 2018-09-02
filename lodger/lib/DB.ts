@@ -1,28 +1,24 @@
 import * as RxDB from 'rxdb'
 import Debug from 'debug'
-// import memoryAdapter from 'pouchdb-adapter-memory'
-// import idbAdapter from 'pouchdb-adapter-idb'
 
 const debug = Debug('lodger:db')
 const { NODE_ENV } = process.env
 /**
  * DB plugins
  */
-if (NODE_ENV === 'test') {
-  RxDB.plugin(require('pouchdb-adapter-memory'))
-} else {
-  RxDB.plugin(require('pouchdb-adapter-idb'))
-}
+// if (NODE_ENV && NODE_ENV === 'test') {
+RxDB.plugin(require('pouchdb-adapter-memory'))
+// }
+// RxDB.plugin(require('pouchdb-adapter-idb'))
 
 RxDB.QueryChangeDetector.enable()
 // RxDB.QueryChangeDetector.enableDebugging()
-// RxDB.plugin(require('pouchdb-adapter-http'))
-// RxDB.plugin(require('pouchdb-authentication'))
 
-// interface DB {
-//   readonly db: RxDB.RxDatabase
-//   new(): RxDB.RxDatabase
-// }
+if (NODE_ENV === 'production') {
+  RxDB.plugin(require('pouchdb-adapter-http'))
+  RxDB.plugin(require('pouchdb-authentication'))
+}
+
 
 export default async function (
   collections: RxDB.RxCollectionCreator[],

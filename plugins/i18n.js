@@ -6,7 +6,8 @@ Vue.use(VueI18n)
 export default ({ app, store }) => {
   // Set i18n instance on app
   // This way we can use it in middleware and pages asyncData/fetch
-  const { locale } = store.state
+  console.info('APP IN I!I*N PLUGIN', app)
+  const locale = app.$lodger.getters['locale']
   app.i18n = new VueI18n({
     locale,
     fallbackLocale: 'ro',

@@ -1,10 +1,10 @@
-import { RxDatabase, RxDatabaseCreator, RxCollection, RxCollectionCreator } from "rxdb"
+import { RxDatabase, RxCollection, RxCollectionCreator } from "rxdb"
 import { Form } from 'lodger/lib/Form'
 import { Store } from 'vuex'
 import { Taxonomii } from "../index";
 
 declare global {
-  // type Taxonomie = 'asociatie' | 'bloc' | 'apartament' | 'incasare' | 'cheltuiala'
+  type Taxonomie = keyof typeof Taxonomii
 
   type ItemID = string | null
 
@@ -18,9 +18,9 @@ declare global {
     retea: string,
     username: string
   }
-  type Plural<K extends string, Taxonomii> = (k: K) => K
 
-  export type Singular = string
+  type Plural = string
+  type Singular = string
 
 
   type Criteriu = {
@@ -43,24 +43,7 @@ declare global {
 
   type Bani = number
 
-
-  type LodgerSchema = {
-    
-  }
-
-  type Module = {
-    name: string
-  }
-
-  type BuildOptions = {
-    dbCon: RxDatabaseCreator,
-    usePersistedState?: boolean
-    modules?: Module[]
-  }
-
-  interface LodgerPlugin {
-    name: string
-  }
+ 
 
   interface Incasare {
     suma: Bani,
@@ -140,7 +123,7 @@ declare global {
     user: UserPreferences,
   }
 
-  type PluralsMap = Map<Taxonomii, Plural<Taxonomii>>
+  type PluralsMap = Map<Singular, Plural>
 
   type DateTaxonomie = Asociatie | Apartament
 

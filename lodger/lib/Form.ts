@@ -7,6 +7,7 @@ import Debug from 'debug'
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
 import { pushFieldToSchema } from 'lodger/helpers/forms'
 import { FormError } from 'lodger/lib/Errors'
+import path from 'path'
 
 if (process.env.NODE_ENV === 'test') {
   Debug.enable('Form:*')
@@ -28,11 +29,11 @@ enum Errors {
 /**
  * Require path for known forms
  */
-const formsPath: string = `lodger/forms/${process.env.NODE_ENV === 'test'
+const formsPath: string = path.join(`forms/${process.env.NODE_ENV === 'test'
     // ? `__stubs__`
     ? ''
     : ''
-  }`
+  }`)
 
 
 const defaultSchema: RxJsonSchema = {
@@ -106,11 +107,12 @@ class Form {
     let form
 
     try {
-      form = require(`${formsPath}/${name}`)
+      form = require("forms/" + name)
       if (form.default) form = form.default
       Object.assign(form, { name })
       debug('✓', name)
     } catch (e) {
+      debug('Error', e)
       throw new FormError(Errors.invalidRequested, name)
     }
     return new Form(form)

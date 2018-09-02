@@ -11,16 +11,12 @@ declare module "*.json" {
   export default value;
 }
 
-declare class Lodger {
-  [k: string]: RxDocument<any> | boolean | Promise<void> | GettersDBTaxonomii
+// declare class Lodger {
+//   [k: string]: RxDocument<any> | boolean | Promise<void> | GettersDBTaxonomii
 
-  put(): RxDocument<any>
-  trash(): boolean
-  destroy(): Promise<void>
-}
+//   put(): RxDocument<any>
+//   $get(): Promise<any>
+//   trash(): boolean
+//   destroy(): Promise<void>
+// }
 
-declare global {
-  interface RootState {
-    version: string
-  }
-}

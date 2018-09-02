@@ -60,7 +60,8 @@ export default function (taxonomii: Taxonomii[]) {
   
   const storeOptions: StoreOptions<RootState> = {
     state: {
-      version
+      version,
+      locale: 'ro'
     },
     modules: storeModules
   }

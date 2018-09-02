@@ -8,7 +8,7 @@ describe('Lodger', () => {
     let getters: LodgerGetters
     beforeAll(async () => {
       lodger = await Lodger.build()
-      getters = lodger.__getters
+      getters = lodger.getters
     })
 
     let commonId: string | null = null

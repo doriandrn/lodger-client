@@ -18,6 +18,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     'lodger/(.*)$': '<rootDir>/lodger/$1',
+    'forms/(.*)$': '<rootDir>/lodger/forms/$1',
     '~/(.*)$': '<rootDir>/$1'
   },
   transform: {

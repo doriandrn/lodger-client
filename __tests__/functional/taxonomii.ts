@@ -5,12 +5,14 @@ Debug.enable('lodger:*')
 // import * as lodgerConfig from '../../lodger/config'
 
 let lodger: Lodger | undefined
+let getters: LodgerGetters | undefiend
 
 const asociatiiCount = 30
 const blocuriCount = 5
 
 beforeAll(async () => {
   lodger = await Lodger.build()
+  getters = lodger.getters
 })
 
 const debug = Debug('lodger:functional')
@@ -46,7 +48,9 @@ describe(`ASOCIATII`, async () => {
 
     const limit = 5
     test(`Listeaza ${limit} asociatii specificate in 'limit'`, async () => {
-      await lodger.$get('asociatii', { limit })
+      const secondarySubscriber = 'secondary'
+      await lodger.$get('asociatii', { limit }, secondarySubscriber)
+      lodger.useSubscriber(secondarySubscriber)
       await new Promise(resolve => setTimeout(resolve, 2000))
       expect(Object.keys(lodger.asociatii).length).toBe(limit)
     })
@@ -69,7 +73,7 @@ describe('BLOCURI', () => {
 
   test('getters have the ids', () => {
     // console.error('lodger', lodger)
-    const idsAsociatii = lodger.__getters['asociatie/ids']
+    const idsAsociatii = getters['asociatie/ids']
     // console.error('IA', idsAsociatii, ids, lodger.asociatii)
     expect(idsAsociatii).toEqual(ids)
   })

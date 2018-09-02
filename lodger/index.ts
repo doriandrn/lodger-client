@@ -1,8 +1,8 @@
 import Debug from 'debug'
-import { Store } from 'vuex'
+import { Store, GetterTree } from 'vuex'
 import { RxDatabase, RxCollectionCreator, RxDocument } from 'rxdb'
 import fs from 'fs'
-import downloadsFolder from 'downloads-folder'
+import osHomedir from 'os-homedir'
 import yaml from 'json2yaml'
 
 import LodgerStore from 'lodger/lib/Store'
@@ -10,14 +10,13 @@ import { getCriteriu } from 'lodger/helpers/functions'
 import DB from 'lodger/lib/DB'
 import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
-import { rejects } from 'assert';
 
 const { NODE_ENV } = process.env
 
 const buildOpts: BuildOptions = {
   dbCon: {
     name: 'Lodger/',
-    adapter: NODE_ENV === 'test' ? 'memory' : 'idp',
+    adapter: 'memory',
     password: 'l0dg3rp4$$'
   },
   usePersistedState: false
@@ -47,6 +46,7 @@ enum Errors {
   missingCoreDefinitions = 'Invalid Lodger build. Missing core definitions',
   invalidPreferenceIndex = 'Invalid preference index supplied',
   invalidPropertySupplied = 'Invalid property supplied',
+  noPlural = 'Could not find plural definition for %%',
   couldNotWriteFile = 'Cannot write file'
 }
 
@@ -69,31 +69,46 @@ const shortcuts = {
   // asociatii: {}
 }
 
-const handlerTaxonomyChanges = (taxonomie, changes, resolve) => {
+interface LdgGetters extends GetterTree<IndexState, RootState> {}
+
+const handlerTaxonomyChanges = (binder, taxonomie, changes, resolve) => {
   const debug = Debug('lodger:hTC')
-  debug('SCHIMBAT')
+  debug('binder', binder)
+  if (!binder) binder = shortcuts[taxonomie]
   if (taxonomie === 'servicii' && changes.length < 0) {
     // insertPredefinedServices()
     // servicii.instaleazaPredefinite()
   }
 
-  const xx = Object.assign({},
+  binder = Object.assign({},
     ...changes.map((item: RxDocument<any>) => {
       return { [item._id]: item._data }
     })
   )
   // debug('xx', taxonomie, xx)
-  shortcuts[taxonomie] = xx
-  debug('UPDATAT shortcut', taxonomie, Object.keys(xx).length)
-  resolve(xx)
+ 
+  debug('UPDATAT shortcut', taxonomie, Object.keys(binder).length)
+  resolve(binder)
 }
 
-function $get (
+
+  /**
+   * Updateaza datele subscriberi-lor,
+   * date folosite de getteri pentru a fi
+   * afisate in interfata
+   * 
+   * TODO: de exportat de -aici
+   * 
+   * Usage: subscribes DB changes to a given variable (binder)
+   * 
+   */
+function subscribe (
+  binder: [],
   taxonomie: Plural,
   criteriu ?: Criteriu,
   subscriberName ?: string
 ) {
-  const debug = Debug('lodger:$get')
+  const debug = Debug('lodger:subscribe')
 
   const { collections } = <RxDatabase>this
   if (!collections) {
@@ -116,21 +131,13 @@ function $get (
       .$
       .subscribe(changes => {
         if (!changes) reject('no changes')
-        handlerTaxonomyChanges(taxonomie, changes, resolve)
+        handlerTaxonomyChanges(binder, taxonomie, changes, resolve)
         debug('INSCRIS', taxonomie)
       })
   })
 }
 
-// /**
-//  * Private, internal stuff
-//  * ** initialize on build **
-//  * 
-//  */
-// let forms: Form[] | undefined
-// let db: RxDatabase | undefined
-// let store: Store<RootState> | undefined
-// let plurals: PluralsMap | undefined
+
 const plugins: Plugin[] = []
 
 class Lodger {
@@ -139,76 +146,33 @@ class Lodger {
     protected forms: Form[],
     private readonly plurals: PluralsMap,
     protected db: RxDatabase,
-    protected store: Store<RootState>
+    protected store: Store<RootState>,
+    readonly subscribe: () => Promise<any>
   ) {
     const debug = Debug('lodger:new')
     
     /**
      * Short API access for taxonomies
      */
-    
+    // Object.keys(shortcuts).forEach(shortcut => {
+      // this[shortcut] = (bindable, criteriu, subscriberName) => {
+      //   shortcuts[shortcut]
+      // }
+      // Object.defineProperty(this, shortcut, {
+      //   get () {
+      //     debug('getter apelat, intorc: ', shortcuts[shortcut])
+      //     return shortcuts[shortcut]
+      //   }
+      // })
+    // })
 
     // for (const plugin of this.plugins) {
     //   debug('loading plugin:', plugin)
     // }
-    this.$get = $get.bind(db)
-    // this.shortcus = shortcuts
-    Object.keys(shortcuts).forEach(shortcut => {
-      Object.defineProperty(this, shortcut, {
-        get () {
-          debug('getter apelat, intorc: ', shortcuts[shortcut])
-          return shortcuts[shortcut]
-        }
-      })
 
-      // Object.defineProperty(this, {
-      //   [shortcut]: {
-      //     get () {
-      //       return shortcuts[shortcut]
-      //     }
-      //   }
-      // }, {})
-      // this[shortcut] = () => shortcuts[shortcut]
-    })
     debug('inited', Object.keys(this))
   }
 
-  /**
-   * Updateaza datele subscriberi-lor,
-   * date folosite de getteri pentru a fi
-   * afisate in interfata
-   */
-  // async $get (
-  //   taxonomie: Plural,
-  //   criteriu?: Criteriu,
-  //   subscriberName?: string
-  // ) {
-  //   const debug = Debug('lodger:$get')
-  //   const {
-  //     db: { collections },
-  //     subscribers
-  //   } = this
-  //   let { limit, index, sort, find } = getCriteriu(taxonomie, criteriu)
-
-  //   const paging = Number(limit || 0) * (index || 1)
-
-  //   const colectie = collections[<Plural>taxonomie]
-  //   debug('tax', taxonomie)
-  //   const subscriber = <Subscriber>subscribers[subscriberName || 'main']
-
-  //   if (subscriber[taxonomie]) return
-
-  //   subscriber[taxonomie] = colectie
-  //     .find(find)
-  //     .limit(paging)
-  //     .sort(sort)
-  //     .$
-  //     .subscribe(async changes => {
-  //       await this.handlerTaxonomyChanges(taxonomie, changes)
-  //       debug('GoT', taxonomie)
-  //     })
-  // }
-  
   /**
    * Adds / updates an entry in the DB
    * 
@@ -219,12 +183,12 @@ class Lodger {
     const debug = Debug('lodger:put')
     const { db, plurals, store } = this
     const plural = plurals.get(taxonomie)
-    if (!plural) throw new LodgerError('noPlural')
+    if (!plural) throw new LodgerError(Errors.noPlural, taxonomie)
     let { _id } = data
     const colectie = db.collections[plural]
     const method = _id ? 'upsert' : 'insert'
     const { _data } = await colectie[method](data)
-    debug('pus', taxonomie)
+    debug('pus', taxonomie, _data._id)
     // debug('should update store here', _data)
 
     if (store) await store.dispatch(`${taxonomie}/setLast`, _data._id)
@@ -244,9 +208,8 @@ class Lodger {
     if (!plural) throw new LodgerError('wtf')
     const col = db.collections[plural]
     const doc: RxDocument<Taxonomii> = await col.findOne(id)
-    debug(`deleting ${taxonomie} ID ${id}`)
     await doc.remove()
-    debug('deleted')
+    debug(`deleted ${taxonomie} ID ${id}`)
     return true
   }
 
@@ -292,7 +255,7 @@ class Lodger {
    * combines DB & Store getters
    * 
    */
-  get __getters () {
+  get getters () {
     const { db, store } = this
     if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
     return {
@@ -325,8 +288,8 @@ class Lodger {
   static async build (options?: BuildOptions) {
     let { dbCon } = options || buildOpts
     const debug = Debug('lodger:build')
-    debug('building...')
-    
+    debug(`building in ${NODE_ENV} mode ...`)
+
     const taxonomii: Taxonomii[] = <Taxonomii[]>Object.keys(Taxonomii)
 
     const forms = loadForms(taxonomii)
@@ -343,18 +306,15 @@ class Lodger {
       Object.assign(buildOpts, { ...options })
     }
 
-    for (const [s, p] of plurals) { await $get.call(db, p) }
-
-    // plurals.forEach(async taxonomie => { 
-    //   await $get(db, taxonomie)
-    // })
+    // for (const [s, p] of plurals) { await subscribe.call(db, p) }
 
     return new Lodger(
       taxonomii,
       forms,
       plurals,
       db,
-      store
+      store,
+      subscribe.bind(db)
     )
   }
 
@@ -389,7 +349,7 @@ class Lodger {
     const debug = Debug('lodger:export')
     const json = await this.db.dump()
     const extension = 'ldb'
-    if (!path) path = downloadsFolder()
+    if (!path) path = `${osHomedir()}/downloads/`
   
     if (!filename) {
       const date = new Date()

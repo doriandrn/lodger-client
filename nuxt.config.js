@@ -1,7 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 const tsconfig = require('./tsconfig.json')
-const tslint = require('./tslint.json')
+// const tslint = require('./tslint.json')
 
 const debug = !(process && process.env.NODE_ENV === 'production')
 
@@ -47,7 +47,7 @@ module.exports = {
   }],
   plugins: [
     { src: '~plugins/debug' },
-    // { src: '~plugins/db' },
+    { src: '~plugins/lodger' },
     { src: '~plugins/filters' },
     { src: '~plugins/validate' },
     { src: '~plugins/tabs' },
@@ -84,7 +84,7 @@ module.exports = {
   ],
   typescript: {
     tsconfig,
-    tslint
+    // tslint
   },
   /*
   ** Build configuration

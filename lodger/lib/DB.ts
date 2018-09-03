@@ -11,7 +11,7 @@ RxDB.plugin(require('pouchdb-adapter-memory'))
 // }
 // RxDB.plugin(require('pouchdb-adapter-idb'))
 
-RxDB.QueryChangeDetector.enable()
+// RxDB.QueryChangeDetector.enable()
 // RxDB.QueryChangeDetector.enableDebugging()
 
 if (NODE_ENV === 'production') {

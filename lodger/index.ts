@@ -15,7 +15,7 @@ const { NODE_ENV } = process.env
 
 const buildOpts: BuildOptions = {
   dbCon: {
-    name: 'Lodger/',
+    name: 'Lodger2/',
     adapter: 'memory',
     password: 'l0dg3rp4$$'
   },
@@ -65,31 +65,31 @@ type Subscriber = {
   [k: string]: Asociatii | undefined
 }
 
-const shortcuts = {
-  // asociatii: {}
-}
+// const shortcuts = {
+//   // asociatii: {}
+// }
 
 interface LdgGetters extends GetterTree<IndexState, RootState> {}
 
-const handlerTaxonomyChanges = (binder, taxonomie, changes, resolve) => {
-  const debug = Debug('lodger:hTC')
-  debug('binder', binder)
-  if (!binder) binder = shortcuts[taxonomie]
-  if (taxonomie === 'servicii' && changes.length < 0) {
-    // insertPredefinedServices()
-    // servicii.instaleazaPredefinite()
-  }
+// const handlerTaxonomyChanges = (binder, taxonomie, changes, resolve) => {
+//   const debug = Debug('lodger:hTC')
+//   debug('binder', binder)
+//   if (!binder) binder = shortcuts[taxonomie]
+//   if (taxonomie === 'servicii' && changes.length < 0) {
+//     // insertPredefinedServices()
+//     // servicii.instaleazaPredefinite()
+//   }
 
-  binder = Object.assign({},
-    ...changes.map((item: RxDocument<any>) => {
-      return { [item._id]: item._data }
-    })
-  )
-  // debug('xx', taxonomie, xx)
+//   binder = Object.assign({},
+//     ...changes.map((item: RxDocument<any>) => {
+//       return { [item._id]: item._data }
+//     })
+//   )
+//   // debug('xx', taxonomie, xx)
  
-  debug('UPDATAT shortcut', taxonomie, Object.keys(binder).length)
-  resolve(binder)
-}
+//   debug('UPDATAT shortcut', taxonomie, Object.keys(binder).length)
+//   resolve(binder)
+// }
 
 
   /**
@@ -120,21 +120,24 @@ function subscribe (
 
   const colectie = collections[<Plural>taxonomie]
   debug('tax', taxonomie)
+  debug('subs', subscribers)
   const subscriber = <Subscriber>subscribers[subscriberName || 'main']
+  if (subscriber[taxonomie]) throw new LodgerError('subscriber exists')
 
-  return new Promise((resolve, reject) => {
-    if (subscriber[taxonomie]) reject('subscriber exists')
-    subscriber[taxonomie] = colectie
-      .find(find)
-      .limit(paging)
-      .sort(sort)
-      .$
-      .subscribe(changes => {
-        if (!changes) reject('no changes')
-        handlerTaxonomyChanges(binder, taxonomie, changes, resolve)
-        debug('INSCRIS', taxonomie)
-      })
-  })
+  subscriber[taxonomie] = colectie
+    .find(find)
+    .limit(paging)
+    .sort(sort)
+    .$
+    .subscribe(changes => {
+      // if (!changes) return
+      // handlerTaxonomyChanges(binder, taxonomie, changes, resolve)
+      debug('BINDER', binder)
+      binder = Object.assign({},
+        ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
+      )
+    })
+
 }
 
 
@@ -339,6 +342,7 @@ class Lodger {
    * 
    */
   async destroy () {
+    await this.unsubscribeAll()
     await this.db.destroy()
   }
 
@@ -366,6 +370,17 @@ class Lodger {
    */
   async import () {
 
+  }
+
+  async unsubscribeAll (subscriberName: string = 'main') {
+    const sub = subscribers[subscriberName || 'main']
+    const debug = Debug('lodger:unsub')
+    return Promise.all(
+      Object.keys(sub).map(async subscriber => {
+        debug('unsub', sub)
+        await sub[subscriber].unsubscribe()
+      })
+    )
   }
 }
 

@@ -24,7 +24,7 @@ export default Vue.extend({
       
   //   }
   // },
-  async mounted () {
+  mounted () {
     // this.$lodger.asociatii(this.asociatii)
     // this.asociatii = this.$lodger.$get('asociatii')
     this.$lodger.subscribe(this.asociatii, 'asociatii')

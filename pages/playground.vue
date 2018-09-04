@@ -1,62 +1,83 @@
 <template lang="pug">
 sction#pg
-  h2 aici ma joc io
-  button(@click="adauga('asociatie', { name: 'gigi' })") add ass
+  .box
+    .asociatii
+      button(@click="adauga('asociatie', { name: faker.company.companyName() })") + asoc
+      h3 {{ idsAsociatii.length }}/{{ asociatiiCount }} asociatii
+      //- p last: {{ $lodger.getters['asociatie/last'] }}
+      ul(v-if="asociatii")
+        li(
+          v-for=  "asoc, i in asociatii"
+          @click= "selecteaza(i)"
+        ) {{ asoc.name }}
+      button.more(@click="criteriu.limit = criteriu.limit + criteriu.limit; sub()") MOR
 
-  h3 {{ idsAsociatii.length }}/{{ asociatiiCount }} asocs
-  p last: {{ $lodger.getters['asociatie/last'] }}
-  ul(v-if="asociatii")
-    li(v-for="asoc, i in asociatii") {{ i }} {{ asoc.name }}
-  button.more(@click="criteriu.limit = criteriu.limit + criteriu.limit; sub()") MOR
+    .asociatie(v-if="idAsociatieSelectata")
+      h2 Selected asoc: {{ asociatieSelectata.name }}
+      .asociatie__details
+        p #[em balanta] {{ asociatieSelectata.balanta }}
+
+  .box
+    h6 preferences list
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import sction from '~components/section'
+import faker from 'faker'
+import { State, Action, Getter } from 'vuex-class'
+import Component from 'vue-class-component'
 
-export default Vue.extend({
-  data () {
-    return {
-      asociatii: {},
-      criteriu: {
-        limit: 5
-      },
-      asociatiiCount: -1
-    }
+const namespace = 'asociatie'
+
+@Component({
+  components: {
+    sction
   },
-  computed: {
-    idsAsociatii () {
+  layout: 'tspg'
+})
+  export default class Playground extends Vue {
+    @Getter('selected', { namespace }) idAsociatieSelectata: string
+    @Action('select', { namespace }) selecteaza: any;
+
+    data () {
+      return {
+        asociatii: {},
+        criteriu: {
+          limit: 5
+        },
+        asociatiiCount: -1
+      }
+    }
+
+    get asociatieSelectata () {
+      return this.asociatii[this.idAsociatieSelectata]
+    }
+
+    get idsAsociatii () {
       return Object.keys(this.asociatii)
     }
-  },
-  components: {
-    sction,
-  },
-  layout: 'tspg',
-  // computed: {
-  //   asociatii () {
-  //     return this.$lodger.asociatii
-      
-  //   }
-  // },
-  mounted () {
-    this.sub()
-    this.debug(this.$lodger)
-    // this.asociatiiCount = this.$lodger.db.asociatii.count().$.subscribe()
-  },
-  // mounted () {
-  //   this.$lodger.db.asociatii.find().$.subscribe()
-  // },
-  methods: {
+
+    beforeCreate () {
+      // this.$store.registerModule('LodgerStore', this.$lodger.store)
+      this.$store = this.$lodger.store
+    }
+
+    mounted () {
+      this.faker = faker
+      this.sub()
+      this.debug(this.$lodger)
+    }  
+
     sub () {
       this.$lodger.subscribe(this.asociatii, 'asociatii', this.criteriu)
-    },
+    }
+
     async adauga () {
       this.debug('add clicked', this)
       return await this.$lodger.put(...arguments)
     }
   }
-})
 </script>
 
 <style lang="stylus">

@@ -12,7 +12,7 @@ import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
 
 import Vue from 'vue'
-import { Observable, ObservableLike } from 'rxjs';
+import { Observer } from 'rxjs';
 
 const { NODE_ENV } = process.env
 
@@ -85,25 +85,20 @@ interface LdgGetters extends GetterTree<IndexState, RootState> {}
    * 
    */
 function subscribe (
-  binder: ObservableLike<object>,
+  binder: Observer<object>,
   taxonomie: Plural,
   criteriu ?: Criteriu,
   subscriberName ?: string
 ) {
-  const debug = Debug('lodger:subscribe')
+  // const debug = Debug('lodger:subscribe')
 
   const { collections } = <RxDatabase>this
   if (!collections) {
     throw new LodgerError(Errors.missingCoreDefinitions)
   }
   let { limit, index, sort, find } = getCriteriu(taxonomie, criteriu)
-
   const paging = Number(limit || 0) * (index || 1)
-
   const colectie = collections[<Plural>taxonomie]
-  debug('tax', taxonomie)
-  debug('subs', subscribers)
-  // binder = { name: 'mom' }
   const subscriber = <Subscriber>subscribers[subscriberName || 'main']
 
   subscriber[taxonomie] = colectie
@@ -111,24 +106,24 @@ function subscribe (
     .limit(paging)
     .sort(sort)
     .$
-    .subscribe(changes => {
+    .subscribe((changes: RxDocument<any>[]) => {
       if (!changes) return
+      
+      // check if comes from Vue data() -> if it's observable
+      if (binder.__ob__) {
+        // cleanup first
+        Object.keys(binder).forEach(id => { delete binder[id] })
 
-      debug('changes', changes)
-      // binder = Object.assign({},
-      //   ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
-      // )
-
-      // cleanup first
-      Object.keys(binder).forEach(item => {
-        delete binder[item]
-      })
-      // set the results
-      changes.map((item: RxDocument<any>) => {
-        Vue.set(binder, item._id, item._data)
-      })
+        // update data obj
+        changes.map((item: RxDocument<any>) => {
+          Vue.set(binder, item._id, item._data)
+        })
+      } else {
+        binder = Object.assign({},
+          ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
+        )
+      }
     })
-
 }
 
 
@@ -140,32 +135,9 @@ class Lodger {
     protected forms: Form[],
     private readonly plurals: PluralsMap,
     protected db: RxDatabase,
-    protected store: Store<RootState>,
+    readonly store: Store<RootState>,
     readonly subscribe: () => Promise<any>
-  ) {
-    const debug = Debug('lodger:new')
-    
-    /**
-     * Short API access for taxonomies
-     */
-    // Object.keys(shortcuts).forEach(shortcut => {
-      // this[shortcut] = (bindable, criteriu, subscriberName) => {
-      //   shortcuts[shortcut]
-      // }
-      // Object.defineProperty(this, shortcut, {
-      //   get () {
-      //     debug('getter apelat, intorc: ', shortcuts[shortcut])
-      //     return shortcuts[shortcut]
-      //   }
-      // })
-    // })
-
-    // for (const plugin of this.plugins) {
-    //   debug('loading plugin:', plugin)
-    // }
-
-    debug('inited', Object.keys(this))
-  }
+  ) {}
 
   /**
    * Adds / updates an entry in the DB
@@ -182,11 +154,8 @@ class Lodger {
     const colectie = db.collections[plural]
     const method = _id ? 'upsert' : 'insert'
     const { _data } = await colectie[method](data)
-    // await colectie.awaitPersistence()
-    debug('pus', taxonomie, _data._id)
-    // debug('should update store here', _data)
-
     if (store) await store.dispatch(`${taxonomie}/setLast`, _data._id)
+    debug('pus', taxonomie, _data._id)
     return _data
   }
 

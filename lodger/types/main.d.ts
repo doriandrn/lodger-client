@@ -1,3 +1,5 @@
+/// <reference path="build.d.ts" />
+
 import { RxDatabase, RxCollection, RxCollectionCreator } from "rxdb"
 import { Form } from 'lodger/lib/Form'
 import { Store } from 'vuex'

@@ -1,15 +1,17 @@
 import { RxDatabaseCreator } from 'rxdb'
 
-type BuildOptions = {
-  dbCon: RxDatabaseCreator,
-  usePersistedState?: boolean
-  modules?: Module[]
-}
+declare global {
+  type BuildOptions = {
+    dbCon: RxDatabaseCreator,
+    usePersistedState?: boolean
+    modules?: Module[]
+  }
 
-type Module = {
-  name: string
-}
+  type Module = {
+    name: string
+  }
 
-interface LodgerPlugin {
-  name: string
+  interface LodgerPlugin {
+    name: string
+  }
 }

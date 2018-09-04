@@ -11,6 +11,9 @@ import DB from 'lodger/lib/DB'
 import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
 
+import Vue from 'vue'
+import { Observable, ObservableLike } from 'rxjs';
+
 const { NODE_ENV } = process.env
 
 const buildOpts: BuildOptions = {
@@ -71,27 +74,6 @@ type Subscriber = {
 
 interface LdgGetters extends GetterTree<IndexState, RootState> {}
 
-// const handlerTaxonomyChanges = (binder, taxonomie, changes, resolve) => {
-//   const debug = Debug('lodger:hTC')
-//   debug('binder', binder)
-//   if (!binder) binder = shortcuts[taxonomie]
-//   if (taxonomie === 'servicii' && changes.length < 0) {
-//     // insertPredefinedServices()
-//     // servicii.instaleazaPredefinite()
-//   }
-
-//   binder = Object.assign({},
-//     ...changes.map((item: RxDocument<any>) => {
-//       return { [item._id]: item._data }
-//     })
-//   )
-//   // debug('xx', taxonomie, xx)
- 
-//   debug('UPDATAT shortcut', taxonomie, Object.keys(binder).length)
-//   resolve(binder)
-// }
-
-
   /**
    * Updateaza datele subscriberi-lor,
    * date folosite de getteri pentru a fi
@@ -103,7 +85,7 @@ interface LdgGetters extends GetterTree<IndexState, RootState> {}
    * 
    */
 function subscribe (
-  binder: [],
+  binder: ObservableLike<object>,
   taxonomie: Plural,
   criteriu ?: Criteriu,
   subscriberName ?: string
@@ -121,8 +103,8 @@ function subscribe (
   const colectie = collections[<Plural>taxonomie]
   debug('tax', taxonomie)
   debug('subs', subscribers)
+  // binder = { name: 'mom' }
   const subscriber = <Subscriber>subscribers[subscriberName || 'main']
-  if (subscriber[taxonomie]) throw new LodgerError('subscriber exists')
 
   subscriber[taxonomie] = colectie
     .find(find)
@@ -130,12 +112,21 @@ function subscribe (
     .sort(sort)
     .$
     .subscribe(changes => {
-      // if (!changes) return
-      // handlerTaxonomyChanges(binder, taxonomie, changes, resolve)
-      debug('BINDER', binder)
-      binder = Object.assign({},
-        ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
-      )
+      if (!changes) return
+
+      debug('changes', changes)
+      // binder = Object.assign({},
+      //   ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
+      // )
+
+      // cleanup first
+      Object.keys(binder).forEach(item => {
+        delete binder[item]
+      })
+      // set the results
+      changes.map((item: RxDocument<any>) => {
+        Vue.set(binder, item._id, item._data)
+      })
     })
 
 }
@@ -191,6 +182,7 @@ class Lodger {
     const colectie = db.collections[plural]
     const method = _id ? 'upsert' : 'insert'
     const { _data } = await colectie[method](data)
+    // await colectie.awaitPersistence()
     debug('pus', taxonomie, _data._id)
     // debug('should update store here', _data)
 
@@ -375,7 +367,7 @@ class Lodger {
   async unsubscribeAll (subscriberName: string = 'main') {
     const sub = subscribers[subscriberName || 'main']
     const debug = Debug('lodger:unsub')
-    return Promise.all(
+    return await Promise.all(
       Object.keys(sub).map(async subscriber => {
         debug('unsub', sub)
         await sub[subscriber].unsubscribe()

@@ -1,21 +1,36 @@
 <template lang="pug">
-#pg
+sction#pg
   h2 aici ma joc io
-  button(@click="adauga('asociatie', { name: 'gigi' })") yoyo
+  button(@click="adauga('asociatie', { name: 'gigi' })") add ass
 
-  h3 asocs
+  h3 {{ idsAsociatii.length }}/{{ asociatiiCount }} asocs
   p last: {{ $lodger.getters['asociatie/last'] }}
-  ul(v-if="asociatii && asociatii.length")
-    li(v-for="asoc in asociatii") {{ asoc.name }}
+  ul(v-if="asociatii")
+    li(v-for="asoc, i in asociatii") {{ i }} {{ asoc.name }}
+  button.more(@click="criteriu.limit = criteriu.limit + criteriu.limit; sub()") MOR
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import sction from '~components/section'
+
 export default Vue.extend({
   data () {
     return {
-      asociatii: []
+      asociatii: {},
+      criteriu: {
+        limit: 5
+      },
+      asociatiiCount: -1
     }
+  },
+  computed: {
+    idsAsociatii () {
+      return Object.keys(this.asociatii)
+    }
+  },
+  components: {
+    sction,
   },
   layout: 'tspg',
   // computed: {
@@ -25,14 +40,17 @@ export default Vue.extend({
   //   }
   // },
   mounted () {
-    // this.$lodger.asociatii(this.asociatii)
-    // this.asociatii = this.$lodger.$get('asociatii')
-    this.$lodger.subscribe(this.asociatii, 'asociatii')
+    this.sub()
+    this.debug(this.$lodger)
+    // this.asociatiiCount = this.$lodger.db.asociatii.count().$.subscribe()
   },
   // mounted () {
   //   this.$lodger.db.asociatii.find().$.subscribe()
   // },
   methods: {
+    sub () {
+      this.$lodger.subscribe(this.asociatii, 'asociatii', this.criteriu)
+    },
     async adauga () {
       this.debug('add clicked', this)
       return await this.$lodger.put(...arguments)

@@ -32,7 +32,8 @@ export default async function (
     if (NODE_ENV !== 'dev') return
     document.title = `♛ ${document.title}`
   })
+  debug('yo1')
   await Promise.all(collections.map(c => db.collection(c)))
-
+  debug('yo2')
   return db
 }

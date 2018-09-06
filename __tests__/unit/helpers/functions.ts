@@ -5,7 +5,7 @@ import {
   spleet,
   getCriteriu,
   getTaxonomyConfig
-} from '../../../lodger/helpers/functions'
+} from 'lodger/lib/helpers/functions'
 import lodgerConfig from '../../../lodger.config'
 
 describe('Functii ajutatoare', () => {

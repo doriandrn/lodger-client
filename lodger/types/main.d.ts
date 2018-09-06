@@ -127,6 +127,5 @@ declare global {
 
   type PluralsMap = Map<Singular, Plural>
 
-  type DateTaxonomie = Asociatie | Apartament
-
+  type LodgerFormData = Asociatie | Apartament
 }

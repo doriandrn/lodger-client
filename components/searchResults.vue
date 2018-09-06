@@ -35,10 +35,10 @@
 </template>
 
 <script>
-import bani from '~components/bani'
+import bani from 'c/bani'
 import apartament from 'struct/apartament'
-import furnizor from '~components/furnizor'
-import split from '~components/split'
+import furnizor from 'c/furnizor'
+import split from 'c/split'
 import { mapGetters } from 'vuex'
 
 export default {

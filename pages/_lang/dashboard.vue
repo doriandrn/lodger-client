@@ -18,8 +18,8 @@ sction#dash
 </template>
 
 <script>
-import sction from '~components/section'
-import widget from '~components/widget'
+import sction from 'c/section'
+import widget from 'c/widget'
 import buton from 'form/button'
 
 import { mapGetters, mapActions } from 'vuex'

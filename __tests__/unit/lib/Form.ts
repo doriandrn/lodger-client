@@ -1,5 +1,5 @@
 import { Form, Errors } from 'lodger/lib/Form'
-import { stub1, stub2, fields, name } from 'lodger/forms/__stubs__/playground'
+import { stub1, stub2, fields, name } from 'lodger/lib/forms/__stubs__/playground'
 
 describe('Form', () => {
   const __stub1__ = new Form(stub1)
@@ -15,20 +15,20 @@ describe('Form', () => {
           name,
           plural,
           fields
-        })).toThrow(Errors.noData)
+        })).toThrow()
       })
     })
 
   })
 
-  describe('schema (getter)', () => {
+  describe('.schema', () => {
     
-    test('schema is defined', () => {
+    test('is defined', () => {
       const { schema } = __stub1__
       expect(schema).toBeDefined()
     })
 
-    test('schema title matches name', () => {
+    test('title matches name', () => {
       const { schema } = __stub1__
       expect(schema.title).toBe(name)
     })
@@ -42,7 +42,7 @@ describe('Form', () => {
     describe('.required[]', () => {
       const { schema } = __stub2__
       const { required } = schema
-      console.log(schema, typeof schema)
+      // console.log(schema, typeof schema)
 
       test('adds required fields', () => {
         expect(required).toContain('x2')
@@ -60,7 +60,7 @@ describe('Form', () => {
     })
   })
 
-  describe('collection (getter)', () => {
+  describe('.collection', () => {
     test('makes collection', () => {
       const { collection } = __stub1__
       expect(collection).toBeDefined()
@@ -72,16 +72,16 @@ describe('Form', () => {
     })
   })
 
-  describe('static .loadByName - Loads a form by name', () => {
-    describe('invalid forms', () => {
+  describe('.loadByName() - Loads a form by name', () => {
+    describe('negative', () => {
       test('throws if called with anything else than string', () => {
-        expect(() => Form.loadByName('')).toThrow(Errors.invalidName)
+        expect(() => Form.loadByName('')).toThrow()
       })
       test('throws for unknown filenames', () => {
-        expect(() => Form.loadByName('ceva')).toThrow(Errors.invalidRequested)
+        expect(() => Form.loadByName('ceva')).toThrow()
       })
     })
-    describe('valid forms', () => {
+    describe('positive', () => {
       test('returns a fully inited <Form> if found and ok', () => {
         const form = Form.loadByName('asociatie')
         expect(form.name).toBe('asociatie')

@@ -18,10 +18,10 @@ ul.incasari.zebra
 </template>
 
 <script>
-import dateTime from '~components/dateTime'
-import split from '~components/split'
+import dateTime from 'c/dateTime'
+import split from 'c/split'
 import ap from 'struct/apartament'
-import bani from '~components/bani'
+import bani from 'c/bani'
 import { mapGetters } from 'vuex'
 
 export default {

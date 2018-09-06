@@ -6,7 +6,7 @@ sction(title="Liste")
 </template>
 
 <script>
-import sction from '~components/section'
+import sction from 'c/section'
 import typecheck from 'pg/widgets/typography'
 
 export default {

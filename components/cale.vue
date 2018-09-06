@@ -5,7 +5,7 @@ split.cale
 
 <script>
 import slect from 'form/select'
-import split from '~components/split'
+import split from 'c/split'
 
 export default {
   components: {

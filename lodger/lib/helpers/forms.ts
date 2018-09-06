@@ -1,5 +1,6 @@
 import { RxJsonSchema } from 'rxdb'
-import FormItemTypes from '../defs/FormItemTypes'
+import FormItemTypes from 'lodger/lib/defs/FormItemTypes'
+import { Form } from 'lodger/lib/Form';
 
 /**
  * Converteste tipurile campurilor 'noastre' in primare
@@ -12,7 +13,7 @@ import FormItemTypes from '../defs/FormItemTypes'
  * @param {string} type 
  * @returns {string} - tipul primar, eg. 'string'
  */
-export function toRxDBtype(type: KnownItemTypes): RxDBType {
+function toRxDBtype(type: KnownItemTypes): RxDBType {
   const _default = 'string'
   const { strings, numbers, arrays, objects } = FormItemTypes
 
@@ -28,7 +29,7 @@ export function toRxDBtype(type: KnownItemTypes): RxDBType {
  * 
  * @param formItem 
  */
-export const toSchemaField = (formItem: Item) => {
+const toSchemaField = (formItem: Item) => {
   if (!formItem.id)
     throw new Error('camp fara id')
 
@@ -69,7 +70,7 @@ export const toSchemaField = (formItem: Item) => {
  * @param {Object} schema - schema colectiei
  * @returns {object} schema modificata
  */
-export const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
+const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
   if (!formItem || !schema)
     throw new TypeError('parametri insuficienti')
   if (typeof formItem !== 'object' || typeof schema !== 'object')
@@ -88,4 +89,29 @@ export const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
   if (formItem.required && required && required.indexOf(id) < 0) schema.required.push(id)
   Object.assign(schema.properties, toSchemaField(formItem))
   return schema
+}
+
+/**
+ * Manipulates the final data before submitting the form to the DB
+ * 
+ * @param data
+ */
+const handleOnSubmit = (data: LodgerFormData) => {
+  const manipulatedData = {}
+  Object.keys(data).forEach(what => {
+    let value = data[what]
+    // TODO: adauga data la indecsii numiti 'la'
+    if (what === 'la') value = Date.now()
+    if (value === null || value === 'undefined') return
+
+    manipulatedData[what] = value
+  })
+  return manipulatedData
+}
+
+export {
+  toRxDBtype,
+  toSchemaField,
+  pushFieldToSchema,
+  handleOnSubmit
 }

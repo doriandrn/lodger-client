@@ -44,7 +44,7 @@ input(
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import tooltip from '~components/tooltip'
+import tooltip from 'c/tooltip'
 
 export default {
   data () {

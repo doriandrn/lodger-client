@@ -6,7 +6,7 @@ header.ui
 </template>
 
 <script>
-import split from '~components/split'
+import split from 'c/split'
 
 export default {
   components: {

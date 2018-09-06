@@ -1,13 +1,13 @@
 <template lang="pug">
-form.form(@submit.prevent="handleSubmit(formName)")
-  h5.form__title(v-if="title") {{ $t( title ) }}
-  p.form__desc(v-if="desc") {{ $t( desc ) }}
+form.form(@submit.prevent="validate()")
+  //- h5.form__title(v-if="title") {{ $t( title ) }}
+  //- p.form__desc(v-if="desc") {{ $t( desc ) }}
 
   .form__content
     slot(name=        "beforeFields")
 
     field(
-      v-for=          "field in formData.campuri"
+      v-for=          "field in fields"
       v-if=           "!field.notInForm"
 
       :key=           "`${field.type}-${field.id}`"
@@ -27,7 +27,7 @@ form.form(@submit.prevent="handleSubmit(formName)")
       :click=         "field['@click']"
       :dangerous=     "field.dangerous"
       :transform=     "field.transform"
-      @change=        "handleChange(field['@change'], field.id, field.type, $event, formName)"
+      @change=        "handleChange(field['@change'], field.id, field.type, $event, form.name)"
 
       :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
 
@@ -35,19 +35,19 @@ form.form(@submit.prevent="handleSubmit(formName)")
 
       v-validate=     "field.v || null"
       :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
-      :data-vv-scope= "formName",
+      :data-vv-scope= "form.name",
       :data-vv-as=    "$t( field.label )"
       :data-vv-name=  "field.id"
-      :error=         "errors.has(field.id, formName)"
-      :valid=         "!errors.has(field.id, formName)"
-      :message=       "errors.first(field.id, formName)"
+      :error=         "errors.has(field.id, form.name)"
+      :valid=         "!errors.has(field.id, form.name)"
+      :message=       "errors.first(field.id, form.name)"
     )
 
     slot(name=        "afterFields")
 
-  split.actions(v-if="formData.actiuni")
+  split.actions(v-if="form.data.actions")
     buton(
-      v-if= "formData.$for === 'apartament' && $store.getters['apartament/selectat']"
+      v-if= "form.name === 'apartament' && $store.getters['apartament/selected']"
       size= "small"
       styl= "unstyled"
       icon= "trash"
@@ -60,176 +60,68 @@ form.form(@submit.prevent="handleSubmit(formName)")
     ) {{ type === 'new' ? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
 import buton from 'form/button'
 import field from 'form/field'
+// import frm from './form.vue'
+import split from 'c/split'
 
-import shortid from 'shortid'
-import frm from './form.vue'
-import split from '~components/split'
+import Component from 'vue-class-component';
+import { State, Action, Getter } from 'vuex-class'
+import { Form } from 'lodger/lib/Form'
 
-import { mapGetters, mapActions } from 'vuex'
-
-export default {
+@Component({
   name: 'frm',
-
-  data () {
-    let dynamicFormData = {}
-    const { debug, $t, formName, formData: { campuri, $for }} = this
-    if (!campuri) return dynamicFormData
-    const isNewForm = formName.indexOf('.new') > 0
-    
-    // Label-uri pt campurile din modal + required validari
-    campuri.forEach(camp => {
-      const { label, required, click, notInForm, notInDb } = camp
-      let { id, value } = camp
-      let _def = camp.default
-
-      if (click && !id) camp.id = click
-      
-      // apply getters to funcs
-      if (isNewForm) {
-        if (!notInForm || notInDb) value = null
-      }
-
-      if (typeof value === 'function') {
-        try {
-          value = value(this.$store.getters)
-        } catch (e) {
-          value = null
-          debug('no val ->', e)
-        }
-      }
-     
-      if (typeof _def === 'function') _def = _def(this.$store.getters)
-
-      // label
-      camp.label = label || `${$for ? `${$for}.new.` : ''}${id}`
-
-      // validarea de required
-      if (required || (camp.v && camp.v.indexOf('required') < 0)) camp.v = `required|${camp.v || ''}`
-
-      // valoarea finala
-      dynamicFormData[id] = null
-      dynamicFormData[id] = value !== null && value !== undefined ? value : _def
-    })
-
-    return dynamicFormData
-  },
-  mounted () {
-    this.debug('FORM MOUNT3d')
-  },
-  computed: {
-    ...mapGetters({
-      modalContent: 'modal/content'
-    }),
-  },
-  props: {
-    formData: {
-      type: Object,
-      default () {
-        return {
-          campuri: [
-            {
-              id: 'demoText',
-              type: 'text',
-              label: 'Demo Input',
-              focus: true,
-              required: true
-            }
-          ],
-          actiuni: {
-            confirm: 'doNothing'
-          },
-          for: null
-        }
-      }
-    },
-    type: {
-      type: String,
-      default: 'new'
-    },
-    formName: {
-      type: String,
-      default: 'unnamed'
-    },
-    title: {
-      type: String,
-      default: null
-    },
-    desc: {
-      type: String,
-      default: null
-    }
-  },
-  methods: {
-    ...mapActions({
-      adaugaAsociatie: 'asociatie/adauga',
-      adaugaBloc: 'bloc/adauga',
-      adaugaAp: 'apartament/adauga',
-      adaugaServiciu: 'serviciu/adauga',
-      adaugaFurnizor: 'furnizor/adauga',
-      adaugaCheltuiala: 'cheltuiala/adauga',
-      incaseaza: 'incasare/adauga',
-      modalClose: 'modal/close',
-      trimiteFeedback: 'feedback/trimite'
-    }),
-    async validate (scope) {
-      let v = false
-      this.$validator.validateAll(scope).then(valid => {
-        if (valid) v = true
-      })
-      return v
-    },
-    /**
-     * func = string = numele actiunii vuex, global
-     */
-    handleChange (func, id, type, e, scope) {
-      if (!func) return
-      const { value } = e.target
-      if (value === 'undefined' || value === null) return
-
-      const valid = this.validate(scope)
-      if (!valid) {
-        this.debug(`camp invalid ${id}`)
-        return
-      }
-
-      this.$store.dispatch(func, {
-        [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
-      })
-    },
-    handleSubmit (scope) {
-      const valid = this.validate(scope)
-      if (!valid) return
-
-      const { formData: { actiuni: { confirm } }, $data, debug } = this
-      if (typeof this[confirm] !== 'function') {
-        debug('Confirm nedefinit, neinregistrat', $data);
-        return
-      }
-      const manipulatedData = {}
-      Object.keys($data).forEach(what => {
-        let value = $data[what]
-         // TODO: adauga data la indecsii numiti 'la'
-        if (what === 'la') value = Date.now()
-        if (value === null || value === 'undefined') return
-
-        manipulatedData[what] = value
-      })
-      // TODO: verifica daca s-a schimbat ceva, altfel n-are sens sa apelezi confirmu
-      debug('Final form data, submitted: ', manipulatedData)
-      this[confirm](manipulatedData)
-      this.modalClose()
-      this.$emit('submit', manipulatedData)
-    }
-  },
   components: {
     buton,
     split,
     field
+  },
+  props: {
+    form: {
+      type: Form,
+      default: null
+    },
+    isNew: {
+      type: Boolean,
+      default: true
+    }
   }
-}
+})
+
+  export default class FormComponent extends Vue {
+    @Getter('content', { namespace: 'modal' }) modalContent: string
+    @Action('trimite', { namespace: 'feedback' }) trimiteFeedback: any
+    @Action('close', { namespace: 'modal' }) closeModal: () => void
+
+    data () {
+      const { form, isNew } = this
+      if (!form) throw new Error('No form supplied')
+      return form.componentData(isNew)
+    }
+
+    get fields () {
+      return this.form.data.fields
+    }
+
+    mounted () {
+      this.debug('Form Mounted')
+    }
+
+    async validate () {
+      this.$validator.validateAll(this.form.name).then(valid => {
+        if (!valid) throw new Error('invalid')
+        this.submit()
+      })
+    }
+
+    submit () {
+      this.modalClose()
+      this.$emit('submit', this.$data)
+    }
+    
+  }
 </script>
 
 <style lang="stylus">

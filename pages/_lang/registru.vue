@@ -37,11 +37,11 @@ sction.registru(
 </template>
 
 <script>
-import sction from '~components/section'
-import split from '~components/split'
+import sction from 'c/section'
+import split from 'c/split'
 import field from 'form/field'
 import buton from 'form/button'
-import incasari from '~components/incasari'
+import incasari from 'c/incasari'
 import { mapGetters } from 'vuex'
 
 export default {

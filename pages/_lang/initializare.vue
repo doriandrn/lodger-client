@@ -73,19 +73,19 @@ empty(
 </template>
 
 <script>
-import sction from '~components/section'
-import widget from '~components/widget'
+import sction from 'c/section'
+import widget from 'c/widget'
 import buton from 'form/button'
-import blocuri from '~components/blocuri'
-import frm from '~components/form.vue'
-import empty from '~components/empty'
-import dateTime from '~components/dateTime'
-import split from '~components/split'
+import blocuri from 'c/blocuri'
+import frm from 'c/form.vue'
+import empty from 'c/empty'
+import dateTime from 'c/dateTime'
+import split from 'c/split'
 
-import bani from '~components/bani'
-import servicii from '~components/servicii'
+import bani from 'c/bani'
+import servicii from 'c/servicii'
 import field from 'form/field'
-import furnizor from '~components/furnizor'
+import furnizor from 'c/furnizor'
 
 import typecheck from 'pg/widgets/typography'
 

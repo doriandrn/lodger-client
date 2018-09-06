@@ -13,7 +13,7 @@ sction.eroare(
 </template>
 
 <script>
-import sction from '~components/section'
+import sction from 'c/section'
 import buton from 'form/button'
 
 import { mapActions } from 'vuex'

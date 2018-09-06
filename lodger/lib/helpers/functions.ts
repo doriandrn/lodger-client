@@ -1,5 +1,5 @@
-import { Taxonomii } from 'lodger/index'
-import LodgerConfig from '../../lodger.config'
+// import { Taxonomii } from 'lodger/index'
+import LodgerConfig from '../../../lodger.config'
 type TraversableObject = { [index: string]: TraversableObject }
 /**
  * Traverseaza un obiect cu o functie

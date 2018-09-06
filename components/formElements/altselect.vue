@@ -26,8 +26,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import split from '~components/split'
-import progres from '~components/progres'
+import split from 'c/split'
+import progres from 'c/progres'
 
 export default {
   methods: {

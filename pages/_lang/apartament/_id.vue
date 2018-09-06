@@ -67,12 +67,12 @@ sction#nuExista(
 </template>
 
 <script>
-import sction from '~components/section'
-import widget from '~components/widget'
-import split from '~components/split'
-import bani from '~components/bani'
+import sction from 'c/section'
+import widget from 'c/widget'
+import split from 'c/split'
+import bani from 'c/bani'
 
-import incasari from '~components/incasari'
+import incasari from 'c/incasari'
 
 import { mapGetters } from 'vuex'
 

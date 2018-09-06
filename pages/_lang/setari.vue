@@ -18,8 +18,8 @@ sction.setari(:title="$t('defaults.settings')")
 </template>
 
 <script>
-import sction from '~components/section'
-import frm from '~components/form.vue'
+import sction from 'c/section'
+import frm from 'c/form.vue'
 import buton from 'form/button'
 
 import { mapGetters, mapActions } from 'vuex'

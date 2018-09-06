@@ -5,9 +5,8 @@
  */
 import Debug from 'debug'
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
-import { pushFieldToSchema } from 'lodger/helpers/forms'
+import { pushFieldToSchema } from 'lodger/lib/helpers/forms'
 import { FormError } from 'lodger/lib/Errors'
-import path from 'path'
 
 if (process.env.NODE_ENV === 'test') {
   Debug.enable('Form:*')
@@ -26,16 +25,6 @@ enum Errors {
   missingPlural = 'A plural definition is required for %%'
 }
 
-/**
- * Require path for known forms
- */
-const formsPath: string = path.join(`forms/${process.env.NODE_ENV === 'test'
-    // ? `__stubs__`
-    ? ''
-    : ''
-  }`)
-
-
 const defaultSchema: RxJsonSchema = {
   title: '',
   properties: {},
@@ -48,25 +37,11 @@ const defaultSchema: RxJsonSchema = {
  * Form class
  */
 class Form {
-  name: FormName
-  plural: Plural
-
   constructor (
-    private data: LodgerForm,
-  ) {
-    // if (!this.data) {
-    //   console.error(data)
-    //   throw new FormError(Errors.noData)
-    // }
-    const { fields, name, plural } = this.data
-    if (!name) throw new FormError(Errors.missingName)
-    if (!fields || !fields.length) throw new FormError(Errors.noData, name)
-    if (!plural) {
-      throw new FormError(Errors.missingPlural, name)
-    }
-    this.name = name
-    this.plural = plural
-  }
+    readonly data: LodgerForm,
+    readonly name: string,
+    readonly plural: string
+  ) {}
 
   /**
    * A valid RxJsonSchema out of the form
@@ -98,6 +73,60 @@ class Form {
   }
 
   /**
+   * Makes an object suitabble to be completed
+   * by the user in the end form
+   * and bindable to Vue Data object
+   * as it will turn reactive
+   */
+  componentData (
+    isNewForm: boolean
+  ) {
+    const { data: { fields }, name } = this
+    let data = {} as any
+    fields.forEach(camp => {
+      const {
+        label,
+        required,
+        click,
+        notInForm,
+        notInDb
+      } = camp
+      let { id, value } = camp
+      let _def = camp.default
+
+      if (click && !id) camp.id = click
+      
+      // skip fields
+      if (isNewForm) {
+        if (!notInForm || notInDb) value = null
+      }
+      
+      // apply getters to funcs
+      if (typeof value === 'function') {
+        try {
+          value = value(store.getters)
+        } catch (e) {
+          value = null
+        }
+      }
+
+      if (typeof _def === 'function') _def = _def(store.getters)
+
+      // label
+      camp.label = label || `${name ? `${name}.new.` : ''}${id}`
+
+      // validarea de required
+      if (required || (camp.v && camp.v.indexOf('required') < 0)) camp.v = `required|${camp.v || ''}`
+
+      // valoarea finala
+      data[id] = null
+      data[id] = value !== null && value !== undefined ? value : _def
+    })
+
+    return data
+  }
+
+  /**
    * Loads a known form by name
    * 
    * @param name 
@@ -115,7 +144,7 @@ class Form {
       debug('Error', e)
       throw new FormError(Errors.invalidRequested, name)
     }
-    return new Form(form)
+    return new Form(form, name, form.plural)
   }
 }
 

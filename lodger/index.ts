@@ -6,7 +6,8 @@ import osHomedir from 'os-homedir'
 import yaml from 'json2yaml'
 
 import LodgerStore from 'lodger/lib/Store'
-import { getCriteriu } from 'lodger/helpers/functions'
+import { getCriteriu } from 'lodger/lib/helpers/functions'
+import { handleOnSubmit } from 'lodger/lib/helpers/forms'
 import DB from 'lodger/lib/DB'
 import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
@@ -145,15 +146,14 @@ class Lodger {
    * @param taxonomie 
    * @param data 
    */
-  async put (taxonomie: Taxonomii, data: DateTaxonomie) {
+  async put (taxonomie: Taxonomii, data: FormData) {
     const debug = Debug('lodger:put')
     const { db, plurals, store } = this
     const plural = plurals.get(taxonomie)
     if (!plural) throw new LodgerError(Errors.noPlural, taxonomie)
-    let { _id } = data
     const colectie = db.collections[plural]
-    const method = _id ? 'upsert' : 'insert'
-    const { _data } = await colectie[method](data)
+    const method = data._id ? 'upsert' : 'insert'
+    const { _data } = await colectie[method](handleOnSubmit(data))
     if (store) await store.dispatch(`${taxonomie}/setLast`, _data._id)
     debug('pus', taxonomie, _data._id)
     return _data

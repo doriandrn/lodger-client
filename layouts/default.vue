@@ -85,19 +85,19 @@
 </template>
 
 <script>
-import logo from '~components/logo'
-import headr from '~components/header'
-import footr from '~components/footer'
-import modal from '~components/modal'
-import frm from '~components/form.vue'
-import prompt from '~components/prompt'
-import cale from '~components/cale'
-import bani from '~components/bani'
+import logo from 'c/logo'
+import headr from 'c/header'
+import footr from 'c/footer'
+import modal from 'c/modal'
+import frm from 'c/form.vue'
+import prompt from 'c/prompt'
+import cale from 'c/cale'
+import bani from 'c/bani'
 import field from 'form/field'
 import buton from 'form/button'
 
-import toasts from '~components/toasts'
-import dropdown from '~components/dropdown'
+import toasts from 'c/toasts'
+import dropdown from 'c/dropdown'
 
 import { mapGetters, mapActions } from 'vuex'
 import { version, name, author } from '../package.json'

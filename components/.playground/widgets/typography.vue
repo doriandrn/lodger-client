@@ -16,7 +16,7 @@ widget.typecheck(title="Tyop chek" expand)
 </template>
 
 <script>
-import widget from '~components/widget'
+import widget from 'c/widget'
 
 export default {
   components: {

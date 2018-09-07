@@ -19,9 +19,10 @@ const { NODE_ENV } = process.env
 
 const buildOpts: BuildOptions = {
   dbCon: {
-    name: 'Lodger2/',
+    name: 'Lodger/',
     adapter: 'memory',
-    password: 'l0dg3rp4$$'
+    password: 'l0dg3rp4$$',
+    ignoreDuplicate: NODE_ENV === 'test'
   },
   usePersistedState: false
 }
@@ -146,7 +147,7 @@ class Lodger {
    * @param taxonomie 
    * @param data 
    */
-  async put (taxonomie: Taxonomii, data: FormData) {
+  async put (taxonomie: Taxonomii, data: LodgerFormData) {
     const debug = Debug('lodger:put')
     const { db, plurals, store } = this
     const plural = plurals.get(taxonomie)

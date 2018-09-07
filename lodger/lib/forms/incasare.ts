@@ -1,3 +1,5 @@
+import { Getter } from 'vuex'
+
 const fields: Fields = [
   {
     id: 'deLa',
@@ -36,7 +38,7 @@ const fields: Fields = [
     id: 'asociatieId',
     notInForm: true,
     required: true,
-    value: g => g['asociatie/activa']._id
+    value: (g: Getter<AsociatieState, RootState>) => g['asociatie/activa']._id
   }
 ]
 

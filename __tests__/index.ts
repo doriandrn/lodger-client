@@ -1,32 +1,79 @@
 import { Lodger, Errors } from '../lodger/index'
 import Debug from 'debug'
+import { isRxDatabase } from 'rxdb'
 Debug.enable('lodger:*')
 
 describe('Lodger', () => {
-  describe('API', async () => {
+  describe('.build()', () => {
+    let L: Lodger
+    beforeAll(async () => {
+      L = await Lodger.build()
+    })
+    describe('positive', () => {
+      test('this is "run" in test environment', () => {
+        expect(process.env.NODE_ENV).toBe('test')
+      })
+
+      test('.db = RxDatabase', async () => {
+        expect(isRxDatabase(L.db)).toBeTruthy()
+      })
+
+      test('.forms = object containing all forms based on tax', () => {
+        expect(L.forms).toBeDefined()
+        expect(typeof L.forms).toBe('object')
+      })
+    })
+
+    afterAll(async () => {
+      await L.destroy()
+    })
+  })
+
+  describe('Public API', async () => {
     let lodger: Lodger
     let getters: LodgerGetters
     
     beforeAll(async () => {
       lodger = await Lodger.build()
-      getters = lodger.getters
+
     })
 
     let commonId: string | null = null
 
-    describe('put', () => {
+    describe('.put()', () => {
       const debug = Debug('lodger:tests:put')
-      test('adds a new assoc', async () => {
-        const name = 'bla'
-        const { _id } = await lodger.put('asociatie', {
-          name
-        })
-        expect(_id).toBeDefined()
-        const lastAddedId = getters['asociatie/last']
-        expect(lastAddedId).toBe(_id)
-        commonId = _id
 
-        debug('LODGERICA', Object.getOwnPropertyNames(lodger))
+      describe('positive', () => {
+        test('adds a new assoc', async () => {
+          const name = 'bla'
+          const { _id } = await lodger.put('asociatie', {
+            name
+          })
+          expect(_id).toBeDefined()
+          const lastAddedId = lodger.getters['asociatie/last']
+          expect(lastAddedId).toBe(_id)
+          commonId = _id
+
+          debug('LODGERICA', Object.getOwnPropertyNames(lodger))
+        })
+      })
+
+      describe('negative', () => {
+        test('throws if wrong/unknown taxonomy', async () => {
+          try {
+            await lodger.put('masina', { name: 'Honda' })
+          } catch (e) {
+            expect(e).toBeDefined()
+          }
+        })
+
+        test('throws if data doesnt match schema', async () => {
+          try {
+            await lodger.put('asociatie', { lol: 'fool' } )
+          } catch (e) { 
+            expect(e).toBeDefined()
+          }
+        })
       })
 
       // test('adds a new bloc at prev created assoc', async () => {

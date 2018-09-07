@@ -4,7 +4,7 @@ sction#pg
     .box
       frm(:form="$lodger.forms[0]")
     .asociatii.box
-      button(@click="adauga('asociatie', { name: faker.company.companyName(), la: new Date() })") + asoc
+      button(@click="adauga('asociatie', { name: faker.company.companyName() })") + asoc
       h3 {{ idsAsociatii.length }}/{{ asociatiiCount }} asociatii
       //- p last: {{ $lodger.getters['asociatie/last'] }}
       ul(v-if="asociatii")

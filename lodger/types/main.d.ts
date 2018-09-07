@@ -92,19 +92,6 @@ declare global {
 
   type Tranzactie = [Incasare & Cheltuiala]
 
-  interface Asociatie {
-    _id: string
-    name: string
-    balanta: Bani
-  
-    organizatie?: Organizatie,
-    // administratori: [Utilizator],
-    utilizatori?: [Utilizator],
-    servicii: [Serviciu],
-    furnizori?: [Furnizor],
-    tranzactii?: Tranzactie[]
-  }
-
   interface Apartament {
     _id: string
   }

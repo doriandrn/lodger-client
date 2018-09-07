@@ -37,12 +37,12 @@ export default function (taxonomii: Taxonomii[]) {
     }
   
     const actions: ActionTree<TaxonomyState, RootState> = {
-      select: ({ commit }, data) => commit('SELECTEAZA', data),
-      setLast: ({ commit }, data) => commit('RECENTLY_ADDED', data)
+      select: ({ commit }, data) => commit('SELECT', data),
+      setLast: ({ commit }, data) => commit('SET_LAST', data)
     }
     const mutations: MutationTree<TaxonomyState> = {
-      'SELECTEAZA': (s, id) => { s['selected'] = id },
-      'RECENTLY_ADDED': (s, id) => { s['last'] = id }
+      'SELECT': (s, id) => { s['selected'] = id },
+      'SET_LAST': (s, id) => { s['last'] = id }
     }
   
     storeModules[tax] = <Module<TaxonomyState, RootState>>{

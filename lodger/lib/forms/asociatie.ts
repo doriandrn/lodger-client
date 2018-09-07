@@ -1,3 +1,16 @@
+interface Asociatie {
+  _id: string
+  name: string
+  balanta: Bani
+
+  organizatie?: Organizatie,
+  // administratori: [Utilizator],
+  utilizatori?: [Utilizator],
+  servicii: [Serviciu],
+  furnizori?: [Furnizor],
+  tranzactii?: Tranzactie[]
+}
+
 const getter = 'asociatie/activa'
 const modalOpen = 'modal/open'
 const modalContent = 'modal/content'

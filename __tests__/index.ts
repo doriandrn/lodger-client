@@ -1,9 +1,14 @@
 import { Lodger, Errors } from '../lodger/index'
 import Debug from 'debug'
 import { isRxDatabase } from 'rxdb'
+import BroadcastChannel from 'broadcast-channel'
 Debug.enable('lodger:*')
 
 describe('Lodger', () => {
+  beforeAll(() => {
+    BroadcastChannel.clearNodeFolder()
+  })
+
   describe('.build()', () => {
     let L: Lodger
     beforeAll(async () => {
@@ -94,39 +99,43 @@ describe('Lodger', () => {
     })
 
     describe('setPreference', () => {
-      test('throws if starting taxonomy is not known', async () => {
-        // expect(async () => { await lodger.setPreference('caca.maca', null) }).toThrow()
-        try {
-          await lodger.setPreference('caca.maca', null)
-        } catch(e) {
-          expect(e).toBeDefined()
-          expect(String(e).indexOf(Errors.invalidPreferenceIndex)).toBeTruthy()
-        }
-      })
-      test('throws if invalid properties specified', async () => {
-        try {
-          await lodger.setPreference('client.', null)
-        } catch (e) {
-          expect(String(e).indexOf(Errors.invalidPropertySupplied)).toBeTruthy()
-        }
+      describe('positive', () => {
+        test('sets a new preferences value in store', async () => {
+          await lodger.setPreference('client.interface.fontSize', 3)
+          expect(lodger.preferences.client.fontSize).toBe(3)
+        })
 
-
-        try {
-          await lodger.setPreference('client.xxx', 0)
-
-        } catch (e) {
-          expect(String(e).indexOf(Errors.invalidPropertySupplied)).toBeTruthy()
-        }
+        test('sets a new preferences value in DB', async () => {
+          await lodger.setPreference('user.language', 'ro')
+          expect(lodger.preferences.user.language).toBe('ro')
+        })
       })
 
-      test('sets a new preferences value in store', async () => {
-        await lodger.setPreference('client.interface.fontSize', 3)
-        expect(lodger.preferences.client.fontSize).toBe(3)
-      })
+      describe('negative', () => {
+        test('throws if starting taxonomy is not known', async () => {
+          // expect(async () => { await lodger.setPreference('caca.maca', null) }).toThrow()
+          try {
+            await lodger.setPreference('caca.maca', null)
+          } catch (e) {
+            expect(e).toBeDefined()
+            expect(String(e).indexOf(Errors.invalidPreferenceIndex)).toBeTruthy()
+          }
+        })
+        test('throws if invalid properties specified', async () => {
+          try {
+            await lodger.setPreference('client.', null)
+          } catch (e) {
+            expect(String(e).indexOf(Errors.invalidPropertySupplied)).toBeTruthy()
+          }
 
-      test('sets a new preferences value in DB', async () => {
-        await lodger.setPreference('user.language', 'ro')
-        expect(lodger.preferences.user.language).toBe('ro')
+
+          try {
+            await lodger.setPreference('client.xxx', 0)
+
+          } catch (e) {
+            expect(String(e).indexOf(Errors.invalidPropertySupplied)).toBeTruthy()
+          }
+        })
       })
     })
 

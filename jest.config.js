@@ -19,7 +19,8 @@ module.exports = {
   moduleNameMapper: {
     'lodger/(.*)$': '<rootDir>/lodger/$1',
     'forms/(.*)$': '<rootDir>/lodger/lib/forms/$1',
-    '~/(.*)$': '<rootDir>/$1'
+    '~/(.*)$': '<rootDir>/$1',
+    'lodger.config': '<rootDir>/lodger.config'
   },
   transform: {
     '^.+\\.js?$': '<rootDir>/node_modules/babel-jest',

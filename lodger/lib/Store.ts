@@ -1,70 +1,47 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions, ModuleTree, Module, ActionTree, GetterTree, MutationTree } from 'vuex'
 import { Taxonomii } from 'lodger'
+import { setupFromFile, setupSharedMethods } from 'lodger/lib/helpers/store'
 import lodgerConfig from '../../lodger.config'
 const { version } = lodgerConfig
+
 Vue.use(Vuex)
 
-const storeModules: ModuleTree<RootState> = {}
-const namespaced: boolean = true
-
-declare global {
-  interface TaxonomyState {
-    selected: ItemID,
-    last: ItemID
+export class LodgerStore {
+  state: RootState = {
+    locale: 'ro',
+    version
   }
 
-  interface AsociatieState extends TaxonomyState {
+  constructor (
+    private taxonomii?: Taxonomii[],
+  ) {
+    // this.state = store.state
+    const modules: ModuleTree<RootState> = {}
 
-  }
-}
+    /**
+     * Builds modules based on taxonomies
+     * TODO: make this a method ?!
+     */
+    if (taxonomii && taxonomii.length) {
+      taxonomii.forEach(tax => {
+        modules[tax] = {}
+        Object.assign(modules[tax], {
+          ... setupSharedMethods(tax),
+          ... setupFromFile(tax)
+        })
+      })
+    }
 
-
-// const sharedStoreActions = {
-//   select: 'selected',
-//   set_last: 'lasties',
-//   activate: 'active'
-// }
-export default function (taxonomii: Taxonomii[]) {
-  taxonomii.forEach(tax => {
-    const state: TaxonomyState = {
-      selected: null,
-      last: null
-    }
-    const getters: GetterTree<TaxonomyState, RootState> = {
-      last: (S: TaxonomyState) => S['last'],
-      selected: (S: TaxonomyState) => S['selected']
-    }
-  
-    const actions: ActionTree<TaxonomyState, RootState> = {
-      select: ({ commit }, data) => commit('SELECT', data),
-      setLast: ({ commit }, data) => commit('SET_LAST', data)
-    }
-    const mutations: MutationTree<TaxonomyState> = {
-      'SELECT': (s, id) => { s['selected'] = id },
-      'SET_LAST': (s, id) => { s['last'] = id }
-    }
-  
-    storeModules[tax] = <Module<TaxonomyState, RootState>>{
-      namespaced,
-      getters,
-      actions,
-      mutations,
+    /**
+    * Store
+    */
+    const { state } = this
+    const storeOptions: StoreOptions<RootState> = {
+      modules,
       state
     }
-  })
-  
-  /**
-   * Store
-   */
-  
-  const storeOptions: StoreOptions<RootState> = {
-    state: {
-      version,
-      locale: 'ro'
-    },
-    modules: storeModules
+ 
+    return new Vuex.Store<RootState>(storeOptions)
   }
-  
-  return new Vuex.Store<RootState>(storeOptions)
 }

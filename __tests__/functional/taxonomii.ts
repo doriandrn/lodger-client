@@ -5,7 +5,7 @@ Debug.enable('lodger:*')
 // import * as lodgerConfig from '../../lodger/config'
 
 let lodger: Lodger | undefined
-let getters: LodgerGetters | undefiend
+let getters: LodgerGetters | undefined
 
 const asociatiiCount = 30
 const blocuriCount = 5

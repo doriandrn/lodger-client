@@ -265,7 +265,7 @@ class Lodger {
     })
     const collections: RxCollectionCreator[] = forms.map(form => form.collection)
     const db = await DB(collections, dbCon)
-    const store = LodgerStore(taxonomii)
+    const store = new LodgerStore(taxonomii)
 
     if (options) {
       Object.assign(buildOpts, { ...options })

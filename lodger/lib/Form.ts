@@ -140,7 +140,6 @@ class Form {
       if (form.default) form = form.default
       // change prototype to object for Vue
       form = JSON.parse(JSON.stringify(form))
-      debug(form)
       Object.assign(form, { name })
       debug('✓', name)
     } catch (e) {

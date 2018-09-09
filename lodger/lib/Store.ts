@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions, ModuleTree, Module, ActionTree, GetterTree, MutationTree } from 'vuex'
 import { Taxonomii } from 'lodger'
-import { setupFromFile, setupSharedMethods } from 'lodger/lib/helpers/store'
+import { setupFromFile, setupSharedMethods, createEmptyStoreModule } from 'lodger/lib/helpers/store'
 import lodgerConfig from '../../lodger.config'
 const { version } = lodgerConfig
 
 Vue.use(Vuex)
 
-export class LodgerStore {
+export default class LodgerStore {
   state: RootState = {
     locale: 'ro',
     version
@@ -25,11 +25,7 @@ export class LodgerStore {
      */
     if (taxonomii && taxonomii.length) {
       taxonomii.forEach(tax => {
-        modules[tax] = {}
-        Object.assign(modules[tax], {
-          ... setupSharedMethods(tax),
-          ... setupFromFile(tax)
-        })
+        modules[tax] = setupSharedMethods(undefined, createEmptyStoreModule())
       })
     }
 

@@ -19,7 +19,6 @@ if (NODE_ENV === 'production') {
   RxDB.plugin(require('pouchdb-authentication'))
 }
 
-
 export default async function (
   collections: RxDB.RxCollectionCreator[],
   config?: RxDB.RxDatabaseCreator
@@ -32,8 +31,6 @@ export default async function (
     if (NODE_ENV !== 'dev') return
     document.title = `♛ ${document.title}`
   })
-  debug('yo1')
   await Promise.all(collections.map(c => db.collection(c)))
-  debug('yo2')
   return db
 }

@@ -1,12 +1,12 @@
-import { Lodger, Errors } from '../lodger/index'
+import { Lodger, Errors } from 'lodger/index'
 import Debug from 'debug'
 import { isRxDatabase } from 'rxdb'
 import BroadcastChannel from 'broadcast-channel'
 Debug.enable('lodger:*')
 
 describe('Lodger', () => {
-  beforeAll(() => {
-    BroadcastChannel.clearNodeFolder()
+  beforeAll(async () => {
+    await BroadcastChannel.clearNodeFolder()
   })
 
   describe('.build()', () => {
@@ -26,6 +26,24 @@ describe('Lodger', () => {
       test('.forms = object containing all forms based on tax', () => {
         expect(L.forms).toBeDefined()
         expect(typeof L.forms).toBe('object')
+      })
+
+      test('runs with no options / arguments', async () => {
+        const lodger = await Lodger.build()
+        expect(lodger).toBeDefined()
+        await lodger.destroy()
+      })
+
+      test('overwrites allowed build options', async () => {
+        const options = {
+          dbCon: {
+            name: 'lodgerica',
+            adapter: 'memory'
+          }
+        }
+        const lodger = await Lodger.build(options)
+        expect(lodger).toBeDefined()
+        await lodger.destroy()
       })
     })
 

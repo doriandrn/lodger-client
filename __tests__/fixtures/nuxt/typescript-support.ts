@@ -1,6 +1,8 @@
+const tsconfig = require('../../../tsconfig.json')
+
 export default {
-  modules: [
-    '~modules/typescript.ts'
-  ],
+  typescript: {
+    tsconfig
+  },
   debug: true
 }

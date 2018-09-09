@@ -44,7 +44,7 @@ function setupSharedMethods (
     last: 'set_last',
     active: 'activate'
   },
-  module?: Module<SharedStoreMethods, RootState>
+  module?: Module<EmptyState, RootState>
 ) {
   if (typeof sharedMethods !== 'object') {
     throw new LodgerError('invalid methods supplied')
@@ -62,7 +62,7 @@ function setupSharedMethods (
     module.mutations[action] = (s, id) => s[methodName] = id
   })
 
-  return module
+  return <Module<SharedStoreMethods, RootState>>module
 }
 
 /**

@@ -5,17 +5,13 @@ describe('Form', () => {
   const __stub1__ = new Form(stub1)
   const __stub2__ = new Form(stub2)
 
-  describe('constructor (form: LodgerForm)', () => {
-    describe('Invalid form(s)', () => {
+  describe('new()', () => {
+    describe('negative', () => {
       const name = 'aFormName'
       const plural = 'formsCollection'
       test('throws if fields is empty', () => {
         const fields: Fields = []
-        expect(() => new Form({
-          name,
-          plural,
-          fields
-        })).toThrow()
+        expect(() => new Form({ fields }, name, plural)).toThrow()
       })
     })
 

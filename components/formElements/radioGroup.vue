@@ -34,12 +34,12 @@ import labl from 'form/label'
 export default {
   methods: {
     tooltipData (option) {
-      const { label, desc } = option
-      const { $t } = this
-      return `
-        ${ label ? `<h6>${ $t(label) }</h6>`: ''}
-        ${ desc ? `<p>${ $t(desc) }</p>`: ''}
-      `
+      // const { label, desc } = option
+      // const { $t } = this
+      // return `
+      //   ${ label ? `<h6>${ $t(label) }</h6>`: ''}
+      //   ${ desc ? `<p>${ $t(desc) }</p>`: ''}
+      // `
     },
   },
   computed: {
@@ -70,7 +70,7 @@ export default {
       default: null
     },
     value: {
-      type: [Number, String],
+      type: [Number, String, Object],
       default: -1
     }
   }

@@ -101,6 +101,9 @@ function subscribe (
   let { limit, index, sort, find } = getCriteriu(taxonomie, criteriu)
   const paging = Number(limit || 0) * (index || 1)
   const colectie = collections[<Plural>taxonomie]
+  if (!colectie) {
+    throw new LodgerError('invalid collection %%', taxonomie)
+  }
   const subscriber = <Subscriber>subscribers[subscriberName || 'main']
 
   subscriber[taxonomie] = colectie
@@ -155,7 +158,7 @@ class Lodger {
     const colectie = db.collections[plural]
     const method = data._id ? 'upsert' : 'insert'
     const { _data } = await colectie[method](handleOnSubmit(data))
-    if (store) await store.dispatch(`${taxonomie}/setLast`, _data._id)
+    if (store) await store.dispatch(`${taxonomie}/set_last`, _data._id)
     debug('pus', taxonomie, _data._id)
     return _data
   }

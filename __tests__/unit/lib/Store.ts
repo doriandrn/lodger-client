@@ -1,17 +1,11 @@
-import { LodgerStore } from 'lodger/lib/Store'
+import LodgerStore from 'lodger/lib/Store'
+const taxonomies = ['masina']
 
 describe('LodgerStore', () => {
-  describe('helpers', () => {
-    describe('.lodgerModules(taxonomii)', () => {
-      describe('positive', () => {
-
-      })
-    })
-  })
   describe('new ()', () => {
     let store: LodgerStore
     beforeAll(() => {
-      store = new LodgerStore(['masina'])
+      store = new LodgerStore(taxonomies)
     })
     describe('positive', () => {
       test('no arguments -> empty store', () => {
@@ -19,14 +13,21 @@ describe('LodgerStore', () => {
         expect(s).toBeDefined()
       })
 
-      test('contains all modules', () => {
-        expect(store.masina).toBeDefined()
-        expect(Object.keys(store).length).toBe(1)
+      test.each(taxonomies)('contains %s module', (s) => {
+        const getterName = `${s}/active`
+        expect(store.getters[getterName]).toBeDefined()
       })
     })
 
     describe('negative', () => {
-
+      test('throws if called with anything else than an array of taxonomies', () => {
+        try {
+          const store = new LodgerStore({})
+          expect(store).toBeUndefined()
+        } catch (e) {
+          expect(e).toBeDefined()
+        }
+      })
     })
   })
 })

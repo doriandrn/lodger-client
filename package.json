@@ -76,7 +76,7 @@
     "pug-loader": "^2.4.0",
     "pug-plain-loader": "^1.0.0",
     "rupture": "^0.7.1",
-    "rxdb": "^8.0.0-beta.6",
+    "rxdb": "doriandrn/rxdb#collection.length",
     "rxjs": "^6.3.2",
     "shortid": "^2.2.13",
     "stylus": "^0.54.5",

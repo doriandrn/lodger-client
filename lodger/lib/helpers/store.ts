@@ -10,6 +10,12 @@ interface RootState {
 
 type EmptyState = {}
 
+const sharedStoreMethods: SharedStoreMethods = {
+  selected: 'select',
+  last: 'set_last',
+  active: 'activate'
+}
+
 /**
  * Creates an empty store module
  */
@@ -39,11 +45,7 @@ function createEmptyStoreModule () {
   * @requires sharedMethods 
   */
 function setupSharedMethods (
-  sharedMethods: SharedStoreMethods = {
-    selected: 'select',
-    last: 'set_last',
-    active: 'activate'
-  },
+  sharedMethods: SharedStoreMethods = sharedStoreMethods,
   module?: Module<EmptyState, RootState>
 ) {
   if (typeof sharedMethods !== 'object') {
@@ -75,6 +77,7 @@ function setupFromFile (taxonomy: Taxonomii) {
 }
 
 export {
+  sharedStoreMethods,
   createEmptyStoreModule,
   setupSharedMethods,
   setupFromFile

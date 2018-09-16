@@ -61,7 +61,7 @@ import field from 'form/field'
   }
 })
 export default class ListTaxonomyItems extends Vue {
-  @Action('notify', {}) notifyUser: void
+  @Action('notify') notifyUser: any
   data () {
     return {
       items: {},
@@ -91,7 +91,10 @@ export default class ListTaxonomyItems extends Vue {
     try {
       return await this.$lodger.put(...arguments)
     } catch (e) {
-      this.notifyUser('error', e)
+      this.debug('e', e)
+      this.notifyUser({
+        type: 'error', text: String(e)
+      })
     }
   }
 

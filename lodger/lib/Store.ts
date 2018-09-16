@@ -3,7 +3,9 @@ import Vuex, { StoreOptions, ModuleTree, Module, ActionTree, GetterTree, Mutatio
 import { Taxonomii } from 'lodger'
 import { setupFromFile, setupSharedMethods, createEmptyStoreModule } from 'lodger/lib/helpers/store'
 import { LodgerError } from 'lodger/lib/Errors';
-import * as RootModule from 'lodger/store/index'
+import * as RootModule from 'lodger/lib/store/index'
+import Debug from 'debug'
+const debug = Debug('lodger:Store')
 
 Vue.use(Vuex)
 
@@ -29,19 +31,23 @@ export default class LodgerStore implements StoreOptions<RootState> {
         modules[tax] = setupSharedMethods(undefined, createEmptyStoreModule())
       })
     }
-    this.modules = modules
-    console.info('MODULE', this.modules)
     
-    /**
-    * Store
-    */
-    // const { state } = this
-    // const storeOptions: StoreOptions<RootState> = {
-    //   modules,
-    //   state,
-    //   actions
-    // }
- 
+    if (RootModule && RootModule.modules) {
+      Object.keys(RootModule.modules).forEach(module => {
+        LodgerStore.use({ module: RootModule.modules[module] })
+      })
+    }
+    
+    const { state, getters, actions, mutations } = RootModule
+    
+    Object.assign(this, {
+      state,
+      actions,
+      mutations,
+      getters
+    })
+    this.modules = modules
+
     // FUCK YOU TS
     return new Vuex.Store<RootState>(this)
   }
@@ -51,8 +57,8 @@ export default class LodgerStore implements StoreOptions<RootState> {
       throw new LodgerError(Errors.invalidModule)
     }
     const key = Object.keys(module)[0]
-    if (!key) throw new LodgerError(Errors.invalidModule)
-    console.info('folosesc', key)
+    if (!key || !module[key]) throw new LodgerError(Errors.invalidModule)
+    debug('using module', key)
     modules[key] = module[key]
   }
 }

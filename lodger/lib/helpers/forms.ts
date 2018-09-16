@@ -109,9 +109,25 @@ const handleOnSubmit = (data: LodgerFormData) => {
   return manipulatedData
 }
 
+const addCommonFieldsToSchema = (
+  schema: RxJsonSchema,
+  commonFields: [Item] = [{
+    // Data adaugarii / when added
+    id: 'la',
+    type: 'date-time',
+    required: true, // for filters / sorts
+    index: true
+  }]
+) => {
+  commonFields.forEach(item => {
+    Object.assign(schema.properties, toSchemaField(item))
+  })
+}
+
 export {
   toRxDBtype,
   toSchemaField,
   pushFieldToSchema,
-  handleOnSubmit
+  handleOnSubmit,
+  addCommonFieldsToSchema
 }

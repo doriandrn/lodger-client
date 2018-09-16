@@ -1,5 +1,6 @@
 import lodgerConfig from '../../../lodger.config'
 const { version } = lodgerConfig
+import { createModule } from 'vuex-toast'
 
 const state: RootState = {
   locale: 'ro',
@@ -12,7 +13,12 @@ const actions: ActionTree < Toast, RootState > = {
   }
 }
 
+const modules = {
+  toast: createModule({ dismissInterval: 5000 })
+}
+
 export {
   state,
-  actions
+  actions,
+  modules
 }

@@ -150,7 +150,7 @@ describe('helpers/forms', () => {
     describe('negative', () => {})
   })
 
-  describe('.dynamicFormData()', () => {
+  describe('.dynamicFormData() -> renamed to componentData()', () => {
     describe('positive', () => {
       
     })

@@ -4,13 +4,21 @@ sction#pg
     .box
       frm(:form="$lodger.forms[0]")
     
-    list.box(taxonomy="asociatie")
-    details(taxonomy="asociatie")
-      div blocuri
-        list.box(taxonomy="incasare")
+
+
+    list.box(
+      v-for=      "tax in $lodger.taxonomii"
+      :taxonomy=  "tax"
+    )
+
+    
+    //- .details(taxonomy="asociatie")
+    
+    //-   div blocuri
+    //-     list.box(taxonomy="incasare")
 
     //- .box.asociatie(v-if="idAsociatieSelectata")
-    //-   h2 Selected asoc: {{ asociatieSelectata.name }}
+    //-   
     //-   .asociatie__details
     //-     p #[em balanta] {{ asociatieSelectata.balanta }}
 
@@ -33,11 +41,7 @@ import Component from 'vue-class-component'
   },
   layout: 'tspg'
 })
-  export default class Playground extends Vue {
-    beforeCreate () {
-      // this.$store.registerModule('LodgerStore', this.$lodger.store)
-      this.$store = this.$lodger.store
-    }    
+  export default class Playground extends Vue {    
   }
 </script>
 
@@ -72,4 +76,5 @@ import Component from 'vue-class-component'
 
     &.prefs
       margin-left auto
+      min-width 200px
 </style>

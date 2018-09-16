@@ -6,14 +6,14 @@ describe('Form', () => {
   const __stub2__ = new Form(stub2)
 
   describe('new()', () => {
-    describe('negative', () => {
-      const name = 'aFormName'
-      const plural = 'formsCollection'
-      test('throws if fields is empty', () => {
-        const fields: Fields = []
-        expect(() => new Form({ fields }, name, plural)).toThrow()
-      })
-    })
+    // describe('negative', () => {
+    //   const name = 'aFormName'
+    //   const plural = 'formsCollection'
+    //   test('throws if fields is empty', () => {
+    //     const fields: Fields = []
+    //     expect(() => new Form({ fields }, name, plural)).toThrow()
+    //   })
+    // })
 
   })
 
@@ -59,6 +59,14 @@ describe('Form', () => {
       const { schema: { properties } } = __stub2__
       expect(properties.x2.index).toBeDefined()
     })
+
+    describe('adds common-shared fields', () => {
+      test('la - @ - time the doc was added', () => {
+        const { schema: { properties } } = __stub2__
+        expect(properties.x2.la).toBeDefined()
+      })
+    })
+    
   })
 
   describe('.collection', () => {

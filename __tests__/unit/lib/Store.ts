@@ -1,4 +1,6 @@
 import LodgerStore from 'lodger/lib/Store'
+import { sharedStoreMethods } from 'lodger/lib/helpers/store'
+
 const taxonomies = ['masina']
 
 const testModule = {
@@ -14,9 +16,9 @@ const testModule = {
 }
 
 describe('LodgerStore', () => {
-  describe('static use module', () => {
+  describe('static .use() -> module', () => {
     describe('positive', () => {
-      test('uses a test module', () => {
+      test('uses the test module', () => {
         LodgerStore.use(testModule)
         const store = new LodgerStore()
         const tGetter = store.getters['test/test']
@@ -37,29 +39,24 @@ describe('LodgerStore', () => {
 
   describe('new ()', () => {
     let store: LodgerStore
+    let storeGettersKeys: []
+
     beforeAll(() => {
       store = new LodgerStore(taxonomies)
+      storeGettersKeys = Object.keys(store.getters)
     })
+
     describe('positive', () => {
+      
       test('no arguments -> empty store', () => {
         const s = new LodgerStore()
         expect(s).toBeDefined()
       })
 
       test.each(taxonomies)('contains %s module (as taxonomy)', (s) => {
-        const getterName = `${s}/active`
-        expect(store.getters[getterName]).toBeDefined()
-      })
-    })
-
-    describe('negative', () => {
-      test('throws if called with anything else than an array of taxonomies', () => {
-        try {
-          const store = new LodgerStore({})
-          expect(store).toBeUndefined()
-        } catch (e) {
-          expect(e).toBeDefined()
-        }
+        Object.keys(sharedStoreMethods).forEach(methodOrGetter => {
+          expect(storeGettersKeys).toContain(`${s}/${methodOrGetter}`)
+        })
       })
     })
   })

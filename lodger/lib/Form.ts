@@ -5,7 +5,10 @@
  */
 import Debug from 'debug'
 import { RxJsonSchema, RxCollectionCreator } from 'rxdb'
-import { pushFieldToSchema } from 'lodger/lib/helpers/forms'
+import {
+  pushFieldToSchema,
+  addCommonFieldsToSchema
+} from 'lodger/lib/helpers/forms'
 import { FormError } from 'lodger/lib/Errors'
 
 if (process.env.NODE_ENV === 'test') {
@@ -57,6 +60,8 @@ class Form {
         pushFieldToSchema(field, schema)
       })
     
+    addCommonFieldsToSchema(schema)
+
     return <RxJsonSchema>schema
   }
 

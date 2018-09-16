@@ -82,6 +82,15 @@ describe('Lodger', () => {
       })
 
       describe('negative', () => {
+        test('throws if no data is supplied', async () => {
+          try {
+            await lodger.put('asociatie', {})
+          } catch (e) {
+            expect(e).toBeDefined()
+            expect(e.indexOf('data')).toBeTruthy()
+          }
+        })
+
         test('throws if wrong/unknown taxonomy', async () => {
           try {
             await lodger.put('masina', { name: 'Honda' })

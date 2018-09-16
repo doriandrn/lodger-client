@@ -6,7 +6,7 @@
   field(
     type=     "radios",
     label=    "sort.label"
-    v-model=  "criteriu"
+    v-model=  "criteriu.sort"
     id=       "filtruSortare"
     :options=  "sortOptions"
     required= true
@@ -23,7 +23,7 @@
   
   button.more(
     v-if="ids.length < itemsCount"
-    @click="criteriu.limit = criteriu.limit + criteriu.limit; sub()"
+    @click="criteriu.limit = criteriu.limit + criteriu.limit"
   ) MOR
 </template>
 
@@ -31,7 +31,8 @@
 import Vue from 'vue'
 import faker from 'faker'
 import Component from 'vue-class-component'
-import { State, Action, Getter } from 'vuex-class'
+// import { State, Action, Getter } from 'vuex-class'
+import { Action } from 'vuex-class'
 
 /** Components Imports */
 import field from 'form/field'
@@ -45,8 +46,14 @@ import field from 'form/field'
     }
   },
   watch: {
-    items () {
-      this.itemsCount = this.$lodger.db[this.plural].length
+    // items () {
+    //   this.itemsCount = this.$lodger.db[this.plural].length
+    // },
+    criteriu: {
+      handler () {
+        this.sub()
+      },
+      deep: true
     }
   },
   components: {
@@ -54,11 +61,13 @@ import field from 'form/field'
   }
 })
 export default class ListTaxonomyItems extends Vue {
+  @Action('notify', {}) notifyUser: void
   data () {
     return {
       items: {},
       criteriu: {
-        limit: 5
+        limit: 5,
+        sort: 'la'
       },
       itemsCount: 0
     }
@@ -79,7 +88,11 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   async add () {
-    return await this.$lodger.put(...arguments)
+    try {
+      return await this.$lodger.put(...arguments)
+    } catch (e) {
+      this.notifyUser('error', e)
+    }
   }
 
   async remove () {
@@ -110,8 +123,8 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   get sortOptions () {
-    return { la: { label: 'sort.la' } }
-    // return { la: { label: 'sort.la' }, nume: { label: 'sort.nume' } }
+    // return { la: { label: 'sort.la' } }
+    return { la: { label: 'sort.la' }, name: { label: 'sort.az' } }
     // return { la: { label: 'sort.la' }, suma: { label: 'sort.suma' }, nrChintanta: { label: 'sort.nrChitanta' } }
   }
 
@@ -129,7 +142,13 @@ export default class ListTaxonomyItems extends Vue {
    * Subscriber method for items
    */
   sub () {
-    this.$lodger.subscribe(this.items, this.plural, this.criteriu)
+    this.$lodger.subscribe(
+      this.items,
+      this.plural,
+      this.criteriu,
+      undefined,
+      this.$data
+    )
   }
 }
 </script>

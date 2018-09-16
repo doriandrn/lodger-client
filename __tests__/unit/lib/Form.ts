@@ -54,6 +54,11 @@ describe('Form', () => {
       const { schema: { properties } } = __stub2__
       expect(properties).not.toHaveProperty('x5')
     })
+
+    test('indexed fields have index prop', () => {
+      const { schema: { properties } } = __stub2__
+      expect(properties.x2.index).toBeDefined()
+    })
   })
 
   describe('.collection', () => {

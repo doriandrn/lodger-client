@@ -3,7 +3,11 @@ sction#pg
   .boxes
     .box
       frm(:form="$lodger.forms[0]")
+    
     list.box(taxonomy="asociatie")
+    details(taxonomy="asociatie")
+      div blocuri
+        list.box(taxonomy="incasare")
 
     //- .box.asociatie(v-if="idAsociatieSelectata")
     //-   h2 Selected asoc: {{ asociatieSelectata.name }}

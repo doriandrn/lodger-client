@@ -106,6 +106,14 @@ describe('helpers/forms', () => {
           expect(field).toBeDefined()
         })
       })
+
+      test('adds the "index" property if supplied in field', () => {
+        const id = 'indexable'
+        expect(toSchemaField({
+          id,
+          index: true
+        })[id].index).toBeTruthy()
+      })
     })
 
     describe('negative', () => {

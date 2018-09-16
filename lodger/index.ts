@@ -52,6 +52,7 @@ enum Errors {
   invalidPreferenceIndex = 'Invalid preference index supplied',
   invalidPropertySupplied = 'Invalid property supplied',
   noPlural = 'Could not find plural definition for %%',
+  missingData = 'Missing data',
   couldNotWriteFile = 'Cannot write file'
 }
 
@@ -90,7 +91,8 @@ function subscribe (
   binder: Observer<object>,
   taxonomie: Plural,
   criteriu ?: Criteriu,
-  subscriberName ?: string
+  subscriberName ?: string,
+  counterBinder ?: Observer<number>
 ) {
   // const debug = Debug('lodger:subscribe')
 
@@ -105,7 +107,9 @@ function subscribe (
     throw new LodgerError('invalid collection %%', taxonomie)
   }
   const subscriber = <Subscriber>subscribers[subscriberName || 'main']
-
+  if (sort) {
+    if (sort === 'la') sort = { la: -1 }
+  }
   subscriber[taxonomie] = colectie
     .find(find)
     .limit(paging)
@@ -123,6 +127,10 @@ function subscribe (
         changes.map((item: RxDocument<any>) => {
           Vue.set(binder, item._id, item._data)
         })
+
+        if (counterBinder) {
+          Vue.set(counterBinder, 'itemsCount', colectie.length)
+        }
       } else {
         binder = Object.assign({},
           ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
@@ -152,6 +160,7 @@ class Lodger {
    */
   async put (taxonomie: Taxonomii, data: LodgerFormData) {
     const debug = Debug('lodger:put')
+    if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData)
     const { db, plurals, store } = this
     const plural = plurals.get(taxonomie)
     if (!plural) throw new LodgerError(Errors.noPlural, taxonomie)

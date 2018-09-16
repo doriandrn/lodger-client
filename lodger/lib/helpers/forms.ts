@@ -33,7 +33,7 @@ const toSchemaField = (formItem: Item) => {
   if (!formItem.id)
     throw new Error('camp fara id')
 
-  const { id, step, indexRef } = formItem
+  const { id, step, indexRef, index } = formItem
   let { type, ref } = formItem
 
   type = toRxDBtype(type)
@@ -55,6 +55,7 @@ const toSchemaField = (formItem: Item) => {
   //   if (!formItem[cheie]) return
   //   Object.assign(descriereCamp, { [cheie]: formItem[cheie] })
   // })
+  if (index) Object.assign(field, { index })
 
   if (step) Object.assign(field, { multipleOf: step })
   if (ref) Object.assign(field, ref)

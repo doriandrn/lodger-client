@@ -11,16 +11,34 @@ ul.toasts(
     .toast__content
       h5.toast__title(v-if="toast.text.heading") {{ $t( toast.text.heading ) }}
       p(v-if="toast.text.text") {{ $t( toast.text.text ) }}
+      p.bigger(v-if="typeof toast.text === 'string' && toast.text") {{ toast.text }}
+
+    .toast__actions
+      buton(
+        icon=   "x"
+        styl=   "unstyled"
+        @click= "closeToast(toast.id)"
+        icon-only
+      ) Close
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import buton from 'form/button'
 
 export default {
   computed: {
     ...mapGetters({
       toasts: 'toastMessages'
     })
+  },
+  components: {
+    buton
+  },
+  methods: {
+    closeToast (id) {
+      this.$store.dispatch('@@toast/REMOVE_TOAST_MESSAGE', id)
+    }
   }
 }
 </script>
@@ -30,7 +48,7 @@ export default {
 
 types = info warn error success
 palette = config.palette
-iconBgWidth = 20px
+iconBgWidth = 22px
 
 .toast
   &__title
@@ -42,18 +60,22 @@ iconBgWidth = 20px
       margin-top 6px
 
   &__content
-    display inline-flex
-    flex-flow row wrap
-    align-items flex-start
+    display inline-block
+    vertical-align top
+    flex 1 1 100%
+    max-width: calc(100% - 32px)
+
+  &__actions
+    margin-left 32px
 
 .toasts
   position fixed
-  top 70px
-  right 0
+  bottom 32px
+  left 32px
   max-width 280px
   z-index 2
   display flex
-  flex-flow column wrap
+  flex-flow row wrap
   padding 0
 
   +above(m)
@@ -65,14 +87,21 @@ iconBgWidth = 20px
   > li
     display flex
     flex-flow row nowrap
-    align-items center
-    background white
-    border-left 1px solid
+    align-items flex-start
+    background: config.palette.bgs.dark
+    border-radius 4px
     width auto
-    padding 8px 24px 8px 12px
+    padding 8px 12px
     position relative
     left 100%
+    box-shadow 0px 6px 30px 4px rgba(black, .25)
     transition all .15s ease-in-out
+
+    +above(m)
+      padding 10px 20px
+
+    +above(xl)
+      padding 12px 24px
 
     // &:after
     //   content ''
@@ -88,15 +117,20 @@ iconBgWidth = 20px
 
     p
       margin-bottom 0
-      color: config.typography.palette.meta
+      color: config.typography.palette.light
+
+      &.bigger
+        font-size 14px
+        font-weight 500
+        line-height 20px
 
     &:before
-      flex-basis: iconBgWidth
+      float left
       height: iconBgWidth
-      mask-size 14px
-      flex-shrink 0
+      mask-size: iconBgWidth - 2px
       margin-right 12px
       z-index 2
+      flex: 0 0 iconBgWidth
 
     for $type in types
       type = s("%s", $type)

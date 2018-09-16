@@ -1,6 +1,7 @@
 import { RxJsonSchema } from 'rxdb'
 import FormItemTypes from 'lodger/lib/defs/FormItemTypes'
-import { Form } from 'lodger/lib/Form';
+import Debug from 'debug'
+const debug = Debug('lodger:forms')
 
 /**
  * Converteste tipurile campurilor 'noastre' in primare
@@ -99,6 +100,7 @@ const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
  */
 const handleOnSubmit = (data: LodgerFormData) => {
   const manipulatedData = {}
+  debug('data before hOS', data)
   if (!data.la) data.la = Date.now()
   Object.keys(data).forEach(what => {
     let value = data[what]
@@ -106,6 +108,7 @@ const handleOnSubmit = (data: LodgerFormData) => {
 
     manipulatedData[what] = value
   })
+  debug('data after hOS', manipulatedData)
   return manipulatedData
 }
 

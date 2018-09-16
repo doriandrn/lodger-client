@@ -1,9 +1,11 @@
 <template lang="pug">
 .list
+  p.empty(v-if="!ids.length") gol
   button(@click="add(taxonomy, fakeData(taxonomy))") + {{ taxonomy }}
   
-  h3 {{ ids.length }}/{{ itemsCount }} {{ plural }}
+  h3(v-if="ids.length") {{ ids.length }}/{{ itemsCount }} {{ plural }}
   field(
+    v-if=     "ids.length > 1"
     type=     "radios",
     label=    "sort.label"
     v-model=  "criteriu.sort"
@@ -15,7 +17,7 @@
   ul(v-if="itemsCount")
     li(
       v-for=  "item, id in items"
-      :class= "{ active: last === id }"
+      :class= "{ last: last === id, selected: selected === id }"
       @click= "select(id)"
     ) {{ item.name }}
       .item__controls
@@ -81,10 +83,13 @@ export default class ListTaxonomyItems extends Vue {
     return this.$store.getters[`${this.taxonomy}/last`]
   }
 
+  get selected () {
+    return this.$store.getters[`${this.taxonomy}/selected`]
+  }
+
   created () {
     this.faker = faker
     this.sub()
-    this.debug(this.$lodger)
   }
 
   async add () {
@@ -120,7 +125,7 @@ export default class ListTaxonomyItems extends Vue {
 
       case 'bloc':
         return {
-          
+          name: faker.random.alphaNumeric()
         }
     }
   }
@@ -158,13 +163,12 @@ export default class ListTaxonomyItems extends Vue {
 
 <style lang="stylus">
 .list
-  max-width 300px
   li
     display flex
     flex-flow row nowrap
     line-height 14px
     font-size 10px
-    &.active
+    &.selected
       color red
 
   .item

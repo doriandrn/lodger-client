@@ -1,4 +1,4 @@
-const bs = 'bloc/selectat'
+const bs = 'bloc/selected'
 
 const fields = [
   {
@@ -8,14 +8,14 @@ const fields = [
     value: g => g[bs]._id
   },
   {
-    id: 'nume',
+    id: 'name',
     placeholder: 'ex. M11, COCOR-2, A3...',
     transform: 'uppercase:all',
     type: 'text',
     required: true,
     v: 'min:1|max:20',
     focus: true,
-    value: g => g[bs].nume
+    value: g => g[bs].name
   },
   {
     id: 'scari',
@@ -38,8 +38,7 @@ const fields = [
     type: 'select',
     notInForm: true,
     required: true,
-    value: g => g['asociatie/activa']._id,
-    options: g => g['asociatie/ids']
+    value: g => g['asociatie/active'] || g['asociatie/selected']
   }
 ]
 

@@ -1,11 +1,6 @@
 <template lang="pug">
 sction#pg
   .boxes
-    .box
-      frm(:form="$lodger.forms[0]")
-    
-
-
     list.box(
       v-for=      "tax in $lodger.taxonomii"
       :taxonomy=  "tax"
@@ -65,7 +60,10 @@ import Component from 'vue-class-component'
   .box
     display flex
     flex-flow row wrap
+    flex 0 1 285px
     margin 8px
+    padding 8px
+    border 1px solid rgba(black, .05)
 
     &es
       display flex

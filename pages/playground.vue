@@ -3,6 +3,7 @@ sction#pg
   .boxes
     list.box(
       v-for=      "tax in $lodger.taxonomii"
+      :key=       "tax"
       :taxonomy=  "tax"
     )
 

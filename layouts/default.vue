@@ -160,9 +160,10 @@ export default {
       return selector
     },
     navInitializare () {
-      const { $t, activa } = this
-      if (!activa || !activa._id) return $t('navigation[0]')
-      return `${ $t( 'asociatie.init.title' ) } - ${ $t( 'defaults.asociatia' ) } ${ activa.name }`
+      // const { $t, activa } = this
+      // if (!activa) return $t('navigation[0]')
+      // return `${ $t( 'asociatie.init.title' ) } - ${ $t( 'defaults.asociatia' ) } ${ activa }`
+      return ''
     },
     balanta () {
       return this.activa.balanta
@@ -179,11 +180,14 @@ export default {
       const { idsAsociatii } = this
       return idsAsociatii && idsAsociatii.length > 1
     },
+    idsAsociatii () {
+      return []
+    },
     ...mapGetters({
       asociatii: 'asociatii',
       blocuri: 'blocuri',
-      idsAsociatii: 'asociatie/ids', 
-      activa: 'asociatie/activa',
+      // idsAsociatii: 'asociatie/ids', 
+      activa: 'asociatie/active',
       apartamente: 'apartamente',
       modalOpen: 'modal/open',
       modalContent: 'modal/content',

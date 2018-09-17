@@ -82,18 +82,14 @@ module.exports = {
     // '@nuxtjs/proxy',
     // '@nuxtjs/pwa'
   ],
-  typescript: {
-    tsconfig,
-    // tslint
-  },
+  // typescript: {
+  //   tsconfig,
+  //   // tslint
+  // },
   /*
   ** Build configuration
   */
   build: {
-    // vendor: [
-    //   'moment',
-    //   'numeral'
-    // ],
     externals: {
       fs: 'commonjs fs'
     },
@@ -102,7 +98,7 @@ module.exports = {
       config.node = { fs: 'empty' }
 
       const stylLoader = config.module.rules.filter(module => String(module.test).indexOf('styl') > -1)[0]
-      console.error('stylLoader', stylLoader.oneOf)
+
       stylLoader.oneOf.forEach(one => {
         const module = one.use.filter(o => o.loader === 'stylus-loader')[0]
         if (!module) return
@@ -118,7 +114,8 @@ module.exports = {
         loader: 'ts-loader',
         test: new RegExp(/\.ts$/),
         options: {
-          appendTsSuffixTo: [/\.vue$/]
+          appendTsSuffixTo: [/\.vue$/],
+          transpileOnly: true // SET TO FALSE FOR TSLINT
         }
       })
       if (config.resolve.extensions.indexOf('.ts') === -1) {
@@ -137,7 +134,7 @@ module.exports = {
         struct: resolve('components/struct'),
         
         lodger: resolve('lodger'),
-        // lib: resolve('lodger/lib'),
+        // lib: resolve('lodger/lib'), -> this doesnt work as it interfers to other libs
         'lodger-plugins': resolve('lodger/plugins'),
         cfg: resolve('lodger/config'),
         forms: resolve('lodger/lib/forms'),

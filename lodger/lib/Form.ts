@@ -97,6 +97,7 @@ class Form {
         notInDb
       } = camp
       let { id, value } = camp
+      console.info('CV', value)
       let _def = camp.default
 
       if (click && !id) camp.id = click

@@ -104,7 +104,10 @@ const handleOnSubmit = (data: LodgerFormData) => {
   if (!data.la) data.la = Date.now()
   Object.keys(data).forEach(what => {
     let value = data[what]
-    if (value === null || value === 'undefined') return
+    if (value === null || value === 'undefined') {
+      debug('fara val', what)
+      return
+    }
 
     manipulatedData[what] = value
   })
@@ -112,6 +115,13 @@ const handleOnSubmit = (data: LodgerFormData) => {
   return manipulatedData
 }
 
+
+/**
+ * Common fields for all taxonomies
+ * 
+ * @param schema 
+ * @param commonFields 
+ */
 const addCommonFieldsToSchema = (
   schema: RxJsonSchema,
   commonFields: [Item] = [{

@@ -453,7 +453,7 @@ export default {
         what = click.split('/')[0]
       }
       if (what) {
-        const { _id } = this.$store.getters[`${what}/activa`]
+        const { _id } = this.$store.getters[`${what}/active`]
         this.$store.dispatch(click, { _id })
       } else {
         const f = this[click]

@@ -166,6 +166,7 @@ class Lodger {
     if (!plural) throw new LodgerError(Errors.noPlural, taxonomie)
     const colectie = db.collections[plural]
     const method = data._id ? 'upsert' : 'insert'
+    debug('put data', data)
     const { _data } = await colectie[method](handleOnSubmit(data))
     if (store) await store.dispatch(`${taxonomie}/set_last`, _data._id)
     debug('pus', taxonomie, _data._id)

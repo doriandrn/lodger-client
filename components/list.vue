@@ -4,7 +4,7 @@
   button(@click="add(taxonomy, fakeData(taxonomy))") + {{ taxonomy }}
   
   h3(v-if="ids.length") {{ ids.length }}/{{ itemsCount }} {{ plural }}
-  field(
+  field.sort(
     v-if=     "ids.length > 1"
     type=     "radios",
     label=    "sort.label"
@@ -139,7 +139,6 @@ export default class ListTaxonomyItems extends Vue {
   get plural () {
     // TODO!
     const plural = this.$lodger.plurals.get(this.taxonomy)
-    this.debug('PLURAL', plural)
     if (!plural) {
       throw new Error('no plural definiton found, component could not init')
     }
@@ -163,6 +162,8 @@ export default class ListTaxonomyItems extends Vue {
 
 <style lang="stylus">
 .list
+  .sort
+    margin-bottom 20px
   li
     display flex
     flex-flow row nowrap

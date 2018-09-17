@@ -67,6 +67,13 @@ iconBgWidth = 22px
 
   &__actions
     margin-left 32px
+    margin-top -12px
+    margin-right -20px
+
+    button
+      border-radius 50%
+      &:hover
+        background yellow
 
 .toasts
   position fixed

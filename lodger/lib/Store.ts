@@ -34,7 +34,7 @@ export default class LodgerStore implements StoreOptions<RootState> {
     
     if (RootModule && RootModule.modules) {
       Object.keys(RootModule.modules).forEach(module => {
-        LodgerStore.use({ module: RootModule.modules[module] })
+        LodgerStore.use({ [module]: RootModule.modules[module] }, module !== 'toast')
       })
     }
     
@@ -47,18 +47,19 @@ export default class LodgerStore implements StoreOptions<RootState> {
       getters
     })
     this.modules = modules
+    debug('MODULES ON INIT', this.modules)
 
     // FUCK YOU TS
     return new Vuex.Store<RootState>(this)
   }
 
-  static use (module: Module<any, RootState>) {
+  static use (module: Module<any, RootState>, namespaced: boolean = true) {
     if (!module || typeof module !== 'object') {
       throw new LodgerError(Errors.invalidModule)
     }
     const key = Object.keys(module)[0]
     if (!key || !module[key]) throw new LodgerError(Errors.invalidModule)
-    debug('using module', key)
-    modules[key] = module[key]
+    debug('using module', key, module[key])
+    modules[key] = Object.assign({}, module[key], { namespaced })
   }
 }

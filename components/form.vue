@@ -3,11 +3,11 @@ form.form(@submit.prevent="validate()")
   //- h5.form__title(v-if="title") {{ $t( title ) }}
   //- p.form__desc(v-if="desc") {{ $t( desc ) }}
 
-  .form__content
+  .form__content(v-if="$fields && $fields.length")
     slot(name=        "beforeFields")
 
     field(
-      v-for=          "field in fields"
+      v-for=          "field in $fields"
       v-if=           "!field.notInForm"
 
       :key=           "`${field.type}-${field.id}`"
@@ -95,14 +95,14 @@ import { Form } from 'lodger/lib/Form'
     @Action('trimite', { namespace: 'feedback' }) trimiteFeedback: any
     @Action('close', { namespace: 'modal' }) closeModal: () => void
 
+    get $fields () {
+      return this.form.data.fields
+    }
+
     data () {
       const { form, isNew } = this
       if (!form) throw new Error('No form supplied')
-      return form.componentData(isNew)
-    }
-
-    get fields () {
-      return this.form.data.fields
+      return form.componentData(isNew, this.$store.getters)
     }
 
     mounted () {

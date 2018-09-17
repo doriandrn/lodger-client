@@ -22,15 +22,17 @@
     ) #[strong {{ item.name }}]
       .item__controls
         buton(
-          @click= "openModal(`${taxonomy}.edit`)"
+          @click= "openModal({ id: `${taxonomy}.edit`, data: item })"
           styl=   "unstyled"
           icon=   "edit"
+          tooltip
           icon-only
         ) modifica
         buton(
           @click= "remove(taxonomy, id)"
           styl=   "unstyled"
           icon=   "trash"
+          tooltip
           icon-only
         ) sterge
         
@@ -194,6 +196,7 @@ typeColors = config.typography.palette
 
     strong
       font-weight 400
+      font-size 14px
       color: typeColors.heading
 
     &:not(:last-child)
@@ -210,6 +213,9 @@ typeColors = config.typography.palette
 
       *
         line-height 14px
+
+      > button:first-child
+        margin-left 64px
 
       button
         background transparent

@@ -129,7 +129,8 @@ const addCommonFieldsToSchema = (
     id: 'la',
     type: 'date-time',
     required: true, // for filters / sorts
-    index: true
+    index: true,
+    notInForm: true
   }]
 ) => {
   commonFields.forEach(item => {

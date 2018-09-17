@@ -10,6 +10,7 @@ import {
   addCommonFieldsToSchema
 } from 'lodger/lib/helpers/forms'
 import { FormError } from 'lodger/lib/Errors'
+import { GetterTree } from 'vuex';
 
 if (process.env.NODE_ENV === 'test') {
   Debug.enable('Form:*')
@@ -84,10 +85,13 @@ class Form {
    * as it will turn reactive
    */
   componentData (
-    isNewForm: boolean
+    isNewForm: boolean,
+    getters?: GetterTree<any, RootState>
   ) {
     const { data: { fields }, name } = this
-    let data = {} as any
+    const debug = Debug('lodger:Form.ts:componentData')
+    let $data = {} as any
+
     fields.forEach(camp => {
       const {
         label,
@@ -97,7 +101,7 @@ class Form {
         notInDb
       } = camp
       let { id, value } = camp
-      console.info('CV', value)
+      debug('CV -> should be func', value)
       let _def = camp.default
 
       if (click && !id) camp.id = click
@@ -108,10 +112,13 @@ class Form {
       }
       
       // apply getters to funcs
-      if (typeof value === 'function') {
+      if (typeof value === 'function' && getters) {
         try {
-          value = value(store.getters)
+          debug('incerc sa pun val')
+          value = value(getters)
+          debug('am incercat, val: ', value)
         } catch (e) {
+          debug('failed to get val', label, getters)
           value = null
         }
       }
@@ -125,11 +132,11 @@ class Form {
       if (required || (camp.v && camp.v.indexOf('required') < 0)) camp.v = `required|${camp.v || ''}`
 
       // valoarea finala
-      data[id] = null
-      data[id] = value !== null && value !== undefined ? value : _def
+      $data[id] = null
+      $data[id] = value !== null && value !== undefined ? value : _def
     })
 
-    return data
+    return $data
   }
 
   /**
@@ -145,9 +152,9 @@ class Form {
       form = require("forms/" + name)
       if (form.default) form = form.default
       // change prototype to object for Vue
-      form = JSON.parse(JSON.stringify(form))
+      // form = JSON.parse(JSON.stringify(form))
       Object.assign(form, { name })
-      debug('✓', name)
+      debug('✓', name, form)
     } catch (e) {
       debug('Error', e)
       throw new FormError(Errors.invalidRequested, name)

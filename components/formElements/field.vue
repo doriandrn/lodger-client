@@ -590,7 +590,6 @@ input[type="radio"]
   &+label
     font-size 0
     height 24px
-    cursor pointer
     display block
 
     > span
@@ -612,6 +611,7 @@ input[type="radio"]
         top 50%
         left 50%
         transform translate(-50%, -50%)
+        background-size 20px
 
   &:hover
   &:focus
@@ -651,10 +651,32 @@ input[type="radio"]
           background-repeat no-repeat
           background-position 50% 50%
 
+        > span
+          background-color: lighten(palette.tertiary, 90%)
+
+    &+label[for="sort.la"]
+      > span:before
+        border 0
+        background-image embedurl('~static/icons/ui/clock.svg', 'utf8')
+
+    &+label[for="sort.az"]
+      > span:before
+        content 'AZ'
+        border 0
+        background none
+        font-size 16px
+        line-height 22px
+        font-weight 500
+        font-family: config.typography.fams.headings
+
 input[type="checkbox"]
   appearance none
   position absolute
   opacity 0
+
+  &:not(:checked)
+    &+label
+      cursor pointer
 
   &+label
     height 24px
@@ -662,7 +684,6 @@ input[type="checkbox"]
     position relative
     margin-bottom 0
     padding 4px // sa fie mai pushy
-    cursor pointer
     color: typeColors.meta
 
     &:before
@@ -686,6 +707,7 @@ input[type="checkbox"]
   &:checked
     &+label
       color: typeColors.headings
+      cursor default
       &:before
         mask-image embedurl('~static/icons/ui/check.svg')
         background-color: typeColors.headings
@@ -737,9 +759,9 @@ input[type="checkbox"]
       display none
 
     &:hover
-      > label
+      > input[type="radio"]:not(:checked)+label
         > span
-          background-color yellow
+          background-color: lighten(palette.primary, 90%)
 
 .radios
   display flex

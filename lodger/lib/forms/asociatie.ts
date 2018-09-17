@@ -11,7 +11,7 @@ interface Asociatie {
   tranzactii?: Tranzactie[]
 }
 
-const getter = 'asociatie/activa'
+const getter = 'modal/data'
 const modalOpen = 'modal/open'
 const modalContent = 'modal/content'
 
@@ -32,13 +32,6 @@ const fields = [
     value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter].name,
     v: 'max:32|min:3',
     transform: 'capitalize'
-  },
-  // Data adaugarii / when added
-  {
-    id: 'la',
-    type: 'date-time',
-    required: true, // for filters / sorts
-    index: true
   },
   {
     id: 'organizatie',

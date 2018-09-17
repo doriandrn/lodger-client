@@ -1,16 +1,16 @@
-export const state = () => ({
+const state = {
   open: false,
   content: null,
   data: null
-})
+}
 
-export const getters = {
+const getters = {
   open: state => state.open,
   content: state => state.content,
   data: state => state.data
 }
 
-export const mutations = {
+const mutations = {
   OPEN: (state, content) => {
     if (content) state.content = content
     state.open = true
@@ -25,7 +25,7 @@ export const mutations = {
   }
 }
 
-export const actions = {
+const actions = {
   open: ({ commit }, content) => {
     console.log('CC', content)
     switch (typeof content) {
@@ -45,4 +45,11 @@ export const actions = {
     commit('CLOSE')
     if (prompt) dispatch('prompt/cancel', null, { root: true })
   }
+}
+
+export default {
+  state,
+  actions,
+  mutations,
+  getters
 }

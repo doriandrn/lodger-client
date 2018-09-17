@@ -1,25 +1,25 @@
 <template lang="pug">
 sction#pg
   .boxes
-    list.box(
-      v-for=      "tax in $lodger.taxonomii"
-      :key=       "tax"
-      :taxonomy=  "tax"
-    )
-
+    .boxes
+      list.box(
+        v-for=      "tax in $lodger.taxonomii"
+        :key=       "tax"
+        :taxonomy=  "tax"
+      )
     
-    //- .details(taxonomy="asociatie")
-    
-    //-   div blocuri
-    //-     list.box(taxonomy="incasare")
+      //- .details(taxonomy="asociatie")
+      
+      //-   div blocuri
+      //-     list.box(taxonomy="incasare")
 
-    //- .box.asociatie(v-if="idAsociatieSelectata")
-    //-   
-    //-   .asociatie__details
-    //-     p #[em balanta] {{ asociatieSelectata.balanta }}
+      //- .box.asociatie(v-if="idAsociatieSelectata")
+      //-   
+      //-   .asociatie__details
+      //-     p #[em balanta] {{ asociatieSelectata.balanta }}
 
-  .box.prefs
-    h6 preferences list
+    .box.prefs
+      h6 preferences list
 </template>
 
 <script lang="ts">
@@ -34,8 +34,7 @@ import Component from 'vue-class-component'
     sction,
     frm,
     list
-  },
-  layout: 'tspg'
+  }
 })
   export default class Playground extends Vue {    
   }

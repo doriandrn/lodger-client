@@ -73,9 +73,8 @@
     )
       frm#main(
         v-if=       "modalContent && modalContent !== 'prompt'",
-        :formData=  "formData(modalContent, this)",
-        :formName=  "modalContent"
-        :type=      "modalContent.split('.')[1]"
+        :form=      "modalForm",
+        :isNew=     "modalContent.split('.')[1] === 'new'"
       )
 
       prompt(v-else-if= "modalContent === 'prompt'")
@@ -133,23 +132,27 @@ export default {
       modalClose: 'modal/close',
       openModal: 'modal/open'
     }),
-    get formData () {
-      return (id, ctx) => {
-        if (!id || !id.length) return
-        const path = id.split('.')
-        const data = require(`forms/${path[0]}`)
-        let { campuri, actiuni } = data
-        if (!campuri) return
+    // get formData () {
+    //   return (id, ctx) => {
+    //     if (!id || !id.length) return
+    //     const path = id.split('.')
+    //     const data = require(`forms/${path[0]}`)
+    //     let { campuri, actiuni } = data
+    //     if (!campuri) return
 
-        const { modalContent, modalData, blocuri, apartamente, debug } = ctx
+    //     const { modalContent, modalData, blocuri, apartamente, debug } = ctx
 
-        campuri = campuri.filter(camp => !camp.notInAddForm)
-        debug(`${path[0]} Form data: `, campuri)
-        return { campuri, actiuni, $for: path[0] }
-      }
-    }
+    //     campuri = campuri.filter(camp => !camp.notInAddForm)
+    //     debug(`${path[0]} Form data: `, campuri)
+    //     return { campuri, actiuni, $for: path[0] }
+    //   }
+    // }
   },
   computed: {
+    modalForm () {
+      const name = this.modalContent.split('.')[0]
+      return this.$lodger.forms.filter(form => form.name === name)[0]
+    },
     switchOptions () {
       const { idsAsociatii, asociatii } = this
       const selector = {}

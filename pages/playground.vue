@@ -66,12 +66,19 @@ import Component from 'vue-class-component'
     padding 8px
     border 1px solid rgba(black, .05)
 
+    &.list > ul
+      margin -8px
+
     &es
       display flex
       flex-flow row wrap
 
     > *
       flex 1 1 100%
+
+    > button
+      max-height 52px
+      margin-top auto
 
     &.prefs
       margin-left auto

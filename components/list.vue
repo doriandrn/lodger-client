@@ -1,7 +1,7 @@
 <template lang="pug">
 .list
   p.empty(v-if="!ids.length") gol
-  button(@click="add(taxonomy, fakeData(taxonomy))") + {{ taxonomy }}
+  buton(@click="add(taxonomy, fakeData(taxonomy))") + {{ taxonomy }}
   
   h3(v-if="ids.length") {{ ids.length }}/{{ itemsCount }} {{ plural }}
   field.sort(
@@ -19,14 +19,26 @@
       v-for=  "item, id in items"
       :class= "{ last: last === id, selected: selected === id }"
       @click= "select(id)"
-    ) {{ item.name }}
+    ) #[strong {{ item.name }}]
       .item__controls
-        button(@click="remove(taxonomy, id)") -
+        buton(
+          @click= "openModal(`${taxonomy}.edit`)"
+          styl=   "unstyled"
+          icon=   "edit"
+          icon-only
+        ) modifica
+        buton(
+          @click= "remove(taxonomy, id)"
+          styl=   "unstyled"
+          icon=   "trash"
+          icon-only
+        ) sterge
+        
   
-  button.more(
+  buton.more(
     v-if="ids.length < itemsCount"
     @click="criteriu.limit = criteriu.limit + criteriu.limit"
-  ) MOR
+  ) ...
 </template>
 
 <script lang="ts">
@@ -38,6 +50,7 @@ import { Action } from 'vuex-class'
 
 /** Components Imports */
 import field from 'form/field'
+import buton from 'form/button'
 
 @Component({
   props: {
@@ -59,11 +72,14 @@ import field from 'form/field'
     }
   },
   components: {
-    field
+    field,
+    buton
   }
 })
 export default class ListTaxonomyItems extends Vue {
   @Action('notify') notifyUser: any
+  @Action('open', { namespace: 'modal' }) openModal: any
+
   data () {
     return {
       items: {},
@@ -161,20 +177,36 @@ export default class ListTaxonomyItems extends Vue {
 </script>
 
 <style lang="stylus">
+@require '~styles/config'
+colors = config.palette
+typeColors = config.typography.palette
+
 .list
   .sort
     margin-bottom 20px
+  ul
+    background: colors.bgs.ui
+
   li
     display flex
     flex-flow row nowrap
-    line-height 14px
-    font-size 10px
+    padding 8px
+
+    strong
+      font-weight 400
+      color: typeColors.heading
+
+    &:not(:last-child)
+      border-bottom: 1px solid colors.borders
+
     &.selected
       color red
 
   .item
     &__controls
       margin-left auto
+      display flex
+      flex-flow row nowrap
 
       *
         line-height 14px

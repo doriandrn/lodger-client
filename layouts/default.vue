@@ -59,7 +59,7 @@
     nuxt
 
   footr
-    p {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
+    p(v-if="app") {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
     ul.footer__stuff(slot="right")
       li
         nuxt-link(to="/credits") Credits
@@ -104,7 +104,6 @@ import { version, name, author } from '../package.json'
 
 export default {
   data () {
-    const { $t } = this
     return {
       app: {
         version,
@@ -114,11 +113,11 @@ export default {
       search: '',
       navItems: [
         {
-          title: $t('navigation[0]'),
+          title: this.$t('navigation[0]'),
           url: '/dashboard'
         },
         {
-          title: $t('navigation[1]'),
+          title: this.$t('navigation[1]'),
           url: '/liste'
         },
         // {
@@ -160,22 +159,28 @@ export default {
       return selector
     },
     navInitializare () {
-      // const { $t, activa } = this
-      // if (!activa) return $t('navigation[0]')
-      // return `${ $t( 'asociatie.init.title' ) } - ${ $t( 'defaults.asociatia' ) } ${ activa }`
+      // const { $t, $activa } = this
+      // if (!$activa || !$activa.name) return $t('navigation[0]')
+      // return `${ $t( 'asociatie.init.title' ) } - ${ $t( 'defaults.asociatia' ) } ${ $activa.name }`
       return ''
     },
+    $activa () {
+      if (!this.$lodger) return {}
+      const activaId = this.$store.getters['asociatie/active']
+      if (!activaId) return {}
+      return this.$lodger.db.asociatii.findOne(activaId).exec()
+    },
     balanta () {
-      return this.activa.balanta
+      return this.$activa.balanta
     },
-    idAsociatieActiva: {
-      get () { return this.activa._id },
-      set (asocId) {
-        this.debug('asoc', asocId)
-        if (typeof asocId !== 'string') return
-        this.schimbaAsociatieActiva(asocId)
-      }
-    },
+    // idAsociatieActiva: {
+    //   get () { return this.$activa._id },
+    //   set (asocId) {
+    //     this.debug('asoc', asocId)
+    //     if (typeof asocId !== 'string') return
+    //     this.schimbaAsociatieActiva(asocId)
+    //   }
+    // },
     administreazaCelPutinOAsociatie () {
       const { idsAsociatii } = this
       return idsAsociatii && idsAsociatii.length > 1
@@ -195,7 +200,7 @@ export default {
     })
   },
   beforeDestroy () {
-    this.$store.commit('DESTROYMAIN', 1)
+    // this.$store.commit('DESTROYMAIN', 1)
   },
   components: {
     headr,

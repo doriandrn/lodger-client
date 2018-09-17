@@ -76,7 +76,7 @@
     v-else-if=    "type === 'radios'",
     :id=          "id",
     :value=       "value",
-    @change=      "$emit('input', $event)"
+    @change=      "$emit('input', $event); debug($event)"
     :options=     "options"
   )
   checkboxes(
@@ -591,12 +591,27 @@ input[type="radio"]
     font-size 0
     height 24px
     cursor pointer
+    display block
 
     > span
-      size 12px
+      size 40px
       display block
       border-radius 50%
-      border: 1px solid config.typography.palette.meta
+      
+      position: absolute
+      top 50%
+      left 0
+      transform translateY(-50%)
+
+      &:before
+        content ''
+        size 20px
+        border-radius 50%
+        border: 1px solid config.typography.palette.meta
+        position absolute
+        top 50%
+        left 50%
+        transform translate(-50%, -50%)
 
   &:hover
   &:focus
@@ -607,7 +622,7 @@ input[type="radio"]
 
   &:checked
     &+label
-      > span
+      > span:before
         background-image: embedurl('~static/icons/ui/stop-circle.svg', 'utf8')
         background-size contain
         background-repeat no-repeat
@@ -619,6 +634,22 @@ input[type="radio"]
       cursor default
   &:hover
     cursor pointer
+
+  &[name="filtruSortare"]
+    &:checked
+      &+label
+        &:after
+          content ''
+          size 20px
+          background embedurl('~static/icons/ui/chevron-down.svg', 'utf8')
+          background-size 11px
+          position absolute
+          display block
+          right 3px
+          top 50%
+          transform translateY(-50%)
+          background-repeat no-repeat
+          background-position 50% 50%
 
 input[type="checkbox"]
   appearance none
@@ -642,8 +673,9 @@ input[type="checkbox"]
       top 1px
 
     > span
+      size 40px
+
       &:not(.input__optional)
-        size 12px
         display block
         border-radius 50%
         border: 1px solid config.typography.palette.meta
@@ -679,14 +711,35 @@ input[type="checkbox"]
       &:before
         background-color: typeColors.headings
 
-.input__cbox
-  display flex
-  flex-flow column nowrap
-  margin 4px 4px 8px
-  height 12px
+.input
+  &__cbox
+    display flex
+    flex-flow column nowrap
+    margin 4px 4px 8px
+    height 12px
 
-  > input[type="checkbox"]
-    display none
+    > input[type="checkbox"]
+      display none
+
+  &__optional
+    margin-left 4px
+    color: typeColors.meta
+    font-weight 100
+
+  &__radio
+    display flex
+    flex-flow column nowrap
+    margin 4px 4px 8px
+    position relative
+    min-width 40px
+
+    > input[type="radio"]
+      display none
+
+    &:hover
+      > label
+        > span
+          background-color yellow
 
 .radios
   display flex
@@ -694,21 +747,6 @@ input[type="checkbox"]
   align-items center
   margin -4px
   cursor default
-
-.input__radio
-  display flex
-  flex-flow column nowrap
-  margin 4px 4px 8px
-  height 12px
-
-  > input[type="radio"]
-    display none
-
-.input
-  &__optional
-    margin-left 4px
-    color: config.typography.palette.meta
-    font-weight 100
 
 .field
   display flex

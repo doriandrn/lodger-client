@@ -1,6 +1,6 @@
 <template lang="pug">
 #playground
-  h1 PLAYGROUND, crazy shit only
+  headr
   main
     nuxt
 
@@ -10,11 +10,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import toasts from 'c/toasts'
+import headr from 'c/header'
 import Component from 'vue-class-component'
 
 @Component({
   components: {
-    toasts
+    toasts,
+    headr
   }
 })
 export default class TSPGLayout extends Vue {

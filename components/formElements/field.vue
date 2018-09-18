@@ -635,40 +635,6 @@ input[type="radio"]
   &:hover
     cursor pointer
 
-  &[name="filtruSortare"]
-    &:checked
-      &+label
-        &:after
-          content ''
-          size 20px
-          background embedurl('~static/icons/ui/chevron-down.svg', 'utf8')
-          background-size 11px
-          position absolute
-          display block
-          right 3px
-          top 50%
-          transform translateY(-50%)
-          background-repeat no-repeat
-          background-position 50% 50%
-
-        > span
-          background-color: lighten(palette.tertiary, 90%)
-
-    &+label[for="sort.la"]
-      > span:before
-        border 0
-        background-image embedurl('~static/icons/ui/clock.svg', 'utf8')
-
-    &+label[for="sort.az"]
-      > span:before
-        content 'AZ'
-        border 0
-        background none
-        font-size 16px
-        line-height 22px
-        font-weight 500
-        font-family: config.typography.fams.headings
-
 input[type="checkbox"]
   appearance none
   position absolute
@@ -919,4 +885,39 @@ input[type="checkbox"]
 
     input
       border-color: config.palette.error !important
+
+.sort
+  input[type="radio"]
+    &:checked
+      &+label
+        &:after
+          content ''
+          size 20px
+          background embedurl('~static/icons/ui/chevron-down.svg', 'utf8')
+          background-size 11px
+          position absolute
+          display block
+          right 3px
+          top 50%
+          transform translateY(-50%)
+          background-repeat no-repeat
+          background-position 50% 50%
+
+        > span
+          background-color: lighten(palette.tertiary, 90%)
+
+    &+label[data-id="sort.la"]
+      > span:before
+        border 0
+        background-image embedurl('~static/icons/ui/clock.svg', 'utf8')
+
+    &+label[data-id="sort.az"]
+      > span:before
+        content 'AZ'
+        border 0
+        background none
+        font-size 16px
+        line-height 22px
+        font-weight 500
+        font-family: config.typography.fams.headings
 </style>

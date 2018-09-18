@@ -170,7 +170,7 @@ describe('Lodger', () => {
       describe('positive', () => {
         test('returns the requested form by name', () => {
           const name = 'asociatie'
-          expect(lodger._getForm(name)).toBe(lodger.forms.filter(form => form.name === name)[0])
+          expect(lodger._getForm(name)).toBe(lodger.forms.filter(form => form.name === name)[0].data)
         })
       })
 

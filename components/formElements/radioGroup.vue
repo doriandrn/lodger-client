@@ -21,12 +21,13 @@ div(
         :name=      "id",
         :disabled=  "option.disabled"
         :checked=   "String(index) === String(value)"
-        :id=        "option.id || option.label",
+        :id=        "optionId(option)",
         @change=    "$emit('change', index)"
-        @click=     "$emit('click', index)"
+        @click=     "$emit('click', index, checked)"
       )
       label.label(
-        :for=   "option.id || option.label"
+        :for=       "optionId(option)"
+        :data-id=   "option.id || option.label"
       ) #[span] {{ options instanceof Array ? option : $t(option.label) }}
 </template>
 
@@ -41,12 +42,16 @@ export default {
         ${ desc ? `<p>${ this.$t(desc) }</p>`: ''}
       `
     },
+    
   },
   computed: {
     tooltipsPosition () {
       const { id } = this
       if (id === 'initprgrs') return 'right'
       return 'top-center'
+    },
+    optionId () {
+      return option => `${this.id}-${option.id || option.label}`
     }
   },
   components: {

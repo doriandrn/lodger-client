@@ -13,6 +13,8 @@ const fields = [
     transform: 'uppercase:all',
     type: 'text',
     required: true,
+    showInList: 'primary',
+    index: true,
     v: 'min:1|max:20',
     focus: true,
     value: g => g[bs].name

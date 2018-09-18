@@ -369,7 +369,7 @@ class Lodger {
    * @memberof Lodger
    */
   _getForm (formName: string) {
-    return this.forms.filter(form => form.name === formName)[0]
+    return this.forms.filter(form => form.name === formName)[0].data
   }
 }
 

@@ -30,19 +30,23 @@ const fields = [
     id: 'proprietar',
     placeholder: 'Ion Barbu',
     transform: 'capitalize',
+    showInList: 'primary',
     v: 'alpha_spaces|max:32',
     value: g => g['apartament/selectat'].proprietar
   },
   {
     id: 'suprafata',
     type: 'number',
+    showInList: 'details',
     default: null, // TODO: ia de la apartamentul de la etajul de dedesubt, in functie de cate ap sunt
     step: 0.01,
     value: g => g['apartament/selectat'].suprafata
   },
   {
     id: 'locatari',
+    index: true,
     type: 'number',
+    showInList: 'details',
     default: 2,
     min: 0,
     max: 10,
@@ -51,6 +55,8 @@ const fields = [
   {
     id: 'camere',
     type: 'number',
+    index: true,
+    showInList: 'details',
     default: 2,
     max: 12,
     min: 1,
@@ -60,12 +66,13 @@ const fields = [
     id: 'etaj',
     type: 'number',
     required: true,
+    showInList: 'secondary',
     notInForm: true,
     default: g => g['etaj/selectat'].etaj,
     value: g => g['apartament/selectat'].etaj
   },
   {
-    id: 'bloc',
+    id: 'blocId',
     required: true,
     notInForm: true,
     default: g => g['etaj/selectat'].bloc,
@@ -76,6 +83,7 @@ const fields = [
     type: 'number',
     required: true,
     notInForm: true,
+    showInList: 'secondary',
     default: g => g['etaj/selectat'].scara,
     value: g => g['apartament/selectat'].scara
   },
@@ -84,11 +92,14 @@ const fields = [
     type: 'bani',
     default: null,
     required: true,
+    showInList: 'details',
+    index: true,
     value: g => g['apartament/selectat'].balanta
   },
   {
     id: 'contoare',
     type: 'contoare',
+    showInList: 'details',
     value: g => g['apartament/selectat'].contoare
   },
   {

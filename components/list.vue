@@ -9,7 +9,7 @@
     type=     "radios",
     label=    "sort.label"
     v-model=  "criteriu.sort"
-    id=       "filtruSortare"
+    :id=       "`sort-${taxonomy}`"
     :options=  "sortOptions"
     required= true
   )
@@ -20,8 +20,12 @@
       :data-id=    "id"
       :class= "{ last: last === id, selected: selected === id }"
       @click= "select(id)"
-    ) #[strong {{ item.name }}]
-      .item__controls
+    )
+      .l
+        strong(v-if="primaryKey") {{ item[primaryKey] }}
+        details(v-if="detailsKeys && detailsKeys.length > -1")
+          div(v-for="detail in detailsKeys") {{detail}}: {{ item[detail] }}
+      .r.item__controls
         buton(
           @click= "openModal({ id: `${taxonomy}.edit`, data: item })"
           styl=   "unstyled"
@@ -129,9 +133,28 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   // commd bcoz not needed so far
-  // get lodgerForm () {
-  //   return this.$lodger._getForm(this.taxonomy)
-  // }
+  get lodgerForm () {
+    return this.$lodger._getForm(this.taxonomy)
+  }
+
+  /**
+   * START: Related to displaying items
+   * 
+   */
+  get primaryKey () {
+    const primaryField = this.lodgerForm.fields.filter(field => field.showInList === 'primary')[0]
+    if (!primaryField) return
+    return primaryField.id
+  }
+
+  get detailsKeys () {
+    return this.lodgerForm.fields
+      .filter(field => field.showInList === 'details')
+      .map(field => field.id)
+  }
+  /**
+   * END
+   */
 
   created () {
     this.faker = faker
@@ -195,15 +218,44 @@ export default class ListTaxonomyItems extends Vue {
 
       case 'bloc':
         return {
-          name: faker.random.alphaNumeric()
+          name: faker.random.alphaNumeric(2)
+        }
+
+      case 'apartament':
+        return {
+          nr: 1,
+          proprietar: `${faker.name.firstName()} ${faker.name.lastName()}`,
+          etaj: 0,
+          scara: 1,
+          balanta: faker.random.number({ min: -10000, max: 100 }),
+          suprafata: faker.random.number({ min: 20, max: 300 }),
+          locatari: faker.random.number({ min: 0, max: 9 })
         }
     }
   }
 
+  /**
+   * @returns an object with each key used as a sorting option
+   */
   get sortOptions () {
-    // return { la: { label: 'sort.la' } }
-    return { la: { label: 'sort.la' }, name: { label: 'sort.az' } }
-    // return { la: { label: 'sort.la' }, suma: { label: 'sort.suma' }, nrChintanta: { label: 'sort.nrChitanta' } }
+    const { lodgerForm: { fields }, debug } = this
+
+    const indexables = fields
+      .filter(field => field.index)
+      .map(field => field.id)
+
+    // TODO: !!! ia din common methods
+    indexables.push('la')
+
+    const sorts = {}
+    indexables.forEach(indexable => {
+      const label = `sort.${indexable === 'name' ? 'az' : indexable}`
+      Object.assign(sorts, { [indexable]: { label } })
+    })
+
+    debug('sorts', sorts)
+    
+    return sorts
   }
 
   get plural () {
@@ -227,6 +279,9 @@ export default class ListTaxonomyItems extends Vue {
     switch (taxonomy) {
       case 'bloc':
         return 'asociatie'
+
+      case 'apartament':
+        return 'bloc'
     }
 
     return
@@ -266,13 +321,21 @@ typeColors = config.typography.palette
     strong
       font-weight 400
       font-size 14px
-      color: typeColors.heading
+      color: typeColors.headings
+
+    &.last
+      strong:after
+        content ''
+        display inline-block
+        vertical-align middle
+        bubble()
 
     &:not(:last-child)
       border-bottom: 1px solid colors.borders
 
     &.selected
-      color red
+      strong
+        color: colors.primary !important
 
   .item
     &__controls

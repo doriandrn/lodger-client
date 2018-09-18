@@ -29,6 +29,7 @@ const fields = [
     required: true,
     focus: true,
     index: true,
+    showInList: 'primary',
     value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter].name,
     v: 'max:32|min:3',
     transform: 'capitalize'
@@ -44,7 +45,8 @@ const fields = [
     type: 'number',
     value: g => g[getter].balanta,
     notInAddForm: true,
-    notInForm: true
+    notInForm: true,
+    showInList: 'right'
   },
   {
     id: 'incasari',

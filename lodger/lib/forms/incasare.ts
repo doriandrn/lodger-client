@@ -2,24 +2,18 @@ import { Getter } from 'vuex'
 
 const fields: Fields = [
   {
-    id: 'deLa',
+    id: 'apartamentId', //aka DE LA
     required: true,
     type: 'search',
-    // taxonomy: 'apartamente',
     ref: 'apartamente'
   },
   {
     id: 'suma',
     type: 'bani',
+    showInList: 'primary',
     index: true,
+    required: true,
     label: 'defaults.sum'
-  },
-  // TODO: adauga moneda, si la cheltuieli
-  {
-    id: 'la',
-    index: true,
-    type: 'date-time',
-    notInForm: true
   },
   {
     id: 'nrChitanta',
@@ -32,14 +26,21 @@ const fields: Fields = [
     id: 'moneda',
     notInForm: true,
     required: true,
-    value: getters => getters['asociatie/activa'].moneda
+    value: getters => getters['asociatie/moneda']
   },
-  {
-    id: 'asociatieId',
-    notInForm: true,
-    required: true,
-    value: (g: Getter<AsociatieState, RootState>) => g['asociatie/activa']._id
-  }
+
+  // ASTA TREBUIE SA RAMANA IN CAZ CA UN APARTAMENT SE STERGE
+  // TREBUIE SA FIGUREZE
+  // asociatieId = idul asociatiei apului
+  /// !!!!!!!!!!!!!!!!
+
+  // {
+  //   id: 'asociatieId',
+  //   notInForm: true,
+  //   required: true,
+  //   primary: true,
+  //   value: (g: Getter<AsociatieState, RootState>) => g['asociatie/active'] || g['asociatie/selected']
+  // }
 ]
 
 const actions = {

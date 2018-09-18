@@ -23,7 +23,7 @@ div(
         :checked=   "String(index) === String(value)"
         :id=        "optionId(option)",
         @change=    "$emit('change', index)"
-        @click=     "$emit('click', index, checked)"
+        @click=     "$emit('click', index, String(index) === String(value))"
       )
       label.label(
         :for=       "optionId(option)"

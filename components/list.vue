@@ -1,7 +1,12 @@
 <template lang="pug">
 .list
   p.empty(v-if="!ids.length") gol
-  buton(@click="add(taxonomy, fakeData(taxonomy))") + {{ taxonomy }}
+  buton(
+    @click="add(taxonomy, fakeData(taxonomy))"
+    :disabled = "taxonomy !== 'asociatie' && !activeReferenceId"
+    icon="plus"
+    icon-only
+  ) {{ taxonomy }}
   
   h3(v-if="ids.length") {{ ids.length }}/{{ itemsCount }} {{ plural }}
   field.sort(
@@ -14,7 +19,9 @@
     required= true
   )
   //- p last: {{ $lodger.getters['asociatie/last'] }}
-  ul(v-if="items && ids.length && itemsCount")
+  ul(
+    v-if="items && ids.length && itemsCount"
+  )
     li(
       v-for=  "item, id in items"
       :data-id=    "id"
@@ -22,9 +29,24 @@
       @click= "select(id)"
     )
       .l
-        strong(v-if="primaryKey") {{ item[primaryKey] }}
-        details(v-if="detailsKeys && detailsKeys.length > -1")
-          div(v-for="detail in detailsKeys") {{detail}}: {{ item[detail] }}
+        strong(
+          v-if=   "primaryKey"
+          :class= "`${taxonomy}__${primaryKey}`"
+        ) {{ item[primaryKey] }}
+        
+        .secondary(v-if="secondaryKeys")
+          div(v-for="key in secondaryKeys")
+            span {{ key }}: {{ item[key] }}
+        details(v-if="detailsKeys && detailsKeys.length")
+          div(
+            v-for="detail in detailsKeys"
+          )
+            bani(
+              v-if=     "detail === 'balanta'"
+              :valoare= "item.balanta"
+            )
+            span(v-else) {{detail}}: {{ item[detail] }}
+
       .r.item__controls
         buton(
           @click= "openModal({ id: `${taxonomy}.edit`, data: item })"
@@ -59,6 +81,7 @@ import { LodgerError } from 'lodger/lib/Errors'
 /** Components Imports */
 import field from 'form/field'
 import buton from 'form/button'
+import bani from 'c/bani'
 
 enum Errors {
   missingReferenceId = 'Missing reference ID'
@@ -100,7 +123,8 @@ enum Errors {
   },
   components: {
     field,
-    buton
+    buton,
+    bani
   }
 })
 export default class ListTaxonomyItems extends Vue {
@@ -113,6 +137,7 @@ export default class ListTaxonomyItems extends Vue {
       criteriu: {
         limit: 5,
         sort: 'la',
+        sortDirection: -1,
         find: {}
       },
       itemsCount: 0
@@ -151,6 +176,15 @@ export default class ListTaxonomyItems extends Vue {
     return this.lodgerForm.fields
       .filter(field => field.showInList === 'details')
       .map(field => field.id)
+  }
+
+  get secondaryKeys () {
+    const keys = this.lodgerForm.fields
+      .filter(field => field.showInList === 'secondary')
+      .map(field => field.id)
+
+    keys.push('la')
+    return keys
   }
   /**
    * END
@@ -211,10 +245,12 @@ export default class ListTaxonomyItems extends Vue {
    */
   fakeData (taxonomy) {
     const name = faker.company.companyName()
+    const monede = ['ron', 'usd', 'eur']
+    const moneda = faker.random.arrayElement(monede)
 
     switch (taxonomy) {
       case 'asociatie':
-        return { name }
+        return { name, moneda }
 
       case 'bloc':
         return {
@@ -230,6 +266,13 @@ export default class ListTaxonomyItems extends Vue {
           balanta: faker.random.number({ min: -10000, max: 100 }),
           suprafata: faker.random.number({ min: 20, max: 300 }),
           locatari: faker.random.number({ min: 0, max: 9 })
+        }
+
+      case 'incasare':
+        return {
+          moneda,
+          suma: Number(faker.finance.amount(100, 10000, 4)),
+          nrChitanta: 1
         }
     }
   }
@@ -268,7 +311,7 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   /**
-   * Reference Taxonomy for 
+   * Reference Taxonomy for taxonomy
    * eg. 'bloc' are ref 'asociatie'
    * 
    */
@@ -282,6 +325,9 @@ export default class ListTaxonomyItems extends Vue {
 
       case 'apartament':
         return 'bloc'
+
+      case 'incasare':
+        return 'apartament'
     }
 
     return
@@ -321,14 +367,16 @@ typeColors = config.typography.palette
     strong
       font-weight 400
       font-size 14px
+      display inline
       color: typeColors.headings
 
     &.last
-      strong:after
-        content ''
-        display inline-block
-        vertical-align middle
-        bubble()
+      strong
+        &:after
+          content ''
+          display inline-block
+          vertical-align middle
+          bubble()
 
     &:not(:last-child)
       border-bottom: 1px solid colors.borders

@@ -41,6 +41,10 @@ const fields = [
     // value: g => g[modalOpen] && g[modalContent] === 'asociatie.new' ? null : g[getter].idN,
   },
   {
+    id: 'moneda',
+    required: true
+  },
+  {
     id: 'balanta',
     type: 'number',
     value: g => g[getter].balanta,

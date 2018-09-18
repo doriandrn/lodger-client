@@ -24,7 +24,9 @@ const fields = [
       return sortate[0] + 1
     },
     value: g => g['apartament/selectat'].nr,
-    required: true
+    required: true,
+    index: true,
+    showInList: 'secondary'
   },
   {
     id: 'proprietar',
@@ -66,7 +68,6 @@ const fields = [
     id: 'etaj',
     type: 'number',
     required: true,
-    showInList: 'secondary',
     notInForm: true,
     default: g => g['etaj/selectat'].etaj,
     value: g => g['apartament/selectat'].etaj
@@ -83,7 +84,6 @@ const fields = [
     type: 'number',
     required: true,
     notInForm: true,
-    showInList: 'secondary',
     default: g => g['etaj/selectat'].scara,
     value: g => g['apartament/selectat'].scara
   },

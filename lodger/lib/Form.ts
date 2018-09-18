@@ -123,7 +123,7 @@ class Form {
         }
       }
 
-      if (typeof _def === 'function') _def = _def(store.getters)
+      if (typeof _def === 'function') _def = _def(getters)
 
       // label
       camp.label = label || `${name ? `${name}.new.` : ''}${id}`

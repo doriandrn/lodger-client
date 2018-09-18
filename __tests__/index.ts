@@ -113,7 +113,7 @@ describe('Lodger', () => {
       // })
     })
 
-    describe('trash', () => {
+    describe('.trash()', () => {
       test('deletes the prev added assoc', () => {
         expect(async () => { await lodger.trash('asociatie', commonId) }).not.toThrow()
         // expect(getters['asociatie/ids']).not.toContain(commonId)
@@ -125,7 +125,7 @@ describe('Lodger', () => {
       expect(lodger.apartamente).toBeDefined()
     })
 
-    describe('setPreference', () => {
+    describe('.setPreference()', () => {
       describe('positive', () => {
         test('sets a new preferences value in store', async () => {
           await lodger.setPreference('client.interface.fontSize', 3)
@@ -161,6 +161,45 @@ describe('Lodger', () => {
 
           } catch (e) {
             expect(String(e).indexOf(Errors.invalidPropertySupplied)).toBeTruthy()
+          }
+        })
+      })
+    })
+
+    describe('.getForm()', () => {
+      describe('positive', () => {
+        test('returns the requested form by name', () => {
+          const name = 'asociatie'
+          expect(lodger._getForm(name)).toBe(lodger.forms.filter(form => form.name === name)[0])
+        })
+      })
+
+      describe('negative', () => {
+        test('throws if argument is diff than string', () => {
+          try {
+            lodger._getForm({ name: 'baba' })
+          } catch (e) {
+            expect(e).toBeDefined()
+          }
+
+          try {
+            lodger._getForm(1)
+          } catch (e) {
+            expect(e).toBeDefined()
+          }
+
+          try {
+            lodger._getForm(['asociatie'])
+          } catch (e) {
+            expect(e).toBeDefined()
+          }
+        })
+
+        test('throws if no form found with the speciffied name', () => {
+          try {
+            lodger._getForm('invalid')
+          } catch (e) {
+            expect(e).toBeDefined()
           }
         })
       })

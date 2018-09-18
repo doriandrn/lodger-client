@@ -94,7 +94,7 @@ function subscribe (
   subscriberName ?: string,
   counterBinder ?: Observer<number>
 ) {
-  // const debug = Debug('lodger:subscribe')
+  const debug = Debug('lodger:subscribe')
 
   const { collections } = <RxDatabase>this
   if (!collections) {
@@ -116,19 +116,21 @@ function subscribe (
     .sort(sort)
     .$
     .subscribe((changes: RxDocument<any>[]) => {
-      if (!changes) return
-      
+      // DO NOT RETURN IF NO CHANGES!!!!!!!
+      debug('NEW CHANGES ON SUB', changes)
       // check if comes from Vue data() -> if it's observable
       if (binder.__ob__) {
         // cleanup first
-        Object.keys(binder).forEach(id => { delete binder[id] })
+        Object.keys(binder).forEach(id => { 
+          Vue.delete(binder, id)
+        })
 
         // update data obj
         changes.map((item: RxDocument<any>) => {
           Vue.set(binder, item._id, item._data)
         })
 
-        if (counterBinder) {
+        if (counterBinder && counterBinder.itemsCount > -1) {
           Vue.set(counterBinder, 'itemsCount', colectie.length)
         }
       } else {
@@ -356,6 +358,18 @@ class Lodger {
         await sub[subscriber].unsubscribe()
       })
     )
+  }
+
+  /**
+   * More of like a helper to return the speciffied form
+   * as we need this in components
+   *
+   * @param {string} formName
+   * @returns {Form} the form
+   * @memberof Lodger
+   */
+  _getForm (formName: string) {
+    return this.forms.filter(form => form.name === formName)[0]
   }
 }
 

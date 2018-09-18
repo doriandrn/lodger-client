@@ -266,6 +266,8 @@ export default {
   sort: {
     label: 'Sortează după',
     la: 'Data ultimei actualizări',
+    az: 'Alfabetic, ascendent',
+    za: 'Alfabetic, descendent',
     suma: 'Valoarea tranzacției',
     nrChitanta: 'Numărul chitanței'
   },

@@ -14,9 +14,10 @@
     required= true
   )
   //- p last: {{ $lodger.getters['asociatie/last'] }}
-  ul(v-if="itemsCount")
+  ul(v-if="items && ids.length && itemsCount")
     li(
       v-for=  "item, id in items"
+      :data-id=    "id"
       :class= "{ last: last === id, selected: selected === id }"
       @click= "select(id)"
     ) #[strong {{ item.name }}]
@@ -49,10 +50,15 @@ import faker from 'faker'
 import Component from 'vue-class-component'
 // import { State, Action, Getter } from 'vuex-class'
 import { Action } from 'vuex-class'
+import { LodgerError } from 'lodger/lib/Errors'
 
 /** Components Imports */
 import field from 'form/field'
 import buton from 'form/button'
+
+enum Errors {
+  missingReferenceId = 'Missing reference ID'
+}
 
 @Component({
   props: {
@@ -63,14 +69,29 @@ import buton from 'form/button'
     }
   },
   watch: {
-    // items () {
-    //   this.itemsCount = this.$lodger.db[this.plural].length
-    // },
+    /**
+     * Resubscribe everytime the crit changes
+     */
     criteriu: {
       handler () {
+        this.debug('change handler callD')
         this.sub()
       },
       deep: true
+    },
+    /**
+     * 
+     */
+    activeReferenceId (newVal) {
+      if (!newVal) return
+
+      const { refTax, debug } = this
+      if (!refTax) return
+
+      debug('schimbat', newVal)
+
+      this.criteriu.find = { [`${refTax}Id`]: newVal }
+      // Object.assign(this.criteriu.find, { [`${refTax}Id`]: newVal })
     }
   },
   components: {
@@ -87,14 +108,16 @@ export default class ListTaxonomyItems extends Vue {
       items: {},
       criteriu: {
         limit: 5,
-        sort: 'la'
+        sort: 'la',
+        find: {}
       },
       itemsCount: 0
     }
   }
 
   get ids () {
-    return Object.keys(this.items)
+    const { items } = this
+    return Object.keys(items)
   }
 
   get last () {
@@ -105,12 +128,27 @@ export default class ListTaxonomyItems extends Vue {
     return this.$store.getters[`${this.taxonomy}/selected`]
   }
 
+  // commd bcoz not needed so far
+  // get lodgerForm () {
+  //   return this.$lodger._getForm(this.taxonomy)
+  // }
+
   created () {
     this.faker = faker
     this.sub()
   }
 
   async add () {
+    const { activeReferenceId, taxonomy } = this
+    const refId = activeReferenceId
+    
+    const { refTax, debug } = this
+    if (!refTax && taxonomy !== 'asociatie') {
+      throw new LodgerError(Errors.missingReferenceId)
+    }
+
+    if (taxonomy !== 'asociatie') Object.assign(arguments[1], { [`${refTax}Id`]: refId })
+
     try {
       return await this.$lodger.put(...arguments)
     } catch (e) {
@@ -128,6 +166,20 @@ export default class ListTaxonomyItems extends Vue {
   select () {
     const { taxonomy, $store: { commit }} = this
     commit(`${taxonomy}/select`, ... arguments)
+  }
+
+  /**
+   * For taxonomies that have references
+   * this is the referred id
+   */
+  get activeReferenceId () {
+    const { taxonomy, $store: { commit, getters }} = this
+    if (!taxonomy) return
+
+    const { refTax, debug } = this
+    if (!refTax) return
+
+    return getters[`${refTax}/active`] || getters[`${refTax}/selected`]
   }
 
   /**
@@ -161,6 +213,23 @@ export default class ListTaxonomyItems extends Vue {
       throw new Error('no plural definiton found, component could not init')
     }
     return plural
+  }
+
+  /**
+   * Reference Taxonomy for 
+   * eg. 'bloc' are ref 'asociatie'
+   * 
+   */
+  get refTax () {
+    const { taxonomy } = this
+    if (!taxonomy) return
+
+    switch (taxonomy) {
+      case 'bloc':
+        return 'asociatie'
+    }
+
+    return
   }
 
   /**

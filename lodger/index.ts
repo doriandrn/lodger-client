@@ -92,7 +92,7 @@ function subscribe (
   taxonomie: Plural,
   criteriu ?: Criteriu,
   subscriberName ?: string,
-  counterBinder ?: Observer<number>
+  dataBinder ?: Observer<number>
 ) {
   const debug = Debug('lodger:subscribe')
 
@@ -107,9 +107,8 @@ function subscribe (
     throw new LodgerError('invalid collection %%', taxonomie)
   }
   const subscriber = <Subscriber>subscribers[subscriberName || 'main']
-  if (sort) {
-    if (sort === 'la') sort = { la: -1 }
-  }
+
+  debug('sort bef', sort)
   subscriber[taxonomie] = colectie
     .find(find)
     .limit(paging)
@@ -130,9 +129,18 @@ function subscribe (
           Vue.set(binder, item._id, item._data)
         })
 
-        if (counterBinder && counterBinder.itemsCount > -1) {
-          Vue.set(counterBinder, 'itemsCount', colectie.length)
-        }
+        if (dataBinder) {
+          // update items count
+          if (dataBinder.itemsCount > -1) {
+            Vue.set(dataBinder, 'itemsCount', colectie.length)
+          }
+          // remove preloading
+          if (dataBinder.fetching) {
+            dataBinder.fetching = false
+            // Vue.set(dataBinder, '_preloading', false)
+          }
+        } 
+
       } else {
         binder = Object.assign({},
           ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))

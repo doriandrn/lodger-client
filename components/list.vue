@@ -13,12 +13,15 @@
     v-if=     "ids.length > 1"
     type=     "radios",
     label=    "sort.label"
-    v-model=  "criteriu.sort"
+    v-model=  "criteriu.sort.key"
     :id=       "`sort-${taxonomy}`"
     :options=  "sortOptions"
     required= true
+    @click=    "handleSortClick"
+    :class=     "{ reverseActive: criteriu.sort.direction < 1}"
   )
   //- p last: {{ $lodger.getters['asociatie/last'] }}
+  h4(v-if="fetching") loadin'...
   ul(
     v-if="items && ids.length && itemsCount"
   )
@@ -35,8 +38,13 @@
         ) {{ item[primaryKey] }}
         
         .secondary(v-if="secondaryKeys")
-          div(v-for="key in secondaryKeys")
-            span {{ key }}: {{ item[key] }}
+          viw(
+            v-for=  "key in secondaryKeys"
+            :type=  "key",
+            :key=   "key",
+            :value= "item[key]"
+          )
+            //- span {{ key }}: {{ item[key] }}
         details(v-if="detailsKeys && detailsKeys.length")
           div(
             v-for="detail in detailsKeys"
@@ -82,6 +90,7 @@ import { LodgerError } from 'lodger/lib/Errors'
 import field from 'form/field'
 import buton from 'form/button'
 import bani from 'c/bani'
+import viw from 'c/viewElement'
 
 enum Errors {
   missingReferenceId = 'Missing reference ID'
@@ -124,7 +133,8 @@ enum Errors {
   components: {
     field,
     buton,
-    bani
+    bani,
+    viw
   }
 })
 export default class ListTaxonomyItems extends Vue {
@@ -136,11 +146,14 @@ export default class ListTaxonomyItems extends Vue {
       items: {},
       criteriu: {
         limit: 5,
-        sort: 'la',
-        sortDirection: -1,
+        sort: {
+          key: 'la',
+          direction: 1
+        },
         find: {}
       },
-      itemsCount: 0
+      itemsCount: 0,
+      fetching: false
     }
   }
 
@@ -337,6 +350,7 @@ export default class ListTaxonomyItems extends Vue {
    * Subscriber method for items
    */
   sub () {
+    this.fetching = true
     this.$lodger.subscribe(
       this.items,
       this.plural,
@@ -344,6 +358,18 @@ export default class ListTaxonomyItems extends Vue {
       undefined,
       this.$data
     )
+  }
+
+  handleSortClick (e) {
+    this.debug('sort clickd', e)
+    const { checked } = e
+    const { direction } = this.criteriu.sort
+    if (checked) {
+      this.criteriu.sort.direction = direction > 0 ? -1 : 1
+    } else {
+      // default
+      this.criteriu.sort.direction = 1
+    }
   }
 }
 </script>

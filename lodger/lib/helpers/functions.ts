@@ -1,5 +1,8 @@
 // import { Taxonomii } from 'lodger/index'
 import LodgerConfig from '../../../lodger.config'
+import Debug from 'debug'
+// Debug.enable('functions:*')
+
 type TraversableObject = { [index: string]: TraversableObject }
 /**
  * Traverseaza un obiect cu o functie
@@ -40,9 +43,18 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
   }
 
   const { defaults } = LodgerConfig.taxonomii
+  const debug = Debug('functions:getCriteriu')
   let { criteriu } = defaults
+
   criteriu = Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
-  if (criteriuCerut) Object.assign(criteriu, criteriuCerut)
+  debug(taxonomie, 'criteriu inainte de criteriuCerut', criteriu)
+  debug(taxonomie, 'criteriu cerut', { ...criteriuCerut })
+  if (criteriuCerut) {
+    const { sort: { key, direction } } = criteriuCerut
+    const _sort = key ? { [key]: direction || 1 } : {}
+
+    Object.assign(criteriu, {...criteriuCerut }, { sort: _sort })
+  }
   // console.info('criteriu', criteriu, criteriuCerut)
   // switch (taxonomie) {
   //   case 'blocuri':
@@ -54,6 +66,8 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
   //     Object.assign(criteriu.find, { bloc: { $in: g => g['bloc/ids'] } })
   // }
   // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
+  
+  debug(taxonomie, 'DUPA:', criteriu)
   return criteriu
 }
 

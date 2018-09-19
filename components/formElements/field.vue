@@ -77,6 +77,7 @@
     :id=          "id",
     :value=       "value",
     @change=      "$emit('input', $event); debug($event)"
+    @click=       "$emit('click', $event)"
     :options=     "options"
   )
   checkboxes(
@@ -661,6 +662,7 @@ input[type="checkbox"]
 
     > span
       size 40px
+      transition background-color .15s ease-in-out
 
       &:not(.input__optional)
         display block
@@ -897,7 +899,7 @@ input[type="checkbox"]
           background-size 11px
           position absolute
           display block
-          right 3px
+          right -9px
           top 50%
           transform translateY(-50%)
           background-repeat no-repeat
@@ -920,4 +922,15 @@ input[type="checkbox"]
         line-height 22px
         font-weight 500
         font-family: config.typography.fams.headings
+
+
+  &.reverseActive
+    input[type="radio"]
+      &:checked
+        &+label
+          > span
+            background-color: lighten(palette.secondary, 90%)
+
+          &:after
+            transform rotate(180deg)
 </style>

@@ -9,7 +9,10 @@ span.view
   bani(
     v-else-if="type === 'bani'"
   )
-  p insert an el here!!!!
+  span.ap__nr(
+    v-else-if="type === 'nr'"
+  ) {{ value }}
+  p(v-else) insert an el here!!!!
 </template>
 
 <script lang="ts">

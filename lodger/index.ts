@@ -15,6 +15,8 @@ import { LodgerError } from 'lodger/lib/Errors'
 import Vue from 'vue'
 import { Observer } from 'rxjs';
 
+import { predefinite } from 'lodger/lib/forms/serviciu'
+
 const { NODE_ENV } = process.env
 
 const buildOpts: BuildOptions = {
@@ -116,7 +118,13 @@ function subscribe (
     .$
     .subscribe((changes: RxDocument<any>[]) => {
       // DO NOT RETURN IF NO CHANGES!!!!!!!
-      debug('NEW CHANGES ON SUB', changes)
+      debug('NEW CHANGES ON SUB', taxonomie, changes)
+      // assuming this is the first time ?! 
+      if (taxonomie === 'servicii' && !changes.length) {
+        debug('adaug predefinite')
+        predefinite.forEach(async denumire => { await this[taxonomie].insert({ denumire }) })
+      }
+
       // check if comes from Vue data() -> if it's observable
       if (binder.__ob__) {
         // cleanup first

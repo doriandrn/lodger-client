@@ -61,7 +61,7 @@ class Form {
         pushFieldToSchema(field, schema)
       })
     
-    addCommonFieldsToSchema(schema)
+    if (name !== 'serviciu') addCommonFieldsToSchema(schema)
 
     return <RxJsonSchema>schema
   }

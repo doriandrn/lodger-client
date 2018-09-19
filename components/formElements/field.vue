@@ -590,7 +590,7 @@ input[type="text"]
 input[type="radio"]
   &+label
     font-size 0
-    height 24px
+    height 40px
     display block
 
     > span
@@ -889,6 +889,18 @@ input[type="checkbox"]
       border-color: config.palette.error !important
 
 .sort
+  &.field
+    margin-bottom auto
+
+  > label
+    display none
+
+  > div[role="radiogroup"]
+    width 100%
+
+    > .radios
+      justify-content space-around
+
   input[type="radio"]
     &:checked
       &+label

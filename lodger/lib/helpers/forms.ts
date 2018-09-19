@@ -101,7 +101,9 @@ const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
 const handleOnSubmit = (data: LodgerFormData) => {
   const manipulatedData = {}
   debug('data before hOS', data)
-  if (!data.la) data.la = Date.now()
+
+  // not data.denumire pt servicii :/
+  if (!data.la && !data.denumire) data.la = Date.now()
   Object.keys(data).forEach(what => {
     let value = data[what]
     if (value === null || value === 'undefined') {

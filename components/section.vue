@@ -3,7 +3,11 @@ section
   .inner
     slot(name="beforeTitle")
     h1(v-if="title") {{ title }}
-    slot
+    .inner__content
+      slot
+
+    .inner__sidebar(v-if="$slots.sidebar")
+      slot(name="sidebar")
 </template>
 
 <script>

@@ -50,7 +50,8 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
   debug(taxonomie, 'criteriu inainte de criteriuCerut', criteriu)
   debug(taxonomie, 'criteriu cerut', { ...criteriuCerut })
   if (criteriuCerut) {
-    const { sort: { key, direction } } = criteriuCerut
+    let { sort: { key, direction } } = criteriuCerut
+    if (key === 'la' && taxonomie === 'servicii') key = 'denumire'
     const _sort = key ? { [key]: direction || 1 } : {}
 
     Object.assign(criteriu, {...criteriuCerut }, { sort: _sort })

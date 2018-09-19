@@ -1,14 +1,24 @@
 <template lang="pug">
 .list
-  p.empty(v-if="!ids.length") gol
-  buton(
-    @click="add(taxonomy, fakeData(taxonomy))"
-    :disabled = "taxonomy !== 'asociatie' && !activeReferenceId"
-    icon="plus"
-    icon-only
-  ) {{ taxonomy }}
+  split.list__header
+    .top
+      h2.list__heading {{ plural }} {{ refTax }}
+      buton(
+        @click="add(taxonomy, fakeData(taxonomy))"
+        :disabled = "taxesWithoutRef.indexOf(taxonomy) < 0 && !activeReferenceId"
+        styl="unstyled"
+        icon="plus"
+        icon-only
+      ) {{ taxonomy }}
+
+    .bottom
+      span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }} 
+
+    //- buton(slot="right") ceva
   
-  h3(v-if="ids.length") {{ ids.length }}/{{ itemsCount }} {{ plural }}
+  p.empty(v-if="!ids.length") gol
+  
+  
   field.sort(
     v-if=     "ids.length > 1"
     type=     "radios",
@@ -31,7 +41,7 @@
       :class= "{ last: last === id, selected: selected === id }"
       @click= "select(id)"
     )
-      .l
+      split
         strong(
           v-if=   "primaryKey"
           :class= "`${taxonomy}__${primaryKey}`"
@@ -55,21 +65,22 @@
             )
             span(v-else) {{detail}}: {{ item[detail] }}
 
-      .r.item__controls
-        buton(
-          @click= "openModal({ id: `${taxonomy}.edit`, data: item })"
-          styl=   "unstyled"
-          icon=   "edit"
-          tooltip
-          icon-only
-        ) modifica
-        buton(
-          @click= "remove(taxonomy, id)"
-          styl=   "unstyled"
-          icon=   "trash"
-          tooltip
-          icon-only
-        ) sterge
+        .item__controls(slot="right")
+          buton(
+            @click= "openModal({ id: `${taxonomy}.edit`, data: item })"
+            styl=   "unstyled"
+            icon=   "edit"
+            tooltip
+            icon-only
+          ) modifica
+          buton(
+            @click= "remove(taxonomy, id)"
+            styl=   "unstyled"
+            icon=   "trash"
+            dangerous= true
+            tooltip
+            icon-only
+          ) sterge
         
   
   buton.more(
@@ -91,6 +102,7 @@ import field from 'form/field'
 import buton from 'form/button'
 import bani from 'c/bani'
 import viw from 'c/viewElement'
+import split from 'c/split'
 
 enum Errors {
   missingReferenceId = 'Missing reference ID'
@@ -134,7 +146,8 @@ enum Errors {
     field,
     buton,
     bani,
-    viw
+    viw,
+    split
   }
 })
 export default class ListTaxonomyItems extends Vue {
@@ -196,7 +209,7 @@ export default class ListTaxonomyItems extends Vue {
       .filter(field => field.showInList === 'secondary')
       .map(field => field.id)
 
-    keys.push('la')
+    if (this.taxonomy !== 'serviciu') keys.push('la')
     return keys
   }
   /**
@@ -209,15 +222,15 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   async add () {
-    const { activeReferenceId, taxonomy } = this
+    const { activeReferenceId, taxonomy, taxesWithoutRef } = this
     const refId = activeReferenceId
     
     const { refTax, debug } = this
-    if (!refTax && taxonomy !== 'asociatie') {
+    if (!refTax && taxesWithoutRef.indexOf(taxonomy) < 0) {
       throw new LodgerError(Errors.missingReferenceId)
     }
 
-    if (taxonomy !== 'asociatie') Object.assign(arguments[1], { [`${refTax}Id`]: refId })
+    if (taxesWithoutRef.indexOf(taxonomy) < 0) Object.assign(arguments[1], { [`${refTax}Id`]: refId })
 
     try {
       return await this.$lodger.put(...arguments)
@@ -287,6 +300,18 @@ export default class ListTaxonomyItems extends Vue {
           suma: Number(faker.finance.amount(100, 10000, 4)),
           nrChitanta: 1
         }
+
+      case 'furnizor':
+        return {
+          name: faker.company.companyName(),
+          servicii: []
+          // servicii: faker.random.arrayElement(this.$store.getters[''])
+        }
+
+      case 'serviciu':
+        return {
+          denumire: faker.hacker.adjective()
+        }
     }
   }
 
@@ -301,7 +326,7 @@ export default class ListTaxonomyItems extends Vue {
       .map(field => field.id)
 
     // TODO: !!! ia din common methods
-    indexables.push('la')
+    if (this.taxonomy !== 'serviciu') indexables.push('la')
 
     const sorts = {}
     indexables.forEach(indexable => {
@@ -341,9 +366,16 @@ export default class ListTaxonomyItems extends Vue {
 
       case 'incasare':
         return 'apartament'
+
+      case 'cheltuiala':
+        return 'asociatie'
     }
 
     return
+  }
+
+  get taxesWithoutRef () {
+    return ['asociatie', 'furnizor', 'serviciu']
   }
 
   /**
@@ -380,8 +412,38 @@ colors = config.palette
 typeColors = config.typography.palette
 
 .list
+  &__heading
+    margin-bottom 0
+
+  &__header
+    max-height 60px
+    margin-bottom 0
+
+    .top
+      display flex
+      flex-flow row nowrap
+      align-items center
+
+      > *:not(:first-child)
+        margin-left 20px
+
+    .left
+      display flex
+      flex-flow column nowrap
+      align-items flex-start
+
+      > *
+        flex 1 1 100%
+
+  .split
+    .left
+      flex-flow column nowrap
+      align-items flex-start
+
   .sort
     margin-bottom 20px
+
+    
   ul
     background: colors.bgs.ui
 
@@ -389,6 +451,8 @@ typeColors = config.typography.palette
     display flex
     flex-flow row nowrap
     padding 8px
+    position relative
+    overflow hidden
 
     strong
       font-weight 400
@@ -411,11 +475,20 @@ typeColors = config.typography.palette
       strong
         color: colors.primary !important
 
+    &:hover
+    &:active
+      .item
+        &__controls
+          right 0
+
   .item
     &__controls
       margin-left auto
       display flex
       flex-flow row nowrap
+      position relative
+      right -120px
+      transition right .1s ease
 
       *
         line-height 14px

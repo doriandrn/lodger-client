@@ -2,7 +2,9 @@ const fields = [
   {
     id: 'denumire',
     required: true,
-    isPrimary: true
+    showInList: 'primary',
+    isPrimary: true,
+    index: true
   },
   {
     id: 'furnizori',

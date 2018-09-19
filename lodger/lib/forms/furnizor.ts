@@ -1,7 +1,9 @@
 export const fields = [
   {
-    id: 'nume',
-    required: true
+    id: 'name',
+    required: true,
+    showInList: 'primary',
+    index: true
   },
   {
     id: 'servicii',

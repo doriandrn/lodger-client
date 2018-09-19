@@ -8,6 +8,8 @@ sction#pg
         :taxonomy=  "tax"
       )
     
+    registru
+    
       //- .details(taxonomy="asociatie")
       
       //-   div blocuri
@@ -18,22 +20,25 @@ sction#pg
       //-   .asociatie__details
       //-     p #[em balanta] {{ asociatieSelectata.balanta }}
 
-    .box.prefs
-      h6 preferences list
+  .box.prefs(slot="sidebar")
+    h6 preferences list
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import Component from 'vue-class-component'
+
 import sction from 'c/section'
 import frm from 'c/form'
 import list from 'c/list'
-import Component from 'vue-class-component'
+import registru from 'c/registru'
 
 @Component({
   components: {
     sction,
     frm,
-    list
+    list,
+    registru
   }
 })
   export default class Playground extends Vue {    
@@ -50,6 +55,8 @@ import Component from 'vue-class-component'
     flex-flow row nowrap
   ul
     padding 0
+    max-height 300px
+    overflow auto
 
   *
     user-select none
@@ -59,7 +66,7 @@ import Component from 'vue-class-component'
 
   .box
     display flex
-    flex-flow row wrap
+    flex-flow column nowrap
     flex 0 1 285px
     margin 8px
     padding 8px
@@ -67,17 +74,14 @@ import Component from 'vue-class-component'
 
     &.list > ul
       margin -8px
+      width calc(100% + 16px)
+
+    > button
+      margin auto auto 0
 
     &es
       display flex
       flex-flow row wrap
-
-    > *
-      flex 1 1 100%
-
-    > button
-      max-height 52px
-      margin-top auto
 
     &.prefs
       margin-left auto

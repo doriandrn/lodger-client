@@ -162,10 +162,10 @@ export default {
       return selector
     },
     navInitializare () {
-      // const { $t, $activa } = this
-      // if (!$activa || !$activa.name) return $t('navigation[0]')
-      // return `${ $t( 'asociatie.init.title' ) } - ${ $t( 'defaults.asociatia' ) } ${ $activa.name }`
-      return ''
+      const { $lodger: { getters } } = this
+      const $activa = getters['$asociatie']
+      if (!$activa || !$activa.name) return this.$t('navigation[0]')
+      return `${ this.$t( 'asociatie.init.title' ) } - ${ this.$t( 'defaults.asociatia' ) } ${ $activa.name }`
     },
     $activa () {
       if (!this.$lodger) return {}

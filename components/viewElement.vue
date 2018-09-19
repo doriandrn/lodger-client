@@ -7,12 +7,13 @@ span.view
     liveUpdate= true
   )
   bani(
-    v-else-if="type === 'bani'"
+    v-else-if="['suma', 'bani', 'balanta'].indexOf(type) > -1"
+    :valoare="value"
   )
   span.ap__nr(
     v-else-if="type === 'nr'"
   ) {{ value }}
-  p(v-else) insert an el here!!!!
+  strong(v-else) {{ value }}
 </template>
 
 <script lang="ts">
@@ -28,7 +29,7 @@ import bani from 'c/bani'
       default: null
     },
     value: {
-      type: [Number, Object, Boolean],
+      type: [Number, Object, Boolean, String],
       default: null
     }
   },

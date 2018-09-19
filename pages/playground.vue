@@ -1,14 +1,13 @@
 <template lang="pug">
 sction#pg
   .boxes
-    .box.boxes
-      list.box(
-        v-for=      "tax in $lodger.taxonomii"
-        :key=       "tax"
-        :taxonomy=  "tax"
-      )
-    
-    registru
+    list.box(
+      v-for=      "tax in $lodger.taxonomii"
+      :key=       "tax"
+      :taxonomy=  "tax"
+    )
+  
+  registru
     
       //- .details(taxonomy="asociatie")
       

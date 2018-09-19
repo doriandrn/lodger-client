@@ -9,14 +9,16 @@ import { mapGetters } from 'vuex'
 import numeral from 'numeral'
 
 export default {
-  computed: mapGetters({
-    moneda: 'asociatie/moneda'
-  }),
   methods: { numeral },
   props: {
     valoare: {
       type: Number,
       default: 0
+    },
+    moneda: {
+      type: String,
+      default: null,
+      required: true
     }
   }
 }

@@ -30,8 +30,7 @@
     @click=    "handleSortClick"
     :class=     "{ reverseActive: criteriu.sort.direction < 1}"
   )
-  //- p last: {{ $lodger.getters['asociatie/last'] }}
-  h4(v-if="fetching") loadin'...
+
   ul(
     v-if=     "items && ids.length && itemsCount"
     :class=   "{ fetching }"
@@ -43,10 +42,13 @@
       @click= "select(id)"
     )
       split
-        strong(
+        viw(
           v-if=   "primaryKey"
+          :type=  "primaryKey",
+          :key=   "primaryKey",
+          :value= "item[primaryKey]"
           :class= "`${taxonomy}__${primaryKey}`"
-        ) {{ item[primaryKey] }}
+        )
         
         .secondary(v-if="secondaryKeys")
           viw(
@@ -115,6 +117,13 @@ enum Errors {
       type: String,
       required: true,
       default: 'asociatie'
+    },
+    /**
+     * alternate for refTax 
+    */
+    reference: {
+      type: String,
+      default: null
     }
   },
   watch: {
@@ -194,7 +203,9 @@ export default class ListTaxonomyItems extends Vue {
    * 
    */
   get primaryKey () {
-    const primaryField = this.lodgerForm.fields.filter(field => field.showInList === 'primary')[0]
+    const { lodgerForm } = this
+    if (!lodgerForm) return '_id'
+    const primaryField = lodgerForm.fields.filter(field => field.showInList === 'primary')[0]
     if (!primaryField) return
     return primaryField.id
   }
@@ -249,7 +260,7 @@ export default class ListTaxonomyItems extends Vue {
 
   select () {
     const { taxonomy, $store: { commit }} = this
-    commit(`${taxonomy}/select`, ... arguments)
+    this.$lodger.select(taxonomy, ... arguments)
   }
 
   /**
@@ -365,6 +376,7 @@ export default class ListTaxonomyItems extends Vue {
 
     switch (taxonomy) {
       case 'bloc':
+      case 'tranzactie':
         return 'asociatie'
 
       case 'apartament':
@@ -389,11 +401,14 @@ export default class ListTaxonomyItems extends Vue {
    */
   sub () {
     this.fetching = true
+    
+    console.info('!!!', this.plural)
+
     this.$lodger.subscribe(
       this.items,
       this.plural,
       this.criteriu,
-      undefined,
+      this.taxonomy === 'tranzactie' ? 'registru' : undefined,
       this.$data
     )
   }
@@ -447,11 +462,15 @@ typeColors = config.typography.palette
       align-items flex-start
 
   .sort
-    margin-bottom 20px
+    margin 8px -8px
+    background-color: rgba(black, .05)
 
     
   ul
     background: colors.bgs.ui
+
+    &.fetching
+      background-color red
 
   li
     display flex
@@ -492,7 +511,7 @@ typeColors = config.typography.palette
       margin-left auto
       display flex
       flex-flow row nowrap
-      position relative
+      position absolute
       right -120px
       transition right .1s ease
 

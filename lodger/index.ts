@@ -31,6 +31,9 @@ const buildOpts: BuildOptions = {
 
 const subscribers: SubscribersList = {
   main: {},
+  registru: {},
+  listeDePlata: {},
+  statistici: {}
   // altSubscriber: { ... }
 }
 
@@ -102,6 +105,11 @@ function subscribe (
   if (!collections) {
     throw new LodgerError(Errors.missingCoreDefinitions)
   }
+  // PENTRU REGISTRU PLM
+  if (taxonomie === 'tranzactii') {
+    taxonomie = 'incasari'
+  }
+
   let { limit, index, sort, find } = getCriteriu(taxonomie, criteriu)
   const paging = Number(limit || 0) * (index || 1)
   const colectie = collections[<Plural>taxonomie]
@@ -160,6 +168,11 @@ function subscribe (
 
 const plugins: Plugin[] = []
 
+/**
+ * Custom DB getters!!
+ */
+const dbGetters = {}
+
 class Lodger {
   constructor (
     protected taxonomii: Taxonomii[],
@@ -210,6 +223,17 @@ class Lodger {
   }
 
   /**
+   * 
+   * @param taxonomie 
+   * @param id 
+   */
+  async select (taxonomie, id) {
+    this.store.commit(`${taxonomie}/select`, id)
+    const plural = this.plurals.get(taxonomie)
+    dbGetters[`$${taxonomie}`] = await this.db[plural].findOne(id).exec()
+  }
+
+  /**
    * Sets a preference either in DB or store
    * 
    */
@@ -252,7 +276,7 @@ class Lodger {
    * 
    */
   get getters () {
-    const { dbGetters, store } = this
+    const { store } = this
     if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
     return {
       ...store.getters,
@@ -260,28 +284,6 @@ class Lodger {
     }
   }
 
-  get dbGetters () {
-    // $asociatie -> RxDDOC
-    // $bloc -> RXDOc
-    const dbgets = {}
-    const taxes = ['asociatie']
-    const { getters } = this.store
-    const { db } = this
-    
-    taxes.forEach(tax => {
-      const activaId = getters[`${tax}/active`] || getters[`${tax}/selected`]
-      Object.defineProperty(dbgets, `$${tax}`,
-        {
-          async get () {
-            const activDoc = await db.asociatii.findOne(activaId).exec()
-            Debug('lodger:lol')('activDoc', activDoc)
-            return activDoc || undefined
-          }
-      })
-    })
-
-    return dbgets
-  }
 
   get preferences () {
     const { db, store } = this
@@ -318,6 +320,9 @@ class Lodger {
       const { name, plural } = form
       plurals.set(name, plural)
     })
+    // rly custom shit
+    plurals.set('tranzactie', 'tranzactii')
+
     const collections: RxCollectionCreator[] = forms.map(form => form.collection)
     const db = await DB(collections, dbCon)
     const store = new LodgerStore(taxonomii)
@@ -409,7 +414,10 @@ class Lodger {
    * @memberof Lodger
    */
   _getForm (formName: string) {
-    return this.forms.filter(form => form.name === formName)[0].data
+    const { forms } = this
+    if (!forms) return
+    const form = forms.filter(form => form.name === formName)[0]
+    return form ? form.data : {}
   }
 }
 

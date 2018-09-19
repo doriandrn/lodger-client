@@ -1,7 +1,7 @@
 <template lang="pug">
 sction#pg
   .boxes
-    .boxes
+    .box.boxes
       list.box(
         v-for=      "tax in $lodger.taxonomii"
         :key=       "tax"
@@ -67,14 +67,16 @@ import registru from 'c/registru'
   .box
     display flex
     flex-flow column nowrap
-    flex 0 1 285px
     margin 8px
     padding 8px
     border 1px solid rgba(black, .05)
+      
+    &.list
+      flex 0 1 280px
 
-    &.list > ul
-      margin -8px
-      width calc(100% + 16px)
+      > ul
+        margin -8px
+        width calc(100% + 16px)
 
     > button
       margin auto auto 0
@@ -82,6 +84,7 @@ import registru from 'c/registru'
     &es
       display flex
       flex-flow row wrap
+      margin -8px
 
     &.prefs
       margin-left auto

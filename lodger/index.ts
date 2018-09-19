@@ -252,11 +252,35 @@ class Lodger {
    * 
    */
   get getters () {
-    const { db, store } = this
+    const { dbGetters, store } = this
     if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
     return {
-      ...store.getters
+      ...store.getters,
+      ...dbGetters
     }
+  }
+
+  get dbGetters () {
+    // $asociatie -> RxDDOC
+    // $bloc -> RXDOc
+    const dbgets = {}
+    const taxes = ['asociatie']
+    const { getters } = this.store
+    const { db } = this
+    
+    taxes.forEach(tax => {
+      const activaId = getters[`${tax}/active`] || getters[`${tax}/selected`]
+      Object.defineProperty(dbgets, `$${tax}`,
+        {
+          async get () {
+            const activDoc = await db.asociatii.findOne(activaId).exec()
+            Debug('lodger:lol')('activDoc', activDoc)
+            return activDoc || undefined
+          }
+      })
+    })
+
+    return dbgets
   }
 
   get preferences () {

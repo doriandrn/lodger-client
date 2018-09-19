@@ -71,6 +71,7 @@ const fields = [
     type: 'array',
     ref: 'servicii',
     value: g => g[getter].servicii,
+    showInList: 'secondary',
     notInForm: true
   },
   {

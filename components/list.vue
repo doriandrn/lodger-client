@@ -33,7 +33,8 @@
   //- p last: {{ $lodger.getters['asociatie/last'] }}
   h4(v-if="fetching") loadin'...
   ul(
-    v-if="items && ids.length && itemsCount"
+    v-if=     "items && ids.length && itemsCount"
+    :class=   "{ fetching }"
   )
     li(
       v-for=  "item, id in items"
@@ -311,6 +312,11 @@ export default class ListTaxonomyItems extends Vue {
       case 'serviciu':
         return {
           denumire: faker.hacker.adjective()
+        }
+
+      case 'cheltuiala':
+        return {
+
         }
     }
   }

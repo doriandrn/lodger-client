@@ -12,7 +12,7 @@ const fields = [
     type: 'number',
     default: g => {
       //TODO: numerotare pentru hoteluri, 101 et 1, 201 et 2
-      const { apartamente } = g['bloc/selectat']
+      const { apartamente } = g['$bloc']
       if (!apartamente || !apartamente.length) return 1
 
       // TODO: asta e pt hoteluri, daca toate ap de pe etaj la scara

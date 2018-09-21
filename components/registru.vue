@@ -3,7 +3,10 @@
   h1 yoyo registru
   
   list(
-    taxonomy="tranzactie"
+    :taxonomy=  "['incasare', 'cheltuiala']"
+    _plural=     "tranzactii"
+    key=          "tranzactii"
+    subscriber= "registru"
   )
 </template>
 

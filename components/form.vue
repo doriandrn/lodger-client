@@ -45,7 +45,7 @@ form.form(@submit.prevent="validate()")
 
     slot(name=        "afterFields")
 
-  split.actions(v-if="form.data.actions")
+  split.actions
     buton(
       v-if= "form.name === 'apartament' && $store.getters['apartament/selected']"
       size= "small"
@@ -57,7 +57,7 @@ form.form(@submit.prevent="validate()")
       type= "submit",
       icon= "plus-circle"
       slot= "right"
-    ) {{ type === 'new' ? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
+    ) {{ isNew ? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
 </template>
 
 <script lang="ts">
@@ -117,8 +117,30 @@ import { Form } from 'lodger/lib/Form'
     }
 
     submit () {
-      this.modalClose()
       this.$emit('submit', this.$data)
+      this.closeModal()
+    }
+
+    /**
+     * 
+     */
+    async handleChange (actionName, id, type, e, scope) {
+      const { validate, debug, $store: { dispatch } } = this
+      if (!actionName) {
+        debug('handleChange: invalid action name supplied, dats ok!', ... arguments)
+        return
+      }
+      const { value } = e.target
+
+      if (value === 'undefined' || value === null) return
+      const valid = await validate(scope)
+      if (!valid) {
+        debug(`camp invalid ${id}`)
+        return
+      }
+      dispatch(actionName, {
+        [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
+      })
     }
     
   }

@@ -75,6 +75,7 @@
         v-if=       "modalContent && modalContent !== 'prompt'",
         :form=      "modalForm",
         :isNew=     "modalContent.split('.')[1] === 'new'"
+        @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
       )
 
       prompt(v-else-if= "modalContent === 'prompt'")
@@ -129,8 +130,6 @@ export default {
   methods: {
     ...mapActions({
       schimbaAsociatieActiva: 'asociatie/schimba',
-      modalClose: 'modal/close',
-      openModal: 'modal/open'
     }),
     // get formData () {
     //   return (id, ctx) => {
@@ -168,12 +167,10 @@ export default {
       return `${ this.$t( 'asociatie.init.title' ) } - ${ this.$t( 'defaults.asociatia' ) } ${ $activa.name }`
     },
     $activa () {
-      if (!this.$lodger) return {}
-      const activaId = this.$store.getters['asociatie/active']
-      if (!activaId) return {}
-      return this.$lodger.db.asociatii.findOne(activaId).exec()
+      return this.$lodger.getters['$asociatie']
     },
     balanta () {
+      if (!this.$activa) return
       return this.$activa.balanta
     },
     // idAsociatieActiva: {

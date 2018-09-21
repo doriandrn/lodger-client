@@ -52,10 +52,6 @@ import registru from 'c/registru'
   .inner
     display flex
     flex-flow row nowrap
-  ul
-    padding 0
-    max-height 300px
-    overflow auto
 
   *
     user-select none
@@ -76,6 +72,9 @@ import registru from 'c/registru'
       > ul
         margin -8px
         width calc(100% + 16px)
+
+      .sort
+        margin 8px -8px
 
     > button
       margin auto auto 0

@@ -4,12 +4,14 @@ const fields = [
     type: 'search',
     taxonomy: 'furnizori',
     ref: 'furnizori',
-    required: true
+    // required: true TODO: e necesar? ?????????
   },
   {
     id: 'suma',
     type: 'bani',
-    required: true
+    required: true,
+    index: true,
+    showInList: 'secondary'
   },
   {
     id: 'dataScadenta',
@@ -28,6 +30,7 @@ const fields = [
     id: 'moneda',
     notInForm: true,
     required: true,
+    showInList: 'secondary',
     value: getters => getters['asociatie/activa'].moneda
   }
 ]

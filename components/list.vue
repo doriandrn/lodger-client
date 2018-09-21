@@ -3,11 +3,12 @@
   split.list__header
     .top
       h2.list__heading {{ plural }} {{ refTax }}
+        //- @click=     "add(taxonomy, fakeData(taxonomy))"
       buton(
-        @click="add(taxonomy, fakeData(taxonomy))"
+        @click=     "$event.shiftKey ? add(taxonomy, fakeData(taxonomy)) : openModal(`${taxonomy}.new`)"
         :disabled = "taxesWithoutRef.indexOf(taxonomy) < 0 && !activeReferenceId"
-        styl="unstyled"
-        icon="plus"
+        styl=       "unstyled"
+        icon=       "plus"
         icon-only
       ) {{ taxonomy }}
 
@@ -43,30 +44,31 @@
     )
       split
         viw(
-          v-if=   "primaryKey"
-          :type=  "primaryKey",
-          :key=   "primaryKey",
-          :value= "item[primaryKey]"
-          :class= "`${taxonomy}__${primaryKey}`"
+          v-for=  "key in __displayItemLocations.primary"
+          v-if=   "__displayItemLocations.primary"
+          :type=  "key",
+          :key=   "key",
+          :value= "item[key]"
+          :class= "`${taxonomy}__${key}`"
         )
         
-        .secondary(v-if="secondaryKeys")
+        .secondary(v-if="__displayItemLocations.secondary")
           viw(
-            v-for=  "key in secondaryKeys"
+            v-for=  "key in __displayItemLocations.secondary"
             :type=  "key",
             :key=   "key",
             :value= "item[key]"
+            :class= "`${taxonomy}__${key}`"
           )
-            //- span {{ key }}: {{ item[key] }}
-        details(v-if="detailsKeys && detailsKeys.length")
-          div(
-            v-for="detail in detailsKeys"
+
+        .details(v-if="__displayItemLocations.details")
+          viw(
+            v-for=  "key in __displayItemLocations.details"
+            :type=  "key",
+            :key=   "key",
+            :value= "item[key]"
+            :class= "`${taxonomy}__${key}`"
           )
-            bani(
-              v-if=     "detail === 'balanta'"
-              :valoare= "item.balanta"
-            )
-            span(v-else) {{detail}}: {{ item[detail] }}
 
         .item__controls(slot="right")
           buton(
@@ -114,7 +116,7 @@ enum Errors {
 @Component({
   props: {
     taxonomy: {
-      type: String,
+      type: [String, Array],
       required: true,
       default: 'asociatie'
     },
@@ -124,6 +126,16 @@ enum Errors {
     reference: {
       type: String,
       default: null
+    },
+    subscriber: {
+      type: String,
+      default: undefined
+    },
+
+    // for multiple taxonomies
+    _plural: {
+      type: String,
+      default: undefined
     }
   },
   watch: {
@@ -132,8 +144,8 @@ enum Errors {
      */
     criteriu: {
       handler () {
-        this.debug('change handler callD')
-        this.sub()
+        // this.debug('change handler callD')
+        this.sub(this.subscriber)
       },
       deep: true
     },
@@ -195,35 +207,52 @@ export default class ListTaxonomyItems extends Vue {
 
   // commd bcoz not needed so far
   get lodgerForm () {
-    return this.$lodger._getForm(this.taxonomy)
+    return this.__forms.length ? this.__forms[0] : this.__forms
+  }
+
+  get __forms () {
+    const ar = []
+    const { taxonomy } = this
+    const taxes =
+      typeof taxonomy === 'string' ?
+        Array(taxonomy) :
+        taxonomy
+
+    taxes.forEach(tax => {
+      console.error('WTF', tax)
+      ar.push(this.$lodger._getForm(tax))
+    })
+    return ar.length > 1 ? ar : ar[0]
   }
 
   /**
    * START: Related to displaying items
    * 
    */
-  get primaryKey () {
-    const { lodgerForm } = this
-    if (!lodgerForm) return '_id'
-    const primaryField = lodgerForm.fields.filter(field => field.showInList === 'primary')[0]
-    if (!primaryField) return
-    return primaryField.id
+  get __displayItemKeys () {
+    const { fields } = this.lodgerForm
+
+    return slot => {
+      if (!fields) return slot
+      return fields
+        .filter(field => field.showInList === slot)
+        .map(field => field.id)
+    }
   }
 
-  get detailsKeys () {
-    return this.lodgerForm.fields
-      .filter(field => field.showInList === 'details')
-      .map(field => field.id)
+  get __displayItemLocations () {
+    const locations = [
+      'primary',
+      'secondary',
+      'details'
+    ]
+    const o = {}
+    locations.map(loc => {
+      o[loc] = this.__displayItemKeys(loc)
+    })
+    return o
   }
 
-  get secondaryKeys () {
-    const keys = this.lodgerForm.fields
-      .filter(field => field.showInList === 'secondary')
-      .map(field => field.id)
-
-    if (this.taxonomy !== 'serviciu') keys.push('la')
-    return keys
-  }
   /**
    * END
    */
@@ -358,6 +387,7 @@ export default class ListTaxonomyItems extends Vue {
 
   get plural () {
     // TODO!
+    if (this._plural) return this._plural
     const plural = this.$lodger.plurals.get(this.taxonomy)
     if (!plural) {
       throw new Error('no plural definiton found, component could not init')
@@ -399,16 +429,14 @@ export default class ListTaxonomyItems extends Vue {
   /**
    * Subscriber method for items
    */
-  sub () {
+  sub (subscriberName: string) {
     this.fetching = true
-    
-    console.info('!!!', this.plural)
 
     this.$lodger.subscribe(
       this.items,
       this.plural,
       this.criteriu,
-      this.taxonomy === 'tranzactie' ? 'registru' : undefined,
+      subscriberName,
       this.$data
     )
   }
@@ -462,15 +490,33 @@ typeColors = config.typography.palette
       align-items flex-start
 
   .sort
-    margin 8px -8px
     background-color: rgba(black, .05)
 
     
   ul
+    position relative
     background: colors.bgs.ui
+    padding 0
+    max-height 300px
+    overflow auto
+    position relative
+
+    &:before
+      content ''
+      position absolute 0
+      z-index -1
+      background-color white
+      background-image embedurl('~static/loaders/preload.svg')
+      background-position 50% 50%
+      background-repeat no-repeat
+      transform translateY(-100%)
+      transition transform .15s ease-out
 
     &.fetching
-      background-color red
+      &:before
+        z-index 5
+        transform translateY(0)
+
 
   li
     display flex

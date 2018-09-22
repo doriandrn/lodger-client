@@ -95,11 +95,6 @@ const fields = [
   }
 ]
 
-const actiuni = {
-  confirm: 'adaugaAsociatie'
-}
-
-
 const methods = <T>{
   async initBalanta (data: {balanta: Bani}) {
     this.balanta = data.balanta
@@ -123,6 +118,13 @@ const methods = <T>{
       this[camp] = fields[camp]
     })
     await this.save()
+  }
+}
+
+const statics = {
+  selected: async function (id) {
+    console.log('STATIC!', this)
+    return await this.findOne(id).exec()
   }
 }
 
@@ -152,4 +154,10 @@ const setari = {
   },
 }
 
-export { fields, plural, actiuni, methods, setari }
+export {
+  fields,
+  plural,
+  methods,
+  statics,
+  setari
+}

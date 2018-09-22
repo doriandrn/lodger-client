@@ -19,7 +19,7 @@
   
   p.empty(v-if="!ids.length") gol
   
-  
+  //- h4(v-if="__selectedDoc") {{ __selectedDoc._id }}
   field.sort(
     v-if=     "ids.length > 1"
     type=     "radios",
@@ -152,14 +152,13 @@ enum Errors {
     /**
      * 
      */
-    activeReferenceId (newVal) {
+    activeReferenceId (newVal, oldval) {
       if (!newVal) return
 
       const { refTax, debug } = this
       if (!refTax) return
 
-      debug('schimbat', newVal)
-
+      debug('schimbat', newVal, oldval)
       this.criteriu.find = { [`${refTax}Id`]: newVal }
       // Object.assign(this.criteriu.find, { [`${refTax}Id`]: newVal })
     }
@@ -173,7 +172,6 @@ enum Errors {
   }
 })
 export default class ListTaxonomyItems extends Vue {
-  @Action('notify') notifyUser: any
   @Action('open', { namespace: 'modal' }) openModal: any
 
   data () {
@@ -225,6 +223,17 @@ export default class ListTaxonomyItems extends Vue {
     return ar.length > 1 ? ar : ar[0]
   }
 
+  async __getCollection () {
+    return await this.$lodger._getCollection(this.plural)
+  }
+
+  // get __selectedDoc () {
+  //   const { taxonomy, selected, __collection } = this
+  //   // if (!__collection) return
+  //   return 'wtf'
+  //   // return  __collection.selected(selected)
+  // }
+
   /**
    * START: Related to displaying items
    * 
@@ -271,16 +280,10 @@ export default class ListTaxonomyItems extends Vue {
       throw new LodgerError(Errors.missingReferenceId)
     }
 
-    if (taxesWithoutRef.indexOf(taxonomy) < 0) Object.assign(arguments[1], { [`${refTax}Id`]: refId })
+    if (taxesWithoutRef.indexOf(taxonomy) < 0)
+      Object.assign(arguments[1], { [`${refTax}Id`]: refId })
 
-    try {
-      return await this.$lodger.put(...arguments)
-    } catch (e) {
-      this.debug('e', e)
-      this.notifyUser({
-        type: 'error', text: String(e)
-      })
-    }
+    return await this.$lodger.put(...arguments)
   }
 
   async remove () {
@@ -302,7 +305,6 @@ export default class ListTaxonomyItems extends Vue {
 
     const { refTax, debug } = this
     if (!refTax) return
-
     return getters[`${refTax}/active`] || getters[`${refTax}/selected`]
   }
 

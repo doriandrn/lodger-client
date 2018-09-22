@@ -29,6 +29,19 @@ export default class LodgerStore implements StoreOptions<RootState> {
     if (taxonomii && taxonomii.length) {
       taxonomii.forEach(tax => {
         modules[tax] = setupSharedMethods(undefined, createEmptyStoreModule())
+        
+        // // lama, subject to change
+        // Object.assign(modules[tax].state, {
+        //   [`$${tax}`]: undefined
+        // })
+        // Object.assign(modules[tax].getters, {
+        //   [`$${tax}`]: state => state[`$${tax}`]
+        // })
+        // Object.assign(modules[tax].mutations, {
+        //   'SEL_DOC': (state, doc) => {
+        //     state[`$${tax}`] = doc
+        //   }
+        // })
       })
     }
     

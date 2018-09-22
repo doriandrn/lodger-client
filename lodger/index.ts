@@ -61,10 +61,6 @@ enum Errors {
   couldNotWriteFile = 'Cannot write file'
 }
 
-// Debug.enable(['test', 'dev'].indexOf(String(NODE_ENV)) >= -1 ? 'lodger:*' : null)
-
-// function plural<T>
-
 const loadForms = (taxonomies: Taxonomii[]) => taxonomies.map((tax: Taxonomii) => Form.loadByName(tax))
 
 type SubscribersList = {
@@ -168,10 +164,35 @@ function subscribe (
 
 const plugins: Plugin[] = []
 
+// ACTIVE & SELECTED documents
+async function handleSelectChanges(context, { type, payload }) {
+  if (!type.indexOf('select')) return
+  const namespace = type.split('/')[0]
+  const debug = Debug('lodger:handleSelectChanges')
+  const { collections, store, plurals } = context
+  const { commit } = store
+  // let doc: RxDocument<any>
+
+  const plural = plurals.get(namespace)
+  debug('yolo', context)
+
+//   try {
+//     // const doc = await collections[plural].findOne(payload).exec()
+//     // commit(`${namespace}/SEL_DOC`, doc)
+//   } catch (e) {
+//     debug(e)
+//   }
+}
+
 /**
  * Custom DB getters!!
  */
-const dbGetters = {}
+function DBGettersMethods () {
+  const args = { ...arguments[0] }
+  return async (mutation) => {
+    await handleSelectChanges(args, mutation)
+  }
+}
 
 class Lodger {
   constructor (
@@ -182,6 +203,14 @@ class Lodger {
     readonly store: Store<RootState>,
     readonly subscribe: () => Promise<any>
   ) {}
+
+  /**
+   * Notifies the user about an update/change
+   * - Store action wrapper -
+   */
+  notify (notification: Toast | Notification) {
+    this.store.dispatch('notify', notification)
+  }
 
   /**
    * Adds / updates an entry in the DB
@@ -196,12 +225,24 @@ class Lodger {
     const plural = plurals.get(taxonomie)
     if (!plural) throw new LodgerError(Errors.noPlural, taxonomie)
     const colectie = db.collections[plural]
-    const method = data._id ? 'upsert' : 'insert'
-    debug('put data', data)
-    const { _data } = await colectie[method](handleOnSubmit(data))
-    if (store) await store.dispatch(`${taxonomie}/set_last`, _data._id)
-    debug('pus', taxonomie, _data._id)
-    return _data
+
+    /**
+     * If form submitted with an _id, must be an upsert
+     */
+    const method = data._id ?
+      'upsert' :
+      'insert'
+
+    try {
+      const { _data } = await colectie[method](handleOnSubmit(data))
+      if (store) await store.dispatch(`${taxonomie}/set_last`, _data._id)
+      debug('pus', taxonomie, _data._id)
+      return _data
+    } catch (e) {
+      this.notify({
+        type: 'error', text: String(e)
+      })
+    }
   }
 
   /**
@@ -228,9 +269,9 @@ class Lodger {
    * @param id 
    */
   async select (taxonomie, id) {
+    // const plural = this.plurals.get(taxonomie)
+    // dbGetters[`$${taxonomie}`] = await this.db[plural].findOne(id).exec()
     this.store.commit(`${taxonomie}/select`, id)
-    const plural = this.plurals.get(taxonomie)
-    dbGetters[`$${taxonomie}`] = await this.db[plural].findOne(id).exec()
   }
 
   /**
@@ -279,8 +320,7 @@ class Lodger {
     const { store } = this
     if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
     return {
-      ...store.getters,
-      ...dbGetters
+      ...store.getters
     }
   }
 
@@ -320,12 +360,15 @@ class Lodger {
       const { name, plural } = form
       plurals.set(name, plural)
     })
-    // rly custom shit
+    // rly custom n hardcoded shit
     plurals.set('tranzactie', 'tranzactii')
 
-    const collections: RxCollectionCreator[] = forms.map(form => form.collection)
-    const db = await DB(collections, dbCon)
+    const _collections: RxCollectionCreator[] = forms.map(form => form.collection)
+    const db = await DB(_collections, dbCon)
     const store = new LodgerStore(taxonomii)
+    const { collections } = await db
+
+    // store.subscribe(DBGettersMethods({ collections, plurals, store }) )
 
     if (options) {
       Object.assign(buildOpts, { ...options })
@@ -418,6 +461,10 @@ class Lodger {
     if (!forms) return
     const form = forms.filter(form => form.name === formName)[0]
     return form ? form.data : {}
+  }
+
+  _getCollection (colName: string) {
+    return this.db.collections[colName]
   }
 }
 

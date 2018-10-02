@@ -1,11 +1,11 @@
 <template lang="pug">
 .registru
   h1 yoyo registru
-  
+
   list(
     :taxonomy=  "['incasare', 'cheltuiala']"
-    _plural=     "tranzactii"
-    key=          "tranzactii"
+    _plural=   "tranzactii"
+    key=       "tranzactii"
     subscriber= "registru"
   )
 </template>
@@ -22,6 +22,6 @@ import list from 'c/list'
   }
 })
 export default class Registru extends Vue {
-  
+
 }
 </script>

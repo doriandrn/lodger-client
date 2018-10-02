@@ -154,7 +154,7 @@ class Form {
       // change prototype to object for Vue
       // form = JSON.parse(JSON.stringify(form))
       Object.assign(form, { name })
-      debug('✓', name, form)
+      debug('✓', name)
     } catch (e) {
       debug('Error', e)
       throw new FormError(Errors.invalidRequested, name)

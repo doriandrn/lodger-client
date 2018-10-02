@@ -82,83 +82,95 @@ interface LdgGetters extends GetterTree<IndexState, RootState> {}
    * Updateaza datele subscriberi-lor,
    * date folosite de getteri pentru a fi
    * afisate in interfata
-   * 
+   *
    * TODO: de exportat de -aici
-   * 
+   *
    * Usage: subscribes DB changes to a given variable (binder)
-   * 
+   *
    */
 function subscribe (
   binder: Observer<object>,
-  taxonomie: Plural,
+  taxonomii: Taxonomii[],
+  plural: Plural,
   criteriu ?: Criteriu,
-  subscriberName ?: string,
-  dataBinder ?: Observer<number>
+  subscriberName : string = 'main',
+  docs ?: []
 ) {
   const debug = Debug('lodger:subscribe')
 
-  const { collections } = <RxDatabase>this
-  if (!collections) {
+  const { db: { collections }, plurals } = <RxDatabase>this
+  if (!collections || !plurals) {
     throw new LodgerError(Errors.missingCoreDefinitions)
   }
-  // PENTRU REGISTRU PLM
-  if (taxonomie === 'tranzactii') {
-    taxonomie = 'incasari'
+
+  // always have it as an array
+  if (typeof taxonomii === 'string') {
+    taxonomii = Array(taxonomii)
   }
+  debug('taxonomii', taxonomii)
 
-  let { limit, index, sort, find } = getCriteriu(taxonomie, criteriu)
-  const paging = Number(limit || 0) * (index || 1)
-  const colectie = collections[<Plural>taxonomie]
-  if (!colectie) {
-    throw new LodgerError('invalid collection %%', taxonomie)
-  }
-  const subscriber = <Subscriber>subscribers[subscriberName || 'main']
+  const multipleTaxonomies: boolean = taxonomii.length > 1
 
-  debug('sort bef', sort)
-  subscriber[taxonomie] = colectie
-    .find(find)
-    .limit(paging)
-    .sort(sort)
-    .$
-    .subscribe((changes: RxDocument<any>[]) => {
-      // DO NOT RETURN IF NO CHANGES!!!!!!!
-      debug('NEW CHANGES ON SUB', taxonomie, changes)
-      // assuming this is the first time ?! 
-      if (taxonomie === 'servicii' && !changes.length) {
-        debug('adaug predefinite')
-        predefinite.forEach(async denumire => { await this[taxonomie].insert({ denumire }) })
-      }
+  const subscriber = <Subscriber>subscribers[subscriberName]
 
-      // check if comes from Vue data() -> if it's observable
-      if (binder.__ob__) {
-        // cleanup first
-        Object.keys(binder).forEach(id => { 
-          Vue.delete(binder, id)
-        })
+  taxonomii.forEach(taxonomie => {
+    debug('taxonomie', taxonomie)
+    let { limit, index, sort, find } = getCriteriu(plural, criteriu)
+    const paging = Number(limit || 0) * (index || 1)
+    const pluralTaxonomie = plurals.get(taxonomie)
+    const colectie = collections[<Plural>pluralTaxonomie]
+    if (!colectie) throw new LodgerError('invalid collection %%', plural)
 
-        // update data obj
-        changes.map((item: RxDocument<any>) => {
-          Vue.set(binder, item._id, item._data)
-        })
+    subscriber[taxonomie] = colectie
+      .find(find)
+      .limit(paging)
+      .sort(sort)
+      .$
+      .subscribe((changes: RxDocument<any>[]) => {
+        // DO NOT RETURN IF NO CHANGES!!!!!!!
+        debug(`${plural} for subscriber[${subscriberName}]`, changes)
+        // assuming this is the first time ?!
+        if (plural === 'servicii' && !changes.length) {
+          predefinite.forEach(async denumire => { await collections[pluralTaxonomie].insert({ denumire }) })
+          debug('first init, adaugat predefinite')
+        }
 
-        if (dataBinder) {
-          // update items count
-          if (dataBinder.itemsCount > -1) {
-            Vue.set(dataBinder, 'itemsCount', colectie.length)
-          }
-          // remove preloading
-          if (dataBinder.fetching) {
-            dataBinder.fetching = false
-            // Vue.set(dataBinder, '_preloading', false)
-          }
-        } 
 
-      } else {
-        binder = Object.assign({},
+        // check if comes from Vue data() -> if it's observable
+        // if (binder.__ob__) {
+        //   // cleanup first
+        //   // Object.keys(binder.items).forEach(id => {
+        //   //   Vue.delete(binder, id)
+        //   // })
+        //   // binder.items = {}
+
+        //   // // update data obj
+        //   // changes.map((item: RxDocument<any>) => {
+        //   //   Vue.set(binder.items, item._id, item._data)
+        //   // })
+        //   // if (docs) docs = changes\
+        //   // Object.defineProperty(binder, 'docs', {
+        //   //   configurable: false,
+        //   //   value: changes
+        //   // })
+        //   // Vue.set(binder, 'docs', Object.freeze(changes))
+        //   // binder.docs = [...Object.freeze(changes)]
+        //   debug('BINDER', binder)
+
+        const { length } = colectie
+        Vue.set(binder, 'itemsCount', length)
+
+        // remove preloading
+        if (binder.fetching) { binder.fetching = false }
+
+        // binder._docs = Object.freeze(changes)
+
+        Vue.set(multipleTaxonomies ? binder.combinedItems : binder, multipleTaxonomies ? taxonomie : 'items', Object.assign({},
           ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
-        )
-      }
-    })
+        ))
+      })
+  })
+
 }
 
 
@@ -214,9 +226,9 @@ class Lodger {
 
   /**
    * Adds / updates an entry in the DB
-   * 
-   * @param taxonomie 
-   * @param data 
+   *
+   * @param taxonomie
+   * @param data
    */
   async put (taxonomie: Taxonomii, data: LodgerFormData) {
     const debug = Debug('lodger:put')
@@ -247,9 +259,9 @@ class Lodger {
 
   /**
    * Removes a Document from the DB
-   * 
-   * @param taxonomie 
-   * @param id 
+   *
+   * @param taxonomie
+   * @param id
    */
   async trash (taxonomie: Taxonomii, id: ItemID) {
     const { plurals, db } = this
@@ -264,9 +276,9 @@ class Lodger {
   }
 
   /**
-   * 
-   * @param taxonomie 
-   * @param id 
+   *
+   * @param taxonomie
+   * @param id
    */
   async select (taxonomie, id) {
     // const plural = this.plurals.get(taxonomie)
@@ -276,7 +288,7 @@ class Lodger {
 
   /**
    * Sets a preference either in DB or store
-   * 
+   *
    */
   async setPreference (preference: string, value: any) {
     const debug = Debug('lodger:set')
@@ -296,7 +308,7 @@ class Lodger {
         })
 
         break
-      
+
       case 'user':
         // db.collections.utilizator....
         break
@@ -314,7 +326,7 @@ class Lodger {
    * Lodger Getters
    * All UI connects with this
    * combines DB & Store getters
-   * 
+   *
    */
   get getters () {
     const { store } = this
@@ -336,16 +348,16 @@ class Lodger {
 
   /**
    * Init / build function
-   * 
+   *
    * Build steps: (order matters)
    * 1. Lodger Forms
    * 2. Plurals
    * 3. DB
    * 4. Store
-   * 
+   *
    * @param {object} options
    * @returns {Lodger}
-   * 
+   *
    */
   static async build (options?: BuildOptions) {
     let { dbCon } = options || buildOpts
@@ -382,15 +394,15 @@ class Lodger {
       plurals,
       db,
       store,
-      subscribe.bind(db)
+      subscribe.bind({ db, plurals })
     )
   }
 
   /**
    * Metoda de introdus plugin-uri in clasa
-   * 
-   * @param {Plugin} plugin 
-   * 
+   *
+   * @param {Plugin} plugin
+   *
    */
   static use (plugin: Plugin) {
     const debug = Debug('lodger:use')
@@ -404,7 +416,7 @@ class Lodger {
 
   /**
    * Destroys the Lodger instance
-   * 
+   *
    */
   async destroy () {
     await this.unsubscribeAll()
@@ -419,7 +431,7 @@ class Lodger {
     const json = await this.db.dump()
     const extension = 'ldb'
     if (!path) path = `${osHomedir()}/downloads/`
-  
+
     if (!filename) {
       const date = new Date()
       filename = `LdgDB-${date}`

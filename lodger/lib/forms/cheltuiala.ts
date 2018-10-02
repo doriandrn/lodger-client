@@ -1,5 +1,11 @@
 const fields = [
   {
+    id: 'asociatieId',
+    ref: 'asociatii',
+    required: true,
+    index: true,
+  },
+  {
     id: 'catre',
     type: 'search',
     taxonomy: 'furnizori',
@@ -15,7 +21,8 @@ const fields = [
   },
   {
     id: 'dataScadenta',
-    type: 'date'
+    type: 'date',
+    showInList: 'secondary'
   },
   {
     id: 'modDistribuire',

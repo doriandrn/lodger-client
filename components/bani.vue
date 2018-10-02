@@ -17,8 +17,7 @@ export default {
     },
     moneda: {
       type: String,
-      default: null,
-      required: true
+      default: 'ron'
     }
   }
 }

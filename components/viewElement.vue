@@ -1,7 +1,10 @@
 <template lang="pug">
-span.view
+.view
+  strong(
+    v-if="['name', 'proprietar', 'denumire'].indexOf(type) > -1"
+  ) {{ value }}
   timp(
-    v-if= "type === 'la'"
+    v-else-if= "type === 'la'"
     :unixTime = "value"
     ago=  true
     liveUpdate= true
@@ -13,7 +16,7 @@ span.view
   span.ap__nr(
     v-else-if="type === 'nr'"
   ) {{ value }}
-  strong(v-else) {{ value }}
+  span(v-else) {{ type }}: {{ value }}
 </template>
 
 <script lang="ts">
@@ -39,6 +42,6 @@ import bani from 'c/bani'
   }
 })
 export default class ViewElement extends Vue {
- 
+
 }
 </script>

@@ -13,13 +13,13 @@
       ) {{ taxonomy }}
 
     .bottom
-      span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }} 
+      span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }}
 
     //- buton(slot="right") ceva
-  
+
   p.empty(v-if="!ids.length") gol
-  
-  //- h4(v-if="__selectedDoc") {{ __selectedDoc._id }}
+
+  h4(v-if="_selectedDoc && _selectedDoc._id") {{ _selectedDoc._id }}
   field.sort(
     v-if=     "ids.length > 1"
     type=     "radios",
@@ -33,11 +33,11 @@
   )
 
   ul(
-    v-if=     "items && ids.length && itemsCount"
+    v-if=     "items && ids.length"
     :class=   "{ fetching }"
   )
     li(
-      v-for=  "item, id in items"
+      v-for=  "item, id in Items"
       :data-id=    "id"
       :class= "{ last: last === id, selected: selected === id }"
       @click= "select(id)"
@@ -51,7 +51,7 @@
           :value= "item[key]"
           :class= "`${taxonomy}__${key}`"
         )
-        
+
         .secondary(v-if="__displayItemLocations.secondary")
           viw(
             v-for=  "key in __displayItemLocations.secondary"
@@ -86,10 +86,10 @@
             tooltip
             icon-only
           ) sterge
-        
-  
+
+
   buton.more(
-    v-if="ids.length < itemsCount"
+    v-if="ids && ids.length < itemsCount"
     @click="criteriu.limit = criteriu.limit + criteriu.limit"
   ) ...
 </template>
@@ -121,7 +121,7 @@ enum Errors {
       default: 'asociatie'
     },
     /**
-     * alternate for refTax 
+     * alternate for refTax
     */
     reference: {
       type: String,
@@ -150,7 +150,7 @@ enum Errors {
       deep: true
     },
     /**
-     * 
+     *
      */
     activeReferenceId (newVal, oldval) {
       if (!newVal) return
@@ -160,7 +160,26 @@ enum Errors {
 
       debug('schimbat', newVal, oldval)
       this.criteriu.find = { [`${refTax}Id`]: newVal }
-      // Object.assign(this.criteriu.find, { [`${refTax}Id`]: newVal })
+    },
+
+
+    async selected (newId) {
+      const col = this.$lodger._getCollection(this.plural)
+      console.info('CIOL', col)
+      // const doc = await col.findOne(newId).exec()
+      if (typeof col.selected !== 'function') return
+      const doc = await col.selected(newId)
+      const frozen = Object.freeze(doc)
+      console.info('DIO', frozen)
+      // if (!this.selectedDoc) {
+      //   Object.defineProperty(this, 'selectedDoc', {
+      //     configurable: false,
+      //     value: frozen
+      //   })
+      // } else {
+      //   this.selectedDoc = frozen
+      // }
+      // this.selectedDoc = frozen
     }
   },
   components: {
@@ -173,26 +192,46 @@ enum Errors {
 })
 export default class ListTaxonomyItems extends Vue {
   @Action('open', { namespace: 'modal' }) openModal: any
+  _docs = []
+  items = {}
+  itemsCount = 0
+  fetching = false
+  criteriu = {
+    limit: 5,
+    sort: {
+      key: 'la',
+      direction: 1
+    },
+    find: {}
+  }
+  /**
+   * Used for multiple taxonomies subcribers
+   * eg. transactii / transactions
+   */
+  combinedItems = {}
+  // selectedDoc = null
 
-  data () {
-    return {
-      items: {},
-      criteriu: {
-        limit: 5,
-        sort: {
-          key: 'la',
-          direction: 1
-        },
-        find: {}
-      },
-      itemsCount: 0,
-      fetching: false
+  get Items () {
+    // return this.items
+    try {
+      const { combinedItems, items } = this.$data
+      this.debug('CI', combinedItems, 'I', items)
+      if (! (combinedItems && Object.keys(combinedItems).length))
+        return items
+      const combined = {}
+      Object.keys(combinedItems).forEach(tax => {
+        Object.assign(combined, { ...combinedItems[tax] })
+      })
+      return combined
+    } catch (e) {
+      this.debug('wtf happened', e)
     }
   }
 
   get ids () {
-    const { items } = this
-    return Object.keys(items)
+    const { Items } = this
+    if (!Items) return []
+    return Object.keys(Items)
   }
 
   get last () {
@@ -206,6 +245,10 @@ export default class ListTaxonomyItems extends Vue {
   // commd bcoz not needed so far
   get lodgerForm () {
     return this.__forms.length ? this.__forms[0] : this.__forms
+  }
+
+  get _selectedDoc () {
+    return this.selectedDoc || {}
   }
 
   get __forms () {
@@ -223,20 +266,9 @@ export default class ListTaxonomyItems extends Vue {
     return ar.length > 1 ? ar : ar[0]
   }
 
-  async __getCollection () {
-    return await this.$lodger._getCollection(this.plural)
-  }
-
-  // get __selectedDoc () {
-  //   const { taxonomy, selected, __collection } = this
-  //   // if (!__collection) return
-  //   return 'wtf'
-  //   // return  __collection.selected(selected)
-  // }
-
   /**
    * START: Related to displaying items
-   * 
+   *
    */
   get __displayItemKeys () {
     const { fields } = this.lodgerForm
@@ -274,7 +306,7 @@ export default class ListTaxonomyItems extends Vue {
   async add () {
     const { activeReferenceId, taxonomy, taxesWithoutRef } = this
     const refId = activeReferenceId
-    
+
     const { refTax, debug } = this
     if (!refTax && taxesWithoutRef.indexOf(taxonomy) < 0) {
       throw new LodgerError(Errors.missingReferenceId)
@@ -358,7 +390,9 @@ export default class ListTaxonomyItems extends Vue {
 
       case 'cheltuiala':
         return {
-
+          moneda,
+          // suma: Number(faker.finance.amount(1000, 10000, 6))
+          suma: faker.random.number({ min: -100000, max: -100 })
         }
     }
   }
@@ -383,7 +417,7 @@ export default class ListTaxonomyItems extends Vue {
     })
 
     debug('sorts', sorts)
-    
+
     return sorts
   }
 
@@ -400,7 +434,7 @@ export default class ListTaxonomyItems extends Vue {
   /**
    * Reference Taxonomy for taxonomy
    * eg. 'bloc' are ref 'asociatie'
-   * 
+   *
    */
   get refTax () {
     const { taxonomy } = this
@@ -431,16 +465,17 @@ export default class ListTaxonomyItems extends Vue {
   /**
    * Subscriber method for items
    */
-  sub (subscriberName: string) {
+  sub (subscriberName: string = this.subscriber) {
     this.fetching = true
 
     this.$lodger.subscribe(
-      this.items,
+      this.$data,
+      this.taxonomy,
       this.plural,
       this.criteriu,
-      subscriberName,
-      this.$data
+      subscriberName
     )
+
   }
 
   handleSortClick (e) {
@@ -494,7 +529,7 @@ typeColors = config.typography.palette
   .sort
     background-color: rgba(black, .05)
 
-    
+
   ul
     position relative
     background: colors.bgs.ui

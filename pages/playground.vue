@@ -6,21 +6,22 @@ sction#pg
       :key=       "tax"
       :taxonomy=  "tax"
     )
+
+    servicii.box
   
   registru
-    
-      //- .details(taxonomy="asociatie")
-      
-      //-   div blocuri
-      //-     list.box(taxonomy="incasare")
+  
+  .stats(slot="sidebar")
+    h5 stats
 
-      //- .box.asociatie(v-if="idAsociatieSelectata")
-      //-   
-      //-   .asociatie__details
-      //-     p #[em balanta] {{ asociatieSelectata.balanta }}
+    .boxes
+      .box.totals
+        h6 Totals
 
-  .box.prefs(slot="sidebar")
-    h6 preferences list
+  .prefs(slot="sidebar")
+    h6 prefs
+    .boxes
+
 </template>
 
 <script lang="ts">
@@ -31,13 +32,15 @@ import sction from 'c/section'
 import frm from 'c/form'
 import list from 'c/list'
 import registru from 'c/registru'
+import servicii from 'c/servicii'
 
 @Component({
   components: {
     sction,
     frm,
     list,
-    registru
+    registru,
+    servicii
   }
 })
   export default class Playground extends Vue {    

@@ -58,8 +58,10 @@ module.exports = {
     { src: '~plugins/tooltips', ssr: false }
   ],
   router: {
+    base: '/ui/',
+    fallback: true,
     linkActiveClass: 'active',
-    base: '/ui/'
+    linkExactActiveClass: 'active-exact'
   },
   axios: {
     credentials: true,
@@ -132,7 +134,7 @@ module.exports = {
         form: resolve('components/formElements'),
         pg: resolve('components/.playground'),
         struct: resolve('components/struct'),
-        
+
         lodger: resolve('lodger'),
         // lib: resolve('lodger/lib'), -> this doesnt work as it interfers to other libs
         'lodger-plugins': resolve('lodger/plugins'),

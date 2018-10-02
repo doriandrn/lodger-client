@@ -13,6 +13,10 @@
     v-else-if="['suma', 'bani', 'balanta'].indexOf(type) > -1"
     :valoare="value"
   )
+  suprafata(
+    v-else-if="type === 'suprafata'"
+    :value="value"
+  )
   span.ap__nr(
     v-else-if="type === 'nr'"
   ) {{ value }}
@@ -24,6 +28,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component';
 import timp from 'c/dateTime'
 import bani from 'c/bani'
+import suprafata from 'c/suprafata'
 
 @Component({
   props: {
@@ -38,7 +43,8 @@ import bani from 'c/bani'
   },
   components: {
     bani,
-    timp
+    timp,
+    suprafata
   }
 })
 export default class ViewElement extends Vue {

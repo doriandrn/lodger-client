@@ -13,7 +13,7 @@ type EmptyState = {}
 const sharedStoreMethods: SharedStoreMethods = {
   selected: 'select',
   last: 'set_last',
-  active: 'activate'
+  // active: 'activate'
 }
 
 /**
@@ -40,9 +40,9 @@ function createEmptyStoreModule () {
 
 /**
   * Shared methods across taxonomies, called individually
-  * 
+  *
   * @param taxonomy
-  * @requires sharedMethods 
+  * @requires sharedMethods
   */
 function setupSharedMethods (
   sharedMethods: SharedStoreMethods = sharedStoreMethods,
@@ -63,6 +63,8 @@ function setupSharedMethods (
     module.actions[action] = ({ commit }, data) => commit(action, data)
     module.mutations[action] = (s, id) => s[methodName] = id
   })
+
+  module.getters['activeDoc'] = (S: RootState) => S.doc || {}
 
   return <Module<SharedStoreMethods, RootState>>module
 }

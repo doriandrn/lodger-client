@@ -19,7 +19,7 @@
 
   p.empty(v-if="!ids.length") gol
 
-  h4(v-if="_selectedDoc && _selectedDoc._id") {{ _selectedDoc._id }}
+  //- h4(v-if="_selectedDoc && _selectedDoc._id") {{ _selectedDoc._id }}
   field.sort(
     v-if=     "ids.length > 1"
     type=     "radios",
@@ -43,27 +43,13 @@
       @click= "select(id)"
     )
       split
-        viw(
-          v-for=  "key in __displayItemLocations.primary"
-          v-if=   "__displayItemLocations.primary"
-          :type=  "key",
-          :key=   "key",
-          :value= "item[key]"
-          :class= "`${taxonomy}__${key}`"
-        )
-
-        .secondary(v-if="__displayItemLocations.secondary")
-          viw(
-            v-for=  "key in __displayItemLocations.secondary"
-            :type=  "key",
-            :key=   "key",
-            :value= "item[key]"
-            :class= "`${taxonomy}__${key}`"
+        div(
+          v-for=  "location in Object.keys(__displayItemLocations)"
+          :class= "location"
           )
-
-        .details(v-if="__displayItemLocations.details")
           viw(
-            v-for=  "key in __displayItemLocations.details"
+            v-for=  "key in __displayItemLocations[location]"
+            v-if=   "__displayItemLocations[location]"
             :type=  "key",
             :key=   "key",
             :value= "item[key]"
@@ -112,6 +98,9 @@ import split from 'c/split'
 enum Errors {
   missingReferenceId = 'Missing reference ID'
 }
+
+// one per list, it's not reactive, just a hodlder
+let activeDocument
 
 @Component({
   props: {
@@ -163,24 +152,24 @@ enum Errors {
     },
 
 
-    async selected (newId) {
-      const col = this.$lodger._getCollection(this.plural)
-      console.info('CIOL', col)
-      // const doc = await col.findOne(newId).exec()
-      if (typeof col.selected !== 'function') return
-      const doc = await col.selected(newId)
-      const frozen = Object.freeze(doc)
-      console.info('DIO', frozen)
-      // if (!this.selectedDoc) {
-      //   Object.defineProperty(this, 'selectedDoc', {
-      //     configurable: false,
-      //     value: frozen
-      //   })
-      // } else {
-      //   this.selectedDoc = frozen
-      // }
-      // this.selectedDoc = frozen
-    }
+    // async selected (newId) {
+    //   const col = this.$lodger._getCollection(this.plural)
+    //   console.info('CIOL', col)
+    //   // const doc = await col.findOne(newId).exec()
+    //   if (typeof col.selected !== 'function') return
+    //   activeDocument = await col.selected(newId)
+    //   // const frozen = Object.freeze(doc)
+    //   // console.info('DIO', frozen)
+    //   // if (!this.selectedDoc) {
+    //   //   Object.defineProperty(this, 'selectedDoc', {
+    //   //     configurable: false,
+    //   //     value: frozen
+    //   //   })
+    //   // } else {
+    //   //   this.selectedDoc = frozen
+    //   // }
+    //   // this.selectedDoc = frozen
+    // }
   },
   components: {
     field,
@@ -209,6 +198,7 @@ export default class ListTaxonomyItems extends Vue {
    * eg. transactii / transactions
    */
   combinedItems = {}
+  doc = undefined
   // selectedDoc = null
 
   get Items () {
@@ -245,10 +235,6 @@ export default class ListTaxonomyItems extends Vue {
   // commd bcoz not needed so far
   get lodgerForm () {
     return this.__forms.length ? this.__forms[0] : this.__forms
-  }
-
-  get _selectedDoc () {
-    return this.selectedDoc || {}
   }
 
   get __forms () {
@@ -351,7 +337,11 @@ export default class ListTaxonomyItems extends Vue {
 
     switch (taxonomy) {
       case 'asociatie':
-        return { name, moneda }
+        return {
+          name,
+          moneda,
+          balanta: Number(faker.finance.amount(100, 10000, 4))
+        }
 
       case 'bloc':
         return {

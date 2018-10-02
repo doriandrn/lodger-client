@@ -386,6 +386,33 @@ class Lodger {
       Object.assign(buildOpts, { ...options })
     }
 
+    // inscrie active getteru
+    store.subscribe(async ({ type, payload }, state) => {
+      const path = type.split('/')
+      const debug = Debug('lodger:SELECTstoreSubscriber')
+      if (path[1] !== 'select') return
+      const tax = path[0]
+      const plural = plurals.get(tax)
+      let doc = await db.collections[plural].findOne(payload).exec()
+      debug(`ACTIVE ${tax}`, doc)
+      if (!state[tax].doc) {
+        Object.defineProperty(state[tax], 'doc', {
+          configurable: false,
+          get () {
+            return doc
+          },
+          set (newDoc) {
+            doc = newDoc
+          }
+        })
+      } else {
+        state[tax].doc = doc
+      }
+
+      // state[tax]._activeDoc = doc
+      debug('state param', state)
+    })
+
     // for (const [s, p] of plurals) { await subscribe.call(db, p) }
 
     return new Lodger(

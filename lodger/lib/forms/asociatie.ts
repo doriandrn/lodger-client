@@ -50,7 +50,7 @@ const fields = [
     value: g => g[getter].balanta,
     notInAddForm: true,
     notInForm: true,
-    showInList: 'right'
+    showInList: 'details'
   },
   {
     id: 'incasari',

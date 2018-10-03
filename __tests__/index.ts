@@ -55,7 +55,7 @@ describe('Lodger', () => {
   describe('Public API', async () => {
     let lodger: Lodger
     let getters: LodgerGetters
-    
+
     beforeAll(async () => {
       lodger = await Lodger.build()
 
@@ -102,7 +102,7 @@ describe('Lodger', () => {
         test('throws if data doesnt match schema', async () => {
           try {
             await lodger.put('asociatie', { lol: 'fool' } )
-          } catch (e) { 
+          } catch (e) {
             expect(e).toBeDefined()
           }
         })
@@ -119,7 +119,7 @@ describe('Lodger', () => {
         // expect(getters['asociatie/ids']).not.toContain(commonId)
       })
     })
-    
+
     test('mapeaza taxonomiile pt a fi apelate ca gettere', () => {
       expect(lodger.asociatii).toBeDefined()
       expect(lodger.apartamente).toBeDefined()
@@ -166,30 +166,30 @@ describe('Lodger', () => {
       })
     })
 
-    describe('.getForm()', () => {
+    describe('._formData(formName)', () => {
       describe('positive', () => {
         test('returns the requested form by name', () => {
           const name = 'asociatie'
-          expect(lodger._getForm(name)).toBe(lodger.forms.filter(form => form.name === name)[0].data)
+          expect(lodger._formData(name)).toBe(lodger.forms.filter(form => form.name === name)[0].data)
         })
       })
 
       describe('negative', () => {
         test('throws if argument is diff than string', () => {
           try {
-            lodger._getForm({ name: 'baba' })
+            lodger._formData({ name: 'baba' })
           } catch (e) {
             expect(e).toBeDefined()
           }
 
           try {
-            lodger._getForm(1)
+            lodger._formData(1)
           } catch (e) {
             expect(e).toBeDefined()
           }
 
           try {
-            lodger._getForm(['asociatie'])
+            lodger._formData(['asociatie'])
           } catch (e) {
             expect(e).toBeDefined()
           }
@@ -197,7 +197,7 @@ describe('Lodger', () => {
 
         test('throws if no form found with the speciffied name', () => {
           try {
-            lodger._getForm('invalid')
+            lodger._formData('invalid')
           } catch (e) {
             expect(e).toBeDefined()
           }

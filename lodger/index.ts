@@ -7,7 +7,7 @@ import yaml from 'json2yaml'
 
 import LodgerStore from 'lodger/lib/Store'
 import { getCriteriu } from 'lodger/lib/helpers/functions'
-import { handleOnSubmit } from 'lodger/lib/helpers/forms'
+import { handleOnSubmit, assignRefIdsFromStore } from 'lodger/lib/helpers/forms'
 import DB from 'lodger/lib/DB'
 import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
@@ -199,12 +199,12 @@ async function handleSelectChanges(context, { type, payload }) {
 /**
  * Custom DB getters!!
  */
-function DBGettersMethods () {
-  const args = { ...arguments[0] }
-  return async (mutation) => {
-    await handleSelectChanges(args, mutation)
-  }
-}
+// function DBGettersMethods () {
+//   const args = { ...arguments[0] }
+//   return async (mutation) => {
+//     await handleSelectChanges(args, mutation)
+//   }
+// }
 
 class Lodger {
   constructor (
@@ -230,10 +230,15 @@ class Lodger {
    * @param taxonomie
    * @param data
    */
-  async put (taxonomie: Taxonomii, data: LodgerFormData) {
+  async put (
+    taxonomie: Taxonomii,
+    data: LodgerFormData,
+    references ?: Taxonomii[]
+  ) {
     const debug = Debug('lodger:put')
     if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData)
     const { db, plurals, store } = this
+    const { getters } = store
     const plural = plurals.get(taxonomie)
     if (!plural) throw new LodgerError(Errors.noPlural, taxonomie)
     const colectie = db.collections[plural]
@@ -245,8 +250,13 @@ class Lodger {
       'upsert' :
       'insert'
 
+    const internallyHandledData = handleOnSubmit(data, {
+      getters,
+      references
+    })
+
     try {
-      const { _data } = await colectie[method](handleOnSubmit(data))
+      const { _data } = await colectie[method](internallyHandledData)
       if (store) await store.dispatch(`${taxonomie}/set_last`, _data._id)
       debug('pus', taxonomie, _data._id)
       return _data
@@ -280,10 +290,24 @@ class Lodger {
    * @param taxonomie
    * @param id
    */
-  async select (taxonomie, id) {
+  async select (
+    taxonomie: Taxonomii,
+    id: string,
+    isMultiple: boolean = false
+  ) {
+    const debug = Debug('lodger:select')
     // const plural = this.plurals.get(taxonomie)
     // dbGetters[`$${taxonomie}`] = await this.db[plural].findOne(id).exec()
-    this.store.commit(`${taxonomie}/select`, id)
+    if (!isMultiple) {
+      this.store.commit(`${taxonomie}/select`, id)
+    } else {
+      // const refDoc =
+      // apeleaza metoda de selectat
+      if (taxonomie === 'serviciu') {
+
+      }
+      debug('MULTIPLE SEL', id)
+    }
   }
 
   /**
@@ -386,17 +410,22 @@ class Lodger {
       Object.assign(buildOpts, { ...options })
     }
 
-    // inscrie active getteru
+    /**
+     * Custom DB getters on store.getters
+     * This is for SELECT mutation
+     */
     store.subscribe(async ({ type, payload }, state) => {
       const path = type.split('/')
       const debug = Debug('lodger:SELECTstoreSubscriber')
       if (path[1] !== 'select') return
       const tax = path[0]
       const plural = plurals.get(tax)
-      let doc = await db.collections[plural].findOne(payload).exec()
+      let doc = await collections[plural].findOne(payload).exec()
       debug(`ACTIVE ${tax}`, doc)
-      if (!state[tax].doc) {
-        Object.defineProperty(state[tax], 'doc', {
+      // store.getters[`${tax}/active`]
+      const gName = `${tax}/activeDoc`
+      if (!store.getters[gName]) {
+        Object.defineProperty(store.getters, gName, {
           configurable: false,
           get () {
             return doc
@@ -406,7 +435,8 @@ class Lodger {
           }
         })
       } else {
-        state[tax].doc = doc
+        // state[tax].doc = doc
+        store.getters[gName] = doc
       }
 
       // state[tax]._activeDoc = doc
@@ -495,15 +525,29 @@ class Lodger {
    * @returns {Form} the form
    * @memberof Lodger
    */
-  _getForm (formName: string) {
+  get _formData () {
     const { forms } = this
     if (!forms) return
-    const form = forms.filter(form => form.name === formName)[0]
-    return form ? form.data : {}
+
+    return (formName: string) => {
+      const form = forms.filter(form => form.name === formName)[0]
+      return form ? form.data : {}
+    }
   }
 
-  _getCollection (colName: string) {
-    return this.db.collections[colName]
+  get _collection () {
+    return (colName: string) => this.db.collections[colName]
+  }
+
+  get referenceTaxonomies () {
+    const { _formData } = this
+
+    return (taxonomy: Taxonomii) => {
+      const { fields } = _formData(taxonomy)
+      return fields
+        .filter(field => field.id.indexOf('Id') === field.id.length - 2)
+        .map(field => field.id.replace('Id', ''))
+    }
   }
 }
 

@@ -38,7 +38,7 @@ describe('helpers/forms', () => {
     describe('negative', () => {
       //
     })
-    
+
   })
 
   describe('.pushFieldToSchema()', () => {
@@ -56,15 +56,15 @@ describe('helpers/forms', () => {
       test('throws if insufficient arguments', () => {
         expect(() => { pushFieldToSchema() }).toThrow()
       })
-  
+
       test('throws if field doesn t have an id', () => {
         expect(() => { pushFieldToSchema({ salut: 'yolo '}) }).toThrow()
       })
-  
+
       test('throws if duplicated id detected', () => {
         //..
       })
-  
+
       test('throws with wrong parameters', () => {
         expect(() => { pushFieldToSchema(1, 2) }).toThrow()
         expect(() => { pushFieldToSchema(true, null) }).toThrow()
@@ -150,9 +150,18 @@ describe('helpers/forms', () => {
     describe('negative', () => {})
   })
 
+  // TODO! ia din forms dupa nume si gaseste fiedl cu Id la sf
+  // describe('.getReferenceTaxonomy()', () => {
+  //   describe('positive', () => {
+  //     test('returns the item with', () => {
+
+  //     })
+  //   })
+  // })
+
   describe('.dynamicFormData() -> renamed to componentData()', () => {
     describe('positive', () => {
-      
+
     })
 
     describe('negative', () => {

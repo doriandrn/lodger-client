@@ -2,11 +2,11 @@
 .list
   split.list__header
     .top
-      h2.list__heading {{ plural }} {{ refTax }}
+      h2.list__heading {{ plural }} {{ references && references.length ? references[0] : '' }}
         //- @click=     "add(taxonomy, fakeData(taxonomy))"
       buton(
-        @click=     "$event.shiftKey ? add(taxonomy, fakeData(taxonomy)) : openModal(`${taxonomy}.new`)"
-        :disabled = "taxesWithoutRef.indexOf(taxonomy) < 0 && !activeReferenceId"
+        @click=     "$event.shiftKey ? add(taxonomy, fakeData(taxonomy), references) : openModal(`${taxonomy}.new`)"
+        :disabled = "taxesWithoutRef.indexOf(taxonomy) < 0 && !references"
         styl=       "unstyled"
         icon=       "plus"
         icon-only
@@ -87,6 +87,7 @@ import Component from 'vue-class-component'
 // import { State, Action, Getter } from 'vuex-class'
 import { Action } from 'vuex-class'
 import { LodgerError } from 'lodger/lib/Errors'
+import { assignRefIdsFromStore } from 'lodger/lib/helpers/forms'
 
 /** Components Imports */
 import field from 'form/field'
@@ -110,10 +111,17 @@ let activeDocument
       default: 'asociatie'
     },
     /**
-     * alternate for refTax
+     * Pentru contoare si servici si ce-o mai fi
+     */
+    multipleSelect: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * reference taxonomies
     */
-    reference: {
-      type: String,
+    references: {
+      type: [String, Array],
       default: null
     },
     subscriber: {
@@ -133,7 +141,7 @@ let activeDocument
      */
     criteriu: {
       handler () {
-        // this.debug('change handler callD')
+        this.debug('change handler callD')
         this.sub(this.subscriber)
       },
       deep: true
@@ -141,15 +149,19 @@ let activeDocument
     /**
      *
      */
-    activeReferenceId (newVal, oldval) {
-      if (!newVal) return
+    referencesIds: {
+      handler (newVal, oldval) {
+        if (!newVal) return
+        const { references, debug } = this
+        if (!references.length) return
 
-      const { refTax, debug } = this
-      if (!refTax) return
+        debug('schimbat la', newVal, 'de la', oldval)
 
-      debug('schimbat', newVal, oldval)
-      this.criteriu.find = { [`${refTax}Id`]: newVal }
-    },
+        Object.keys(newVal).forEach(refTaxId => {
+          Vue.set(this.criteriu.find, refTaxId, newVal[refTaxId])
+        })
+      }
+    }
 
 
     // async selected (newId) {
@@ -198,8 +210,6 @@ export default class ListTaxonomyItems extends Vue {
    * eg. transactii / transactions
    */
   combinedItems = {}
-  doc = undefined
-  // selectedDoc = null
 
   get Items () {
     // return this.items
@@ -246,8 +256,7 @@ export default class ListTaxonomyItems extends Vue {
         taxonomy
 
     taxes.forEach(tax => {
-      console.error('WTF', tax)
-      ar.push(this.$lodger._getForm(tax))
+      ar.push(this.$lodger._formData(tax))
     })
     return ar.length > 1 ? ar : ar[0]
   }
@@ -290,17 +299,6 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   async add () {
-    const { activeReferenceId, taxonomy, taxesWithoutRef } = this
-    const refId = activeReferenceId
-
-    const { refTax, debug } = this
-    if (!refTax && taxesWithoutRef.indexOf(taxonomy) < 0) {
-      throw new LodgerError(Errors.missingReferenceId)
-    }
-
-    if (taxesWithoutRef.indexOf(taxonomy) < 0)
-      Object.assign(arguments[1], { [`${refTax}Id`]: refId })
-
     return await this.$lodger.put(...arguments)
   }
 
@@ -309,21 +307,34 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   select () {
-    const { taxonomy, $store: { commit }} = this
-    this.$lodger.select(taxonomy, ... arguments)
+    const {
+      taxonomy,
+      $store: { commit, getters },
+      multipleSelect,
+      debug
+    } = this
+    // if (!multipleSelect) {
+    this.$lodger.select(
+      taxonomy,
+      ... arguments,
+      multipleSelect
+    )
+    // } else {
+      // const refDoc = getters[`${refTax}/activeDoc`]
+
+    // }
   }
 
   /**
    * For taxonomies that have references
-   * this is the referred id
+   * get the referred ids
+   *
+   * @returns {Object}
    */
-  get activeReferenceId () {
-    const { taxonomy, $store: { commit, getters }} = this
-    if (!taxonomy) return
 
-    const { refTax, debug } = this
-    if (!refTax) return
-    return getters[`${refTax}/active`] || getters[`${refTax}/selected`]
+  get referencesIds () {
+    const { references, $store: { getters } } = this
+    return assignRefIdsFromStore({ references, getters })
   }
 
   /**
@@ -419,33 +430,6 @@ export default class ListTaxonomyItems extends Vue {
       throw new Error('no plural definiton found, component could not init')
     }
     return plural
-  }
-
-  /**
-   * Reference Taxonomy for taxonomy
-   * eg. 'bloc' are ref 'asociatie'
-   *
-   */
-  get refTax () {
-    const { taxonomy } = this
-    if (!taxonomy) return
-
-    switch (taxonomy) {
-      case 'bloc':
-      case 'tranzactie':
-        return 'asociatie'
-
-      case 'apartament':
-        return 'bloc'
-
-      case 'incasare':
-        return 'apartament'
-
-      case 'cheltuiala':
-        return 'asociatie'
-    }
-
-    return
   }
 
   get taxesWithoutRef () {

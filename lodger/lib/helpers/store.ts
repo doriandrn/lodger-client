@@ -64,7 +64,7 @@ function setupSharedMethods (
     module.mutations[action] = (s, id) => s[methodName] = id
   })
 
-  module.getters['activeDoc'] = (S: RootState) => S.doc || {}
+  // module.getters['activeDoc'] = (S: RootState) => S.doc || {}
 
   return <Module<SharedStoreMethods, RootState>>module
 }

@@ -2,15 +2,18 @@
 sction#pg
   .boxes
     list.box(
-      v-for=      "tax in $lodger.taxonomii"
-      :key=       "tax"
-      :taxonomy=  "tax"
+      v-for=        "tax in $lodger.taxonomii"
+      :key=         "tax"
+      :taxonomy=    "tax"
+      :references=  "$lodger.referenceTaxonomies(tax)"
+      @select=      ""
+      :multipleSelect=  "['serviciu', 'contor'].indexOf(tax) > -1"
     )
 
     servicii.box
-  
+
   registru
-  
+
   .stats(slot="sidebar")
     h5 stats
 
@@ -43,14 +46,11 @@ import servicii from 'c/servicii'
     servicii
   }
 })
-  export default class Playground extends Vue {    
+  export default class Playground extends Vue {
   }
 </script>
 
 <style lang="stylus">
-#webpack-hot-middleware-clientOverlay
-  display none
-
 #pg
   .inner
     display flex
@@ -68,7 +68,7 @@ import servicii from 'c/servicii'
     margin 8px
     padding 8px
     border 1px solid rgba(black, .05)
-      
+
     &.list
       flex 0 1 280px
 

@@ -1,18 +1,19 @@
 const plural = 'apartamente'
+const selectedApGetter = 'apartament/activeDoc'
 
 const fields = [
   {
     id: '_id',
     notInDb: true, // skip it's already defiend by rxdb
     notInForm: true,
-    value: g => g['apartament/selectat']._id
+    value: g => g[selectedApGetter]._id
   },
   {
     id: 'nr',
     type: 'number',
     default: g => {
       //TODO: numerotare pentru hoteluri, 101 et 1, 201 et 2
-      const { apartamente } = g['$bloc']
+      const { apartamente } = g['bloc/activeDoc']
       if (!apartamente || !apartamente.length) return 1
 
       // TODO: asta e pt hoteluri, daca toate ap de pe etaj la scara
@@ -23,7 +24,7 @@ const fields = [
 
       return sortate[0] + 1
     },
-    value: g => g['apartament/selectat'].nr,
+    value: g => g[selectedApGetter].nr,
     required: true,
     index: true,
     showInList: 'secondary'
@@ -34,7 +35,7 @@ const fields = [
     transform: 'capitalize',
     showInList: 'primary',
     v: 'alpha_spaces|max:32',
-    value: g => g['apartament/selectat'].proprietar
+    value: g => g[selectedApGetter].proprietar
   },
   {
     id: 'suprafata',
@@ -42,7 +43,7 @@ const fields = [
     showInList: 'details',
     default: null, // TODO: ia de la apartamentul de la etajul de dedesubt, in functie de cate ap sunt
     step: 0.01,
-    value: g => g['apartament/selectat'].suprafata
+    value: g => g[selectedApGetter].suprafata
   },
   {
     id: 'locatari',
@@ -52,7 +53,7 @@ const fields = [
     default: 2,
     min: 0,
     max: 10,
-    value: g => g['apartament/selectat'].locatari
+    value: g => g[selectedApGetter].locatari
   },
   {
     id: 'camere',
@@ -62,7 +63,7 @@ const fields = [
     default: 2,
     max: 12,
     min: 1,
-    value: g => g['apartament/selectat'].camere
+    value: g => g[selectedApGetter].camere
   },
   {
     id: 'etaj',
@@ -70,14 +71,14 @@ const fields = [
     required: true,
     notInForm: true,
     default: g => g['etaj/selectat'].etaj,
-    value: g => g['apartament/selectat'].etaj
+    value: g => g[selectedApGetter].etaj
   },
   {
     id: 'blocId',
     required: true,
     notInForm: true,
     default: g => g['etaj/selectat'].bloc,
-    value: g => g['apartament/selectat'].bloc
+    value: g => g[selectedApGetter].bloc
   },
   {
     id: 'scara',
@@ -85,7 +86,7 @@ const fields = [
     required: true,
     notInForm: true,
     default: g => g['etaj/selectat'].scara,
-    value: g => g['apartament/selectat'].scara
+    value: g => g[selectedApGetter].scara
   },
   {
     id: 'balanta',
@@ -94,13 +95,13 @@ const fields = [
     required: true,
     showInList: 'details',
     index: true,
-    value: g => g['apartament/selectat'].balanta
+    value: g => g[selectedApGetter].balanta
   },
   {
     id: 'contoare',
     type: 'contoare',
     showInList: 'details',
-    value: g => g['apartament/selectat'].contoare
+    value: g => g[selectedApGetter].contoare
   },
   {
     id: 'incasari',

@@ -1,4 +1,4 @@
-const bs = 'bloc/selected'
+const bs = 'bloc/activeDoc'
 
 const fields = [
   {

@@ -1,17 +1,18 @@
 import { RxJsonSchema } from 'rxdb'
 import FormItemTypes from 'lodger/lib/defs/FormItemTypes'
 import Debug from 'debug'
+import { Taxonomii } from '../../index';
 const debug = Debug('lodger:forms')
 
 /**
  * Converteste tipurile campurilor 'noastre' in primare
- * 
+ *
  * Explicatie:
  * DB-ul nu stie decat de tipurile primare:
  * -> boolean, string, number, array, object
  * Schema noastra e mult mai detaliata
- * 
- * @param {string} type 
+ *
+ * @param {string} type
  * @returns {string} - tipul primar, eg. 'string'
  */
 function toRxDBtype(type: KnownItemTypes): RxDBType {
@@ -27,8 +28,8 @@ function toRxDBtype(type: KnownItemTypes): RxDBType {
 
 /**
  * Transforms a lodger form field to a valid RxSchema one
- * 
- * @param formItem 
+ *
+ * @param formItem
  */
 const toSchemaField = (formItem: Item) => {
   if (!formItem.id)
@@ -67,7 +68,7 @@ const toSchemaField = (formItem: Item) => {
 
 /**
  * Adauga un camp la schema Rx
- * 
+ *
  * @param {Object} formItem - campu'
  * @param {Object} schema - schema colectiei
  * @returns {object} schema modificata
@@ -82,7 +83,7 @@ const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
 
   schema.properties = properties || {}
   schema.required = required || []
-  
+
   const { id } = formItem
   if (!id) {
     throw new TypeError(`No ID supplied for formItem ${formItem}`)
@@ -94,12 +95,33 @@ const pushFieldToSchema = (formItem: Item, schema: RxJsonSchema) => {
 }
 
 /**
+ * Pt taxonomia ceruta
+ * ia formul
+ * si tot ce are nevoie de Id de altceva
+ * se populeaza
+ *
+ * @param { references, getters }
+ * @returns {Object} eg { asociatieId: 'XXXX' }
+ */
+function assignRefIdsFromStore (context: any): void {
+  const { references, getters } = context
+  if (!(references && references.length)) return
+  const refsObj = {}
+  references.map(tax => {
+    refsObj[`${tax}Id`] = getters[`${tax}/selected`]
+  })
+
+  return refsObj
+}
+
+/**
  * Manipulates the final data before submitting the form to the DB
- * 
+ *
  * @param data
  */
-const handleOnSubmit = (data: LodgerFormData) => {
-  const manipulatedData = {}
+function handleOnSubmit (data: LodgerFormData, context: any) {
+  const manipulatedData: any = {}
+  debug('HOS CHEMAT! context: ', context)
   debug('data before hOS', data)
 
   // not data.denumire pt servicii :/
@@ -113,6 +135,24 @@ const handleOnSubmit = (data: LodgerFormData) => {
 
     manipulatedData[what] = value
   })
+
+  let { getters, references } = context
+
+  debug('given refs', references)
+
+  if (references && references.length) {
+    references = assignRefIdsFromStore({ references, getters })
+    debug('refs after', references)
+
+    // asigneaza doar daca nu exista deja, posibbil
+    // sa o provizioneze interfata
+    Object.keys(references).forEach(refTaxId => {
+      if (!manipulatedData[refTaxId]) {
+        Object.assign(manipulatedData, { [refTaxId]: references[refTaxId] })
+      }
+    })
+  }
+
   debug('data after hOS', manipulatedData)
   return manipulatedData
 }
@@ -120,9 +160,9 @@ const handleOnSubmit = (data: LodgerFormData) => {
 
 /**
  * Common fields for all taxonomies
- * 
- * @param schema 
- * @param commonFields 
+ *
+ * @param schema
+ * @param commonFields
  */
 const addCommonFieldsToSchema = (
   schema: RxJsonSchema,
@@ -146,5 +186,7 @@ export {
   toSchemaField,
   pushFieldToSchema,
   handleOnSubmit,
-  addCommonFieldsToSchema
+  addCommonFieldsToSchema,
+  getReferenceTaxonomy,
+  assignRefIdsFromStore
 }

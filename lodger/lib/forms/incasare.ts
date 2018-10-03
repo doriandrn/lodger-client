@@ -34,13 +34,13 @@ const fields: Fields = [
   // asociatieId = idul asociatiei apului
   /// !!!!!!!!!!!!!!!!
 
-  // {
-  //   id: 'asociatieId',
-  //   notInForm: true,
-  //   required: true,
-  //   primary: true,
-  //   value: (g: Getter<AsociatieState, RootState>) => g['asociatie/active'] || g['asociatie/selected']
-  // }
+  {
+    id: 'asociatieId',
+    notInForm: true,
+    required: true,
+    index: true,
+    value: (g: Getter<AsociatieState, RootState>) => g['asociatie/active'] || g['asociatie/selected']
+  }
 ]
 
 const actions = {

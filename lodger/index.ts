@@ -41,6 +41,7 @@ enum Taxonomii {
   asociatie = 'asociatie',
   bloc = 'bloc',
   apartament = 'apartament',
+  factura = 'factura',
   incasare = 'incasare',
   cheltuiala = 'cheltuiala',
   serviciu = 'serviciu',
@@ -107,14 +108,12 @@ function subscribe (
   if (typeof taxonomii === 'string') {
     taxonomii = Array(taxonomii)
   }
-  debug('taxonomii', taxonomii)
 
   const multipleTaxonomies: boolean = taxonomii.length > 1
 
   const subscriber = <Subscriber>subscribers[subscriberName]
 
   taxonomii.forEach(taxonomie => {
-    debug('taxonomie', taxonomie)
     let { limit, index, sort, find } = getCriteriu(plural, criteriu)
     const paging = Number(limit || 0) * (index || 1)
     const pluralTaxonomie = plurals.get(taxonomie)
@@ -126,7 +125,7 @@ function subscribe (
       .limit(paging)
       .sort(sort)
       .$
-      .subscribe((changes: RxDocument<any>[]) => {
+      .subscribe(async (changes: RxDocument<any>[]) => {
         // DO NOT RETURN IF NO CHANGES!!!!!!!
         debug(`${plural} for subscriber[${subscriberName}]`, changes)
         // assuming this is the first time ?!
@@ -135,6 +134,14 @@ function subscribe (
           debug('first init, adaugat predefinite')
         }
 
+        // utilizatorul default
+        if (pluralTaxonomie === 'utilizatori' && !changes.length) {
+          debug('YOLO')
+          // await collections.utilizatori.insert({
+          //   name: 'implicit',
+          //   rol: 'administrator'
+          // })
+        }
 
         // check if comes from Vue data() -> if it's observable
         // if (binder.__ob__) {
@@ -301,12 +308,9 @@ class Lodger {
     if (!isMultiple) {
       this.store.commit(`${taxonomie}/select`, id)
     } else {
-      // const refDoc =
-      // apeleaza metoda de selectat
-      if (taxonomie === 'serviciu') {
-
-      }
-      debug('MULTIPLE SEL', id)
+      const metoda = `toggle_${taxonomie}`
+      await this.store.getters[`${taxonomie}/activeDoc`][metoda](id)
+      debug('MULTIPLE SEL', id, metoda)
     }
   }
 

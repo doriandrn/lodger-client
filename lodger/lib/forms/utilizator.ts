@@ -1,3 +1,5 @@
+const getter = `utilizator/activeDoc`
+
 const fields = [
   {
     id: '_id',
@@ -6,9 +8,10 @@ const fields = [
     value: g => g[getter]._id
   },
   {
-    id: 'nume',
+    id: 'name',
     required: true,
-    encrypted: true,
+    primary: true,
+    showInList: 'primary',
     value: g => g[getter].nume
   },
   {
@@ -18,17 +21,17 @@ const fields = [
   {
     id: 'rol',
     required: true,
-    type: 'number',
-    default: 0,
     notInForm: true
   },
   {
     id: 'alteDetaliiContact',
     type: 'contactFields',
+    notInForm: true
   },
   {
     id: 'preferinte',
-    type: 'object'
+    type: 'object',
+    notInForm: true
   }
 ]
 

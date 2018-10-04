@@ -4,7 +4,7 @@
     v-if="['name', 'proprietar', 'denumire'].indexOf(type) > -1"
   ) {{ value }}
   timp(
-    v-else-if= "type === 'la'"
+    v-else-if= "['la', 'dataScadenta'].indexOf(type) > -1"
     :unixTime = "value"
     ago=  true
     liveUpdate= true

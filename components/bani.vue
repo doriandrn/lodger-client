@@ -1,7 +1,7 @@
 <template lang="pug">
 span.bani(
-  :class="{ negativ: valoare < 0 }"
-) {{ numeral(valoare).format('0,0[.]00') }} {{ moneda }}
+  :class="{ negativ: suma < 0 }"
+) {{ numeral(suma).format('0,0[.]00') }} {{ moneda }}
 </template>
 
 <script>
@@ -12,12 +12,21 @@ export default {
   methods: { numeral },
   props: {
     valoare: {
-      type: Number,
+      type: [Number, Object],
       default: 0
+    }
+  },
+  computed: {
+    suma () {
+       return typeof this.valoare === Number ?
+        this.valoare :
+        this.valoare.suma
     },
-    moneda: {
-      type: String,
-      default: 'ron'
+    moneda () {
+      const def = 'ron'
+      return typeof this.valoare === Number ?
+        def :
+        this.valoare.moneda || def
     }
   }
 }

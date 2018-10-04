@@ -6,6 +6,8 @@ sction#pg
       :key=         "tax"
       :taxonomy=    "tax"
       :references=  "$lodger.referenceTaxonomies(tax)"
+
+      :deselectOnClickAway = false
       @select=      ""
       :multipleSelect=  "['serviciu', 'contor'].indexOf(tax) > -1"
     )

@@ -18,6 +18,7 @@
     //- buton(slot="right") ceva
 
   p.empty(v-if="!ids.length") gol
+  //- empty(v-if="!ids.length") gol
 
   //- h4(v-if="_selectedDoc && _selectedDoc._id") {{ _selectedDoc._id }}
   field.sort(
@@ -49,10 +50,10 @@
           )
           viw(
             v-for=  "key in __displayItemLocations[location]"
-            v-if=   "__displayItemLocations[location]"
+            v-if=   "item[key] && __displayItemLocations[location] && key !== 'moneda'"
             :type=  "key",
             :key=   "key",
-            :value= "item[key]"
+            :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
             :class= "`${taxonomy}__${key}`"
           )
 
@@ -91,6 +92,7 @@ import { assignRefIdsFromStore } from 'lodger/lib/helpers/forms'
 
 /** Components Imports */
 import field from 'form/field'
+import empty from 'c/empty'
 import buton from 'form/button'
 import bani from 'c/bani'
 import viw from 'c/viewElement'
@@ -184,6 +186,7 @@ let activeDocument
     // }
   },
   components: {
+    empty,
     field,
     buton,
     bani,
@@ -377,6 +380,14 @@ export default class ListTaxonomyItems extends Vue {
           nrChitanta: 1
         }
 
+      case 'factura':
+        return {
+          nrFactura: 1,
+          suma: faker.random.number({ min: -100000, max: -100 }),
+          moneda,
+          dataScadenta: Date.now() + faker.random.number({ min: 9000000, max: 100000000 })
+        }
+
       case 'furnizor':
         return {
           name: faker.company.companyName(),
@@ -393,7 +404,14 @@ export default class ListTaxonomyItems extends Vue {
         return {
           moneda,
           // suma: Number(faker.finance.amount(1000, 10000, 6))
-          suma: faker.random.number({ min: -100000, max: -100 })
+          suma: faker.random.number({ min: -100000, max: -100 }),
+
+        }
+
+      case 'utilizator':
+        return {
+          name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+          rol: 'administrator'
         }
     }
   }
@@ -433,7 +451,7 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   get taxesWithoutRef () {
-    return ['asociatie', 'furnizor', 'serviciu']
+    return ['asociatie', 'furnizor', 'serviciu', 'utilizator']
   }
 
   /**

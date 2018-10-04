@@ -1,3 +1,7 @@
+/**
+ * o cheltuiala = parte dintr-o factura
+ */
+
 const fields = [
   {
     id: 'asociatieId',
@@ -6,10 +10,10 @@ const fields = [
     index: true,
   },
   {
-    id: 'catre',
+    id: 'pentruFactura',
     type: 'search',
-    taxonomy: 'furnizori',
-    ref: 'furnizori',
+    taxonomy: 'facturi',
+    ref: 'facturi',
     // required: true TODO: e necesar? ?????????
   },
   {
@@ -20,9 +24,11 @@ const fields = [
     showInList: 'secondary'
   },
   {
-    id: 'dataScadenta',
-    type: 'date',
-    showInList: 'secondary'
+    id: 'moneda',
+    notInForm: true,
+    required: true,
+    showInList: 'secondary',
+    value: getters => getters['asociatie/activa'].moneda
   },
   {
     id: 'modDistribuire',
@@ -33,13 +39,7 @@ const fields = [
     type: 'selApartamente',
     options: getters => getters['asociatie/apartamente']
   },
-  {
-    id: 'moneda',
-    notInForm: true,
-    required: true,
-    showInList: 'secondary',
-    value: getters => getters['asociatie/activa'].moneda
-  }
+
 ]
 
 const plural = 'cheltuieli'

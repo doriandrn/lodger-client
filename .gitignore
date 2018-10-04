@@ -10,4 +10,4 @@ log.txt
 .nuxt
 
 # Nuxt generate
-# dist
+dist

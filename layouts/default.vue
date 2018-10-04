@@ -2,7 +2,7 @@
 #layout
   headr
     logo
-    
+
     field.switch(
       v-if=       "administreazaCelPutinOAsociatie"
       v-model=    "idAsociatieActiva",
@@ -130,22 +130,7 @@ export default {
   methods: {
     ...mapActions({
       schimbaAsociatieActiva: 'asociatie/schimba',
-    }),
-    // get formData () {
-    //   return (id, ctx) => {
-    //     if (!id || !id.length) return
-    //     const path = id.split('.')
-    //     const data = require(`forms/${path[0]}`)
-    //     let { campuri, actiuni } = data
-    //     if (!campuri) return
-
-    //     const { modalContent, modalData, blocuri, apartamente, debug } = ctx
-
-    //     campuri = campuri.filter(camp => !camp.notInAddForm)
-    //     debug(`${path[0]} Form data: `, campuri)
-    //     return { campuri, actiuni, $for: path[0] }
-    //   }
-    // }
+    })
   },
   computed: {
     modalForm () {
@@ -191,7 +176,7 @@ export default {
     ...mapGetters({
       asociatii: 'asociatii',
       blocuri: 'blocuri',
-      // idsAsociatii: 'asociatie/ids', 
+      // idsAsociatii: 'asociatie/ids',
       activa: 'asociatie/active',
       apartamente: 'apartamente',
       modalOpen: 'modal/open',
@@ -265,8 +250,8 @@ footerHeight = 24px
       height 100%
       max-width 250px
 
-      .altselect    
-        max-height 48px    
+      .altselect
+        max-height 48px
         > ul
           border-color transparent
 
@@ -282,7 +267,7 @@ footerHeight = 24px
               font-size 13px
               line-height 16px
               white-space nowrap
-      
+
       label
         font-size 9px
         text-transform uppercase
@@ -323,7 +308,7 @@ footerHeight = 24px
       fullflex()
       > .inner
         fullflex(1)
-  
+
   > footer
     position fixed
     bottom 0

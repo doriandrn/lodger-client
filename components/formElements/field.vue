@@ -65,7 +65,7 @@
     :arrow=       "arrow"
   )
     li(v-if="id === 'asociatieSwitch'") {{ $t('asociatie.new.title') }}
-  
+
   scari(
     v-else-if=    "type === 'scari'",
     :value=       "value",
@@ -224,7 +224,7 @@ export default {
       results: {
         apartamente: [],
         furnizori: [],
-        utilizatori: [] 
+        utilizatori: []
       },
       indexRezultatSelectat: 0
     }
@@ -394,7 +394,7 @@ export default {
         results,
         indexRezultatSelectat,
         debug,
-        type, 
+        type,
         searchTaxonomy
       } = this
       if (type !== 'search') return
@@ -442,7 +442,7 @@ export default {
           .reverse()
           .slice(0, 6)
       })
-      
+
       return results
     },
 
@@ -567,7 +567,7 @@ textarea
     font-weight 100
     opacity 0
     transition opacity .1s ease
-  
+
   &:active
   &:focus
     border-color: palette.primary
@@ -597,7 +597,7 @@ input[type="radio"]
       size 40px
       display block
       border-radius 50%
-      
+
       position: absolute
       top 50%
       left 0
@@ -689,7 +689,7 @@ input[type="checkbox"]
     &+label>span
       opacity .25
       cursor default
-  
+
   &:hover
   &:focus
   &:active
@@ -750,7 +750,7 @@ input[type="checkbox"]
 
   &[data-icon]
     > input
-      padding-left 20px 
+      padding-left 20px
 
   &[data-type="scari"]
     flex-direction column-reverse !important
@@ -881,8 +881,8 @@ input[type="checkbox"]
     flex 0 0 60px !important
 
   &--error
-    .field
-      &__message
+    .field__message
+    > .field__label
         color: config.palette.error
 
     input

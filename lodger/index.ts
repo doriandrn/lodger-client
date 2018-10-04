@@ -125,7 +125,7 @@ function subscribe (
       .limit(paging)
       .sort(sort)
       .$
-      .subscribe(async (changes: RxDocument<any>[]) => {
+      .subscribe((changes: RxDocument<any>[]) => {
         // DO NOT RETURN IF NO CHANGES!!!!!!!
         debug(`${plural} for subscriber[${subscriberName}]`, changes)
         // assuming this is the first time ?!
@@ -135,13 +135,21 @@ function subscribe (
         }
 
         // utilizatorul default
-        if (pluralTaxonomie === 'utilizatori' && !changes.length) {
-          debug('YOLO')
-          // await collections.utilizatori.insert({
-          //   name: 'implicit',
-          //   rol: 'administrator'
-          // })
-        }
+        // if (pluralTaxonomie === 'utilizatori' && !changes.length) {
+        //   debug('YOLO');
+        //   (async () => {
+        //     const usersCol = await collections.utilizatori
+        //     await usersCol.insert({
+        //       name: 'implicit',
+        //       rol: 'administrator'
+        //     })
+
+        //     await usersCol.insert({
+        //       name: 'vizitator',
+        //       rol: 'vizitator'
+        //     })
+        //   })()
+        // }
 
         // check if comes from Vue data() -> if it's observable
         // if (binder.__ob__) {
@@ -309,8 +317,16 @@ class Lodger {
       this.store.commit(`${taxonomie}/select`, id)
     } else {
       const metoda = `toggle_${taxonomie}`
-      await this.store.getters[`${taxonomie}/activeDoc`][metoda](id)
-      debug('MULTIPLE SEL', id, metoda)
+      const references = this.referenceTaxonomies(taxonomie)
+      debug('references', references)
+      references.forEach(async (reference: Taxonomii) => {
+        const doc = this.store.getters[`${reference}/activeDoc`]
+        debug('fac la referinta', doc)
+        if (!doc) throw new LodgerError('nicio/niciun %% selectat(a)', reference)
+        const _toExecute = doc[metoda]
+        if (typeof _toExecute !== 'function') throw new LodgerError('nu e functie %%', metoda)
+        await _toExecute(id)
+      });
     }
   }
 

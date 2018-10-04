@@ -10,7 +10,7 @@ const fields = [
     index: true,
   },
   {
-    id: 'pentruFactura',
+    id: 'facturi',
     type: 'search',
     taxonomy: 'facturi',
     ref: 'facturi',

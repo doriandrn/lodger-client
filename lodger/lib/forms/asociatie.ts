@@ -48,8 +48,6 @@ const fields = [
     id: 'balanta',
     type: 'number',
     value: g => g[getter].balanta,
-    notInAddForm: true,
-    notInForm: true,
     showInList: 'details'
   },
   {

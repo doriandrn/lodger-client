@@ -1,12 +1,12 @@
 const getter = `utilizator/activeDoc`
 
 const fields = [
-  {
-    id: '_id',
-    notInDb: true,
-    notInForm: true,
-    value: g => g[getter]._id
-  },
+  // {
+  //   id: '_id',
+  //   notInDb: true,
+  //   notInForm: true,
+  //   value: g => g[getter]._id
+  // },
   {
     id: 'name',
     required: true,

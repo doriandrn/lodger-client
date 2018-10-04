@@ -9,7 +9,7 @@ export const fields = [
     id: 'servicii',
     type: 'servicii',
     required: true,
-    servicii: g => g['asociatie/activa'].servicii.map(denum => g.servicii[denum]) || {},
+    servicii: g => g['asociatie/activeDoc'].servicii,
     ref: 'serviciu'
   },
   {

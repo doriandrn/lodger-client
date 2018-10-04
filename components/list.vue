@@ -302,6 +302,7 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   async add () {
+    this.debug('add clicat')
     return await this.$lodger.put(...arguments)
   }
 
@@ -316,6 +317,7 @@ export default class ListTaxonomyItems extends Vue {
       multipleSelect,
       debug
     } = this
+    debug('item to select clicked')
     // if (!multipleSelect) {
     this.$lodger.select(
       taxonomy,

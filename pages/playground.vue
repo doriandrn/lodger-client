@@ -5,12 +5,26 @@ sction#pg
       v-for=        "tax in $lodger.taxonomii"
       :key=         "tax"
       :taxonomy=    "tax"
-      :references=  "$lodger.referenceTaxonomies(tax)"
+      :plural=      "$lodger.plurals.get(tax)"
 
       :deselectOnClickAway = false
-      @select=      ""
-      :multipleSelect=  "['serviciu', 'contor'].indexOf(tax) > -1"
+
+      @created=     "$lodger.subscribe(playgroundSubscriber, tax, $event)"
+
+      @new=         "$event.shiftKey && process.env.NODE_ENV === 'dev' ? $lodger.put(tax, fakeData(tax), references) : openModal(`${tax}.new`)"
+      @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
+      @trash=       "$lodger.trash(tax, $event)"
+
+      @select=      "$lodger.select(tax, $event)"
+      :selected=    "$lodger.getters[`${tax}/selected`]"
+
+      @reSort=      "$lodger.subscribe(playgroundSubscriber, tax, $event)"
+      :sortOptions= "$lodger.form(tax).sortOptions"
+
+      :items=       "$lodger.docsHolder && $lodger.docsHolder[playgroundSubscriber] ? $lodger.docsHolder[playgroundSubscriber][$lodger.plurals.get(tax)] : null"
+      :showElements="$lodger.form(tax).__displayItemKeys"
     )
+    //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"
 
     servicii.box
 
@@ -32,12 +46,16 @@ sction#pg
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Action } from 'vuex-class'
 
 import sction from 'c/section'
 import frm from 'c/form'
 import list from 'c/list'
 import registru from 'c/registru'
 import servicii from 'c/servicii'
+
+// this should only stay here, on playground
+import fakeData from 'lodger/lib/helpers/dev/fakeData'
 
 @Component({
   components: {
@@ -49,6 +67,11 @@ import servicii from 'c/servicii'
   }
 })
   export default class Playground extends Vue {
+    @Action('open', { namespace: 'modal' }) openModal: any
+
+    get playgroundSubscriber () {
+      return 'playground'
+    }
   }
 </script>
 

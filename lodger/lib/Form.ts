@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'test') {
 
 /**
  * Form Errors Definition
- * 
+ *
  * TODO: account for translations
  */
 enum Errors {
@@ -60,14 +60,14 @@ class Form {
       .forEach(field => {
         pushFieldToSchema(field, schema)
       })
-    
+
     if (name !== 'serviciu') addCommonFieldsToSchema(schema)
 
     return <RxJsonSchema>schema
   }
 
   /**
-   * 
+   * Makes a RxCollection valid collection from the form
    */
   get collection (): RxCollectionCreator {
     const {
@@ -79,9 +79,43 @@ class Form {
   }
 
   /**
-   * Makes an object suitabble to be completed
+   * @returns {Array} the ids of all fields with index: true
+   */
+  get indexables () {
+    const { fields } = this.data
+
+    return fields
+      .filter(field => field.index)
+      .map(field => field.id)
+  }
+
+  /**
+   * gets the sorting options for tax
+   * @returns an object with each key used as a sorting option
+   */
+  get sortOptions () {
+    const { indexables, name } = this
+    const debug = Debug('lodger:sortOptions')
+
+    if (!['serviciu', 'contor'].indexOf(name)) {
+      indexables.push('la')
+    }
+
+    // TODO: !!! ia din common methods
+    const sorts = {}
+    indexables.forEach(indexable => {
+      const label = `sort.${indexable === 'name' ? 'az' : indexable}`
+      Object.assign(sorts, { [indexable]: { label } })
+    })
+
+    debug('sorts 4', name, sorts)
+
+    return sorts
+  }
+
+  /**
+   * Makes a Vue-ready $data {object} suitable to be completed
    * by the user in the end form
-   * and bindable to Vue Data object
    * as it will turn reactive
    */
   componentData (
@@ -105,12 +139,12 @@ class Form {
       let _def = camp.default
 
       if (click && !id) camp.id = click
-      
+
       // skip fields
       if (isNewForm) {
         if (!notInForm || notInDb) value = null
       }
-      
+
       // apply getters to funcs
       if (typeof value === 'function' && getters) {
         try {
@@ -141,8 +175,8 @@ class Form {
 
   /**
    * Loads a known form by name
-   * 
-   * @param name 
+   *
+   * @param name
    */
   static loadByName (name: string): Form {
     const debug = Debug('lodger:Form')
@@ -160,6 +194,20 @@ class Form {
       throw new FormError(Errors.invalidRequested, name)
     }
     return new Form(form, name, form.plural)
+  }
+
+  /**
+   * Items to be display to user,
+   * @returns {Object} the keys of the fields: their position
+   *
+   */
+  get __displayItemKeys () {
+    const { fields } = this.data
+
+    return Object.assign({}, ...fields
+      .filter(field => field.showInList)
+      .map(field => ({ [field.id]: field.showInList }) )
+    )
   }
 }
 

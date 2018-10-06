@@ -73,153 +73,14 @@ type Subscriber = {
   [k: string]: Asociatii | undefined
 }
 
-// const shortcuts = {
-//   // asociatii: {}
-// }
-
-interface LdgGetters extends GetterTree<IndexState, RootState> {}
-
-  /**
-   * Updateaza datele subscriberi-lor,
-   * date folosite de getteri pentru a fi
-   * afisate in interfata
-   *
-   * TODO: de exportat de -aici
-   *
-   * Usage: subscribes DB changes to a given variable (binder)
-   *
-   */
-function subscribe (
-  binder: Observer<object>,
-  taxonomii: Taxonomii[],
-  plural: Plural,
-  criteriu ?: Criteriu,
-  subscriberName : string = 'main',
-  docs ?: []
-) {
-  const debug = Debug('lodger:subscribe')
-
-  const { db: { collections }, plurals } = <RxDatabase>this
-  if (!collections || !plurals) {
-    throw new LodgerError(Errors.missingCoreDefinitions)
-  }
-
-  // always have it as an array
-  if (typeof taxonomii === 'string') {
-    taxonomii = Array(taxonomii)
-  }
-
-  const multipleTaxonomies: boolean = taxonomii.length > 1
-
-  const subscriber = <Subscriber>subscribers[subscriberName]
-
-  taxonomii.forEach(taxonomie => {
-    let { limit, index, sort, find } = getCriteriu(plural, criteriu)
-    const paging = Number(limit || 0) * (index || 1)
-    const pluralTaxonomie = plurals.get(taxonomie)
-    const colectie = collections[<Plural>pluralTaxonomie]
-    if (!colectie) throw new LodgerError('invalid collection %%', plural)
-
-    subscriber[taxonomie] = colectie
-      .find(find)
-      .limit(paging)
-      .sort(sort)
-      .$
-      .subscribe((changes: RxDocument<any>[]) => {
-        // DO NOT RETURN IF NO CHANGES!!!!!!!
-        debug(`${plural} for subscriber[${subscriberName}]`, changes)
-        // assuming this is the first time ?!
-        if (plural === 'servicii' && !changes.length) {
-          predefinite.forEach(async denumire => { await collections[pluralTaxonomie].insert({ denumire }) })
-          debug('first init, adaugat predefinite')
-        }
-
-        // utilizatorul default
-        // if (pluralTaxonomie === 'utilizatori' && !changes.length) {
-        //   debug('YOLO');
-        //   (async () => {
-        //     const usersCol = await collections.utilizatori
-        //     await usersCol.insert({
-        //       name: 'implicit',
-        //       rol: 'administrator'
-        //     })
-
-        //     await usersCol.insert({
-        //       name: 'vizitator',
-        //       rol: 'vizitator'
-        //     })
-        //   })()
-        // }
-
-        // check if comes from Vue data() -> if it's observable
-        // if (binder.__ob__) {
-        //   // cleanup first
-        //   // Object.keys(binder.items).forEach(id => {
-        //   //   Vue.delete(binder, id)
-        //   // })
-        //   // binder.items = {}
-
-        //   // // update data obj
-        //   // changes.map((item: RxDocument<any>) => {
-        //   //   Vue.set(binder.items, item._id, item._data)
-        //   // })
-        //   // if (docs) docs = changes\
-        //   // Object.defineProperty(binder, 'docs', {
-        //   //   configurable: false,
-        //   //   value: changes
-        //   // })
-        //   // Vue.set(binder, 'docs', Object.freeze(changes))
-        //   // binder.docs = [...Object.freeze(changes)]
-        //   debug('BINDER', binder)
-
-        const { length } = colectie
-        Vue.set(binder, 'itemsCount', length)
-
-        // remove preloading
-        if (binder.fetching) { binder.fetching = false }
-
-        // binder._docs = Object.freeze(changes)
-
-        Vue.set(multipleTaxonomies ? binder.combinedItems : binder, multipleTaxonomies ? taxonomie : 'items', Object.assign({},
-          ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
-        ))
-      })
-  })
-
-}
-
+/**
+ * Main holder for temporary items subscribed to
+ */
+// const docsHolder = {}
 
 const plugins: Plugin[] = []
 
-// ACTIVE & SELECTED documents
-async function handleSelectChanges(context, { type, payload }) {
-  if (!type.indexOf('select')) return
-  const namespace = type.split('/')[0]
-  const debug = Debug('lodger:handleSelectChanges')
-  const { collections, store, plurals } = context
-  const { commit } = store
-  // let doc: RxDocument<any>
-
-  const plural = plurals.get(namespace)
-  debug('yolo', context)
-
-//   try {
-//     // const doc = await collections[plural].findOne(payload).exec()
-//     // commit(`${namespace}/SEL_DOC`, doc)
-//   } catch (e) {
-//     debug(e)
-//   }
-}
-
-/**
- * Custom DB getters!!
- */
-// function DBGettersMethods () {
-//   const args = { ...arguments[0] }
-//   return async (mutation) => {
-//     await handleSelectChanges(args, mutation)
-//   }
-// }
+interface LdgGetters extends GetterTree<IndexState, RootState> {}
 
 class Lodger {
   constructor (
@@ -227,9 +88,38 @@ class Lodger {
     protected forms: Form[],
     private readonly plurals: PluralsMap,
     protected db: RxDatabase,
-    readonly store: Store<RootState>,
-    readonly subscribe: () => Promise<any>
-  ) {}
+    readonly store: Store<RootState>
+  ) {
+    const debug = Debug('lodger:constructor')
+    // Vue.set(this, 'docsHolder', {})
+    this.docsHolder = new Vue({ data: { main: {}, playground: {} } })
+    // debug('TST', test)
+    taxonomii.forEach(tax => {
+      const plural = plurals.get(tax)
+      Object.defineProperty(this, plural, {
+        get () {
+          return (subscriberName: string = 'main') => {
+            try {
+              return this.docsHolder[subscriberName][plural].items
+            } catch (e) {
+              // debug(e)
+              return {}
+            }
+          }
+        },
+        /**
+         * usage:
+         * $lodger.asociatii('main') = { newitems }
+         * @param newItems
+         */
+        // set (newItems: any) {
+        //   return (subscriberName: string = 'main') => {
+        //     docsHolder[subscriberName][plural] = newItems
+        //   }
+        // }
+      })
+    })
+  }
 
   /**
    * Notifies the user about an update/change
@@ -307,27 +197,123 @@ class Lodger {
    */
   async select (
     taxonomie: Taxonomii,
-    id: string,
-    isMultiple: boolean = false
+    id: string
   ) {
     const debug = Debug('lodger:select')
-    // const plural = this.plurals.get(taxonomie)
-    // dbGetters[`$${taxonomie}`] = await this.db[plural].findOne(id).exec()
+
+    /**
+     * Taxonomii cu select multiplu
+     */
+    const isMultiple = ['serviciu', 'contor'].indexOf(taxonomie) > -1
+
+
     if (!isMultiple) {
       this.store.commit(`${taxonomie}/select`, id)
     } else {
       const metoda = `toggle_${taxonomie}`
-      const references = this.referenceTaxonomies(taxonomie)
-      debug('references', references)
-      references.forEach(async (reference: Taxonomii) => {
-        const doc = this.store.getters[`${reference}/activeDoc`]
-        debug('fac la referinta', doc)
-        if (!doc) throw new LodgerError('nicio/niciun %% selectat(a)', reference)
-        const _toExecute = doc[metoda]
-        if (typeof _toExecute !== 'function') throw new LodgerError('nu e functie %%', metoda)
-        await _toExecute(id)
-      });
+      debug('MULTIPLE SELECt!', metoda, '....TODO: adauga binderi, eg. pt serviciu e clar asociatie, dar conteaza de context')
+      /// NARE TREABA REFERENCES AICI!!!!!!!!!!
+      /// codu dinauntru e bun totusi
+
+      // references.forEach(async (reference: Taxonomii) => {
+      //   const doc = this.store.getters[`${reference}/activeDoc`]
+      //   debug('fac la referinta', doc)
+      //   if (!doc) throw new LodgerError('nicio/niciun %% selectat(a)', reference)
+      //   const _toExecute = doc[metoda]
+      //   if (typeof _toExecute !== 'function') throw new LodgerError('nu e functie %%', metoda)
+      //   await _toExecute(id)
+      // });
     }
+  }
+
+   /**
+   * Updateaza datele subscriberi-lor,
+   * date folosite de getteri pentru a fi
+   * afisate in interfata
+   *
+   * TODO: de exportat de -aici
+   *
+   * Usage: subscribes DB changes to a given variable (binder)
+   *
+   */
+  subscribe (
+    subscriberName : string = 'main',
+    taxonomii: Taxonomii[],
+    criteriu ?: Criteriu
+  ) {
+    const debug = Debug('lodger:subscribe')
+
+    const {
+      db: { collections },
+      plurals,
+      docsHolder
+     } = <Lodger>this
+
+    if (!collections || !plurals) {
+      throw new LodgerError(Errors.missingCoreDefinitions)
+    }
+
+    // always have it as an array
+    if (typeof taxonomii === 'string') {
+      taxonomii = Array(taxonomii)
+    }
+
+    // const multipleTaxonomies: boolean = taxonomii.length > 1
+    if (!subscribers[subscriberName]) Object.assign(subscribers, { [subscriberName]: {} })
+    debug('subscribers', subscribers)
+
+    const subscriber = <Subscriber>subscribers[subscriberName]
+
+    taxonomii.forEach(taxonomie => {
+      const plural = plurals.get(taxonomie)
+      let { limit, index, sort, find } = getCriteriu(plural, criteriu)
+      const paging = Number(limit || 0) * (index || 1)
+      const colectie = collections[<Plural>plural]
+      if (!colectie) throw new LodgerError('invalid collection %%', plural)
+
+      subscriber[plural] = colectie
+        .find(find)
+        .limit(paging)
+        .sort(sort)
+        .$
+        .subscribe((changes: RxDocument<any>[]) => {
+          // DO NOT RETURN IF NO CHANGES!!!!!!!
+          debug(`${plural} for subscriber[${subscriberName}]`, changes)
+          // assuming this is the first time ?!
+          if (plural === 'servicii' && !changes.length) {
+            predefinite.forEach(async denumire => { await collections[plural].insert({ denumire }) })
+            debug('first init, adaugat predefinite')
+          }
+
+          Vue.set(docsHolder[subscriberName], plural, {
+            docs: changes.map(change => Object.freeze(change)) || [],
+            items: Object.assign({},
+              ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
+            )
+          })
+
+        })
+    })
+
+  }
+
+  // get docsHolder () {
+  //   return docsHolder
+  // }
+
+  /**
+   * Array of taxonomies that have no reference
+   * root taxonomies
+   */
+  get taxonomiesWithoutReference () {
+    const twr: Taxonomii[] = []
+    this.taxonomii.forEach(tax => {
+      const references = this.referenceTaxonomies(tax)
+      if (!(references && references.length > -1)) {
+        twr.push(tax)
+      }
+    })
+    return twr
   }
 
   /**
@@ -470,13 +456,13 @@ class Lodger {
       forms,
       plurals,
       db,
-      store,
-      subscribe.bind({ db, plurals })
+      store
     )
   }
 
   /**
-   * Metoda de introdus plugin-uri in clasa
+   * Extend Lodger :)
+   * Todo!
    *
    * @param {Plugin} plugin
    *
@@ -502,6 +488,9 @@ class Lodger {
 
   /**
    * Exports the DB
+   * as a YML file with ext .ldb
+   * date is captured
+   *
    */
   async export (path?: string, cryptedData?: boolean, filename?: string) {
     const debug = Debug('lodger:export')
@@ -526,6 +515,10 @@ class Lodger {
 
   }
 
+  /**
+   * Kills all active listeners for a given subscriber name
+   * @param subscriberName
+   */
   async unsubscribeAll (subscriberName: string = 'main') {
     const sub = subscribers[subscriberName || 'main']
     const debug = Debug('lodger:unsub')
@@ -545,12 +538,16 @@ class Lodger {
    * @returns {Form} the form
    * @memberof Lodger
    */
-  get _formData () {
+  get form () {
     const { forms } = this
     if (!forms) return
 
+    return (formName: string) => forms.filter(form => form.name === formName)[0]
+  }
+
+  get _formData () {
     return (formName: string) => {
-      const form = forms.filter(form => form.name === formName)[0]
+      const form = this.form(formName)
       return form ? form.data : {}
     }
   }
@@ -559,6 +556,24 @@ class Lodger {
     return (colName: string) => this.db.collections[colName]
   }
 
+  /**
+   * For taxonomies that have references
+   * get the referred ids
+   *
+   * @returns {Object}
+   */
+  activeReferencesIds (references: Taxonomii[]) {
+    return assignRefIdsFromStore({
+      references,
+      getters: this.store.getters
+    })
+  }
+
+  /**
+   * Reference taxonomies of a taxonomy
+   *
+   * @returns {Taxonomii[]}
+   */
   get referenceTaxonomies () {
     const { _formData } = this
 

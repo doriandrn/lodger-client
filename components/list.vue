@@ -2,15 +2,16 @@
 .list
   split.list__header
     .top
-      h2.list__heading {{ plural }} {{ references && references.length ? references[0] : '' }}
-        //- @click=     "add(taxonomy, fakeData(taxonomy))"
+      h2.list__heading {{ plural }}
+       //|{{ references && references.length ? references[0] : '' }}
+
       buton(
-        @click=     "$event.shiftKey ? add(taxonomy, fakeData(taxonomy), references) : openModal(`${taxonomy}.new`)"
-        :disabled = "taxesWithoutRef.indexOf(taxonomy) < 0 && !references"
+        @click=     "$emit('new')"
+        :disabled = "!referencesIds"
         styl=       "unstyled"
         icon=       "plus"
         icon-only
-      ) {{ taxonomy }}
+      ) adauga
 
     .bottom
       span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }}
@@ -38,13 +39,14 @@
     :class=   "{ fetching }"
   )
     li(
-      v-for=  "item, id in Items"
+      v-for=  "item, id in items"
       :data-id=    "id"
-      :class= "{ last: last === id, selected: selected === id }"
+      :class= "{ last: last === id, selected: selected && selected.length && selected.contains(id) }"
       @click= "select(id)"
     )
       split
         div(
+          v-if=   "__displayItemLocations"
           v-for=  "location in Object.keys(__displayItemLocations)"
           :class= "location"
           )
@@ -59,14 +61,14 @@
 
         .item__controls(slot="right")
           buton(
-            @click= "openModal({ id: `${taxonomy}.edit`, data: item })"
+            @click= "$emit('edit', item)"
             styl=   "unstyled"
             icon=   "edit"
             tooltip
             icon-only
           ) modifica
           buton(
-            @click= "remove(taxonomy, id)"
+            @click= "$emit('trash', id)"
             styl=   "unstyled"
             icon=   "trash"
             dangerous= true
@@ -83,7 +85,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import faker from 'faker'
 import Component from 'vue-class-component'
 // import { State, Action, Getter } from 'vuex-class'
 import { Action } from 'vuex-class'
@@ -108,81 +109,80 @@ let activeDocument
 @Component({
   props: {
     taxonomy: {
-      type: [String, Array],
-      required: true,
-      default: 'asociatie'
+      type: [String, Array]
     },
-    /**
-     * Pentru contoare si servici si ce-o mai fi
-     */
-    multipleSelect: {
-      type: Boolean,
-      default: false
+
+    items: {
+      type: Object,
+      default: () => {}
     },
+
+    showElements: {
+      type: Object,
+      default: () => {}
+    },
+
     /**
      * reference taxonomies
     */
-    references: {
-      type: [String, Array],
+    referencesIds: {
+      type: Object,
       default: null
     },
-    subscriber: {
+
+    /**
+     * Selected item(s)
+     */
+    selected: {
+      type: Array,
+      default: () => []
+    },
+
+    sortOptions: {
+      type: Object,
+      default: null
+    },
+
+    /**
+     * Last added item's ID
+     */
+    last: {
       type: String,
-      default: undefined
+      default: null
     },
 
     // for multiple taxonomies
-    _plural: {
+    plural: {
       type: String,
       default: undefined
     }
   },
   watch: {
-    /**
-     * Resubscribe everytime the crit changes
-     */
-    criteriu: {
-      handler () {
-        this.debug('change handler callD')
-        this.sub(this.subscriber)
-      },
-      deep: true
-    },
-    /**
-     *
-     */
-    referencesIds: {
-      handler (newVal, oldval) {
-        if (!newVal) return
-        const { references, debug } = this
-        if (!references.length) return
+    // /**
+    //  * Resubscribe everytime the crit changes
+    //  */
+    // criteriu: {
+    //   handler () {
+    //     this.debug('change handler callD')
+    //     this.sub(this.subscriber)
+    //   },
+    //   deep: true
+    // },
+    // /**
+    //  *
+    //  */
+    // referencesIds: {
+    //   handler (newVal, oldval) {
+    //     if (!newVal) return
+    //     const { references, debug } = this
+    //     if (!references.length) return
 
-        debug('schimbat la', newVal, 'de la', oldval)
+    //     debug('schimbat la', newVal, 'de la', oldval)
 
-        Object.keys(newVal).forEach(refTaxId => {
-          Vue.set(this.criteriu.find, refTaxId, newVal[refTaxId])
-        })
-      }
-    }
-
-
-    // async selected (newId) {
-    //   const col = this.$lodger._getCollection(this.plural)
-    //   console.info('CIOL', col)
-    //   // const doc = await col.findOne(newId).exec()
-    //   if (typeof col.selected !== 'function') return
-    //   activeDocument = await col.selected(newId)
-    //   // const frozen = Object.freeze(doc)
-    //   // console.info('DIO', frozen)
-    //   // if (!this.selectedDoc) {
-    //   //   Object.defineProperty(this, 'selectedDoc', {
-    //   //     configurable: false,
-    //   //     value: frozen
-    //   //   })
-    //   // } else {
-    //   //   this.selectedDoc = frozen
-    //   // }
-    //   // this.selectedDoc = frozen
+    //     Object.keys(newVal).forEach(refTaxId => {
+    //       Vue.set(this.criteriu.find, refTaxId, newVal[refTaxId])
+    //     })
+    //   }
     // }
   },
   components: {
@@ -195,9 +195,6 @@ let activeDocument
   }
 })
 export default class ListTaxonomyItems extends Vue {
-  @Action('open', { namespace: 'modal' }) openModal: any
-  _docs = []
-  items = {}
   itemsCount = 0
   fetching = false
   criteriu = {
@@ -214,82 +211,67 @@ export default class ListTaxonomyItems extends Vue {
    */
   combinedItems = {}
 
-  get Items () {
-    // return this.items
-    try {
-      const { combinedItems, items } = this.$data
-      this.debug('CI', combinedItems, 'I', items)
-      if (! (combinedItems && Object.keys(combinedItems).length))
-        return items
-      const combined = {}
-      Object.keys(combinedItems).forEach(tax => {
-        Object.assign(combined, { ...combinedItems[tax] })
-      })
-      return combined
-    } catch (e) {
-      this.debug('wtf happened', e)
-    }
-  }
+  // get Items () {
+  //   // return this.items
+  //   try {
+  //     const { combinedItems, items } = this.$data
+  //     this.debug('CI', combinedItems, 'I', items)
+  //     if (! (combinedItems && Object.keys(combinedItems).length))
+  //       return items
+  //     const combined = {}
+  //     Object.keys(combinedItems).forEach(tax => {
+  //       Object.assign(combined, { ...combinedItems[tax] })
+  //     })
+  //     return combined
+  //   } catch (e) {
+  //     this.debug('wtf happened', e)
+  //   }
+  // }
 
   get ids () {
-    const { Items } = this
-    if (!Items) return []
-    return Object.keys(Items)
-  }
-
-  get last () {
-    return this.$store.getters[`${this.taxonomy}/last`]
-  }
-
-  get selected () {
-    return this.$store.getters[`${this.taxonomy}/selected`]
+    return Object.keys(this.items || {})
   }
 
   // commd bcoz not needed so far
-  get lodgerForm () {
-    return this.__forms.length ? this.__forms[0] : this.__forms
-  }
+  // get lodgerForm () {
+  //   return this.__forms.length ? this.__forms[0] : this.__forms
+  // }
 
-  get __forms () {
-    const ar = []
-    const { taxonomy } = this
-    const taxes =
-      typeof taxonomy === 'string' ?
-        Array(taxonomy) :
-        taxonomy
+  // get __forms () {
+  //   const ar = []
+  //   const { taxonomy } = this
+  //   const taxes =
+  //     typeof taxonomy === 'string' ?
+  //       Array(taxonomy) :
+  //       taxonomy
 
-    taxes.forEach(tax => {
-      ar.push(this.$lodger._formData(tax))
-    })
-    return ar.length > 1 ? ar : ar[0]
-  }
+  //   taxes.forEach(tax => {
+  //     ar.push(this.$lodger._formData(tax))
+  //   })
+  //   return ar.length > 1 ? ar : ar[0]
+  // }
 
-  /**
-   * START: Related to displaying items
-   *
-   */
-  get __displayItemKeys () {
-    const { fields } = this.lodgerForm
 
-    return slot => {
-      if (!fields) return slot
-      return fields
-        .filter(field => field.showInList === slot)
-        .map(field => field.id)
-    }
-  }
 
   get __displayItemLocations () {
-    const locations = [
-      'primary',
-      'secondary',
-      'details'
-    ]
+    const { showElements } = this
+    const locations = Object.values(showElements).filter((item, pos, self) => self.indexOf(item) === pos)
     const o = {}
-    locations.map(loc => {
-      o[loc] = this.__displayItemKeys(loc)
+    if (!(locations && locations.length)) return o
+    locations.forEach(location => {
+      o[location] = Object.keys(showElements).filter(el => showElements[el] === location)
     })
     return o
+    // const locations = [
+    //   'primary',
+    //   'secondary',
+    //   'details'
+    // ]
+    // const o = {}
+    // locations.map(loc => {
+    //   o[loc] = this.__displayItemKeys(loc)
+    // })
+    // return o
   }
 
   /**
@@ -297,179 +279,7 @@ export default class ListTaxonomyItems extends Vue {
    */
 
   created () {
-    this.faker = faker
-    this.sub()
-  }
-
-  async add () {
-    this.debug('add clicat')
-    return await this.$lodger.put(...arguments)
-  }
-
-  async remove () {
-    return await this.$lodger.trash(...arguments)
-  }
-
-  select () {
-    const {
-      taxonomy,
-      $store: { commit, getters },
-      multipleSelect,
-      debug
-    } = this
-    debug('item to select clicked')
-    // if (!multipleSelect) {
-    this.$lodger.select(
-      taxonomy,
-      ... arguments,
-      multipleSelect
-    )
-    // } else {
-      // const refDoc = getters[`${refTax}/activeDoc`]
-
-    // }
-  }
-
-  /**
-   * For taxonomies that have references
-   * get the referred ids
-   *
-   * @returns {Object}
-   */
-
-  get referencesIds () {
-    const { references, $store: { getters } } = this
-    return assignRefIdsFromStore({ references, getters })
-  }
-
-  /**
-   * TODO: export from here
-   * To be removed in production
-   */
-  fakeData (taxonomy) {
-    const name = faker.company.companyName()
-    const monede = ['ron', 'usd', 'eur']
-    const moneda = faker.random.arrayElement(monede)
-
-    switch (taxonomy) {
-      case 'asociatie':
-        return {
-          name,
-          moneda,
-          balanta: Number(faker.finance.amount(100, 10000, 4))
-        }
-
-      case 'bloc':
-        return {
-          name: faker.random.alphaNumeric(2)
-        }
-
-      case 'apartament':
-        return {
-          nr: 1,
-          proprietar: `${faker.name.firstName()} ${faker.name.lastName()}`,
-          etaj: 0,
-          scara: 1,
-          balanta: faker.random.number({ min: -10000, max: 100 }),
-          suprafata: faker.random.number({ min: 20, max: 300 }),
-          locatari: faker.random.number({ min: 0, max: 9 })
-        }
-
-      case 'incasare':
-        return {
-          moneda,
-          suma: Number(faker.finance.amount(100, 10000, 4)),
-          nrChitanta: 1
-        }
-
-      case 'factura':
-        return {
-          nrFactura: 1,
-          suma: faker.random.number({ min: -100000, max: -100 }),
-          moneda,
-          dataScadenta: Date.now() + faker.random.number({ min: 9000000, max: 100000000 })
-        }
-
-      case 'furnizor':
-        return {
-          name: faker.company.companyName(),
-          servicii: []
-          // servicii: faker.random.arrayElement(this.$store.getters[''])
-        }
-
-      case 'serviciu':
-        return {
-          denumire: faker.hacker.adjective()
-        }
-
-      case 'cheltuiala':
-        return {
-          moneda,
-          // suma: Number(faker.finance.amount(1000, 10000, 6))
-          suma: faker.random.number({ min: -100000, max: -100 }),
-
-        }
-
-      case 'utilizator':
-        return {
-          name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-          rol: 'administrator'
-        }
-    }
-  }
-
-  /**
-   * @returns an object with each key used as a sorting option
-   */
-  get sortOptions () {
-    const { lodgerForm: { fields }, debug } = this
-
-    const indexables = fields
-      .filter(field => field.index)
-      .map(field => field.id)
-
-    // TODO: !!! ia din common methods
-    if (this.taxonomy !== 'serviciu') indexables.push('la')
-
-    const sorts = {}
-    indexables.forEach(indexable => {
-      const label = `sort.${indexable === 'name' ? 'az' : indexable}`
-      Object.assign(sorts, { [indexable]: { label } })
-    })
-
-    debug('sorts', sorts)
-
-    return sorts
-  }
-
-  get plural () {
-    // TODO!
-    if (this._plural) return this._plural
-    const plural = this.$lodger.plurals.get(this.taxonomy)
-    if (!plural) {
-      throw new Error('no plural definiton found, component could not init')
-    }
-    return plural
-  }
-
-  get taxesWithoutRef () {
-    return ['asociatie', 'furnizor', 'serviciu', 'utilizator']
-  }
-
-  /**
-   * Subscriber method for items
-   */
-  sub (subscriberName: string = this.subscriber) {
-    this.fetching = true
-
-    this.$lodger.subscribe(
-      this.$data,
-      this.taxonomy,
-      this.plural,
-      this.criteriu,
-      subscriberName
-    )
-
+    this.$emit('created')
   }
 
   handleSortClick (e) {

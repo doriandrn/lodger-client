@@ -119,9 +119,11 @@ function assignRefIdsFromStore (context: any): void {
  *
  * @param data
  */
-function handleOnSubmit (data: LodgerFormData, context: any) {
+function handleOnSubmit (
+  data : LodgerFormData,
+  context ?: any
+) {
   const manipulatedData: any = {}
-  debug('HOS CHEMAT! context: ', context)
   debug('data before hOS', data)
 
   // not data.denumire pt servicii :/
@@ -135,6 +137,8 @@ function handleOnSubmit (data: LodgerFormData, context: any) {
 
     manipulatedData[what] = value
   })
+
+  if (!context) return manipulatedData
 
   let { getters, references } = context
 
@@ -187,6 +191,5 @@ export {
   pushFieldToSchema,
   handleOnSubmit,
   addCommonFieldsToSchema,
-  getReferenceTaxonomy,
   assignRefIdsFromStore
 }

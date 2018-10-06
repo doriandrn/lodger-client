@@ -120,9 +120,32 @@ describe('Lodger', () => {
       })
     })
 
-    test('mapeaza taxonomiile pt a fi apelate ca gettere', () => {
-      expect(lodger.asociatii).toBeDefined()
-      expect(lodger.apartamente).toBeDefined()
+    describe('maps taxonomies to root', () => {
+      describe ('positive', () => {
+        test('all taxes are defined & accesable', () => {
+          // TODO: scrie un for, nu fi lazy
+          expect(lodger.apartamente).toBeDefined()
+          expect(lodger.asociatii).toBeDefined()
+        })
+
+        test('returns the items of main subscriber if called with no args', () => {
+          expect(lodger.apartamente()).toReturn()
+        })
+
+        test('returns the items of another sub', () => {
+          expect(lodger.apartamente('listeDePlata')).toReturn()
+        })
+      })
+
+      describe('negative', () => {
+        test('throws if subscriber supplied doesnt exist', () => {
+          try {
+            const aps = lodger.apartamente('subInexistent')
+          } catch (e) {
+            expect(e).toBeDefined()
+          }
+        })
+      })
     })
 
     describe('.setPreference()', () => {

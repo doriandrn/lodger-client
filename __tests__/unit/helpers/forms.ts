@@ -123,6 +123,11 @@ describe('helpers/forms', () => {
     })
   })
 
+  describe('.sortOptions', () => {
+    describe('positive', () => {})
+    describe('negative', () => {})
+  })
+
   describe('.handleOnSubmit()', () => {
     describe('positive', () => {
       test('adds the current time for all "la" fields', () => {

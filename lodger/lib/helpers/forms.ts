@@ -126,6 +126,14 @@ function handleOnSubmit (
   const manipulatedData: any = {}
   debug('data before hOS', data)
 
+  const {
+    taxonomy,
+    activeReferencesIds,
+    referenceTaxonomies
+  } = context
+
+  let { referencesIds } = context
+
   // not data.denumire pt servicii :/
   if (!data.la && !data.denumire) data.la = Date.now()
   Object.keys(data).forEach(what => {
@@ -140,23 +148,12 @@ function handleOnSubmit (
 
   if (!context) return manipulatedData
 
-  let { getters, references } = context
-
-  debug('given refs', references)
-
-  if (references && references.length) {
-    references = assignRefIdsFromStore({ references, getters })
-    debug('refs after', references)
-
-    // asigneaza doar daca nu exista deja, posibbil
-    // sa o provizioneze interfata
-    Object.keys(references).forEach(refTaxId => {
-      if (!manipulatedData[refTaxId]) {
-        Object.assign(manipulatedData, { [refTaxId]: references[refTaxId] })
-      }
-    })
+  debug('given refs', referencesIds)
+  if (!referencesIds) {
+    referencesIds = activeReferencesIds(referenceTaxonomies(taxonomy))
   }
 
+  Object.assign(manipulatedData, referencesIds)
   debug('data after hOS', manipulatedData)
   return manipulatedData
 }

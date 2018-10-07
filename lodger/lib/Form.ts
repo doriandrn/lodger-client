@@ -108,7 +108,7 @@ class Form {
       Object.assign(sorts, { [indexable]: { label } })
     })
 
-    debug('sorts 4', name, sorts)
+    debug(`${name} => sortable fields`, sorts)
 
     return sorts
   }

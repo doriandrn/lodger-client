@@ -82,6 +82,9 @@ const plugins: Plugin[] = []
 
 interface LdgGetters extends GetterTree<IndexState, RootState> {}
 
+const docsHolderObj = { docs: [], items: {}, criteriu: {} }
+const docsHolder = new Vue({ data: { main: {}, playground: {} } })
+
 class Lodger {
   constructor (
     protected taxonomii: Taxonomii[],
@@ -91,34 +94,19 @@ class Lodger {
     readonly store: Store<RootState>
   ) {
     const debug = Debug('lodger:constructor')
-    // Vue.set(this, 'docsHolder', {})
-    this.docsHolder = new Vue({ data: { main: {}, playground: {} } })
-    // debug('TST', test)
+    const { subscriberData } = this
+
     taxonomii.forEach(tax => {
       const plural = plurals.get(tax)
+
       Object.defineProperty(this, plural, {
         get () {
-          return (subscriberName: string = 'main') => {
-            try {
-              return this.docsHolder[subscriberName][plural].items
-            } catch (e) {
-              // debug(e)
-              return {}
-            }
-          }
-        },
-        /**
-         * usage:
-         * $lodger.asociatii('main') = { newitems }
-         * @param newItems
-         */
-        // set (newItems: any) {
-        //   return (subscriberName: string = 'main') => {
-        //     docsHolder[subscriberName][plural] = newItems
-        //   }
-        // }
+          return (subscriberName: string = 'main') => subscriberData(tax, subscriberName)
+        }
       })
     })
+
+    this.docsHolder = docsHolder
   }
 
   /**
@@ -136,16 +124,22 @@ class Lodger {
    * @param data
    */
   async put (
-    taxonomie: Taxonomii,
+    taxonomy: Taxonomii,
     data: LodgerFormData,
-    references ?: Taxonomii[]
+    referencesIds ?: any
   ) {
     const debug = Debug('lodger:put')
     if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData)
-    const { db, plurals, store } = this
-    const { getters } = store
-    const plural = plurals.get(taxonomie)
-    if (!plural) throw new LodgerError(Errors.noPlural, taxonomie)
+
+    const {
+      db,
+      plurals,
+      store,
+      referenceTaxonomies
+    } = this
+
+    const plural = plurals.get(taxonomy)
+    if (!plural) throw new LodgerError(Errors.noPlural, taxonomy)
     const colectie = db.collections[plural]
 
     /**
@@ -156,14 +150,15 @@ class Lodger {
       'insert'
 
     const internallyHandledData = handleOnSubmit(data, {
-      getters,
-      references
+      taxonomy,
+      activeReferencesIds: this.activeReferencesIds,
+      referenceTaxonomies
     })
 
     try {
       const { _data } = await colectie[method](internallyHandledData)
-      if (store) await store.dispatch(`${taxonomie}/set_last`, _data._id)
-      debug('pus', taxonomie, _data._id)
+      if (store) await store.dispatch(`${taxonomy}/set_last`, _data._id)
+      debug('pus', taxonomy, _data._id)
       return _data
     } catch (e) {
       this.notify({
@@ -239,14 +234,13 @@ class Lodger {
   subscribe (
     subscriberName : string = 'main',
     taxonomii: Taxonomii[],
-    criteriu ?: Criteriu
+    criteriuCerut ?: Criteriu
   ) {
     const debug = Debug('lodger:subscribe')
 
     const {
       db: { collections },
-      plurals,
-      docsHolder
+      plurals
      } = <Lodger>this
 
     if (!collections || !plurals) {
@@ -264,12 +258,22 @@ class Lodger {
 
     const subscriber = <Subscriber>subscribers[subscriberName]
 
+    if (!docsHolder[subscriberName]) {
+      Vue.set(docsHolder, subscriberName, {})
+    }
+
     taxonomii.forEach(taxonomie => {
       const plural = plurals.get(taxonomie)
-      let { limit, index, sort, find } = getCriteriu(plural, criteriu)
-      const paging = Number(limit || 0) * (index || 1)
       const colectie = collections[<Plural>plural]
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
+
+      const criteriu = getCriteriu(plural, criteriuCerut)
+      let { limit, index, sort, find } = criteriu
+      const paging = Number(limit || 0) * (index || 1)
+
+      if (!docsHolder[subscriberName][plural]) {
+        Vue.set(docsHolder[subscriberName], plural, docsHolderObj)
+      }
 
       subscriber[plural] = colectie
         .find(find)
@@ -286,6 +290,7 @@ class Lodger {
           }
 
           Vue.set(docsHolder[subscriberName], plural, {
+            criteriu,
             docs: changes.map(change => Object.freeze(change)) || [],
             items: Object.assign({},
               ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
@@ -562,10 +567,11 @@ class Lodger {
    *
    * @returns {Object}
    */
-  activeReferencesIds (references: Taxonomii[]) {
-    return assignRefIdsFromStore({
+  get activeReferencesIds () {
+    const { getters } = this.store
+    return (references: Taxonomii[]) => assignRefIdsFromStore({
       references,
-      getters: this.store.getters
+      getters
     })
   }
 
@@ -583,6 +589,16 @@ class Lodger {
         .filter(field => field.id.indexOf('Id') === field.id.length - 2)
         .map(field => field.id.replace('Id', ''))
     }
+  }
+
+  get subscriberData () {
+    const { plurals } = this
+
+    return (
+      taxonomy: Taxonomii,
+      subscriberName: string
+    ) => docsHolder[subscriberName][plurals.get(taxonomy)] || docsHolderObj
+
   }
 }
 

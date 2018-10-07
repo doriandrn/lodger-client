@@ -9,20 +9,25 @@ sction#pg
 
       :deselectOnClickAway = false
 
-      @created=     "$lodger.subscribe(playgroundSubscriber, tax, $event)"
+      @subscribe=   "$lodger.subscribe(playgroundSubscriber, tax, $event)"
 
-      @new=         "$event.shiftKey && process.env.NODE_ENV === 'dev' ? $lodger.put(tax, fakeData(tax), references) : openModal(`${tax}.new`)"
+      @fakeNew=     "$lodger.put(tax, fakeData(tax))"
+      @new=         "openModal(`${tax}.new`)"
       @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
       @trash=       "$lodger.trash(tax, $event)"
 
       @select=      "$lodger.select(tax, $event)"
       :selected=    "$lodger.getters[`${tax}/selected`]"
+      :last=        "$lodger.getters[`${tax}/last`]"
 
-      @reSort=      "$lodger.subscribe(playgroundSubscriber, tax, $event)"
       :sortOptions= "$lodger.form(tax).sortOptions"
 
-      :items=       "$lodger.docsHolder && $lodger.docsHolder[playgroundSubscriber] ? $lodger.docsHolder[playgroundSubscriber][$lodger.plurals.get(tax)] : null"
+      :items=       "subscriberData(tax).items"
+      :criteriu=    "subscriberData(tax).criteriu"
+
       :showElements="$lodger.form(tax).__displayItemKeys"
+      :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
+
     )
     //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"
 
@@ -64,6 +69,9 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
     list,
     registru,
     servicii
+  },
+  methods: {
+    fakeData
   }
 })
   export default class Playground extends Vue {
@@ -71,6 +79,17 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
 
     get playgroundSubscriber () {
       return 'playground'
+    }
+
+    get subscriberData () {
+      const {
+        playgroundSubscriber,
+        $lodger: {
+          subscriberData
+        }
+      } = this
+
+      return taxonomy => subscriberData(taxonomy, playgroundSubscriber)
     }
   }
 </script>

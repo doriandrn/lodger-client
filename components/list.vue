@@ -6,8 +6,8 @@
        //|{{ references && references.length ? references[0] : '' }}
 
       buton(
-        @click=     "$emit('new')"
-        :disabled = "!referencesIds"
+        @click=     "$emit($event.shiftKey ? 'fakeNew' : 'new')"
+        :disabled = "!allReferencesHaveValues"
         styl=       "unstyled"
         icon=       "plus"
         icon-only
@@ -26,11 +26,11 @@
     v-if=     "ids.length > 1"
     type=     "radios",
     label=    "sort.label"
-    v-model=  "criteriu.sort.key"
+    v-model=  "sort"
     :id=       "`sort-${taxonomy}`"
     :options=  "sortOptions"
     required= true
-    @click=    "handleSortClick"
+    @click=    "changeSortDirectionIfChecked"
     :class=     "{ reverseActive: criteriu.sort.direction < 1}"
   )
 
@@ -41,8 +41,8 @@
     li(
       v-for=  "item, id in items"
       :data-id=    "id"
-      :class= "{ last: last === id, selected: selected && selected.length && selected.contains(id) }"
-      @click= "select(id)"
+      :class= "{ last: last === id, selected: typeof selected === 'string' ? selected === id : selected.length && selected.contains(id) }"
+      @click= "$emit('select', id)"
     )
       split
         div(
@@ -89,7 +89,7 @@ import Component from 'vue-class-component'
 // import { State, Action, Getter } from 'vuex-class'
 import { Action } from 'vuex-class'
 import { LodgerError } from 'lodger/lib/Errors'
-import { assignRefIdsFromStore } from 'lodger/lib/helpers/forms'
+import { getCriteriu } from 'lodger/lib/helpers/functions'
 
 /** Components Imports */
 import field from 'form/field'
@@ -122,6 +122,10 @@ let activeDocument
       default: () => {}
     },
 
+    criteriu: {
+      type: Object
+    },
+
     /**
      * reference taxonomies
     */
@@ -132,9 +136,10 @@ let activeDocument
 
     /**
      * Selected item(s)
+     * array for multiple selects
      */
     selected: {
-      type: Array,
+      type: [String, Array],
       default: () => []
     },
 
@@ -162,9 +167,9 @@ let activeDocument
     //  * Resubscribe everytime the crit changes
     //  */
     // criteriu: {
-    //   handler () {
+    //   handler (newVal) {
     //     this.debug('change handler callD')
-    //     this.sub(this.subscriber)
+    //     this.$emit('subscribe', newVal)
     //   },
     //   deep: true
     // },
@@ -172,12 +177,11 @@ let activeDocument
     //  *
     //  */
     // referencesIds: {
+    //   deep: true,
     //   handler (newVal, oldval) {
     //     if (!newVal) return
-    //     const { references, debug } = this
-    //     if (!references.length) return
 
-    //     debug('schimbat la', newVal, 'de la', oldval)
+    //     this.debug('schimbat la', newVal, 'de la', oldval)
 
     //     Object.keys(newVal).forEach(refTaxId => {
     //       Vue.set(this.criteriu.find, refTaxId, newVal[refTaxId])
@@ -197,19 +201,19 @@ let activeDocument
 export default class ListTaxonomyItems extends Vue {
   itemsCount = 0
   fetching = false
-  criteriu = {
-    limit: 5,
-    sort: {
-      key: 'la',
-      direction: 1
-    },
-    find: {}
-  }
+  // criteriu = {
+  //   limit: 5,
+  //   sort: {
+  //     key: 'la',
+  //     direction: 1
+  //   },
+  //   find: {}
+  // }
   /**
    * Used for multiple taxonomies subcribers
    * eg. transactii / transactions
    */
-  combinedItems = {}
+  // combinedItems = {}
 
   // get Items () {
   //   // return this.items
@@ -228,30 +232,37 @@ export default class ListTaxonomyItems extends Vue {
   //   }
   // }
 
+  // get criteriu () {
+  //   const { taxonomy, referencesIds, debug } = this
+  //   let criteriu = getCriteriu(taxonomy)
+  //   if (!referencesIds) return criteriu
+  //   Object.assign(criteriu.find, referencesIds)
+  //   debug('criteriu', criteriu)
+  //   return criteriu
+  //   // Object.keys(referencesIds).forEach(refTaxId => {
+  //   //   Vue.set(this.criteriu.find, refTaxId, newVal[refTaxId])
+  //   // })
+  // }
+
   get ids () {
     return Object.keys(this.items || {})
   }
 
-  // commd bcoz not needed so far
-  // get lodgerForm () {
-  //   return this.__forms.length ? this.__forms[0] : this.__forms
-  // }
+  /**
+   * This knows when to show the add button,
+   * checks if references provided exist so the add goes ok
+   */
+  get allReferencesHaveValues () {
+    const { referencesIds } = this
+    let HV = true
+    if (!referencesIds) return HV
 
-  // get __forms () {
-  //   const ar = []
-  //   const { taxonomy } = this
-  //   const taxes =
-  //     typeof taxonomy === 'string' ?
-  //       Array(taxonomy) :
-  //       taxonomy
+    Object.values(referencesIds).forEach(val => {
+      if (val === undefined) { HV = false }
+    })
 
-  //   taxes.forEach(tax => {
-  //     ar.push(this.$lodger._formData(tax))
-  //   })
-  //   return ar.length > 1 ? ar : ar[0]
-  // }
-
-
+    return HV
+  }
 
   get __displayItemLocations () {
     const { showElements } = this
@@ -262,36 +273,31 @@ export default class ListTaxonomyItems extends Vue {
       o[location] = Object.keys(showElements).filter(el => showElements[el] === location)
     })
     return o
-    // const locations = [
-    //   'primary',
-    //   'secondary',
-    //   'details'
-    // ]
-    // const o = {}
-    // locations.map(loc => {
-    //   o[loc] = this.__displayItemKeys(loc)
-    // })
-    // return o
   }
-
-  /**
-   * END
-   */
 
   created () {
-    this.$emit('created')
+    this.$emit('subscribe')
   }
 
-  handleSortClick (e) {
-    this.debug('sort clickd', e)
-    const { checked } = e
-    const { direction } = this.criteriu.sort
-    if (checked) {
-      this.criteriu.sort.direction = direction > 0 ? -1 : 1
-    } else {
-      // default
-      this.criteriu.sort.direction = 1
+  get sort () {
+    return Object.keys(this.criteriu.sort || {})[0]
+  }
+
+  set sort (e) {
+    this.$emit('subscribe', { sort: { key: e } })
+  }
+
+  changeSortDirectionIfChecked (e) {
+    const { index, checked } = e
+    if (!checked) return
+
+    const direction = this.criteriu.sort[index] ? -1 : 1
+    const sort = {
+      direction,
+      key: index
     }
+    this.debug('newsort', sort)
+    this.$emit('subscribe', { sort })
   }
 }
 </script>

@@ -6,7 +6,7 @@ import Debug from 'debug'
 type TraversableObject = { [index: string]: TraversableObject }
 /**
  * Traverseaza un obiect cu o functie
- * 
+ *
  * @param {object} obiectul de traversat
  * @param {function} fn - callback -> cheie, valoare
  */
@@ -19,7 +19,7 @@ function traverse (o: TraversableObject, fn: Function) {
 
 /**
  * Returneaza config-ul pentru o taxonomie sau default
- * 
+ *
  * @param {string} taxonomie
  */
 const getTaxonomyConfig = (tax: Plural) => {
@@ -32,8 +32,8 @@ const getTaxonomyConfig = (tax: Plural) => {
 
 /**
  * Criteriu default pentru o taxonmoie ceruta
- * 
- * @param {string} taxonomie 
+ *
+ * @param {string} taxonomie
  * @param {object} criteriuCerut - poate fi diferit decat default
  */
 const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
@@ -49,12 +49,19 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
   criteriu = Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
   debug(taxonomie, 'criteriu inainte de criteriuCerut', criteriu)
   debug(taxonomie, 'criteriu cerut', { ...criteriuCerut })
-  if (criteriuCerut) {
-    let { sort: { key, direction } } = criteriuCerut
-    if (key === 'la' && taxonomie === 'servicii') key = 'denumire'
-    const _sort = key ? { [key]: direction || 1 } : {}
 
-    Object.assign(criteriu, {...criteriuCerut }, { sort: _sort })
+  if (criteriuCerut) {
+    debug('CRITERIU CERUT', criteriuCerut)
+
+    if (criteriuCerut.sort) {
+      let { sort: { key, direction } } = criteriuCerut
+      if (key === 'la' && taxonomie === 'servicii') key = 'denumire'
+      const _sort = key ? { [key]: direction || 1 } : {}
+
+      criteriuCerut.sort = _sort
+    }
+
+    Object.assign(criteriu, {...criteriuCerut })
   }
   // console.info('criteriu', criteriu, criteriuCerut)
   // switch (taxonomie) {
@@ -67,7 +74,7 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
   //     Object.assign(criteriu.find, { bloc: { $in: g => g['bloc/ids'] } })
   // }
   // servicii,furnizori, asociatii sunt globale, n-au nevoie de criteriu de cautare
-  
+
   debug(taxonomie, 'DUPA:', criteriu)
   return criteriu
 }
@@ -75,7 +82,7 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
 
 /**
  * Scoate '$' de la inceputul unui string
- * @param {string} str 
+ * @param {string} str
  */
 const no$ = (str: string): string => {
   if (typeof str !== 'string') return str
@@ -99,7 +106,7 @@ const spleet = (str: string) => {
 
 /**
  * slug-ifica... destul de descriptiv :)
- * @param {string} text 
+ * @param {string} text
  */
 const slugify = (text: string) => {
   return text.toString().toLowerCase()

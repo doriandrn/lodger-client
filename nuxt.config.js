@@ -37,6 +37,7 @@ module.exports = {
     theme_color: '#3B8070',
     background_color: '#fff'
   },
+
   /*
   ** Customize the progress bar color
   */
@@ -78,7 +79,7 @@ module.exports = {
     // }
   },
   modules: [
-    '@nuxtjs/axios',
+    '@nuxtjs/axios'
     // 'typescript'
     // 'nuxt-ts-module'
     // '@nuxtjs/proxy',

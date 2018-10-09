@@ -26,7 +26,7 @@
     v-if=     "ids.length > 1"
     type=     "radios",
     label=    "sort.label"
-    v-model=  "sort"
+    v-model=  "_sort"
     :id=       "`sort-${taxonomy}`"
     :options=  "sortOptions"
     required= true
@@ -279,12 +279,12 @@ export default class ListTaxonomyItems extends Vue {
     this.$emit('subscribe')
   }
 
-  get sort () {
+  get _sort () {
     return Object.keys(this.criteriu.sort || {})[0]
   }
 
-  set sort (e) {
-    this.$emit('subscribe', { sort: { key: e } })
+  set _sort (e) {
+    this.$emit('subscribe', Object.freeze({ sort: { key: e } }))
   }
 
   changeSortDirectionIfChecked (e) {
@@ -296,7 +296,7 @@ export default class ListTaxonomyItems extends Vue {
       direction,
       key: index
     }
-    this.debug('newsort', sort)
+    this.debug('newsort', sort, e),
     this.$emit('subscribe', { sort })
   }
 }

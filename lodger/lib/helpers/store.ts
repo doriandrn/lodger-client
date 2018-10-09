@@ -1,5 +1,6 @@
 import { Module, ActionTree, GetterTree, MutationTree } from 'vuex'
 import { LodgerError } from 'lodger/lib/Errors';
+import { taxIsMultipleSelect } from 'lodger/lib/helpers/functions';
 
 // const namespaced: boolean = true
 
@@ -10,9 +11,13 @@ interface RootState {
 
 type EmptyState = {}
 
+/**
+ * @param { methoName: action }
+ */
 const sharedStoreMethods: SharedStoreMethods = {
   selected: 'select',
   last: 'set_last',
+  referencesIds: 'set_referencesIds'
   // active: 'activate'
 }
 
@@ -38,6 +43,20 @@ function createEmptyStoreModule () {
   }
 }
 
+const otherActions = (taxonomy, actionName) => {
+  switch (actionName) {
+    case 'select':
+      return [
+        `${taxonomy}/set_referencesIds`
+      ]
+
+    default:
+      return []
+  }
+
+}
+
+
 /**
   * Shared methods across taxonomies, called individually
   *
@@ -46,22 +65,45 @@ function createEmptyStoreModule () {
   */
 function setupSharedMethods (
   sharedMethods: SharedStoreMethods = sharedStoreMethods,
-  module?: Module<EmptyState, RootState>
+  module: Module<EmptyState, RootState> = createEmptyStoreModule(),
+  moduleName ?: Taxonomii | string,
+  plural ?: Plural
 ) {
   if (typeof sharedMethods !== 'object') {
     throw new LodgerError('invalid methods supplied')
   }
-  if (!module) {
-    module = createEmptyStoreModule()
-  }
+  console.error('module', moduleName, module)
+
+
+  // pt servicii si contoare
+  const isMultiple: boolean = taxIsMultipleSelect(moduleName)
 
   Object.keys(sharedMethods).forEach(methodName => {
-    const action: string | undefined = sharedMethods[methodName]
+    const action : string | undefined = sharedMethods[methodName]
+    const multipleSelect : boolean = isMultiple && action === 'select'
 
     module.state[methodName] = undefined
-    module.getters[methodName] = (S: RootState) => S[methodName]
-    module.actions[action] = ({ commit }, data) => commit(action, data)
-    module.mutations[action] = (s, id) => s[methodName] = id
+    module.getters[methodName] = (S: RootState, G: GetterTree<RootState, any>) => {
+      if (multipleSelect) {
+        console.error('PULARAL in setupSM', plural)
+        const doc = G[`${moduleName}/activeDoc`]
+        return doc ? doc[plural] : undefined
+      } else {
+        return S[methodName]
+      }
+    }
+    module.actions[action] = ({ commit, dispatch }, data) => {
+      commit(action, data)
+
+      // const otherActionsToDispatch = otherActions(moduleName, methodName)
+
+      // otherActionsToDispatch.forEach(action => {
+      //   dispatch(action, )
+      // })
+    }
+    module.mutations[action] = (s, data) => {
+      s[methodName] = data
+    }
   })
 
   // module.getters['activeDoc'] = (S: RootState) => S.doc || {}

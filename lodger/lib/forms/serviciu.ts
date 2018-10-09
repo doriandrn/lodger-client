@@ -1,4 +1,13 @@
 const fields = [
+  /**
+   * desi globale, serviciile sunt pt asociatii.
+   * excludem asta din db, pastram pt referinta
+   */
+  {
+    id: 'asociatieId',
+    notInDb: true
+  },
+
   {
     id: 'denumire',
     required: true,

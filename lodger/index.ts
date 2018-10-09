@@ -6,7 +6,7 @@ import osHomedir from 'os-homedir'
 import yaml from 'json2yaml'
 
 import LodgerStore from 'lodger/lib/Store'
-import { getCriteriu } from 'lodger/lib/helpers/functions'
+import { getCriteriu, taxIsMultipleSelect } from 'lodger/lib/helpers/functions'
 import { handleOnSubmit, assignRefIdsFromStore } from 'lodger/lib/helpers/forms'
 import DB from 'lodger/lib/DB'
 import { Form } from 'lodger/lib/Form'
@@ -73,17 +73,40 @@ type Subscriber = {
   [k: string]: Asociatii | undefined
 }
 
-/**
- * Main holder for temporary items subscribed to
- */
-// const docsHolder = {}
 
 const plugins: Plugin[] = []
 
 interface LdgGetters extends GetterTree<IndexState, RootState> {}
 
+/**
+ * Main holder for temporary items subscribed to
+ *
+ * -> a vue helper for reactivity
+ * holds RX documents
+ * and methods to accezss / manipulate them
+ */
 const docsHolderObj = { docs: [], items: {}, criteriu: {} }
-const docsHolder = new Vue({ data: { main: {}, playground: {} } })
+const docsHolder = new Vue({
+  data: { main: {}, playground: {} },
+  methods: {
+    async getItem (
+      plural: Plural,
+      itemId: string,
+      subscriberName: string
+    ) {
+      let item
+      const debug = Debug('lodger:getItem')
+
+      try {
+        item = this[subscriberName][plural].docs.filter(doc => doc._id === itemId)[0]
+      } catch (e) {
+        debug('ITEM NEGASIT', subscriberName, plural, e)
+      }
+
+      return item
+    }
+  }
+})
 
 class Lodger {
   constructor (
@@ -106,6 +129,7 @@ class Lodger {
       })
     })
 
+    // todo, remove on prod
     this.docsHolder = docsHolder
   }
 
@@ -192,33 +216,39 @@ class Lodger {
    */
   async select (
     taxonomie: Taxonomii,
-    id: string
+    data: string | object
   ) {
     const debug = Debug('lodger:select')
-
+    const { dispatch } = this.store
+    const id = typeof data === 'string' ? data : ( data.id !== undefined ? data.id : data )
     /**
      * Taxonomii cu select multiplu
      */
-    const isMultiple = ['serviciu', 'contor'].indexOf(taxonomie) > -1
+    await dispatch(`${taxonomie}/select`, id)
 
+    const referenceTaxonomies = this.referenceTaxonomies(taxonomie)
 
-    if (!isMultiple) {
-      this.store.commit(`${taxonomie}/select`, id)
-    } else {
-      const metoda = `toggle_${taxonomie}`
-      debug('MULTIPLE SELECt!', metoda, '....TODO: adauga binderi, eg. pt serviciu e clar asociatie, dar conteaza de context')
-      /// NARE TREABA REFERENCES AICI!!!!!!!!!!
-      /// codu dinauntru e bun totusi
-
-      // references.forEach(async (reference: Taxonomii) => {
-      //   const doc = this.store.getters[`${reference}/activeDoc`]
-      //   debug('fac la referinta', doc)
-      //   if (!doc) throw new LodgerError('nicio/niciun %% selectat(a)', reference)
-      //   const _toExecute = doc[metoda]
-      //   if (typeof _toExecute !== 'function') throw new LodgerError('nu e functie %%', metoda)
-      //   await _toExecute(id)
-      // });
+    if (referenceTaxonomies && referenceTaxonomies.length) {
+      const referencesIds = this.activeReferencesIds(referenceTaxonomies)
+      debug('select:referencesIds', referencesIds)
+      await dispatch(`${taxonomie}/set_referencesIds`, referencesIds)
     }
+    // if (!taxIsMultipleSelect(taxonomie)) {
+    // } else {
+    //   const metoda = `toggle_${taxonomie}`
+    //   debug('MULTIPLE SELECt!', metoda, '....TODO: adauga binderi, eg. pt serviciu e clar asociatie, dar conteaza de context')
+    //   /// NARE TREABA REFERENCES AICI!!!!!!!!!!
+    //   /// codu dinauntru e bun totusi
+
+    //   // references.forEach(async (reference: Taxonomii) => {
+    //   //   const doc = this.store.getters[`${reference}/activeDoc`]
+    //   //   debug('fac la referinta', doc)
+    //   //   if (!doc) throw new LodgerError('nicio/niciun %% selectat(a)', reference)
+    //   //   const _toExecute = doc[metoda]
+    //   //   if (typeof _toExecute !== 'function') throw new LodgerError('nu e functie %%', metoda)
+    //   //   await _toExecute(id)
+    //   // });
+    // }
   }
 
    /**
@@ -252,9 +282,11 @@ class Lodger {
       taxonomii = Array(taxonomii)
     }
 
+    debug('subscribe chemat. criteriu cerut: ', criteriuCerut, taxonomii)
+
     // const multipleTaxonomies: boolean = taxonomii.length > 1
     if (!subscribers[subscriberName]) Object.assign(subscribers, { [subscriberName]: {} })
-    debug('subscribers', subscribers)
+    // debug('subscribers', subscribers)
 
     const subscriber = <Subscriber>subscribers[subscriberName]
 
@@ -269,6 +301,7 @@ class Lodger {
 
       const criteriu = getCriteriu(plural, criteriuCerut)
       let { limit, index, sort, find } = criteriu
+      debug('criteriu dupa getCruteruy in subsc', criteriu)
       const paging = Number(limit || 0) * (index || 1)
 
       if (!docsHolder[subscriberName][plural]) {
@@ -412,7 +445,7 @@ class Lodger {
 
     const _collections: RxCollectionCreator[] = forms.map(form => form.collection)
     const db = await DB(_collections, dbCon)
-    const store = new LodgerStore(taxonomii)
+    const store = new LodgerStore(taxonomii, plurals)
     const { collections } = await db
 
     // store.subscribe(DBGettersMethods({ collections, plurals, store }) )
@@ -427,31 +460,36 @@ class Lodger {
      */
     store.subscribe(async ({ type, payload }, state) => {
       const path = type.split('/')
-      const debug = Debug('lodger:SELECTstoreSubscriber')
       if (path[1] !== 'select') return
+
+      const debug = Debug('lodger:SELECTstoreSubscriber')
+
       const tax = path[0]
       const plural = plurals.get(tax)
-      let doc = await collections[plural].findOne(payload).exec()
-      debug(`ACTIVE ${tax}`, doc)
-      // store.getters[`${tax}/active`]
+
+      const id = typeof payload === 'string' ? payload : payload.id
+
+      // let doc
+
+      // if (typeof payload === 'object' && payload.subscriber) {
+      let doc = await docsHolder.getItem(plural, id, payload.subscriber)
+      // }
+      // doc = await collections[plural].findOne(id).exec()
+
       const gName = `${tax}/activeDoc`
-      if (!store.getters[gName]) {
+      debug(gName, doc)
+
+      if (typeof store.getters[gName] === undefined) {
         Object.defineProperty(store.getters, gName, {
           configurable: false,
-          get () {
-            return doc
-          },
-          set (newDoc) {
-            doc = newDoc
-          }
+          get () { return doc },
+          set (newDoc) { doc = newDoc }
         })
       } else {
         // state[tax].doc = doc
         store.getters[gName] = doc
       }
 
-      // state[tax]._activeDoc = doc
-      debug('state param', state)
     })
 
     // for (const [s, p] of plurals) { await subscribe.call(db, p) }

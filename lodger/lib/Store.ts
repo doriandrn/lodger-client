@@ -18,41 +18,30 @@ enum Errors {
 export default class LodgerStore implements StoreOptions<RootState> {
   readonly modules: ModuleTree<any> = {}
 
-  constructor (    
+  constructor (
     private taxonomii?: Taxonomii[],
+    private plurals: PluralsMap
   ) {
-    
+
     /**
      * Builds modules based on taxonomies
      * TODO: make this a method ?!
      */
     if (taxonomii && taxonomii.length) {
       taxonomii.forEach(tax => {
-        modules[tax] = setupSharedMethods(undefined, createEmptyStoreModule())
-        
-        // // lama, subject to change
-        // Object.assign(modules[tax].state, {
-        //   [`$${tax}`]: undefined
-        // })
-        // Object.assign(modules[tax].getters, {
-        //   [`$${tax}`]: state => state[`$${tax}`]
-        // })
-        // Object.assign(modules[tax].mutations, {
-        //   'SEL_DOC': (state, doc) => {
-        //     state[`$${tax}`] = doc
-        //   }
-        // })
+        const plural = plurals.get(tax)
+        modules[tax] = setupSharedMethods(undefined, undefined, tax, plural)
       })
     }
-    
+
     if (RootModule && RootModule.modules) {
       Object.keys(RootModule.modules).forEach(module => {
         LodgerStore.use({ [module]: RootModule.modules[module] }, module !== 'toast')
       })
     }
-    
+
     const { state, getters, actions, mutations } = RootModule
-    
+
     Object.assign(this, {
       state,
       actions,

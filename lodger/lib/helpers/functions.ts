@@ -1,6 +1,7 @@
 // import { Taxonomii } from 'lodger/index'
 import LodgerConfig from '../../../lodger.config'
 import Debug from 'debug'
+import { Taxonomii } from '../../index';
 // Debug.enable('functions:*')
 
 type TraversableObject = { [index: string]: TraversableObject }
@@ -46,22 +47,20 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
   const debug = Debug('functions:getCriteriu')
   let { criteriu } = defaults
 
-  criteriu = Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
+  Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
   debug(taxonomie, 'criteriu inainte de criteriuCerut', criteriu)
   debug(taxonomie, 'criteriu cerut', { ...criteriuCerut })
 
   if (criteriuCerut) {
     debug('CRITERIU CERUT', criteriuCerut)
-
+    let sort = {}
     if (criteriuCerut.sort) {
-      let { sort: { key, direction } } = criteriuCerut
+      let { key, direction } = criteriuCerut.sort
       if (key === 'la' && taxonomie === 'servicii') key = 'denumire'
-      const _sort = key ? { [key]: direction || 1 } : {}
-
-      criteriuCerut.sort = _sort
+      sort = key ? { [key]: direction || 1 } : {}
     }
 
-    Object.assign(criteriu, {...criteriuCerut })
+    Object.assign(criteriu, {...criteriuCerut }, { sort })
   }
   // console.info('criteriu', criteriu, criteriuCerut)
   // switch (taxonomie) {
@@ -117,11 +116,14 @@ const slugify = (text: string) => {
     .replace(/-+$/, '');            // Trim - from end of text
 }
 
+const taxIsMultipleSelect = (tax: Taxonomii) => ['serviciu', 'contor'].indexOf(tax) > -1
+
 export {
   traverse,
   no$,
   spleet,
   slugify,
   getCriteriu,
-  getTaxonomyConfig
+  getTaxonomyConfig,
+  taxIsMultipleSelect
 }

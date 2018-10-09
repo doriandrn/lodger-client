@@ -16,7 +16,7 @@ sction#pg
       @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
       @trash=       "$lodger.trash(tax, $event)"
 
-      @select=      "$lodger.select(tax, $event)"
+      @select=      "$lodger.select(tax, {id: $event, subscriber: playgroundSubscriber })"
       :selected=    "$lodger.getters[`${tax}/selected`]"
       :last=        "$lodger.getters[`${tax}/last`]"
 
@@ -26,9 +26,9 @@ sction#pg
       :criteriu=    "subscriberData(tax).criteriu"
 
       :showElements="$lodger.form(tax).__displayItemKeys"
-      :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
-
+      :referencesIds="$lodger.getters[`${tax}/referencesIds`]"
     )
+    //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
     //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"
 
     servicii.box

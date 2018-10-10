@@ -126,14 +126,6 @@ function handleOnSubmit (
   const manipulatedData: any = {}
   debug('data before hOS', data)
 
-  const {
-    taxonomy,
-    activeReferencesIds,
-    referenceTaxonomies
-  } = context
-
-  let { referencesIds } = context
-
   // not data.denumire pt servicii :/
   if (!data.la && !data.denumire) data.la = Date.now()
   Object.keys(data).forEach(what => {
@@ -147,11 +139,7 @@ function handleOnSubmit (
   })
 
   if (!context) return manipulatedData
-
-  debug('given refs', referencesIds)
-  if (!referencesIds) {
-    referencesIds = activeReferencesIds(referenceTaxonomies(taxonomy))
-  }
+  const { referencesIds } = context
 
   Object.assign(manipulatedData, referencesIds)
   debug('data after hOS', manipulatedData)

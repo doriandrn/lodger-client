@@ -197,6 +197,20 @@ class Form {
   }
 
   /**
+   * Reference taxonomies of a taxonomy
+   *
+   * @returns {Taxonomii[]}
+   */
+  get referenceTaxonomies () {
+    const { data: { fields } } = this
+
+    return fields
+      .filter(field => field.id.indexOf('Id') === field.id.length - 2)
+      .map(field => field.id.replace('Id', ''))
+  }
+
+
+  /**
    * Items to be display to user,
    * @returns {Object} the keys of the fields: their position
    *

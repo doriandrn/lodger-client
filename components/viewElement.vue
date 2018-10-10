@@ -17,6 +17,10 @@
     v-else-if="type === 'suprafata'"
     :value="value"
   )
+  servicii(
+    v-else-if="type === 'servicii'"
+    :value="value"
+  )
   span.ap__nr(
     v-else-if="type === 'nr'"
   ) {{ value }}
@@ -29,6 +33,7 @@ import Component from 'vue-class-component';
 import timp from 'c/dateTime'
 import bani from 'c/bani'
 import suprafata from 'c/suprafata'
+import servicii from 'c/servicii'
 
 @Component({
   props: {
@@ -37,14 +42,15 @@ import suprafata from 'c/suprafata'
       default: null
     },
     value: {
-      type: [Number, Object, Boolean, String],
+      type: [Number, Object, Boolean, String, Array],
       default: null
     }
   },
   components: {
     bani,
     timp,
-    suprafata
+    suprafata,
+    servicii
   }
 })
 export default class ViewElement extends Vue {

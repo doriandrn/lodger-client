@@ -24,9 +24,9 @@ sction#pg
 
       :items=       "subscriberData(tax).items"
       :criteriu=    "subscriberData(tax).criteriu"
+      :references=  "subscriberData(tax).references"
 
       :showElements="$lodger.form(tax).__displayItemKeys"
-      :referencesIds="$lodger.getters[`${tax}/referencesIds`]"
     )
     //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
     //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"

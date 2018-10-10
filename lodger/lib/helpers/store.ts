@@ -89,7 +89,7 @@ function setupSharedMethods (
         const doc = G[`${moduleName}/activeDoc`]
         return doc ? doc[plural] : undefined
       } else {
-        return S[methodName]
+        return S[methodName] && S[methodName].id ? S[methodName].id : S[methodName]
       }
     }
     module.actions[action] = ({ commit, dispatch }, data) => {

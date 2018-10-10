@@ -106,9 +106,22 @@ const methods = <T>{
     this.incasari = incasari
     await this.save()
   },
-  async TOGGLE_SERVICIU (servicii) {
-    this.servicii = servicii
-    await this.save()
+  async toggle_serviciu (serviciu) {
+    let { servicii } = this
+    if (!servicii) servicii = []
+    const index = servicii.indexOf(serviciu)
+    if (index > -1) {
+      servicii.splice(index, 1)
+    } else {
+      servicii.push(serviciu)
+    }
+
+    // this.update('servicii', servicii)
+    this.update({
+      $set: {
+        servicii
+      }
+    })
   },
   async UPDATEAZA (fields) {
     // TODO: nu permite updatarea anumitor chei

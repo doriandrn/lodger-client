@@ -3,7 +3,10 @@
   split.list__header
     .top
       h2.list__heading {{ plural }}
-       //|{{ references && references.length ? references[0] : '' }}
+        em(
+          v-for="ref in references"
+          :class="{ active: referencesIds[`${ref}Id`] }"
+        ) {{ ref }}
 
       buton(
         @click=     "$emit($event.shiftKey ? 'fakeNew' : 'new')"
@@ -129,8 +132,8 @@ let activeDocument
     /**
      * reference taxonomies
     */
-    referencesIds: {
-      type: Object,
+    references: {
+      type: Array,
       default: null
     },
 
@@ -248,6 +251,10 @@ export default class ListTaxonomyItems extends Vue {
     return Object.keys(this.items || {})
   }
 
+  get referencesIds () {
+    return this.$lodger.activeReferencesIds(this.references)
+  }
+
   /**
    * This knows when to show the add button,
    * checks if references provided exist so the add goes ok
@@ -284,7 +291,7 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   set _sort (e) {
-    this.$emit('subscribe', Object.freeze({ sort: { key: e } }))
+    this.$emit('subscribe', { sort: { key: e } })
   }
 
   changeSortDirectionIfChecked (e) {
@@ -310,6 +317,15 @@ typeColors = config.typography.palette
 .list
   &__heading
     margin-bottom 0
+
+    em
+      font-size 10px
+      margin 0 10px
+      opacity .5
+
+      &.active
+        opacity 1
+        color blue
 
   &__header
     max-height 60px

@@ -91,16 +91,16 @@ const docsHolder = new Vue({
   methods: {
     async getItem (
       plural: Plural,
-      itemId: string,
-      subscriberName: string
+      payload: string | object
     ) {
       let item
       const debug = Debug('lodger:getItem')
+      const subscriber = payload.subscriber ? payload.subscriber : 'main'
 
       try {
-        item = this[subscriberName][plural].docs.filter(doc => doc._id === itemId)[0]
+        item = this[subscriber][plural].docs.filter(doc => doc._id === payload.id)[0]
       } catch (e) {
-        debug('ITEM NEGASIT', subscriberName, plural, e)
+        console.error('ITEM NEGASIT', payload, plural, e)
       }
 
       return item
@@ -149,8 +149,7 @@ class Lodger {
    */
   async put (
     taxonomy: Taxonomii,
-    data: LodgerFormData,
-    referencesIds ?: any
+    data: LodgerFormData
   ) {
     const debug = Debug('lodger:put')
     if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData)
@@ -158,8 +157,7 @@ class Lodger {
     const {
       db,
       plurals,
-      store,
-      referenceTaxonomies
+      store
     } = this
 
     const plural = plurals.get(taxonomy)
@@ -173,16 +171,19 @@ class Lodger {
       'upsert' :
       'insert'
 
-    const internallyHandledData = handleOnSubmit(data, {
-      taxonomy,
-      activeReferencesIds: this.activeReferencesIds,
-      referenceTaxonomies
-    })
+    /**
+     * add references, default values, etc
+     */
+    const internallyHandledData = handleOnSubmit(data, { store })
 
+    /**
+     * do the insert / upsert and following actions
+     */
     try {
       const { _data } = await colectie[method](internallyHandledData)
-      if (store) await store.dispatch(`${taxonomy}/set_last`, _data._id)
-      debug('pus', taxonomy, _data._id)
+      store.dispatch(`${taxonomy}/set_last`, _data._id)
+      this.select(taxonomy, _data._id)
+      debug('pus si selectat', taxonomy, _data._id)
       return _data
     } catch (e) {
       this.notify({
@@ -220,19 +221,11 @@ class Lodger {
   ) {
     const debug = Debug('lodger:select')
     const { dispatch } = this.store
-    const id = typeof data === 'string' ? data : ( data.id !== undefined ? data.id : data )
     /**
      * Taxonomii cu select multiplu
      */
-    await dispatch(`${taxonomie}/select`, id)
+    await dispatch(`${taxonomie}/select`, data)
 
-    const referenceTaxonomies = this.referenceTaxonomies(taxonomie)
-
-    if (referenceTaxonomies && referenceTaxonomies.length) {
-      const referencesIds = this.activeReferencesIds(referenceTaxonomies)
-      debug('select:referencesIds', referencesIds)
-      await dispatch(`${taxonomie}/set_referencesIds`, referencesIds)
-    }
     // if (!taxIsMultipleSelect(taxonomie)) {
     // } else {
     //   const metoda = `toggle_${taxonomie}`
@@ -270,7 +263,9 @@ class Lodger {
 
     const {
       db: { collections },
-      plurals
+      plurals,
+      activeReferencesIds,
+      store: { dispatch }
      } = <Lodger>this
 
     if (!collections || !plurals) {
@@ -308,6 +303,8 @@ class Lodger {
         Vue.set(docsHolder[subscriberName], plural, docsHolderObj)
       }
 
+      // const references = referenceTaxonomies(taxonomie)
+
       subscriber[plural] = colectie
         .find(find)
         .limit(paging)
@@ -321,6 +318,12 @@ class Lodger {
             predefinite.forEach(async denumire => { await collections[plural].insert({ denumire }) })
             debug('first init, adaugat predefinite')
           }
+
+          // if (references && references.length) {
+          //   const referencesIds = activeReferencesIds(references)
+          //   debug('SUB:referencesIds', referencesIds)
+          //   dispatch(`${taxonomie}/set_referencesIds`, referencesIds)
+          // }
 
           Vue.set(docsHolder[subscriberName], plural, {
             criteriu,
@@ -344,14 +347,11 @@ class Lodger {
    * root taxonomies
    */
   get taxonomiesWithoutReference () {
-    const twr: Taxonomii[] = []
-    this.taxonomii.forEach(tax => {
-      const references = this.referenceTaxonomies(tax)
-      if (!(references && references.length > -1)) {
-        twr.push(tax)
-      }
+    const { form } = this
+    return this.taxonomii.filter(tax => {
+      const refs = form(tax).referenceTaxonomies
+      return !(refs && refs.length)
     })
-    return twr
   }
 
   /**
@@ -472,14 +472,17 @@ class Lodger {
       // let doc
 
       // if (typeof payload === 'object' && payload.subscriber) {
-      let doc = await docsHolder.getItem(plural, id, payload.subscriber)
+      let doc = await docsHolder.getItem(plural, payload)
       // }
       // doc = await collections[plural].findOne(id).exec()
 
       const gName = `${tax}/activeDoc`
       debug(gName, doc)
 
-      if (typeof store.getters[gName] === undefined) {
+      /**
+       * the active Document
+       */
+      if (!store.getters.hasOwnProperty(gName)) {
         Object.defineProperty(store.getters, gName, {
           configurable: false,
           get () { return doc },
@@ -489,6 +492,27 @@ class Lodger {
         // state[tax].doc = doc
         store.getters[gName] = doc
       }
+
+
+      /**
+       * commit DB methods
+       * eg. multiple selects
+       */
+      const isMultiple = taxIsMultipleSelect(tax)
+      if (isMultiple) {
+        const getter = store.getters[`${tax}/referencesIds`]
+        if (getter) {
+          Object.keys(getter).forEach(async refTaxId => {
+            const reftax = refTaxId.replace('Id', '')
+            const refdoc = store.getters[`${reftax}/activeDoc`]
+            if (!refdoc) return
+            console.error('REFDOC', refdoc)
+            await refdoc[`toggle_${tax}`](id)
+          })
+        }
+
+      }
+
 
     })
 
@@ -611,22 +635,6 @@ class Lodger {
       references,
       getters
     })
-  }
-
-  /**
-   * Reference taxonomies of a taxonomy
-   *
-   * @returns {Taxonomii[]}
-   */
-  get referenceTaxonomies () {
-    const { _formData } = this
-
-    return (taxonomy: Taxonomii) => {
-      const { fields } = _formData(taxonomy)
-      return fields
-        .filter(field => field.id.indexOf('Id') === field.id.length - 2)
-        .map(field => field.id.replace('Id', ''))
-    }
   }
 
   get subscriberData () {

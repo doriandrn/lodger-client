@@ -62,7 +62,7 @@ enum Errors {
   couldNotWriteFile = 'Cannot write file'
 }
 
-const loadForms = (taxonomies: Taxonomii[]) => taxonomies.map((tax: Taxonomii) => Form.loadByName(tax))
+const loadForms = (taxonomies: Taxonomii[]) => Object.assign({}, ...taxonomies.map((tax: Taxonomii) => ({ [tax]: Form.loadByName(tax) }) ))
 
 type SubscribersList = {
   main: Subscriber,
@@ -99,13 +99,17 @@ const docsHolder = new Vue({
 
       // const _sub
       const _theDoc = docs => docs.filter(doc => doc._id === id)[0]
+      const { $data } = this
 
       try {
-        item = _theDoc(this[subscriberName][taxonomie].docs)
+        const s = this[subscriberName][taxonomie]
+        if (s && s.docs) item = _theDoc(s.docs)
       } catch (e) {
-        Object.keys(this.$data).forEach(subscriberName => {
+        Object.keys($data).forEach(subscriberName => {
           if (item) return
-          item = _theDoc(this[subscriberName][taxonomie].docs)
+          const s = this[subscriberName][taxonomie]
+          if (!(s && s.docs)) return
+          item = _theDoc(s.docs)
         })
         debug('item negasit pe subscriber, iau din db', taxonomie, id)
         // item = await collections[plural].findOne(id).exec()
@@ -448,15 +452,17 @@ class Lodger {
     const taxonomii: Taxonomii[] = <Taxonomii[]>Object.keys(Taxonomii)
 
     const forms = loadForms(taxonomii)
+    debug('forms', forms)
     const plurals: PluralsMap = new Map()
-    forms.forEach(form => {
-      const { name, plural } = form
+
+    Object.keys(forms).forEach(form => {
+      const { name, plural } = forms[form]
       plurals.set(name, plural)
     })
     // rly custom n hardcoded shit
     plurals.set('tranzactie', 'tranzactii')
 
-    const _collections: RxCollectionCreator[] = forms.map(form => form.collection)
+    const _collections: RxCollectionCreator[] = taxonomii.map(tax => forms[tax].collection)
     const db = await DB(_collections, dbCon)
     const store = new LodgerStore(taxonomii, plurals)
     const { collections } = await db
@@ -601,37 +607,37 @@ class Lodger {
     const debug = Debug('lodger:unsub')
     return await Promise.all(
       Object.keys(sub).map(async subscriber => {
-        debug('unsub', sub)
+        debug('unsubscribing', sub)
         await sub[subscriber].unsubscribe()
       })
     )
   }
 
-  /**
-   * More of like a helper to return the speciffied form
-   * as we need this in components
-   *
-   * @param {string} formName
-   * @returns {Form} the form
-   * @memberof Lodger
-   */
-  get form () {
-    const { forms } = this
-    if (!forms) return
+  // /**
+  //  * More of like a helper to return the speciffied form
+  //  * as we need this in components
+  //  *
+  //  * @param {string} formName
+  //  * @returns {Form} the form
+  //  * @memberof Lodger
+  //  */
+  // get form () {
+  //   const { forms } = this
+  //   if (!forms) return
 
-    return (formName: string) => forms.filter(form => form.name === formName)[0]
-  }
+  //   return (formName: string) => forms.filter(form => form.name === formName)[0]
+  // }
 
-  get _formData () {
-    return (formName: string) => {
-      const form = this.form(formName)
-      return form ? form.data : {}
-    }
-  }
+  // get _formData () {
+  //   return (formName: string) => {
+  //     const form = this.form(formName)
+  //     return form ? form.data : {}
+  //   }
+  // }
 
-  get _collection () {
-    return (colName: string) => this.db.collections[colName]
-  }
+  // get _collection () {
+  //   return (colName: string) => this.db.collections[colName]
+  // }
 
   /**
    * For taxonomies that have references

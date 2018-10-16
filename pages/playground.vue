@@ -20,13 +20,13 @@ sction#pg
       :selected=    "$lodger.getters[`${tax}/selected`]"
       :last=        "$lodger.getters[`${tax}/last`]"
 
-      :sortOptions= "$lodger.form(tax).sortOptions"
+      :sortOptions= "$lodger.forms[tax].sortOptions"
 
       :items=       "subscriberData(tax).items"
       :criteriu=    "subscriberData(tax).criteriu"
-      :references=  "subscriberData(tax).references"
 
-      :showElements="$lodger.form(tax).__displayItemKeys"
+      :references=  "$lodger.forms[tax].referenceTaxonomies"
+      :showElements="$lodger.forms[tax].__displayItemKeys"
     )
     //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
     //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"

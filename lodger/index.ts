@@ -90,17 +90,30 @@ const docsHolder = new Vue({
   data: { main: {}, playground: {} },
   methods: {
     async getItem (
-      plural: Plural,
-      payload: string | object
+      taxonomie: Plural<Taxonomii>,
+      id: string | object,
+      subscriberName : string = 'main'
     ) {
       let item
       const debug = Debug('lodger:getItem')
-      const subscriber = payload.subscriber ? payload.subscriber : 'main'
+
+      // const _sub
+      const _theDoc = docs => docs.filter(doc => doc._id === id)[0]
 
       try {
-        item = this[subscriber][plural].docs.filter(doc => doc._id === payload.id)[0]
+        item = _theDoc(this[subscriberName][taxonomie].docs)
       } catch (e) {
-        console.error('ITEM NEGASIT', payload, plural, e)
+        Object.keys(this.$data).forEach(subscriberName => {
+          if (item) return
+          item = _theDoc(this[subscriberName][taxonomie].docs)
+        })
+        debug('item negasit pe subscriber, iau din db', taxonomie, id)
+        // item = await collections[plural].findOne(id).exec()
+        console.error('ITEM NEGASIT', taxonomie, id, e)
+      } finally {
+        if (!item) {
+          // item = await db.collections[taxonomie].findOne.exec()
+        }
       }
 
       return item
@@ -469,12 +482,9 @@ class Lodger {
 
       const id = typeof payload === 'string' ? payload : payload.id
 
-      // let doc
-
-      // if (typeof payload === 'object' && payload.subscriber) {
-      let doc = await docsHolder.getItem(plural, payload)
+      let doc = await docsHolder.getItem(plural, id, payload.subscriber)
       // }
-      // doc = await collections[plural].findOne(id).exec()
+      // doc =
 
       const gName = `${tax}/activeDoc`
       debug(gName, doc)

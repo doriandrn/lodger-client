@@ -11,3 +11,6 @@ log.txt
 
 # Nuxt generate
 dist
+
+# yarn stff
+yarn.lock

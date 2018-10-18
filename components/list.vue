@@ -17,7 +17,7 @@
       ) adauga
 
     .bottom
-      span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }}
+      //- span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }}
 
     //- buton(slot="right") ceva
 
@@ -183,12 +183,8 @@ let activeDocument
     //   deep: true,
     //   handler (newVal, oldval) {
     //     if (!newVal) return
-
     //     this.debug('schimbat la', newVal, 'de la', oldval)
-
-    //     Object.keys(newVal).forEach(refTaxId => {
-    //       Vue.set(this.criteriu.find, refTaxId, newVal[refTaxId])
-    //     })
+    //     this.$emit('subscribe', { find: newVal })
     //   }
     // }
   },

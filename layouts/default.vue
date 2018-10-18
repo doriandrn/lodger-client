@@ -135,7 +135,7 @@ export default {
   computed: {
     modalForm () {
       const name = this.modalContent.split('.')[0]
-      return this.$lodger.forms.filter(form => form.name === name)[0]
+      return this.$lodger.forms[name]
     },
     switchOptions () {
       const { idsAsociatii, asociatii } = this

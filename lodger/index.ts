@@ -174,7 +174,8 @@ class Lodger {
     const {
       db,
       plurals,
-      store
+      store,
+      forms
     } = this
 
     const plural = plurals.get(taxonomy)
@@ -188,10 +189,14 @@ class Lodger {
       'upsert' :
       'insert'
 
+    const form = forms[taxonomy]
+    const references = form.referenceTaxonomies
+    const referencesIds = this.activeReferencesIds(references)
+
     /**
      * add references, default values, etc
      */
-    const internallyHandledData = handleOnSubmit(data, { store })
+    const internallyHandledData = handleOnSubmit(data, { referencesIds, store })
 
     /**
      * do the insert / upsert and following actions
@@ -282,6 +287,7 @@ class Lodger {
       db: { collections },
       plurals,
       activeReferencesIds,
+      forms,
       store: { dispatch }
      } = <Lodger>this
 
@@ -307,20 +313,28 @@ class Lodger {
     }
 
     taxonomii.forEach(taxonomie => {
-      const plural = plurals.get(taxonomie)
+      const form = forms[taxonomie]
+      if (!form) throw new LodgerError('missing form for %%', taxonomie)
+      const { plural, referenceTaxonomies } = form
       const colectie = collections[<Plural>plural]
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
 
       const criteriu = getCriteriu(plural, criteriuCerut)
       let { limit, index, sort, find } = criteriu
-      debug('criteriu dupa getCruteruy in subsc', criteriu)
       const paging = Number(limit || 0) * (index || 1)
 
       if (!docsHolder[subscriberName][plural]) {
         Vue.set(docsHolder[subscriberName], plural, docsHolderObj)
       }
 
-      // const references = referenceTaxonomies(taxonomie)
+      if (referenceTaxonomies && referenceTaxonomies.length) {
+        const referencesIds = activeReferencesIds(referenceTaxonomies)
+        debug(`${taxonomie} refsID!!!`, referencesIds)
+        if (referencesIds) {
+          criteriu.find = referencesIds
+        }
+      }
+      debug('CRITERIA', criteriu)
 
       subscriber[plural] = colectie
         .find(find)
@@ -335,12 +349,6 @@ class Lodger {
             predefinite.forEach(async denumire => { await collections[plural].insert({ denumire }) })
             debug('first init, adaugat predefinite')
           }
-
-          // if (references && references.length) {
-          //   const referencesIds = activeReferencesIds(references)
-          //   debug('SUB:referencesIds', referencesIds)
-          //   dispatch(`${taxonomie}/set_referencesIds`, referencesIds)
-          // }
 
           Vue.set(docsHolder[subscriberName], plural, {
             criteriu,

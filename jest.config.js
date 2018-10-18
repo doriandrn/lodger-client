@@ -5,8 +5,9 @@ module.exports = {
   testEnvironment: 'node',
   globals: {
     'ts-jest': {
-      tsConfigFile: 'tsconfig.json',
-      useBabelrc: true
+      tsConfig: 'tsconfig.json',
+      babelConfig: true,
+      diagnostics: false
     }
   },
   moduleFileExtensions: [
@@ -23,8 +24,8 @@ module.exports = {
     'lodger.config': '<rootDir>/lodger.config'
   },
   transform: {
-    '^.+\\.js?$': '<rootDir>/node_modules/babel-jest',
-    '^.+\\.ts?$': 'ts-jest'
+    '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.tsx?$': 'ts-jest'
   },
   // transformIgnorePatterns: ['/node_modules/', '/lodger/'],
   testRegex: '(/__tests__/.*| (\\.| /)(test|spec))\\.(jsx?|tsx?)$'

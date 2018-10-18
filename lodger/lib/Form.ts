@@ -42,9 +42,7 @@ const defaultSchema: RxJsonSchema = {
  */
 class Form {
   constructor (
-    readonly data: LodgerForm,
-    readonly name: string,
-    readonly plural: string
+    readonly data: LodgerForm
   ) {}
 
   /**
@@ -108,7 +106,7 @@ class Form {
       Object.assign(sorts, { [indexable]: { label } })
     })
 
-    debug(`${name} => sortable fields`, sorts)
+    // debug(`${name} => sortable fields`, sorts)
 
     return sorts
   }
@@ -193,7 +191,15 @@ class Form {
       debug('Error', e)
       throw new FormError(Errors.invalidRequested, name)
     }
-    return new Form(form, name, form.plural)
+    return new Form(form)
+  }
+
+  get name () {
+    return this.data.name
+  }
+
+  get plural () {
+    return this.data.plural
   }
 
   /**

@@ -6,7 +6,6 @@ module.exports = {
   globals: {
     'ts-jest': {
       tsConfig: 'tsconfig.json',
-      babelConfig: true,
       diagnostics: false
     }
   },
@@ -27,6 +26,8 @@ module.exports = {
     '^.+\\.jsx?$': 'babel-jest',
     '^.+\\.tsx?$': 'ts-jest'
   },
+  preset: 'ts-jest',
   // transformIgnorePatterns: ['/node_modules/', '/lodger/'],
-  testRegex: '(/__tests__/.*| (\\.| /)(test|spec))\\.(jsx?|tsx?)$'
+  // testRegex: '(/__tests__/.*| (\\.| /)(test|spec))\\.(jsx?|tsx?)$'
+  testRegex: null
 }

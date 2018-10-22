@@ -297,7 +297,6 @@ class Lodger {
     const { store } = this
 
     if (!store.getters.hasOwnProperty(gName)) {
-      debug('FIRST', store)
       Object.defineProperty(store.getters, gName, {
         configurable: false,
         get () { return doc },
@@ -369,14 +368,7 @@ class Lodger {
         Vue.set(docsHolder[subscriberName], plural, docsHolderObj)
       }
 
-      if (referenceTaxonomies && referenceTaxonomies.length) {
-        const referencesIds = activeReferencesIds(referenceTaxonomies)
-        debug(`${taxonomie} refsID!!!`, referencesIds)
-        if (referencesIds) {
-          criteriu.find = referencesIds
-        }
-      }
-      debug('CRITERIA', criteriu)
+      debug(`${taxonomie} CRITERIA ->`, {...criteriu})
 
       subscriber[plural] = colectie
         .find(find)

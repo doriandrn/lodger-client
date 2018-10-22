@@ -8,9 +8,9 @@
     buton(
       v-for=  "traducere, metoda, index in actions",
       :key=   "metoda",
-      :size=  "size",
+      size=   "medium",
       :styl=  "index === 0 ? 'outline' : null"
-      @click= "$emit('action', metoda)"
+      @click= "$emit('CTA')"
     ) {{ traducere }}
 </template>
 
@@ -39,10 +39,6 @@ export default {
           metoda: 'traducere'
         }
       }
-    },
-    size: {
-      type: String,
-      default: 'medium'
     }
   },
   components: {

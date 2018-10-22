@@ -69,9 +69,16 @@ describe('Lodger', () => {
       describe('positive', () => {
         test('adds a new assoc', async () => {
           const name = 'bla'
-          const { _id } = await lodger.put('asociatie', {
-            name
-          })
+          let asoc
+          try {
+            asoc = await lodger.put('asociatie', {
+              name
+            })
+          } catch (e) {
+            console.error('PUT FAILED', e)
+          }
+          expect(asoc).toBeDefined()
+          const { _id } = asoc
           expect(_id).toBeDefined()
           const lastAddedId = lodger.getters['asociatie/last']
           expect(lastAddedId).toBe(_id)
@@ -87,6 +94,7 @@ describe('Lodger', () => {
             await lodger.put('asociatie', {})
           } catch (e) {
             expect(e).toBeDefined()
+            console.error(e)
             expect(e.indexOf('data')).toBeTruthy()
           }
         })
@@ -189,44 +197,44 @@ describe('Lodger', () => {
       })
     })
 
-    describe('._formData(formName)', () => {
-      describe('positive', () => {
-        test('returns the requested form by name', () => {
-          const name = 'asociatie'
-          expect(lodger._formData(name)).toBe(lodger.forms.filter(form => form.name === name)[0].data)
-        })
-      })
+    // describe('._formData(formName)', () => {
+    //   describe('positive', () => {
+    //     test('returns the requested form by name', () => {
+    //       const name = 'asociatie'
+    //       expect(lodger._formData(name)).toBe(lodger.forms.filter(form => form.name === name)[0].data)
+    //     })
+    //   })
 
-      describe('negative', () => {
-        test('throws if argument is diff than string', () => {
-          try {
-            lodger._formData({ name: 'baba' })
-          } catch (e) {
-            expect(e).toBeDefined()
-          }
+    //   describe('negative', () => {
+    //     test('throws if argument is diff than string', () => {
+    //       try {
+    //         lodger._formData({ name: 'baba' })
+    //       } catch (e) {
+    //         expect(e).toBeDefined()
+    //       }
 
-          try {
-            lodger._formData(1)
-          } catch (e) {
-            expect(e).toBeDefined()
-          }
+    //       try {
+    //         lodger._formData(1)
+    //       } catch (e) {
+    //         expect(e).toBeDefined()
+    //       }
 
-          try {
-            lodger._formData(['asociatie'])
-          } catch (e) {
-            expect(e).toBeDefined()
-          }
-        })
+    //       try {
+    //         lodger._formData(['asociatie'])
+    //       } catch (e) {
+    //         expect(e).toBeDefined()
+    //       }
+    //     })
 
-        test('throws if no form found with the speciffied name', () => {
-          try {
-            lodger._formData('invalid')
-          } catch (e) {
-            expect(e).toBeDefined()
-          }
-        })
-      })
-    })
+    //     test('throws if no form found with the speciffied name', () => {
+    //       try {
+    //         lodger._formData('invalid')
+    //       } catch (e) {
+    //         expect(e).toBeDefined()
+    //       }
+    //     })
+    //   })
+    // })
 
     afterAll(async () => {
       if (!lodger) return

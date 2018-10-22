@@ -10,11 +10,8 @@ import {
   addCommonFieldsToSchema
 } from 'lodger/lib/helpers/forms'
 import { FormError } from 'lodger/lib/Errors'
-import { GetterTree } from 'vuex';
+import { GetterTree } from 'vuex'
 
-if (process.env.NODE_ENV === 'test') {
-  Debug.enable('Form:*')
-}
 
 /**
  * Form Errors Definition
@@ -29,6 +26,19 @@ enum Errors {
   missingPlural = 'A plural definition is required for %%'
 }
 
+interface LodgerFormCreator {
+  name: FormName
+  plural: Plural
+  fields: Fields
+  methods?: FormMethods
+  statics?: FormMethods
+  sync?: boolean
+}
+
+if (process.env.NODE_ENV === 'test') {
+  Debug.enable('Form:*')
+}
+
 const defaultSchema: RxJsonSchema = {
   title: '',
   properties: {},
@@ -37,54 +47,67 @@ const defaultSchema: RxJsonSchema = {
   version: 0
 }
 
+interface LFormData {
+  fields: Fields,
+  name: string
+}
+
+/**
+ * A valid RxJsonSchema out of the form
+ */
+const toRxSchema = (formData: LFormData) => {
+  const { name, fields } = formData
+  const schema: RxJsonSchema = JSON.parse(JSON.stringify(defaultSchema))
+  schema.title = name
+
+  fields
+    .filter(field => !field.notInDb)
+    .forEach(field => {
+      pushFieldToSchema(field, schema)
+    })
+
+  if (name !== 'serviciu') addCommonFieldsToSchema(schema)
+
+  return schema
+}
+
+/**
+ * All indexabble fields
+ * @returns {Array} the ids of all fields with index: true
+ */
+const lookupIndexables = (fields: Fields) =>
+  fields
+    .filter(field => field.index)
+    .map(field => field.id)
+
+/**
+ * Makes a RxCollection valid collection from the form
+ */
+function toRxCollection (context: Form) {
+  const {
+    schema,
+    data: { plural, methods, statics }
+  } = context
+  const name = plural
+  return { name, schema, methods, statics }
+}
+
 /**
  * Form class
  */
 class Form {
+  readonly schema: RxJsonSchema
+  readonly indexables: string[]
+  readonly collection: RxCollectionCreator
+
   constructor (
-    readonly data: LodgerForm
-  ) {}
+    readonly data: LodgerFormCreator
+  ) {
+    this.indexables = lookupIndexables(data.fields)
+    this.schema = toRxSchema(data)
+    this.collection = toRxCollection(this)
 
-  /**
-   * A valid RxJsonSchema out of the form
-   */
-  get schema (): RxJsonSchema {
-    const { name, fields } = this.data
-    const schema: RxJsonSchema = JSON.parse(JSON.stringify(defaultSchema))
-    schema.title = name
-
-    fields
-      .filter(field => !field.notInDb)
-      .forEach(field => {
-        pushFieldToSchema(field, schema)
-      })
-
-    if (name !== 'serviciu') addCommonFieldsToSchema(schema)
-
-    return <RxJsonSchema>schema
-  }
-
-  /**
-   * Makes a RxCollection valid collection from the form
-   */
-  get collection (): RxCollectionCreator {
-    const {
-      schema,
-      data: { plural, methods, statics }
-    } = this
-    const name = plural
-    return <RxCollectionCreator>{ name, schema, methods, statics }
-  }
-
-  /**
-   * @returns {Array} the ids of all fields with index: true
-   */
-  get indexables () {
-    const { fields } = this.data
-
-    return fields
-      .filter(field => field.index)
-      .map(field => field.id)
+    // this.sortOptions = sortOptions({ indexables, name })
   }
 
   /**
@@ -93,7 +116,6 @@ class Form {
    */
   get sortOptions () {
     const { indexables, name } = this
-    const debug = Debug('lodger:sortOptions')
 
     if (!['serviciu', 'contor'].indexOf(name)) {
       indexables.push('la')

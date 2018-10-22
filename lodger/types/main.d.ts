@@ -5,6 +5,8 @@ import { Form } from 'lodger/lib/Form'
 import { Store } from 'vuex'
 import { Taxonomii } from "../index";
 
+export * from './Form'
+
 declare global {
   type Taxonomie = keyof typeof Taxonomii
 
@@ -45,7 +47,7 @@ declare global {
 
   type Bani = number
 
- 
+
 
   interface Incasare {
     suma: Bani,
@@ -114,5 +116,4 @@ declare global {
 
   type PluralsMap = Map<Singular, Plural>
 
-  type LodgerFormData = Asociatie | Apartament
 }

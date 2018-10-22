@@ -262,11 +262,7 @@ button
 
       &.iconOnly
         font-size 0
-        size 40px
-
-        &:before
-          size 24px
-          mask-size 24px
+        
 
     &:hover
     &:focus

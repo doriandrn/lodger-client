@@ -52,7 +52,7 @@
 
     //- .blocuri__tabs(slot="pagination")
     //-   .blocuri__list
-    
+
 
 </template>
 
@@ -212,7 +212,7 @@ drkr = rgba(black, .05)
       max-width 100%
       overflow auto
 
-  
+
 
   // &:before
   //   content ''
@@ -305,7 +305,7 @@ drkr = rgba(black, .05)
       transition all .1s ease-in-out
       text-transform capitalize
 
-      .nume 
+      .nume
         color: config.typography.palette.meta
         margin-right 24px
 
@@ -340,7 +340,7 @@ drkr = rgba(black, .05)
     display flex
     flex-flow column nowrap
     text-align center
-     
+
 
     > .split > .left > label
       text-transform uppercase

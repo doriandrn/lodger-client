@@ -1,6 +1,6 @@
 import Debug from 'debug'
 import { Store, GetterTree } from 'vuex'
-import { RxDatabase, RxCollectionCreator, RxDocument } from 'rxdb'
+import { RxDatabase, RxCollectionCreator, RxDocument, isRxDocument } from 'rxdb'
 import fs from 'fs'
 import osHomedir from 'os-homedir'
 import yaml from 'json2yaml'
@@ -58,7 +58,7 @@ enum Errors {
   invalidPreferenceIndex = 'Invalid preference index supplied',
   invalidPropertySupplied = 'Invalid property supplied',
   noPlural = 'Could not find plural definition for %%',
-  missingData = 'Missing data',
+  missingData = 'Missing data %%',
   couldNotWriteFile = 'Cannot write file'
 }
 
@@ -98,24 +98,36 @@ const docsHolder = new Vue({
       const debug = Debug('lodger:getItem')
 
       // const _sub
-      const _theDoc = docs => docs.filter(doc => doc._id === id)[0]
+      // Filters the documents array for the one with the id
+      const _theDoc = docs => {
+        const doc = docs.filter(doc => doc._id === id)[0]
+        if (!(doc && isRxDocument(doc))) throw new LodgerError('no doc found %%', id)
+        return doc
+      }
+
       const { $data } = this
 
       try {
         const s = this[subscriberName][taxonomie]
-        if (s && s.docs) item = _theDoc(s.docs)
+        item = _theDoc(s.docs)
+        if (item) debug('item gasit din prima', { taxonomie, subscriberName, s, item })
       } catch (e) {
-        Object.keys($data).forEach(subscriberName => {
+        Object.keys($data).forEach(sub => {
+          debug('SEX', sub)
           if (item) return
-          const s = this[subscriberName][taxonomie]
+          const s = this[sub][taxonomie]
+          debug('tried s', sub, s, taxonomie)
           if (!(s && s.docs)) return
+          debug('SBF', s)
           item = _theDoc(s.docs)
+          if (item) debug('item gasit din a 2a', { taxonomie, subscriberName, s, item })
         })
-        debug('item negasit pe subscriber, iau din db', taxonomie, id)
-        // item = await collections[plural].findOne(id).exec()
-        console.error('ITEM NEGASIT', taxonomie, id, e)
+
       } finally {
         if (!item) {
+          debug('item negasit pe subscriber, iau din db', taxonomie, id)
+          // item = await collections[plural].findOne(id).exec()
+          console.error('ITEM NEGASIT', taxonomie, id)
           // item = await db.collections[taxonomie].findOne.exec()
         }
       }
@@ -146,8 +158,21 @@ class Lodger {
       })
     })
 
+    store.subscribe(async ({ type, payload }) => {
+      const path = type.split('/')
+      if (path[1] !== 'select') return
+      const taxonomie = path[0]
+      const { plural } = forms[taxonomie]
+
+      if (!payload.hadDoc) {
+        let doc
+        doc = await docsHolder.getItem(plural, payload.id, payload.subscriber)
+        this._activeDocument = { taxonomie, doc }
+      }
+    })
+
     // todo, remove on prod
-    this.docsHolder = docsHolder
+    if (window) window.dh = docsHolder
   }
 
   /**
@@ -169,7 +194,7 @@ class Lodger {
     data: LodgerFormData
   ) {
     const debug = Debug('lodger:put')
-    if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData)
+    if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData, data)
 
     const {
       db,
@@ -202,11 +227,13 @@ class Lodger {
      * do the insert / upsert and following actions
      */
     try {
-      const { _data } = await colectie[method](internallyHandledData)
-      store.dispatch(`${taxonomy}/set_last`, _data._id)
-      this.select(taxonomy, _data._id)
-      debug('pus si selectat', taxonomy, _data._id)
-      return _data
+      const doc = await colectie[method](internallyHandledData)
+      const id = doc._id
+      store.dispatch(`${taxonomy}/set_last`, id)
+      this.select(taxonomy, { doc, id })
+
+      debug('pus', taxonomy, id, doc)
+      return doc
     } catch (e) {
       this.notify({
         type: 'error', text: String(e)
@@ -243,27 +270,42 @@ class Lodger {
   ) {
     const debug = Debug('lodger:select')
     const { dispatch } = this.store
-    /**
-     * Taxonomii cu select multiplu
-     */
+
+    if (typeof data === 'object') {
+      const { doc } = data
+
+      if (doc) {
+        debug('!!! DOC pe data', doc)
+        this._activeDocument = { taxonomie, doc }
+        data.doc = undefined
+        data.hadDoc = true
+      }
+    }
+
     await dispatch(`${taxonomie}/select`, data)
+  }
 
-    // if (!taxIsMultipleSelect(taxonomie)) {
-    // } else {
-    //   const metoda = `toggle_${taxonomie}`
-    //   debug('MULTIPLE SELECt!', metoda, '....TODO: adauga binderi, eg. pt serviciu e clar asociatie, dar conteaza de context')
-    //   /// NARE TREABA REFERENCES AICI!!!!!!!!!!
-    //   /// codu dinauntru e bun totusi
+  /**
+   * Active document for taxonomy
+  */
+  protected set _activeDocument (docHolder) {
+    let { taxonomie, doc } = docHolder
+    const debug = Debug('lodger:_activeDocument')
+    debug('set active', docHolder)
+    const gName = `${taxonomie}/activeDoc`
+    debug('gName', gName)
+    const { store } = this
 
-    //   // references.forEach(async (reference: Taxonomii) => {
-    //   //   const doc = this.store.getters[`${reference}/activeDoc`]
-    //   //   debug('fac la referinta', doc)
-    //   //   if (!doc) throw new LodgerError('nicio/niciun %% selectat(a)', reference)
-    //   //   const _toExecute = doc[metoda]
-    //   //   if (typeof _toExecute !== 'function') throw new LodgerError('nu e functie %%', metoda)
-    //   //   await _toExecute(id)
-    //   // });
-    // }
+    if (!store.getters.hasOwnProperty(gName)) {
+      debug('FIRST', store)
+      Object.defineProperty(store.getters, gName, {
+        configurable: false,
+        get () { return doc },
+        set (newDoc) { doc = newDoc; debug('resetat', newDoc, doc) }
+      })
+    } else {
+      store.getters[gName] = doc
+    }
   }
 
    /**
@@ -422,11 +464,7 @@ class Lodger {
    *
    */
   get getters () {
-    const { store } = this
-    if (!store) throw new LodgerError(Errors.missingCoreDefinitions)
-    return {
-      ...store.getters
-    }
+    return this.store.getters
   }
 
 
@@ -460,7 +498,6 @@ class Lodger {
     const taxonomii: Taxonomii[] = <Taxonomii[]>Object.keys(Taxonomii)
 
     const forms = loadForms(taxonomii)
-    debug('forms', forms)
     const plurals: PluralsMap = new Map()
 
     Object.keys(forms).forEach(form => {
@@ -492,31 +529,11 @@ class Lodger {
       const debug = Debug('lodger:SELECTstoreSubscriber')
 
       const tax = path[0]
-      const plural = plurals.get(tax)
+      // const { plural } = forms[tax]
+
+      debug('payload', payload)
 
       const id = typeof payload === 'string' ? payload : payload.id
-
-      let doc = await docsHolder.getItem(plural, id, payload.subscriber)
-      // }
-      // doc =
-
-      const gName = `${tax}/activeDoc`
-      debug(gName, doc)
-
-      /**
-       * the active Document
-       */
-      if (!store.getters.hasOwnProperty(gName)) {
-        Object.defineProperty(store.getters, gName, {
-          configurable: false,
-          get () { return doc },
-          set (newDoc) { doc = newDoc }
-        })
-      } else {
-        // state[tax].doc = doc
-        store.getters[gName] = doc
-      }
-
 
       /**
        * commit DB methods
@@ -524,6 +541,7 @@ class Lodger {
        */
       const isMultiple = taxIsMultipleSelect(tax)
       if (isMultiple) {
+        debug('ISML')
         const getter = store.getters[`${tax}/referencesIds`]
         if (getter) {
           Object.keys(getter).forEach(async refTaxId => {
@@ -620,32 +638,6 @@ class Lodger {
       })
     )
   }
-
-  // /**
-  //  * More of like a helper to return the speciffied form
-  //  * as we need this in components
-  //  *
-  //  * @param {string} formName
-  //  * @returns {Form} the form
-  //  * @memberof Lodger
-  //  */
-  // get form () {
-  //   const { forms } = this
-  //   if (!forms) return
-
-  //   return (formName: string) => forms.filter(form => form.name === formName)[0]
-  // }
-
-  // get _formData () {
-  //   return (formName: string) => {
-  //     const form = this.form(formName)
-  //     return form ? form.data : {}
-  //   }
-  // }
-
-  // get _collection () {
-  //   return (colName: string) => this.db.collections[colName]
-  // }
 
   /**
    * For taxonomies that have references

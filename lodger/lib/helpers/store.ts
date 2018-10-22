@@ -72,8 +72,6 @@ function setupSharedMethods (
   if (typeof sharedMethods !== 'object') {
     throw new LodgerError('invalid methods supplied')
   }
-  console.error('module', moduleName, module)
-
 
   // pt servicii si contoare
   const isMultiple: boolean = taxIsMultipleSelect(moduleName)
@@ -85,7 +83,6 @@ function setupSharedMethods (
     module.state[methodName] = undefined
     module.getters[methodName] = (S: RootState, G: GetterTree<RootState, any>) => {
       if (multipleSelect) {
-        console.error('PULARAL in setupSM', plural)
         const doc = G[`${moduleName}/activeDoc`]
         return doc ? doc[plural] : undefined
       } else {

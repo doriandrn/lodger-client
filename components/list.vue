@@ -106,9 +106,6 @@ enum Errors {
   missingReferenceId = 'Missing reference ID'
 }
 
-// one per list, it's not reactive, just a hodlder
-let activeDocument
-
 @Component({
   props: {
     taxonomy: {
@@ -169,13 +166,13 @@ let activeDocument
     // /**
     //  * Resubscribe everytime the crit changes
     //  */
-    // criteriu: {
-    //   handler (newVal) {
-    //     this.debug('change handler callD')
-    //     this.$emit('subscribe', newVal)
-    //   },
-    //   deep: true
-    // },
+    xfind: {
+      handler (newVal) {
+        this.debug('XXX')
+        // this.$emit('subscribe', newVal)
+      },
+      deep: true
+    },
     // /**
     //  *
     //  */
@@ -200,6 +197,7 @@ let activeDocument
 export default class ListTaxonomyItems extends Vue {
   itemsCount = 0
   fetching = false
+  xfind = this.referencesIds
   // criteriu = {
   //   limit: 5,
   //   sort: {
@@ -294,7 +292,7 @@ export default class ListTaxonomyItems extends Vue {
     const { index, checked } = e
     if (!checked) return
 
-    const direction = this.criteriu.sort[index] ? -1 : 1
+    const direction = this.criteriu.sort[index] > 0 ? -1 : 1
     const sort = {
       direction,
       key: index

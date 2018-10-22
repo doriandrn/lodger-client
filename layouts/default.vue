@@ -174,11 +174,6 @@ export default {
       return []
     },
     ...mapGetters({
-      asociatii: 'asociatii',
-      blocuri: 'blocuri',
-      // idsAsociatii: 'asociatie/ids',
-      activa: 'asociatie/active',
-      apartamente: 'apartamente',
       modalOpen: 'modal/open',
       modalContent: 'modal/content',
       modalData: 'modal/data'

@@ -275,7 +275,7 @@ class Lodger {
       const { doc } = data
 
       if (doc) {
-        debug('!!! DOC pe data', doc)
+        // debug('!!! DOC pe data', doc)
         this._activeDocument = { taxonomie, doc }
         data.doc = undefined
         data.hadDoc = true
@@ -291,10 +291,10 @@ class Lodger {
   protected set _activeDocument (docHolder) {
     let { taxonomie, doc } = docHolder
     const debug = Debug('lodger:_activeDocument')
-    debug('set active', docHolder)
     const gName = `${taxonomie}/activeDoc`
-    debug('gName', gName)
     const { store } = this
+    // debug('set active', docHolder)
+    // debug('gName', gName)
 
     if (!store.getters.hasOwnProperty(gName)) {
       Object.defineProperty(store.getters, gName, {
@@ -327,7 +327,6 @@ class Lodger {
     const {
       db: { collections },
       plurals,
-      activeReferencesIds,
       forms,
       store: { dispatch }
      } = <Lodger>this
@@ -345,7 +344,6 @@ class Lodger {
 
     // const multipleTaxonomies: boolean = taxonomii.length > 1
     if (!subscribers[subscriberName]) Object.assign(subscribers, { [subscriberName]: {} })
-    // debug('subscribers', subscribers)
 
     const subscriber = <Subscriber>subscribers[subscriberName]
 
@@ -361,6 +359,7 @@ class Lodger {
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
 
       const criteriu = getCriteriu(plural, criteriuCerut)
+      debug(`${taxonomie} criteriu cerut`, criteriuCerut)
       let { limit, index, sort, find } = criteriu
       const paging = Number(limit || 0) * (index || 1)
 

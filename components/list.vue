@@ -123,7 +123,8 @@ enum Errors {
     },
 
     criteriu: {
-      type: Object
+      type: Object,
+      default: () => {}
     },
 
     /**
@@ -168,7 +169,7 @@ enum Errors {
     //  */
     xfind: {
       handler (newVal) {
-        this.debug('XXX')
+        this.debug('XXX', newVal)
         // this.$emit('subscribe', newVal)
       },
       deep: true
@@ -246,7 +247,26 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   get referencesIds () {
-    return this.$lodger.activeReferencesIds(this.references)
+    const reffies = this.$lodger.activeReferencesIds(this.references)
+    if (!reffies) return
+    if (!this.criteriu) return reffies
+    const { criteriu } = this
+
+    const { find } = criteriu
+    this.debug('F', find)
+    if (find) {
+      let same = true
+      Object.keys(reffies).forEach(ref => {
+        if (!reffies[ref]) return
+        this.debug('ref', ref)
+        if (reffies[ref] !== find[ref]) same = false
+      })
+      this.debug('same', same)
+      if (!same) this.debug('!same!!!')
+    }
+    this.debug('refIds getter !', reffies)
+
+    return reffies
   }
 
   /**
@@ -286,6 +306,10 @@ export default class ListTaxonomyItems extends Vue {
 
   set _sort (e) {
     this.$emit('subscribe', { sort: { key: e } })
+  }
+
+  get _find () {
+    return this.criteriu.find
   }
 
   changeSortDirectionIfChecked (e) {

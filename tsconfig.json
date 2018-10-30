@@ -8,6 +8,7 @@
     "baseUrl": ".",
     "paths": {
       "forms/*": [ "./lodger/forms/*" ],
+      "c/*": [ "./components/*" ],
       "lodger/*": [ "./lodger/*" ],
       "@/*": [ "./*" ],
       "~/*": [ "./*" ],
@@ -19,12 +20,20 @@
     "types": [
       "node",
       "debug",
-      "jest"
+      "jest",
+      "faker",
+      "vue",
+      "os-homedir"
     ],
     "strict": true,
     "sourceMap": true,
     "noUnusedLocals": true,
     "experimentalDecorators": true,
     "esModuleInterop": true
-  }
+  },
+  "exclude": [
+    "_oldstore",
+    "__tests__"
+  ],
+  "compileOnSave": true
 }

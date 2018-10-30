@@ -31,7 +31,7 @@ console.log('Server listening on localhost:3000')
 /*
 ** Electron app
 */
-const electron = require('./electron')
+const electron = require('./electron.build')
 const path = require('path')
 const url = require('url')
 

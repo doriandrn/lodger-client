@@ -1,18 +1,19 @@
 import { Lodger } from '../../lodger'
 import faker from 'faker'
 import Debug from 'debug'
+import BroadcastChannel from 'broadcast-channel'
+
 Debug.enable('lodger:*')
-// import * as lodgerConfig from '../../lodger/config'
 
 let lodger: Lodger | undefined
-let getters: LodgerGetters | undefined
 
 const asociatiiCount = 30
-const blocuriCount = 5
+// const blocuriCount = 5
 
 beforeAll(async () => {
+  await BroadcastChannel.clearNodeFolder()
   lodger = await Lodger.build()
-  getters = lodger.getters
+  if (!lodger) throw new Error('tests failed, lodger undefined')
 })
 
 const debug = Debug('lodger:functional')
@@ -22,7 +23,7 @@ describe(`ASOCIATII`, async () => {
 
   describe('PUT (add func)', () => {
     beforeAll(async () => {
-      ids = await Promise.all(Array(asociatiiCount).fill().map(async (_, i) => {
+      ids = await Promise.all(Array(asociatiiCount).fill(undefined).map(async (_, i) => {
         const name = faker.company.companyName()
         const cif = faker.random.number()
 
@@ -48,11 +49,9 @@ describe(`ASOCIATII`, async () => {
 
     const limit = 5
     test(`Listeaza ${limit} asociatii specificate in 'limit'`, async () => {
-      const secondarySubscriber = 'secondary'
-      await lodger.$get('asociatii', { limit }, secondarySubscriber)
-      lodger.useSubscriber(secondarySubscriber)
+      const asociatii = await lodger.asociatii({ limit })
       await new Promise(resolve => setTimeout(resolve, 2000))
-      expect(Object.keys(lodger.asociatii).length).toBe(limit)
+      expect(Object.keys(asociatii).length).toBe(limit)
     })
 
     // test(`Listeaza ultimele ${limit} si le sorteaza dupa data`, async () => {
@@ -73,7 +72,7 @@ describe('BLOCURI', () => {
 
   test('getters have the ids', () => {
     // console.error('lodger', lodger)
-    const idsAsociatii = getters['asociatie/ids']
+    const idsAsociatii = lodger.getters['asociatie/ids']
     // console.error('IA', idsAsociatii, ids, lodger.asociatii)
     expect(idsAsociatii).toEqual(ids)
   })

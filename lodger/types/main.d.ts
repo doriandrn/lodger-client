@@ -1,11 +1,9 @@
 /// <reference path="build.d.ts" />
 
-import { RxDatabase, RxCollection, RxCollectionCreator } from "rxdb"
+import { RxDocument, RxDatabase, RxCollection, RxCollectionCreator } from "rxdb"
 import { Form } from 'lodger/lib/Form'
 import { Store } from 'vuex'
-import { Taxonomii } from "../index";
-
-export * from './Form'
+import { Taxonomii } from "../index"
 
 declare global {
   type Taxonomie = keyof typeof Taxonomii
@@ -23,16 +21,14 @@ declare global {
     username: string
   }
 
-  type Plural = string
-  type Singular = string
-
-
   type Criteriu = {
     limit?: number,
     index?: number,
     sort?: Sort,
     find?: Find
   }
+
+  type Plural = <T>(definitie: T) => T
 
   type Sort = {}
   type Find = {} | null
@@ -46,8 +42,6 @@ declare global {
   }
 
   type Bani = number
-
-
 
   interface Incasare {
     suma: Bani,
@@ -98,8 +92,6 @@ declare global {
     _id: string
   }
 
-  type Asociatii = Array<Asociatie>
-
   enum Languages {
     en,
     ro
@@ -114,6 +106,22 @@ declare global {
     user: UserPreferences,
   }
 
-  type PluralsMap = Map<Singular, Plural>
+  interface Forms {
+    [key: string]: Form
+  }
 
+  type SelectedItemData = string | {
+    id: string,
+
+    doc?: RxDocument<Taxonomie>,
+    hadDoc?: boolean,
+  }
+
+  /**
+   * An user notification
+   */
+  type LdgNotification = {
+    type: 'error' | 'success' | 'info' | 'warn',
+    text: string
+  }
 }

@@ -1,38 +1,41 @@
 import Vue from 'vue'
-import Vuex, { StoreOptions, ModuleTree, Module, ActionTree, GetterTree, MutationTree } from 'vuex'
+import Vuex, { ModuleTree, Module } from 'vuex'
 import { Taxonomii } from 'lodger'
-import { setupFromFile, setupSharedMethods, createEmptyStoreModule } from 'lodger/lib/helpers/store'
+import { setupSharedMethods } from 'lodger/lib/helpers/store'
 import { LodgerError } from 'lodger/lib/Errors';
 import * as RootModule from 'lodger/lib/store/index'
 import Debug from 'debug'
-const debug = Debug('lodger:Store')
 
 Vue.use(Vuex)
 
+const debug = Debug('lodger:Store')
 const modules: ModuleTree<RootState> = {}
 
 enum Errors {
   invalidModule = 'Invalid Module'
 }
 
-export default class LodgerStore implements StoreOptions<RootState> {
+// export default class LodgerStore implements StoreOptions<RootState> {
+export default class LodgerStore extends Vuex.Store<RootState> {
   readonly modules: ModuleTree<any> = {}
 
   constructor (
-    private taxonomii?: Taxonomii[],
-    private plurals: PluralsMap
+    readonly context: any,
+    readonly options: {}
   ) {
+    super(options)
+    const { taxonomii, forms } = context
 
     /**
      * Builds modules based on taxonomies
      * TODO: make this a method ?!
      */
-    if (taxonomii && taxonomii.length) {
-      taxonomii.forEach(tax => {
-        const plural = plurals.get(tax)
-        modules[tax] = setupSharedMethods(undefined, undefined, tax, plural)
-      })
-    }
+    if (!(taxonomii && taxonomii.length)) throw new LodgerError('No taxes supplied')
+
+    taxonomii.forEach((tax: Taxonomii) => {
+      const { plural } = forms[tax]
+      modules[tax] = setupSharedMethods(undefined, undefined, tax, plural)
+    })
 
     if (RootModule && RootModule.modules) {
       Object.keys(RootModule.modules).forEach(module => {
@@ -40,28 +43,28 @@ export default class LodgerStore implements StoreOptions<RootState> {
       })
     }
 
-    const { state, getters, actions, mutations } = RootModule
+    Object.assign(this, { ...RootModule })
 
-    Object.assign(this, {
-      state,
-      actions,
-      mutations,
-      getters
-    })
     this.modules = modules
-    debug('MODULES ON INIT', this.modules)
-
-    // FUCK YOU TS
-    return new Vuex.Store<RootState>(this)
+    debug('modules', modules)
   }
 
+  /**
+   * Use a store module
+   * to be used before calling the constructor
+   *
+   * @param module
+   * @param {Boolean} namespaced - if it should be namespaced
+   */
   static use (module: Module<any, RootState>, namespaced: boolean = true) {
     if (!module || typeof module !== 'object') {
       throw new LodgerError(Errors.invalidModule)
     }
     const key = Object.keys(module)[0]
     if (!key || !module[key]) throw new LodgerError(Errors.invalidModule)
+
     debug('using module', key, module[key])
+
     modules[key] = Object.assign({}, module[key], { namespaced })
   }
 }

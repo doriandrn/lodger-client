@@ -89,7 +89,7 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
         }
       } = this
 
-      return taxonomy => subscriberData(taxonomy, playgroundSubscriber)
+      return (taxonomy: Taxonomie) => subscriberData(taxonomy, playgroundSubscriber)
     }
   }
 </script>

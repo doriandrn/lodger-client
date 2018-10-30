@@ -28,7 +28,7 @@ enum Errors {
 
 interface LodgerFormCreator {
   name: FormName
-  plural: Plural
+  plural: Plural<Taxonomie>
   fields: Fields
   methods?: FormMethods
   statics?: FormMethods
@@ -227,12 +227,12 @@ class Form {
   /**
    * Reference taxonomies of a taxonomy
    *
-   * @returns {Taxonomii[]}
+   * @returns {Array} taxonomii
    */
   get referenceTaxonomies () {
     const { data: { fields } } = this
 
-    return fields
+    return <Taxonomie[]>fields
       .filter(field => field.id.indexOf('Id') === field.id.length - 2)
       .map(field => field.id.replace('Id', ''))
   }

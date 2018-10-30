@@ -5,6 +5,10 @@ type GettersDBTaxonomii = {
   [k in Taxonomii]: () => RxCollection<any>
 }
 
+declare module "*.vue" {
+  import Vue from 'vue'
+  export default typeof Vue
+}
 
 declare module "*.json" {
   const value: any;

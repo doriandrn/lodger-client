@@ -13,7 +13,6 @@ import { Form } from 'lodger/lib/Form'
 import { LodgerError } from 'lodger/lib/Errors'
 
 import Vue from 'vue'
-import { Observer } from 'rxjs';
 
 import { predefinite } from 'lodger/lib/forms/serviciu'
 
@@ -65,18 +64,12 @@ enum Errors {
 const loadForms = (taxonomies: Taxonomii[]) => Object.assign({}, ...taxonomies.map((tax: Taxonomii) => ({ [tax]: Form.loadByName(tax) }) ))
 
 type SubscribersList = {
-  main: Subscriber,
-  [k: string]: Subscriber
+  [k: string]: {}
 }
-
-type Subscriber = {
-  [k: string]: Asociatii | undefined
-}
-
 
 const plugins: Plugin[] = []
 
-interface LdgGetters extends GetterTree<IndexState, RootState> {}
+// interface LdgGetters extends GetterTree<IndexState, RootState> {}
 
 /**
  * Main holder for temporary items subscribed to
@@ -94,12 +87,11 @@ const docsHolder = new Vue({
       id: string | object,
       subscriberName : string = 'main'
     ) {
-      let item
+      let item: RxDocument<Taxonomie> | undefined
       const debug = Debug('lodger:getItem')
 
-      // const _sub
       // Filters the documents array for the one with the id
-      const _theDoc = docs => {
+      const _theDoc = (docs: RxDocument<Taxonomie, any>[]) => {
         const doc = docs.filter(doc => doc._id === id)[0]
         if (!(doc && isRxDocument(doc))) throw new LodgerError('no doc found %%', id)
         return doc
@@ -108,14 +100,14 @@ const docsHolder = new Vue({
       const { $data } = this
 
       try {
-        const s = this[subscriberName][taxonomie]
+        const s = $data[subscriberName][taxonomie]
         item = _theDoc(s.docs)
         if (item) debug('item gasit din prima', { taxonomie, subscriberName, s, item })
       } catch (e) {
         Object.keys($data).forEach(sub => {
           debug('SEX', sub)
           if (item) return
-          const s = this[sub][taxonomie]
+          const s = $data[sub][taxonomie]
           debug('tried s', sub, s, taxonomie)
           if (!(s && s.docs)) return
           debug('SBF', s)
@@ -140,16 +132,15 @@ const docsHolder = new Vue({
 class Lodger {
   constructor (
     protected taxonomii: Taxonomii[],
-    protected forms: Form[],
-    private readonly plurals: PluralsMap,
+    protected forms: Forms,
     protected db: RxDatabase,
     readonly store: Store<RootState>
   ) {
-    const debug = Debug('lodger:constructor')
+    // const debug = Debug('lodger:constructor')
     const { subscriberData } = this
 
     taxonomii.forEach(tax => {
-      const plural = plurals.get(tax)
+      const { plural } = forms[tax]
 
       Object.defineProperty(this, plural, {
         get () {
@@ -158,6 +149,7 @@ class Lodger {
       })
     })
 
+    // hooks up the active document
     store.subscribe(async ({ type, payload }) => {
       const path = type.split('/')
       if (path[1] !== 'select') return
@@ -172,14 +164,14 @@ class Lodger {
     })
 
     // todo, remove on prod
-    if (window) window.dh = docsHolder
+    try { window.dh = docsHolder.$data } catch (e) {}
   }
 
   /**
    * Notifies the user about an update/change
    * - Store action wrapper -
    */
-  notify (notification: Toast | Notification) {
+  notify (notification: LdgNotification) {
     this.store.dispatch('notify', notification)
   }
 
@@ -190,7 +182,7 @@ class Lodger {
    * @param data
    */
   async put (
-    taxonomy: Taxonomii,
+    taxonomy: Taxonomie,
     data: LodgerFormData
   ) {
     const debug = Debug('lodger:put')
@@ -198,12 +190,11 @@ class Lodger {
 
     const {
       db,
-      plurals,
       store,
       forms
     } = this
 
-    const plural = plurals.get(taxonomy)
+    const { plural } = forms[taxonomy]
     if (!plural) throw new LodgerError(Errors.noPlural, taxonomy)
     const colectie = db.collections[plural]
 
@@ -248,9 +239,9 @@ class Lodger {
    * @param id
    */
   async trash (taxonomie: Taxonomii, id: ItemID) {
-    const { plurals, db } = this
+    const { db, forms } = this
     const debug = Debug('lodger:trash')
-    const plural = plurals.get(taxonomie)
+    const { plural } = forms[taxonomie]
     if (!plural) throw new LodgerError('wtf')
     const col = db.collections[plural]
     const doc: RxDocument<Taxonomii> = await col.findOne(id)
@@ -265,8 +256,8 @@ class Lodger {
    * @param id
    */
   async select (
-    taxonomie: Taxonomii,
-    data: string | object
+    taxonomie: Taxonomie,
+    data: SelectedItemData
   ) {
     const debug = Debug('lodger:select')
     const { dispatch } = this.store
@@ -318,27 +309,22 @@ class Lodger {
    *
    */
   subscribe (
+    taxonomii: Taxonomii | Taxonomii[],
     subscriberName : string = 'main',
-    taxonomii: Taxonomii[],
     criteriuCerut ?: Criteriu
   ) {
     const debug = Debug('lodger:subscribe')
 
     const {
       db: { collections },
-      plurals,
       forms,
       store: { dispatch }
      } = <Lodger>this
 
-    if (!collections || !plurals) {
-      throw new LodgerError(Errors.missingCoreDefinitions)
-    }
+    if (!collections) throw new LodgerError(Errors.missingCoreDefinitions)
 
     // always have it as an array
-    if (typeof taxonomii === 'string') {
-      taxonomii = Array(taxonomii)
-    }
+    if (typeof taxonomii === 'string') taxonomii = Array(taxonomii)
 
     debug('subscribe chemat. criteriu cerut: ', criteriuCerut, taxonomii)
 
@@ -347,9 +333,7 @@ class Lodger {
 
     const subscriber = <Subscriber>subscribers[subscriberName]
 
-    if (!docsHolder[subscriberName]) {
-      Vue.set(docsHolder, subscriberName, {})
-    }
+    if (!docsHolder[subscriberName]) Vue.set(docsHolder, subscriberName, {})
 
     taxonomii.forEach(taxonomie => {
       const form = forms[taxonomie]
@@ -390,24 +374,20 @@ class Lodger {
               ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
             )
           })
-
         })
     })
-
   }
-
-  // get docsHolder () {
-  //   return docsHolder
-  // }
 
   /**
    * Array of taxonomies that have no reference
    * root taxonomies
+   *
+   * @returns {Array}
    */
   get taxonomiesWithoutReference () {
-    const { form } = this
+    const { forms } = this
     return this.taxonomii.filter(tax => {
-      const refs = form(tax).referenceTaxonomies
+      const refs = forms[tax].referenceTaxonomies
       return !(refs && refs.length)
     })
   }
@@ -472,8 +452,8 @@ class Lodger {
    * Init / build function
    *
    * Build steps: (order matters)
-   * 1. Lodger Forms
-   * 2. Plurals
+   * 1. Hook up the taxonomies
+   * 2. Lodger Forms based on taxonomies
    * 3. DB
    * 4. Store
    *
@@ -489,30 +469,20 @@ class Lodger {
     const taxonomii: Taxonomii[] = <Taxonomii[]>Object.keys(Taxonomii)
 
     const forms = loadForms(taxonomii)
-    const plurals: PluralsMap = new Map()
-
-    Object.keys(forms).forEach(form => {
-      const { name, plural } = forms[form]
-      plurals.set(name, plural)
-    })
-    // rly custom n hardcoded shit
-    plurals.set('tranzactie', 'tranzactii')
 
     const _collections: RxCollectionCreator[] = taxonomii.map(tax => forms[tax].collection)
     const db = await DB(_collections, dbCon)
-    const store = new LodgerStore(taxonomii, plurals)
+    const store = new LodgerStore({ taxonomii, forms })
     const { collections } = await db
 
-    // store.subscribe(DBGettersMethods({ collections, plurals, store }) )
 
-    if (options) {
-      Object.assign(buildOpts, { ...options })
-    }
+    if (options) Object.assign(buildOpts, { ...options })
 
     /**
      * Custom DB getters on store.getters
      * This is for SELECT mutation
      */
+    // store.subscribe(DBGettersMethods({ collections, plurals, store }) )
     store.subscribe(async ({ type, payload }, state) => {
       const path = type.split('/')
       if (path[1] !== 'select') return
@@ -543,10 +513,7 @@ class Lodger {
             await refdoc[`toggle_${tax}`](id)
           })
         }
-
       }
-
-
     })
 
     // for (const [s, p] of plurals) { await subscribe.call(db, p) }
@@ -554,7 +521,6 @@ class Lodger {
     return new Lodger(
       taxonomii,
       forms,
-      plurals,
       db,
       store
     )
@@ -638,19 +604,19 @@ class Lodger {
    */
   get activeReferencesIds () {
     const { getters } = this.store
-    return (references: Taxonomii[]) => assignRefIdsFromStore({
+    return (references: Taxonomie[]) => assignRefIdsFromStore({
       references,
       getters
     })
   }
 
   get subscriberData () {
-    const { plurals } = this
+    const { forms } = this
 
     return (
       taxonomy: Taxonomii,
       subscriberName: string
-    ) => docsHolder[subscriberName][plurals.get(taxonomy)] || docsHolderObj
+    ) => docsHolder[subscriberName][forms[taxonomy]] || docsHolderObj
 
   }
 }

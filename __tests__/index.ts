@@ -2,6 +2,7 @@ import { Lodger, Errors } from 'lodger/index'
 import Debug from 'debug'
 import { isRxDatabase } from 'rxdb'
 import BroadcastChannel from 'broadcast-channel'
+
 Debug.enable('lodger:*')
 
 describe('Lodger', () => {
@@ -37,7 +38,7 @@ describe('Lodger', () => {
       test('overwrites allowed build options', async () => {
         const options = {
           dbCon: {
-            name: 'lodgerica',
+            name: 'lodgerica' + new Date().getTime(),
             adapter: 'memory'
           }
         }
@@ -49,6 +50,28 @@ describe('Lodger', () => {
 
     afterAll(async () => {
       await L.destroy()
+    })
+  })
+
+  describe('.subscribe()', () => {
+    let lodger: Lodger
+    beforeAll(async () => {
+      lodger = await Lodger.build()
+    })
+
+    describe('positive', () => {
+      test('it subscribes and gets default content for a taxonomy', async () => {
+        await lodger.subscribe('asociatie')
+        expect(lodger.asociatii()).toBeDefined()
+      })
+    })
+
+    describe('negative', () => {
+
+    })
+
+    afterAll(async () => {
+      await lodger.destroy()
     })
   })
 
@@ -74,6 +97,7 @@ describe('Lodger', () => {
             asoc = await lodger.put('asociatie', {
               name
             })
+            console.info('ASOC', asoc)
           } catch (e) {
             console.error('PUT FAILED', e)
           }
@@ -94,8 +118,7 @@ describe('Lodger', () => {
             await lodger.put('asociatie', {})
           } catch (e) {
             expect(e).toBeDefined()
-            console.error(e)
-            expect(e.indexOf('data')).toBeTruthy()
+            expect(String(e).indexOf('data')).toBeTruthy()
           }
         })
 
@@ -128,7 +151,7 @@ describe('Lodger', () => {
       })
     })
 
-    describe('maps taxonomies to root', () => {
+    describe('.[taxonomy]()', () => {
       describe ('positive', () => {
         test('all taxes are defined & accesable', () => {
           // TODO: scrie un for, nu fi lazy

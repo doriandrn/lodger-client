@@ -1,4 +1,4 @@
-import { 
+import {
   traverse,
   slugify,
   no$,
@@ -66,7 +66,7 @@ describe('Functii ajutatoare', () => {
   })
 
   describe('getCriteriu', () => {
-    
+
     test('suprascrie valorile cerute in query', () => {
       const limit = 77
       const sort = { la: 'lala' }
@@ -90,13 +90,11 @@ describe('Functii ajutatoare', () => {
     })
   })
 
-  describe('fara$', () => {
-    test('scoate doar -$- de la inceput', () => {
+  describe('.no$', () => {
+    test('it just removes the prelimiary "$" sign', () => {
       expect(no$('$test')).toBe('test')
       expect(no$('$$test')).toBe('test')
       expect(no$('test 4$')).toBe('test 4$')
-    })
-    test('nu afecteaza alta valoare', () => {
       expect(no$('test')).toBe('test')
       expect(no$(123)).toBe(123)
       expect(no$(null)).toBe(null)

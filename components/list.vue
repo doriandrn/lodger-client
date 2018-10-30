@@ -163,29 +163,6 @@ enum Errors {
       default: undefined
     }
   },
-  watch: {
-    // /**
-    //  * Resubscribe everytime the crit changes
-    //  */
-    xfind: {
-      handler (newVal) {
-        this.debug('XXX', newVal)
-        // this.$emit('subscribe', newVal)
-      },
-      deep: true
-    },
-    // /**
-    //  *
-    //  */
-    // referencesIds: {
-    //   deep: true,
-    //   handler (newVal, oldval) {
-    //     if (!newVal) return
-    //     this.debug('schimbat la', newVal, 'de la', oldval)
-    //     this.$emit('subscribe', { find: newVal })
-    //   }
-    // }
-  },
   components: {
     empty,
     field,
@@ -198,7 +175,7 @@ enum Errors {
 export default class ListTaxonomyItems extends Vue {
   itemsCount = 0
   fetching = false
-  xfind = this.referencesIds
+  // xfind = this.referencesIds
   // criteriu = {
   //   limit: 5,
   //   sort: {
@@ -246,31 +223,34 @@ export default class ListTaxonomyItems extends Vue {
     return Object.keys(this.items || {})
   }
 
-  get referencesIds () {
-    const reffies = this.$lodger.activeReferencesIds(this.references)
-    if (!reffies) return
-    if (!this.criteriu) return reffies
-    const { criteriu } = this
+  // get referencesIds () {
+  //   const reffies = this.$lodger.activeReferencesIds(this.references)
+  //   if (!reffies) return
+  //   if (!this.criteriu) return reffies
+  //   const { criteriu } = this
 
-    const { find } = criteriu
-    this.debug('F', find)
-    if (find) {
-      let same = true
-      Object.keys(reffies).forEach(ref => {
-        if (!reffies[ref]) return
-        this.debug('ref', ref)
-        if (reffies[ref] !== find[ref]) same = false
-      })
-      this.debug('same', same)
-      if (!same) this.debug('!same!!!')
-    }
-    this.debug('refIds getter !', reffies)
+  //   const { find } = criteriu
+  //   this.debug('F', find)
+  //   if (find) {
+  //     let same = true
+  //     Object.keys(reffies).forEach(ref => {
+  //       if (!reffies[ref]) return
+  //       this.debug('ref', ref)
+  //       if (reffies[ref] !== find[ref]) same = false
+  //     })
+  //     this.debug('same', same)
+  //     if (!same) this.debug('!same!!!')
+  //   } else {
+  //     this.$emit('subscribe', reffies)
+  //   }
+  //   this.debug('refIds getter !', reffies)
 
-    return reffies
-  }
+  //   return reffies
+  // }
 
   /**
    * This knows when to show the add button,
+   *
    * checks if references provided exist so the add goes ok
    */
   get allReferencesHaveValues () {

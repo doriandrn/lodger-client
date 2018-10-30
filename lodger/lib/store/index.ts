@@ -16,7 +16,7 @@ const state: RootState = {
 }
 
 const actions: ActionTree < Toast, RootState > = {
-  notify: ({ dispatch }, notificare) => {
+  notify: ({ dispatch }, notificare: LdgNotification) => {
     dispatch('@@toast/ADD_TOAST_MESSAGE', notificare)
   }
 }

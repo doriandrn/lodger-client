@@ -83,7 +83,7 @@ const docsHolder = new Vue({
   data: { main: {}, playground: {} },
   methods: {
     async getItem (
-      taxonomie: Plural<Taxonomii>,
+      taxonomie: Plural<Taxonomie>,
       id: string | object,
       subscriberName : string = 'main'
     ) {
@@ -97,17 +97,15 @@ const docsHolder = new Vue({
         return doc
       }
 
-      const { $data } = this
-
       try {
-        const s = $data[subscriberName][taxonomie]
+        const s = this.$data[subscriberName][taxonomie]
         item = _theDoc(s.docs)
         if (item) debug('item gasit din prima', { taxonomie, subscriberName, s, item })
       } catch (e) {
-        Object.keys($data).forEach(sub => {
+        Object.keys(this.$data).forEach(sub => {
           debug('SEX', sub)
           if (item) return
-          const s = $data[sub][taxonomie]
+          const s = this.$data[sub][taxonomie]
           debug('tried s', sub, s, taxonomie)
           if (!(s && s.docs)) return
           debug('SBF', s)
@@ -309,8 +307,8 @@ class Lodger {
    *
    */
   subscribe (
-    taxonomii: Taxonomii | Taxonomii[],
     subscriberName : string = 'main',
+    taxonomii: Taxonomii | Taxonomii[],
     criteriuCerut ?: Criteriu
   ) {
     const debug = Debug('lodger:subscribe')
@@ -616,7 +614,7 @@ class Lodger {
     return (
       taxonomy: Taxonomii,
       subscriberName: string
-    ) => docsHolder[subscriberName][forms[taxonomy]] || docsHolderObj
+    ) => docsHolder.$data[subscriberName][forms[taxonomy].plural] || docsHolderObj
 
   }
 }

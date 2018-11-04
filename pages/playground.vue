@@ -5,7 +5,7 @@ sction#pg
       v-for=        "tax in $lodger.taxonomii"
       :key=         "tax"
       :taxonomy=    "tax"
-      :plural=      "$lodger.plurals.get(tax)"
+      :plural=      "$lodger.forms[tax].plural"
 
       :deselectOnClickAway = false
 

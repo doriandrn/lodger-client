@@ -1,38 +1,34 @@
 # Lodger
 
-Lodger este cea mai simplistă și ușor de utilizat aplicație pentru administrarea imobilelor, menită să vină în ajutorul oricui dorește a deveni / este administrator de asociații de locatari / proprietari;
+__O aplicație simplă și ușor de utilizat pentru administrarea imobilelor, menită să vină în ajutorul oricui dorește a deveni / este administrator de asociații de locatari / proprietari;__
 
-Aplicația este complet transparentă din punct de vedere financiar tuturor utilizatorilor, este extrem de ușor de folosit, foarte intuitivă, accesibilă (Link to inclusive design). Atât aplicația cât și utilizarea acesteia nu vor fi niciodată taxate.
+- complet transparentă din punct de vedere financiar tuturor utilizatorilor;
+- intuitivă;
+- [accesibilă](https://material.io/design/usability/accessibility.html#);
+- oferă un mod eficient de a comunica cu locatarii și de a le înțelege mai bine nevoile și îngrijorările acestora;
 
 <!-- (DE CE: un studiu ne arată că aplicațiile de genul, în general tind să fie complexe d.p.d.v. al experienței oferite utilizatorului, de multe ori acestuia fiindu-i foarte greu să se acomodeze și să folosească aplicația) -->
 
-Aplicația, de asemeni, oferă un mod eficient de a comunica cu locatarii și de a le înțelege mai bine nevoile și îngrijorările acestora.
-
-Din punct de vedere tehnologic, Lodger se manifestă ca o aplicație web progresivă (PWA). [Citește mai multe despre asta...](https://developers.google.com/web/progressive-web-apps/)
-cu următoarele specificații:
-
-- Offline First - Funcționează în totalitate fără acces la internet.
-- Mobile First
-- Cross-device
-- Bază de date reactivă
+Din punct de vedere tehnologic, Lodger se manifestă ca o [aplicație web progresivă (PWA)](https://developers.google.com/web/progressive-web-apps/)
+cu [aceste specificații](./SPECS.md).
 
 ## Cum poți contribui
 
 Lodger este un proiect de tip open-source, licențiat sub MIT. [Vezi licența](./LICENSE).
 Te rugăm să consulți [codul nostru de conduită](./COD_DE_CONDUITĂ.md) înainte de a contribui.
 
-### Administratori, Președinți, Comitete de asociații
+- ### Administratori, Președinți, Comitete de asociații
 
-Încercarea noastră este una de a oferi un software calitativ și extrem  de intuitiv, cât mai adecvat administratorilor, acest lucru fiind imposibil fără ajutorul vostru.
+  Încercarea noastră este una de a oferi un software calitativ și extrem  de intuitiv, cât mai adecvat administratorilor, acest lucru fiind imposibil fără ajutorul vostru.
 
-Câteva dintre lucrurile care ne-ar putea ajuta:
+  Câteva dintre lucrurile care ne-ar putea ajuta:
 
-### Programatori
+- ### Programatori
 
-Lodger folosește un stack modern atât pe backend cât și pe frontend.
-Limbajele principale folosite sunt: JavaScript + TypeScript (acestea combinate, ne vor permite compilarea in WASM pe viitor). Native love.
+  Lodger folosește un stack modern atât pe backend cât și pe frontend.
+  Limbajele principale folosite sunt: JavaScript + TypeScript (acestea combinate, ne vor permite compilarea in WASM pe viitor). Native love.
 
-Te invităm să te alături acestui proiect! Oricine este binevenit și încurajat să participe în orice părticică a proiectului.
+  Te invităm să te alături acestui proiect! Oricine este binevenit și încurajat să participe în orice părticică a proiectului.
 
 ## Contribuitori
 
@@ -55,14 +51,6 @@ Procesul ales ne reprezintă
 
 Credem în simplitate și este principalul lucru de care ținem cont când definim experiența pe care vrem s-o oferim utilizatorului (administratorului / locatarului).
 
-### Stack-ul
-
-*Backend:* serverless - Graph.cool + Algolia + Mailgun + Auth0 + altele
-
-*Frontend:* [Nuxt.js](https://github.com/nuxt/nuxt.js) (bazat pe VueJs si NodeJs)
-
-Deși folosim microservicii, acestea sunt doar pentru funcționalitate, nicidecum pentru interfață decât doar dacă vin în ajutorul dezvoltatorului.
-
 ### Procesul
 
 În favoarea
@@ -74,34 +62,6 @@ Câteva chestii de care ținem cont:
 - *Inclusive Design* (aplicația este accesibilă oricui) => Teste in browser cu extensia "aXe" pentru Chrome pe fiecare paginăș
 - *Mobile-First* Aplicația e dezvoltată pe principiul mobile-first.
 
-ZenHub
-
-## Contribuie
-
-Experiența o capeți când lucrezi cu adevărat la un proiect complex.
-Fie că vrei să înveți un stack modern, fie că
-Aplicația Lodger este dezvoltată cu și din pasiune pentru administratorii de asociații de locatari / proprietari.
-
-Fiind o aplicație de tip open-source, fiecare componentă / stil / funcționalitate este foarte bine documentată în așa fel încât orice dezvoltator să poată înțelege cât mai ușor ce se petrece cu codul.
-
-Funcționalitatea acesteia este integral testată - unit, e2e, ux
-
-## Build Setup
-
-``` bash
-# install dependencies
-$ yarn
-
-# serve with hot reload at localhost:3000
-$ yarn dev
-
-# build for production and launch server
-$ yarn build
-$ yarn start
-
-# generate static project
-$ yarn generate
-```
 
 For detailed explanation on how front-end things work, checkout the .
 

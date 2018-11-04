@@ -223,6 +223,10 @@ export default class ListTaxonomyItems extends Vue {
     return Object.keys(this.items || {})
   }
 
+  get referencesIds () {
+    return this.$lodger.activeReferencesIds(this.references)
+  }
+
   // get referencesIds () {
   //   const reffies = this.$lodger.activeReferencesIds(this.references)
   //   if (!reffies) return

@@ -34,7 +34,7 @@
     :options=  "sortOptions"
     required= true
     @click=    "changeSortDirectionIfChecked"
-    :class=     "{ reverseActive: criteriu.sort.direction < 1}"
+    :class=     "{ reverseActive: criteriu && criteriu.sort && criteriu.sort.direction < 1}"
   )
 
   ul(
@@ -285,11 +285,12 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   get _sort () {
+    if (!this.criteriu || this.criteriu.sort) return {}
     return Object.keys(this.criteriu.sort || {})[0]
   }
 
   set _sort (e) {
-    this.$emit('subscribe', { sort: { key: e } })
+    // this.$emit('subscribe', { sort: { key: e } })
   }
 
   get _find () {
@@ -299,14 +300,15 @@ export default class ListTaxonomyItems extends Vue {
   changeSortDirectionIfChecked (e) {
     const { index, checked } = e
     if (!checked) return
+    if (!this.criteriu) return
 
     const direction = this.criteriu.sort[index] > 0 ? -1 : 1
     const sort = {
       direction,
       key: index
     }
-    this.debug('newsort', sort, e),
-    this.$emit('subscribe', { sort })
+    this.debug('newsort', sort, e)
+    // this.$emit('subscribe', { sort })
   }
 }
 </script>

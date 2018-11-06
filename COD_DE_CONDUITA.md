@@ -40,4 +40,4 @@ Administratorii de proiecte care nu respectă sau aplică Codul de conduită cu 
 
 ## Atribuire
 
-Acest Cod de Conduită este adaptat din Pactul Contribuitor, versiunea 1.4, disponibil la http://contributor-covenant.org/version/1/4
+[Acest Cod de Conduită este adaptat din Pactul Contribuitor, versiunea 1.4](http://contributor-covenant.org/version/1/4)

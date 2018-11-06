@@ -4,6 +4,7 @@ import { RxDatabase, RxCollectionCreator, RxDocument, isRxDocument } from 'rxdb'
 import fs from 'fs'
 import osHomedir from 'os-homedir'
 import yaml from 'json2yaml'
+import equal from 'deep-equal'
 
 import LodgerStore from 'lodger/lib/Store'
 import { getCriteriu, taxIsMultipleSelect } from 'lodger/lib/helpers/functions'
@@ -115,10 +116,8 @@ const docsHolder = new Vue({
 
       } finally {
         if (!item) {
-          debug('item negasit pe subscriber, iau din db', taxonomie, id)
+          throw new LodgerError('item not found', arguments)
           // item = await collections[plural].findOne(id).exec()
-          console.error('ITEM NEGASIT', taxonomie, id)
-          // item = await db.collections[taxonomie].findOne.exec()
         }
       }
 
@@ -193,7 +192,7 @@ class Lodger {
     } = this
 
     const { plural } = forms[taxonomy]
-    if (!plural) throw new LodgerError(Errors.noPlural, taxonomy)
+    // if (!plural) throw new LodgerError(Errors.noPlural, taxonomy)
     const colectie = db.collections[plural]
 
     /**
@@ -257,14 +256,13 @@ class Lodger {
     taxonomie: Taxonomie,
     data: SelectedItemData
   ) {
-    const debug = Debug('lodger:select')
+    // const debug = Debug('lodger:select')
     const { dispatch } = this.store
 
     if (typeof data === 'object') {
       const { doc } = data
 
       if (doc) {
-        // debug('!!! DOC pe data', doc)
         this._activeDocument = { taxonomie, doc }
         data.doc = undefined
         data.hadDoc = true
@@ -312,6 +310,7 @@ class Lodger {
     criteriuCerut ?: Criteriu
   ) {
     const debug = Debug('lodger:subscribe')
+    debug('SUBSCRIBING', arguments, this)
 
     const {
       db: { collections },
@@ -334,22 +333,33 @@ class Lodger {
     if (!docsHolder[subscriberName]) Vue.set(docsHolder, subscriberName, {})
 
     taxonomii.forEach(taxonomie => {
-      const form = forms[taxonomie]
-      if (!form) throw new LodgerError('missing form for %%', taxonomie)
-      const { plural, referenceTaxonomies } = form
-      const colectie = collections[<Plural>plural]
+      const { plural, referenceTaxonomies } = forms[taxonomie]
+      const colectie = collections[plural]
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
-
       const criteriu = getCriteriu(plural, criteriuCerut)
-      debug(`${taxonomie} criteriu cerut`, criteriuCerut)
+
+      debug(`${taxonomie}: criteriu cerut`, criteriuCerut)
+      debug(`${taxonomie}: criteriu`, criteriu)
+
       let { limit, index, sort, find } = criteriu
       const paging = Number(limit || 0) * (index || 1)
 
+      // first init -> define the data object container
       if (!docsHolder[subscriberName][plural]) {
-        Vue.set(docsHolder[subscriberName], plural, docsHolderObj)
-      }
+        const freshO = Object.assign({}, docsHolderObj)
+        freshO.criteriu = criteriu
+        debug(`${taxonomie} freshO`, freshO)
+        Vue.set(docsHolder[subscriberName], plural, freshO)
 
-      debug(`${taxonomie} CRITERIA ->`, {...criteriu})
+        // add watcher for criteriu and when it changes
+        // fire this subscribe func again
+        docsHolder.$watch(`${subscriberName}.${plural}.criteriu.find`, (newC, oldC) => {
+          if ( equal(newC, oldC) ) return
+          const debug = Debug(`lodger:dhWatcher-${plural}`)
+          debug('!!!! criteriu modificat, reinscriu !!!!!!!')
+          this.subscribe(subscriberName, taxonomie, { find: newC })
+        }, { deep: true })
+      }
 
       subscriber[plural] = colectie
         .find(find)
@@ -365,13 +375,18 @@ class Lodger {
             debug('first init, adaugat predefinite')
           }
 
-          Vue.set(docsHolder[subscriberName], plural, {
-            criteriu,
-            docs: changes.map(change => Object.freeze(change)) || [],
-            items: Object.assign({},
-              ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
-            )
-          })
+          // update data objects inside
+          docsHolder[subscriberName][plural].docs = changes.map(change => Object.freeze(change)) || []
+          docsHolder[subscriberName][plural].items = Object.assign({},
+            ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
+          )
+
+          // Vue.set(docsHolder[subscriberName], plural, {
+          //   docs: changes.map(change => Object.freeze(change)) || [],
+          //   items: Object.assign({},
+          //     ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
+          //   )
+          // })
         })
     })
   }
@@ -437,6 +452,10 @@ class Lodger {
   }
 
 
+  /**
+   * Combined preferences getter
+   * gets values from DB and store
+   */
   get preferences () {
     const { db, store } = this
     const preferences: Preferences = {
@@ -471,14 +490,14 @@ class Lodger {
     const _collections: RxCollectionCreator[] = taxonomii.map(tax => forms[tax].collection)
     const db = await DB(_collections, dbCon)
     const store = new LodgerStore({ taxonomii, forms })
-    const { collections } = await db
-
+    // const { collections } = await db
 
     if (options) Object.assign(buildOpts, { ...options })
 
     /**
-     * Custom DB getters on store.getters
-     * This is for SELECT mutation
+     * When a taxonomy item gets SELECTED,
+     * try to call all DB methods for refrences of the taxonomy
+     *
      */
     // store.subscribe(DBGettersMethods({ collections, plurals, store }) )
     store.subscribe(async ({ type, payload }, state) => {
@@ -493,28 +512,47 @@ class Lodger {
       debug('payload', payload)
 
       const id = typeof payload === 'string' ? payload : payload.id
+      const reference = { [`${tax}Id`]: id }
 
-      /**
-       * commit DB methods
-       * eg. multiple selects
-       */
-      const isMultiple = taxIsMultipleSelect(tax)
-      if (isMultiple) {
-        debug('ISML')
-        const getter = store.getters[`${tax}/referencesIds`]
-        if (getter) {
-          Object.keys(getter).forEach(async refTaxId => {
-            const reftax = refTaxId.replace('Id', '')
-            const refdoc = store.getters[`${reftax}/activeDoc`]
-            if (!refdoc) return
-            console.error('REFDOC', refdoc)
-            await refdoc[`toggle_${tax}`](id)
-          })
-        }
+
+      const { referenceTaxonomies } = forms[tax]
+
+      // taxonomies that depend on the selected tax and subscriber
+      // todo: move from here
+      const dependentTaxonomies: Taxonomie[] = []
+      Object.keys(forms).forEach(taxForm => {
+        const { referenceTaxonomies } = forms[taxForm]
+        if (!referenceTaxonomies || referenceTaxonomies.indexOf(tax) < 0) return
+        dependentTaxonomies.push(taxForm)
+      })
+      debug('DT', dependentTaxonomies)
+
+      // call methods of references documents
+      referenceTaxonomies.forEach(async refTax => {
+        const refdoc = store.getters[`${refTax}/activeDoc`]
+        debug(`refdoc ${tax} (${refTax})`, refdoc)
+        if (!refdoc) return
+        const method = refdoc[`toggle_${tax}`]
+        if (!method || typeof method !== 'function') return
+        await method(id)
+        debug(`called references methods for ${refTax}`)
+      })
+
+      // update find criteria in DH with selected Item
+      if (dependentTaxonomies.length) {
+        dependentTaxonomies.forEach(dTax => {
+          const subscriber = payload.subscriber || 'main'
+          const { plural } = forms[dTax]
+          const holder = docsHolder[subscriber][plural]
+          debug('holder', holder)
+          if (!holder || !holder.criteriu) return
+          debug('asignez', subscriber, reference)
+          holder.criteriu.find = reference
+          // Object.assign(holder.criteriu.find, reference)
+        })
+        debug('ass dun')
       }
     })
-
-    // for (const [s, p] of plurals) { await subscribe.call(db, p) }
 
     return new Lodger(
       taxonomii,
@@ -588,8 +626,8 @@ class Lodger {
     const debug = Debug('lodger:unsub')
     return await Promise.all(
       Object.keys(sub).map(async subscriber => {
-        debug('unsubscribing', sub)
         await sub[subscriber].unsubscribe()
+        debug('unsubscribed', subscriber)
       })
     )
   }

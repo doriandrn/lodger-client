@@ -62,7 +62,6 @@ Câteva chestii de care ținem cont:
 - *Inclusive Design* (aplicația este accesibilă oricui) => Teste in browser cu extensia "aXe" pentru Chrome pe fiecare paginăș
 - *Mobile-First* Aplicația e dezvoltată pe principiul mobile-first.
 
-
 For detailed explanation on how front-end things work, checkout the .
 
 For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).

@@ -155,7 +155,7 @@ class Form {
         notInDb
       } = camp
       let { id, value } = camp
-      debug('CV -> should be func', value)
+      debug('camp.value (f)', value)
       let _def = camp.default
 
       if (click && !id) camp.id = click
@@ -205,8 +205,6 @@ class Form {
     try {
       form = require("forms/" + name)
       if (form.default) form = form.default
-      // change prototype to object for Vue
-      // form = JSON.parse(JSON.stringify(form))
       Object.assign(form, { name })
       debug('✓', name)
     } catch (e) {

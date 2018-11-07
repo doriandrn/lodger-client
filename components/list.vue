@@ -5,7 +5,7 @@
       h2.list__heading {{ plural }}
         em(
           v-for="ref in references"
-          :class="{ active: referencesIds[`${ref}Id`] }"
+          :class="{ active: typeof referencesIds[`${ref}Id`] === 'object' ? referencesIds[`${ref}Id`].id : referencesIds[`${ref}Id`]}"
         ) {{ ref }}
 
       buton(
@@ -22,9 +22,7 @@
     //- buton(slot="right") ceva
 
   p.empty(v-if="!ids.length") gol
-  //- empty(v-if="!ids.length") gol
 
-  //- h4(v-if="_selectedDoc && _selectedDoc._id") {{ _selectedDoc._id }}
   field.sort(
     v-if=     "ids.length > 1"
     type=     "radios",
@@ -44,7 +42,7 @@
     li(
       v-for=  "item, id in items"
       :data-id=    "id"
-      :class= "{ last: last === id, selected: typeof selected === 'string' ? selected === id : selected.length && selected.contains(id) }"
+      :class= "{ last: last === id, selected: typeof selected === 'string' ? selected === id : selected && selected.length && selected.contains(id) }"
       @click= "$emit('select', id)"
     )
       split
@@ -264,6 +262,7 @@ export default class ListTaxonomyItems extends Vue {
 
     Object.values(referencesIds).forEach(val => {
       if (val === undefined) { HV = false }
+      if (typeof val === 'object' && val.id === null ) { HV = false }
     })
 
     return HV

@@ -30,6 +30,8 @@ const customOpts = (context, options) => {
   })
 
   if (RootModule && RootModule.modules) {
+    // LodgerStore.use(RootModule, false)
+    Object.assign(options, RootModule)
     Object.keys(RootModule.modules).forEach(module => {
       LodgerStore.use({ [module]: RootModule.modules[module] }, module !== 'toast')
     })

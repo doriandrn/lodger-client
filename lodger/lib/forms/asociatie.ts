@@ -107,6 +107,7 @@ const methods = <T>{
     await this.save()
   },
   async toggle_serviciu (serviciu) {
+    if (!serviciu) return
     let { servicii } = this
     if (!servicii) servicii = []
     const index = servicii.indexOf(serviciu)

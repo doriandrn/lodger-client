@@ -148,6 +148,7 @@ class Lodger {
 
     // hooks up the active document
     store.subscribe(async ({ type, payload }) => {
+      if (!payload || !payload.id) return
       const path = type.split('/')
       if (path[1] !== 'select') return
       const taxonomie = path[0]
@@ -161,7 +162,7 @@ class Lodger {
     })
 
     // todo, remove on prod
-    try { window.dh = docsHolder.$data } catch (e) {}
+    try { window.dh = docsHolder } catch (e) {}
   }
 
   /**
@@ -248,6 +249,8 @@ class Lodger {
   }
 
   /**
+   * select an item
+   * brings in the active Document from DB
    *
    * @param taxonomie
    * @param id
@@ -270,6 +273,16 @@ class Lodger {
     }
 
     await dispatch(`${taxonomie}/select`, data)
+  }
+
+  /**
+   * deselect an item
+   */
+  async deselect (
+    taxonomie: Taxonomie,
+    subscriber ?: string
+  ) {
+    await this.store.dispatch(`${taxonomie}/select`, { id: null, subscriber })
   }
 
   /**
@@ -336,7 +349,7 @@ class Lodger {
       const { plural, referenceTaxonomies } = forms[taxonomie]
       const colectie = collections[plural]
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
-      const criteriu = getCriteriu(plural, criteriuCerut)
+      const criteriu = { ...getCriteriu(plural, criteriuCerut) }
 
       debug(`${taxonomie}: criteriu cerut`, criteriuCerut)
       debug(`${taxonomie}: criteriu`, criteriu)
@@ -353,12 +366,25 @@ class Lodger {
 
         // add watcher for criteriu and when it changes
         // fire this subscribe func again
-        docsHolder.$watch(`${subscriberName}.${plural}.criteriu.find`, (newC, oldC) => {
-          if ( equal(newC, oldC) ) return
-          const debug = Debug(`lodger:dhWatcher-${plural}`)
-          debug('!!!! criteriu modificat, reinscriu !!!!!!!')
-          this.subscribe(subscriberName, taxonomie, { find: newC })
-        }, { deep: true })
+        const watchPath = `${subscriberName}.${plural}.criteriu.find`
+        debug('definesc watcher (shldnt happen twice)', subscriberName, plural, watchPath)
+
+        if (!taxIsMultipleSelect(taxonomie)) {
+          docsHolder.$watch(watchPath, (newC, oldC) => {
+            const debug = Debug(`lodger:dhWatcher-${plural}`)
+            debug('newC', {...newC}, 'oldC', {...oldC})
+            if (!newC || equal(newC, oldC) ) return
+            const find = { ...newC }
+            if (!find) return
+            debug('!!!! new find - reinscriu !!!!!!!', find)
+            this.subscribe(subscriberName, taxonomie, { find })
+          }, { deep: true })
+        }
+
+        if (plural === 'servicii') {
+          predefinite.forEach(async denumire => { await collections[plural].insert({ denumire }) })
+          debug('first init, adaugat predefinite')
+        }
       }
 
       subscriber[plural] = colectie
@@ -369,24 +395,12 @@ class Lodger {
         .subscribe((changes: RxDocument<any>[]) => {
           // DO NOT RETURN IF NO CHANGES!!!!!!!
           debug(`${plural} for subscriber[${subscriberName}]`, changes)
-          // assuming this is the first time ?!
-          if (plural === 'servicii' && !changes.length) {
-            predefinite.forEach(async denumire => { await collections[plural].insert({ denumire }) })
-            debug('first init, adaugat predefinite')
-          }
 
           // update data objects inside
           docsHolder[subscriberName][plural].docs = changes.map(change => Object.freeze(change)) || []
           docsHolder[subscriberName][plural].items = Object.assign({},
             ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
           )
-
-          // Vue.set(docsHolder[subscriberName], plural, {
-          //   docs: changes.map(change => Object.freeze(change)) || [],
-          //   items: Object.assign({},
-          //     ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
-          //   )
-          // })
         })
     })
   }
@@ -503,18 +517,15 @@ class Lodger {
     store.subscribe(async ({ type, payload }, state) => {
       const path = type.split('/')
       if (path[1] !== 'select') return
-
       const debug = Debug('lodger:SELECTstoreSubscriber')
-
       const tax = path[0]
-      // const { plural } = forms[tax]
 
       debug('payload', payload)
 
       const id = typeof payload === 'string' ? payload : payload.id
+      // // for deselects:
+      // if (!id) return
       const reference = { [`${tax}Id`]: id }
-
-
       const { referenceTaxonomies } = forms[tax]
 
       // taxonomies that depend on the selected tax and subscriber
@@ -544,10 +555,10 @@ class Lodger {
           const subscriber = payload.subscriber || 'main'
           const { plural } = forms[dTax]
           const holder = docsHolder[subscriber][plural]
-          debug('holder', holder)
           if (!holder || !holder.criteriu) return
-          debug('asignez', subscriber, reference)
-          holder.criteriu.find = reference
+          debug('asignez',  dTax, subscriber, reference)
+          holder.criteriu.find = { ...reference }
+          store.dispatch(`${dTax}/select`, {id: null, subscriber })
           // Object.assign(holder.criteriu.find, reference)
         })
         debug('ass dun')

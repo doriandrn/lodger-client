@@ -17,7 +17,7 @@ sction#pg
       @trash=       "$lodger.trash(tax, $event)"
 
       @select=      "$lodger.select(tax, {id: $event, subscriber: playgroundSubscriber })"
-      :selected=    "$lodger.getters[`${tax}/selected`]"
+      :selected=    "typeof $lodger.getters[`${tax}/selected`] !== 'object' ? $lodger.getters[`${tax}/selected`] : $lodger.getters[`${tax}/selected`].id"
       :last=        "$lodger.getters[`${tax}/last`]"
 
       :sortOptions= "$lodger.forms[tax].sortOptions"

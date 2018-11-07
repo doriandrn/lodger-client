@@ -168,9 +168,8 @@ class Form {
       // apply getters to funcs
       if (typeof value === 'function' && getters) {
         try {
-          debug('incerc sa pun val')
           value = value(getters)
-          debug('am incercat, val: ', value)
+          debug('valoare dupa apel functie: ', value)
         } catch (e) {
           debug('failed to get val', label, getters)
           value = null

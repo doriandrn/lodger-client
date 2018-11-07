@@ -1,4 +1,5 @@
 import { Getter } from 'vuex'
+const gi = `incasare/activeDoc`
 
 const fields: Fields = [
   {
@@ -20,26 +21,31 @@ const fields: Fields = [
     type: 'number',
     default: 1,
     index: true,
-    value: getters => Number(getters['asociatie/nrUltimaChitanta'] || 0) + 1
+    value: getters => Number(getters['incasare/activeDoc'].nrUltimaChitanta || 0) + 1
   },
   {
     id: 'moneda',
     notInForm: true,
     required: true,
-    value: getters => getters['asociatie/moneda']
+    value: getters => getters['incasare/activeDoc'].moneda
   },
 
-  // ASTA TREBUIE SA RAMANA IN CAZ CA UN APARTAMENT SE STERGE
+  // ASTEA TREBUIE SA RAMANA IN CAZ CA UN APARTAMENT SE STERGE
   // TREBUIE SA FIGUREZE
-  // asociatieId = idul asociatiei apului
   /// !!!!!!!!!!!!!!!!
-
+  {
+    id: 'blocId',
+    notInForm: true,
+    required: true,
+    index: true,
+    value: (g: Getter<AsociatieState, RootState>) => g['bloc/selected'].id
+  },
   {
     id: 'asociatieId',
     notInForm: true,
     required: true,
     index: true,
-    value: (g: Getter<AsociatieState, RootState>) => g['asociatie/active'] || g['asociatie/selected']
+    value: (g: Getter<AsociatieState, RootState>) => g['asociatie/selected'].id
   }
 ]
 

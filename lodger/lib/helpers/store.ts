@@ -17,7 +17,7 @@ type EmptyState = {}
 const sharedStoreMethods: SharedStoreMethods = {
   selected: 'select',
   last: 'set_last',
-  referencesIds: 'set_referencesIds'
+  // referencesIds: 'set_referencesIds'
   // active: 'activate'
 }
 
@@ -43,18 +43,18 @@ function createEmptyStoreModule () {
   }
 }
 
-const otherActions = (taxonomy, actionName) => {
-  switch (actionName) {
-    case 'select':
-      return [
-        `${taxonomy}/set_referencesIds`
-      ]
+// const otherActions = (taxonomy, actionName) => {
+//   switch (actionName) {
+//     case 'select':
+//       return [
+//         `${taxonomy}/set_referencesIds`
+//       ]
 
-    default:
-      return []
-  }
+//     default:
+//       return []
+//   }
 
-}
+// }
 
 
 /**

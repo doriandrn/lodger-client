@@ -221,7 +221,10 @@ class Lodger {
       store.dispatch(`${taxonomy}/set_last`, id)
       this.select(taxonomy, { doc, id })
 
-      debug('pus', taxonomy, id, doc)
+      this.notify({
+        type: 'success',
+        text: `pus ${taxonomy} ${id}`
+      })
       return doc
     } catch (e) {
       this.notify({

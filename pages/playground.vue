@@ -1,5 +1,13 @@
 <template lang="pug">
 sction#pg
+  .actions
+    h5 main actions
+    buton(
+      size=     "large"
+      rounded=  true
+      icon=     "incaseaza"
+      @click=   "openModal('incasare.new')"
+    ) incaseaza
   .boxes
     list.box(
       v-for=        "tax in $lodger.taxonomii"
@@ -24,6 +32,7 @@ sction#pg
 
       :items=       "subscriberData(tax).items"
       :criteriu=    "subscriberData(tax).criteriu"
+      :fetching=    "subscriberData(tax).fetching"
 
       :references=  "$lodger.forms[tax].referenceTaxonomies"
       :showElements="$lodger.forms[tax].__displayItemKeys"
@@ -34,6 +43,11 @@ sction#pg
     servicii.box
 
   registru
+
+  h1 test shit
+    //- blocuri(
+    //-   layout= "interactiv"
+    //- )
 
   .stats(slot="sidebar")
     h5 stats
@@ -58,6 +72,9 @@ import frm from 'c/form'
 import list from 'c/list'
 import registru from 'c/registru'
 import servicii from 'c/servicii'
+// import blocuri from 'c/blocuri'
+
+import buton from 'form/button'
 
 // this should only stay here, on playground
 import fakeData from 'lodger/lib/helpers/dev/fakeData'
@@ -68,7 +85,9 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
     frm,
     list,
     registru,
-    servicii
+    servicii,
+    // blocuri,
+    buton
   },
   methods: {
     fakeData
@@ -97,8 +116,10 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
 <style lang="stylus">
 #pg
   .inner
-    display flex
-    flex-flow row nowrap
+    display grid
+    grid-template-columns 12px 12px 12px
+    grid-template-rows 12px 12px 12px
+    // flex-flow row nowrap
 
   *
     user-select none

@@ -64,13 +64,16 @@ enum Errors {
 
 const loadForms = (taxonomies: Taxonomii[]) => Object.assign({}, ...taxonomies.map((tax: Taxonomii) => ({ [tax]: Form.loadByName(tax) }) ))
 
-type SubscribersList = {
-  [k: string]: {}
-}
+type SubscribersList = { [k: string]: {} }
 
 const plugins: Plugin[] = []
 
-// interface LdgGetters extends GetterTree<IndexState, RootState> {}
+const docsHolderObj = {
+  docs: [],
+  items: {},
+  criteriu: {},
+  fetching: false
+}
 
 /**
  * Main holder for temporary items subscribed to
@@ -79,7 +82,6 @@ const plugins: Plugin[] = []
  * holds RX documents
  * and methods to accezss / manipulate them
  */
-const docsHolderObj = { docs: [], items: {}, criteriu: {} }
 const docsHolder = new Vue({
   data: { main: {}, playground: {} },
   methods: {
@@ -148,16 +150,21 @@ class Lodger {
 
     // hooks up the active document
     store.subscribe(async ({ type, payload }) => {
-      if (!payload || !payload.id) return
+      if (!payload || payload.id === undefined) return
       const path = type.split('/')
       if (path[1] !== 'select') return
       const taxonomie = path[0]
       const { plural } = forms[taxonomie]
 
-      if (!payload.hadDoc) {
+      if (payload.id && !payload.hadDoc) {
         let doc
         doc = await docsHolder.getItem(plural, payload.id, payload.subscriber)
         this._activeDocument = { taxonomie, doc }
+      }
+
+      // on deselect, unsubscribe
+      if (payload.id === null) {
+        this.unsubscribe(plural, payload.subscriber)
       }
     })
 
@@ -296,8 +303,6 @@ class Lodger {
     const debug = Debug('lodger:_activeDocument')
     const gName = `${taxonomie}/activeDoc`
     const { store } = this
-    // debug('set active', docHolder)
-    // debug('gName', gName)
 
     if (!store.getters.hasOwnProperty(gName)) {
       Object.defineProperty(store.getters, gName, {
@@ -326,7 +331,6 @@ class Lodger {
     criteriuCerut ?: Criteriu
   ) {
     const debug = Debug('lodger:subscribe')
-    debug('SUBSCRIBING', arguments, this)
 
     const {
       db: { collections },
@@ -339,7 +343,7 @@ class Lodger {
     // always have it as an array
     if (typeof taxonomii === 'string') taxonomii = Array(taxonomii)
 
-    debug('subscribe chemat. criteriu cerut: ', criteriuCerut, taxonomii)
+    debug('--- SUBSCRIBING ---\n', taxonomii, '\ncriteriu cerut: ', criteriuCerut)
 
     // const multipleTaxonomies: boolean = taxonomii.length > 1
     if (!subscribers[subscriberName]) Object.assign(subscribers, { [subscriberName]: {} })
@@ -352,9 +356,9 @@ class Lodger {
       const { plural, referenceTaxonomies } = forms[taxonomie]
       const colectie = collections[plural]
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
-      const criteriu = { ...getCriteriu(plural, criteriuCerut) }
+      const criteriu = { ...getCriteriu(plural, JSON.parse(JSON.stringify(criteriuCerut || {})) ) }
 
-      debug(`${taxonomie}: criteriu cerut`, criteriuCerut)
+      debug(`${taxonomie}: criteriu cerut`, { ...criteriuCerut })
       debug(`${taxonomie}: criteriu`, criteriu)
 
       let { limit, index, sort, find } = criteriu
@@ -363,31 +367,37 @@ class Lodger {
       // first init -> define the data object container
       if (!docsHolder[subscriberName][plural]) {
         const freshO = Object.assign({}, docsHolderObj)
-        freshO.criteriu = criteriu
-        debug(`${taxonomie} freshO`, freshO)
+        freshO.criteriu = Object.assign({}, criteriu)
+
         Vue.set(docsHolder[subscriberName], plural, freshO)
 
         // add watcher for criteriu and when it changes
         // fire this subscribe func again
-        const watchPath = `${subscriberName}.${plural}.criteriu.find`
-        debug('definesc watcher (shldnt happen twice)', subscriberName, plural, watchPath)
-
         if (!taxIsMultipleSelect(taxonomie)) {
-          docsHolder.$watch(watchPath, (newC, oldC) => {
-            const debug = Debug(`lodger:dhWatcher-${plural}`)
-            debug('newC', {...newC}, 'oldC', {...oldC})
+          const everyKeyInCriteriu = (vm) => {
+            const c = vm[subscriberName][plural].criteriu
+            return { ...c }
+          }
+          docsHolder.$watch(everyKeyInCriteriu, (newC, oldC) => {
             if (!newC || equal(newC, oldC) ) return
-            const find = { ...newC }
-            if (!find) return
-            debug('!!!! new find - reinscriu !!!!!!!', find)
-            this.subscribe(subscriberName, taxonomie, { find })
-          }, { deep: true })
+            const diff = {}
+            if (newC.find) Object.assign(diff, { find: { ...newC.find } })
+            if (newC.sort) Object.assign(diff, { sort: newC.sort })
+            debug('parsedNew', diff)
+            this.subscribe(subscriberName, taxonomie, diff)
+          }, { deep: true, immediate: false })
         }
 
+        // insert predefined services on first init
+        // todo: make this a hook and call funcs
         if (plural === 'servicii') {
           predefinite.forEach(async denumire => { await collections[plural].insert({ denumire }) })
           debug('first init, adaugat predefinite')
         }
+      } else {
+        docsHolder[subscriberName][plural].criteriu = criteriu
+        docsHolder[subscriberName][plural].fetching = true
+        this.unsubscribe(plural, subscriberName)
       }
 
       subscriber[plural] = colectie
@@ -404,6 +414,7 @@ class Lodger {
           docsHolder[subscriberName][plural].items = Object.assign({},
             ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
           )
+          docsHolder[subscriberName][plural].fetching = false
         })
     })
   }
@@ -526,8 +537,8 @@ class Lodger {
       debug('payload', payload)
 
       const id = typeof payload === 'string' ? payload : payload.id
-      // // for deselects:
-      // if (!id) return
+      if (id === undefined) return
+
       const reference = { [`${tax}Id`]: id }
       const { referenceTaxonomies } = forms[tax]
 
@@ -539,7 +550,7 @@ class Lodger {
         if (!referenceTaxonomies || referenceTaxonomies.indexOf(tax) < 0) return
         dependentTaxonomies.push(taxForm)
       })
-      debug('DT', dependentTaxonomies)
+      debug('DT', tax, dependentTaxonomies)
 
       // call methods of references documents
       referenceTaxonomies.forEach(async refTax => {
@@ -561,8 +572,9 @@ class Lodger {
           if (!holder || !holder.criteriu) return
           debug('asignez',  dTax, subscriber, reference)
           holder.criteriu.find = { ...reference }
-          store.dispatch(`${dTax}/select`, {id: null, subscriber })
-          // Object.assign(holder.criteriu.find, reference)
+
+          // deselect
+          store.dispatch(`${dTax}/select`, { id: null, subscriber })
         })
         debug('ass dun')
       }
@@ -632,12 +644,26 @@ class Lodger {
   }
 
   /**
+   * Unsubscribe a single taxonomy from a single sub.
+   *
+   */
+  async unsubscribe (taxPlural: Plural<Taxonomie>, subscriberName: string = 'main') {
+    const sub = subscribers[subscriberName]
+    const debug = Debug('lodger:unsub')
+    debug('sub', sub)
+    if (!sub[taxPlural]) {
+      throw new LodgerError('subscriber nedefinit', {taxPlural, subscriberName})
+    }
+    await sub[taxPlural].unsubscribe()
+  }
+
+  /**
    * Kills all active listeners for a given subscriber name
    * @param subscriberName
    */
   async unsubscribeAll (subscriberName: string = 'main') {
-    const sub = subscribers[subscriberName || 'main']
-    const debug = Debug('lodger:unsub')
+    const sub = subscribers[subscriberName]
+    const debug = Debug('lodger:unsubAll')
     return await Promise.all(
       Object.keys(sub).map(async subscriber => {
         await sub[subscriber].unsubscribe()

@@ -1,3 +1,12 @@
+/**
+ * Main Vue helper component for rendering data from DB
+ *
+ * Renderless so it can be used inside Node/CLI or browsers & anything else.
+ * This same component can and should be used for:
+ * listing items, displaying statistics, displaying mixed items (eg. transactions)
+ *
+ */
+
 <template lang="pug">
 .list
   split.list__header
@@ -31,7 +40,7 @@
     :id=       "`sort-${taxonomy}`"
     :options=  "sortOptions"
     required= true
-    @click=    "changeSortDirectionIfChecked"
+    @click=    "criteriu.sort = $event.checked ? { key: $event.index, direction: -1 } : criteriu.sort"
     :class=     "{ reverseActive: criteriu && criteriu.sort && criteriu.sort.direction < 1}"
   )
 
@@ -106,6 +115,11 @@ enum Errors {
 
 @Component({
   props: {
+    fetching: {
+      type: Boolean,
+      default: false
+    },
+
     taxonomy: {
       type: [String, Array]
     },
@@ -172,7 +186,7 @@ enum Errors {
 })
 export default class ListTaxonomyItems extends Vue {
   itemsCount = 0
-  fetching = false
+
   // xfind = this.referencesIds
   // criteriu = {
   //   limit: 5,
@@ -284,31 +298,25 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   get _sort () {
-    if (!this.criteriu || this.criteriu.sort) return {}
-    return Object.keys(this.criteriu.sort || {})[0]
+    if (!this.criteriu || !this.criteriu.sort) return
+    return Object.keys(this.criteriu.sort)[0]
   }
 
   set _sort (e) {
-    // this.$emit('subscribe', { sort: { key: e } })
+    this.$emit('subscribe', { sort: { key: e } })
   }
 
   get _find () {
     return this.criteriu.find
   }
 
-  changeSortDirectionIfChecked (e) {
-    const { index, checked } = e
-    if (!checked) return
-    if (!this.criteriu) return
+  // changeSortDirectionIfChecked (e) {
+  //   const { index, checked } = e
+  //   if (!checked) return
+  //   if (!this.criteriu) return
 
-    const direction = this.criteriu.sort[index] > 0 ? -1 : 1
-    const sort = {
-      direction,
-      key: index
-    }
-    this.debug('newsort', sort, e)
-    // this.$emit('subscribe', { sort })
-  }
+  //   this.$emit('subscribe', sort: e )
+  // }
 }
 </script>
 

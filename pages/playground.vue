@@ -56,9 +56,9 @@ sction#pg
           icon=       "plus"
           icon-only
         ) adauga
-        //- ul(v-if="data.items && data.items.length")
-        //-   li(v-for="item, id in data.items")
-        //-     span {{ item.title || 'lola' }}
+        ul(v-if="data.items && data.items.length")
+          li(v-for="item, id in data.items")
+            span {{ item.title || 'lola' }}
           //- :disabled = "!allReferencesHaveValues"
     //- @subscribe=   "$lodger.subscribe(subscriber, tax, $event)"
     //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"

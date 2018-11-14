@@ -1,48 +1,78 @@
 <template lang="pug">
 sction#pg
   .actions
-    h5 main actions
     buton(
       size=     "large"
-      rounded=  true
-      icon=     "incaseaza"
+      icon=     "incasare"
       @click=   "openModal('incasare.new')"
     ) incaseaza
+
   .boxes
+    //- list.box(
+    //-   v-for=        "tax in $lodger.taxonomii"
+    //-   :key=         "tax"
+    //-   :taxonomy=    "tax"
+    //-   :plural=      "$lodger.forms[tax].plural"
+    //-   subscriber=   "plural"
+
+    //-   deselectOnClickAway = false
+
+    //-   @subscribe=   "$lodger.subscribe(subscriber, tax, $event)"
+
+    //-   @fakeNew=     "$lodger.put(tax, fakeData(tax), subscriber)"
+    //-   @new=         "openModal(`${tax}.new`, {data: { subscriber }} )"
+    //-   @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
+    //-   @trash=       "$lodger.trash(tax, $event)"
+
+    //-   @select=      "$lodger.select(tax, {id: $event, subscriber: subscriber })"
+    //-   :selected=    "typeof $lodger.getters[`${tax}/selected`] !== 'object' ? $lodger.getters[`${tax}/selected`] : $lodger.getters[`${tax}/selected`].id"
+    //-   :last=        "$lodger.getters[`${tax}/last`]"
+
+    //-   :sortOptions= "$lodger.forms[tax].sortOptions"
+
+    //-   :items=       "subscriberData(tax).items"
+    //-   :criteriu=    "subscriberData(tax).criteriu"
+    //-   :fetching=    "subscriberData(tax).fetching"
+
+    //-   :references=  "$lodger.forms[tax].referenceTaxonomies"
+    //-   :showElements="$lodger.forms[tax].__displayItemKeys"
+    //- )
     list.box(
       v-for=        "tax in $lodger.taxonomii"
       :key=         "tax"
       :taxonomy=    "tax"
       :plural=      "$lodger.forms[tax].plural"
+      subscriber=   "playground"
 
-      :deselectOnClickAway = false
+      deselectOnClickAway = false
 
-      @subscribe=   "$lodger.subscribe(playgroundSubscriber, tax, $event)"
-
-      @fakeNew=     "$lodger.put(tax, fakeData(tax))"
-      @new=         "openModal(`${tax}.new`)"
-      @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
-      @trash=       "$lodger.trash(tax, $event)"
-
-      @select=      "$lodger.select(tax, {id: $event, subscriber: playgroundSubscriber })"
-      :selected=    "typeof $lodger.getters[`${tax}/selected`] !== 'object' ? $lodger.getters[`${tax}/selected`] : $lodger.getters[`${tax}/selected`].id"
-      :last=        "$lodger.getters[`${tax}/last`]"
-
-      :sortOptions= "$lodger.forms[tax].sortOptions"
-
-      :items=       "subscriberData(tax).items"
-      :criteriu=    "subscriberData(tax).criteriu"
-      :fetching=    "subscriberData(tax).fetching"
-
-      :references=  "$lodger.forms[tax].referenceTaxonomies"
-      :showElements="$lodger.forms[tax].__displayItemKeys"
+      @fakeNew=     "$lodger.put(tax, fakeData(tax), 'playground')"
+      @new=         "openModal(`${tax}.new`, {data: { subscriber: 'playground' }} )"
     )
+      div(slot-scope="data")
+        buton(
+          @click=     "$emit($event.shiftKey ? 'fakeNew' : 'new')"
+          styl=       "unstyled"
+          icon=       "plus"
+          icon-only
+        ) adauga
+        //- ul(v-if="data.items && data.items.length")
+        //-   li(v-for="item, id in data.items")
+        //-     span {{ item.title || 'lola' }}
+          //- :disabled = "!allReferencesHaveValues"
+    //- @subscribe=   "$lodger.subscribe(subscriber, tax, $event)"
     //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
-    //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"
+
+    //- @fakeNew=     "$lodger.put(tax, fakeData(tax), subscriber)"
+    //- @new=         "openModal(`${tax}.new`, {data: { subscriber }} )"
+    //-   @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
+    //-   @trash=       "$lodger.trash(tax, $event)"
+
+    //-   @select=      "$lodger.select(tax, {id: $event, subscriber: subscriber })"
 
     servicii.box
 
-  registru
+  //- registru
 
   h1 test shit
     //- blocuri(
@@ -50,7 +80,19 @@ sction#pg
     //- )
 
   .stats(slot="sidebar")
-    h5 stats
+    h5 {{ $t('dashboard.statistics.title') }}
+
+    list(
+      taxonomy=     "incasare"
+      plural=       "incasari"
+      subscriber=   "listeDePlata"
+      slot-scope=   "taxData"
+      sortable=     false
+      filterable=   true
+      displayTypes=      "['statistics', 'list']"
+      :userOptions=      "['filter']"
+    )
+      h1 {{ taxData.plural }}
 
     .boxes
       .box.totals
@@ -96,20 +138,6 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
   export default class Playground extends Vue {
     @Action('open', { namespace: 'modal' }) openModal: any
 
-    get playgroundSubscriber () {
-      return 'playground'
-    }
-
-    get subscriberData () {
-      const {
-        playgroundSubscriber,
-        $lodger: {
-          subscriberData
-        }
-      } = this
-
-      return (taxonomy: Taxonomie) => subscriberData(taxonomy, playgroundSubscriber)
-    }
   }
 </script>
 

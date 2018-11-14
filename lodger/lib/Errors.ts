@@ -4,7 +4,7 @@
 class LodgerError extends Error {
   constructor(m: string, details?: any) {
     if (details) {
-      m = m.replace('%%', `"${JSON.parse(JSON.stringify(details))}"`)
+      m = m.replace('%%', `"${JSON.stringify(details)}"`)
     }
     super(m)
 

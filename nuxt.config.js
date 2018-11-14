@@ -64,6 +64,9 @@ module.exports = {
     linkActiveClass: 'active',
     linkExactActiveClass: 'active-exact'
   },
+  env: {
+    NODE_ENV: process.env.NODE_ENV || 'development'
+  },
   axios: {
     credentials: true,
     baseURL: 'https://api.graph.cool/simple/v1/lodger-v2',
@@ -121,6 +124,7 @@ module.exports = {
           transpileOnly: true // SET TO FALSE FOR TSLINT
         }
       })
+
       if (config.resolve.extensions.indexOf('.ts') === -1) {
         config.resolve.extensions.push('.ts')
       }

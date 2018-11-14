@@ -45,9 +45,11 @@ const getCriteriu = (taxonomie: Plural, criteriuCerut?: Criteriu) => {
 
   const { defaults } = LodgerConfig.taxonomii
   const debug = Debug('functions:getCriteriu')
-  let { criteriu } = defaults
 
-  Object.assign(criteriu, getTaxonomyConfig(taxonomie).criteriu)
+  const criteriu = Object.assign({},
+    { ...defaults.criteriu },
+    { ...getTaxonomyConfig(taxonomie).criteriu })
+
   debug(taxonomie, 'criteriu inainte de criteriuCerut', criteriu)
   debug(taxonomie, 'criteriu cerut', { ...criteriuCerut })
 

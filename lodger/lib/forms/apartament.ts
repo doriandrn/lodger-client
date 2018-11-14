@@ -81,6 +81,13 @@ const fields = [
     value: g => g[selectedApGetter].bloc
   },
   {
+    id: 'asociatieId',
+    required: true,
+    notInForm: true,
+    default: g => g['asociatie/activeDoc']._id,
+    value: g => g['asociatie/activeDoc']._id
+  },
+  {
     id: 'scara',
     type: 'number',
     required: true,

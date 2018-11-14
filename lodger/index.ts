@@ -33,7 +33,8 @@ const subscribers: SubscribersList = {
   main: {},
   registru: {},
   listeDePlata: {},
-  statistici: {}
+  statistici: {},
+  playground: {}
   // altSubscriber: { ... }
 }
 
@@ -83,7 +84,9 @@ const docsHolderObj = {
  * and methods to accezss / manipulate them
  */
 const docsHolder = new Vue({
-  data: { main: {}, playground: {} },
+  data () {
+    return Object.assign({}, { ...subscribers })
+  },
   methods: {
     async getItem (
       taxonomie: Plural<Taxonomie>,
@@ -106,12 +109,12 @@ const docsHolder = new Vue({
         if (item) debug('item gasit din prima', { taxonomie, subscriberName, s, item })
       } catch (e) {
         Object.keys(this.$data).forEach(sub => {
-          debug('SEX', sub)
+          // debug('SEX', sub)
           if (item) return
           const s = this.$data[sub][taxonomie]
-          debug('tried s', sub, s, taxonomie)
+          // debug('tried s', sub, s, taxonomie)
           if (!(s && s.docs)) return
-          debug('SBF', s)
+          // debug('SBF', s)
           item = _theDoc(s.docs)
           if (item) debug('item gasit din a 2a', { taxonomie, subscriberName, s, item })
         })
@@ -188,7 +191,8 @@ class Lodger {
    */
   async put (
     taxonomy: Taxonomie,
-    data: LodgerFormData
+    data: LodgerFormData,
+    subscriber ?: string
   ) {
     const debug = Debug('lodger:put')
     if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData, data)
@@ -226,7 +230,7 @@ class Lodger {
       const doc = await colectie[method](internallyHandledData)
       const id = doc._id
       store.dispatch(`${taxonomy}/set_last`, id)
-      this.select(taxonomy, { doc, id })
+      this.select(taxonomy, { doc, id, subscriber })
 
       this.notify({
         type: 'success',
@@ -350,41 +354,36 @@ class Lodger {
 
     const subscriber = <Subscriber>subscribers[subscriberName]
 
-    if (!docsHolder[subscriberName]) Vue.set(docsHolder, subscriberName, {})
+    if (!docsHolder.$data[subscriberName]) Vue.set(docsHolder, subscriberName, {})
 
     taxonomii.forEach(taxonomie => {
       const { plural, referenceTaxonomies } = forms[taxonomie]
+      // console.error(taxonomie, forms, plural)
       const colectie = collections[plural]
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
-      const criteriu = { ...getCriteriu(plural, JSON.parse(JSON.stringify(criteriuCerut || {})) ) }
+      const criteriu = Object.assign({}, { ...getCriteriu(plural, JSON.parse(JSON.stringify(criteriuCerut || {})) ) })
 
-      debug(`${taxonomie}: criteriu cerut`, { ...criteriuCerut })
       debug(`${taxonomie}: criteriu`, criteriu)
 
       let { limit, index, sort, find } = criteriu
       const paging = Number(limit || 0) * (index || 1)
 
       // first init -> define the data object container
-      if (!docsHolder[subscriberName][plural]) {
+      // todo: make this a hook
+      if (!docsHolder.$data[subscriberName][plural]) {
         const freshO = Object.assign({}, docsHolderObj)
         freshO.criteriu = Object.assign({}, criteriu)
 
-        Vue.set(docsHolder[subscriberName], plural, freshO)
+        Vue.set(docsHolder.$data[subscriberName], plural, freshO)
 
         // add watcher for criteriu and when it changes
         // fire this subscribe func again
         if (!taxIsMultipleSelect(taxonomie)) {
-          const everyKeyInCriteriu = (vm) => {
-            const c = vm[subscriberName][plural].criteriu
-            return { ...c }
-          }
+          const everyKeyInCriteriu = vm => ({ ...vm[subscriberName][plural].criteriu })
+
           docsHolder.$watch(everyKeyInCriteriu, (newC, oldC) => {
             if (!newC || equal(newC, oldC) ) return
-            const diff = {}
-            if (newC.find) Object.assign(diff, { find: { ...newC.find } })
-            if (newC.sort) Object.assign(diff, { sort: newC.sort })
-            debug('parsedNew', diff)
-            this.subscribe(subscriberName, taxonomie, diff)
+            this.subscribe(subscriberName, taxonomie, newC)
           }, { deep: true, immediate: false })
         }
 
@@ -392,11 +391,10 @@ class Lodger {
         // todo: make this a hook and call funcs
         if (plural === 'servicii') {
           predefinite.forEach(async denumire => { await collections[plural].insert({ denumire }) })
-          debug('first init, adaugat predefinite')
         }
       } else {
-        docsHolder[subscriberName][plural].criteriu = criteriu
-        docsHolder[subscriberName][plural].fetching = true
+        // Object.assign(docsHolder[subscriberName][plural].criteriu, { ...criteriu })
+        docsHolder.$data[subscriberName][plural].fetching = true
         this.unsubscribe(plural, subscriberName)
       }
 
@@ -569,7 +567,10 @@ class Lodger {
           const subscriber = payload.subscriber || 'main'
           const { plural } = forms[dTax]
           const holder = docsHolder[subscriber][plural]
-          if (!holder || !holder.criteriu) return
+          if (!holder || !holder.criteriu) {
+            debug('fara holder', subscriber, plural)
+            return
+          }
           debug('asignez',  dTax, subscriber, reference)
           holder.criteriu.find = { ...reference }
 
@@ -692,8 +693,20 @@ class Lodger {
     return (
       taxonomy: Taxonomii,
       subscriberName: string
-    ) => docsHolder.$data[subscriberName][forms[taxonomy].plural] || docsHolderObj
+    ) => {
+      if (!forms[taxonomy]) throw new LodgerError('invalid tax %%', taxonomy)
+      const { plural } = forms[taxonomy]
+      try {
+        return docsHolder.$data[subscriberName][plural]
+      } catch (e) { throw new LodgerError('nu exista %%', { plural, subscriberName })}
+    }
+  }
 
+  /**
+   * Boolean indicating the dev mode status
+   */
+  get _devMode () {
+    return process.env.NODE_ENV === 'development'
   }
 }
 

@@ -9,88 +9,101 @@
 
 <template lang="pug">
 .list
-  split.list__header
-    .top
-      h2.list__heading {{ plural }}
-        em(
-          v-for="ref in references"
-          :class="{ active: typeof referencesIds[`${ref}Id`] === 'object' ? referencesIds[`${ref}Id`].id : referencesIds[`${ref}Id`]}"
-        ) {{ ref }}
+  slot(
+    :items=       "items"
+    :criteriu=    "criteriu"
+    :references=  "references"
 
-      buton(
-        @click=     "$emit($event.shiftKey ? 'fakeNew' : 'new')"
-        :disabled = "!allReferencesHaveValues"
-        styl=       "unstyled"
-        icon=       "plus"
-        icon-only
-      ) adauga
+    :taxonomy=    "taxonomy"
+    :plural=      "plural"
 
-    .bottom
-      //- span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }}
-
-    //- buton(slot="right") ceva
-
-  p.empty(v-if="!ids.length") gol
-
-  field.sort(
-    v-if=     "ids.length > 1"
-    type=     "radios",
-    label=    "sort.label"
-    v-model=  "_sort"
-    :id=       "`sort-${taxonomy}`"
-    :options=  "sortOptions"
-    required= true
-    @click=    "criteriu.sort = $event.checked ? { key: $event.index, direction: -1 } : criteriu.sort"
-    :class=     "{ reverseActive: criteriu && criteriu.sort && criteriu.sort.direction < 1}"
+    :last=        "last"
+    :selected=    "selected"
   )
+    //- FALLBACK
+    split.list__header
+      .top
+        h2.list__heading {{ plural }}
+          em(
+            v-if= "isDev"
+            v-for="ref in references"
+            :class="{ active: typeof referencesIds[`${ref}Id`] === 'object' ? referencesIds[`${ref}Id`].id : referencesIds[`${ref}Id`]}"
+          ) {{ ref }}
 
-  ul(
-    v-if=     "items && ids.length"
-    :class=   "{ fetching }"
-  )
-    li(
-      v-for=  "item, id in items"
-      :data-id=    "id"
-      :class= "{ last: last === id, selected: typeof selected === 'string' ? selected === id : selected && selected.length && selected.contains(id) }"
-      @click= "$emit('select', id)"
+        buton(
+          @click=     "$emit($event.shiftKey ? 'fakeNew' : 'new')"
+          :disabled = "!allReferencesHaveValues"
+          styl=       "unstyled"
+          icon=       "plus"
+          icon-only
+        ) adauga
+
+      .bottom
+        //- span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }}
+
+      //- buton(slot="right") ceva
+
+    p.empty(v-if="!ids.length") gol
+
+    field.sort(
+      v-if=     "ids.length > 1"
+      type=     "radios",
+      label=    "sort.label"
+      v-model=  "_sort"
+      :id=       "`sort-${taxonomy}`"
+      :options=  "sortOptions"
+      required= true
+      @click=    "criteriu.sort = $event.checked ? { key: $event.index, direction: -1 } : criteriu.sort"
+      :class=     "{ reverseActive: criteriu && criteriu.sort && criteriu.sort.direction < 1}"
     )
-      split
-        div(
-          v-if=   "__displayItemLocations"
-          v-for=  "location in Object.keys(__displayItemLocations)"
-          :class= "location"
-          )
-          viw(
-            v-for=  "key in __displayItemLocations[location]"
-            v-if=   "item[key] && __displayItemLocations[location] && key !== 'moneda'"
-            :type=  "key",
-            :key=   "key",
-            :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
-            :class= "`${taxonomy}__${key}`"
-          )
 
-        .item__controls(slot="right")
-          buton(
-            @click= "$emit('edit', item)"
-            styl=   "unstyled"
-            icon=   "edit"
-            tooltip
-            icon-only
-          ) modifica
-          buton(
-            @click= "$emit('trash', id)"
-            styl=   "unstyled"
-            icon=   "trash"
-            dangerous= true
-            tooltip
-            icon-only
-          ) sterge
+    ul(
+      v-if=     "items && ids.length"
+      :class=   "{ fetching }"
+    )
+      li(
+        v-for=  "item, id in items"
+        :data-id=    "id"
+        :class= "{ last: last === id, selected: typeof selected === 'string' ? selected === id : selected && selected.length && selected.contains(id) }"
+        @click= "$emit('select', id)"
+      )
+        split
+          div(
+            v-if=   "__displayItemLocations"
+            v-for=  "location in Object.keys(__displayItemLocations)"
+            :class= "location"
+            )
+            viw(
+              v-for=  "key in __displayItemLocations[location]"
+              v-if=   "item[key] && __displayItemLocations[location] && key !== 'moneda'"
+              :type=  "key",
+              :key=   "key",
+              :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
+              :class= "`${taxonomy}__${key}`"
+            )
+
+          .item__controls(slot="right")
+            buton(
+              @click= "$emit('edit', item)"
+              styl=   "unstyled"
+              icon=   "edit"
+              tooltip
+              icon-only
+            ) modifica
+            buton(
+              @click= "$emit('trash', id)"
+              styl=   "unstyled"
+              icon=   "trash"
+              dangerous= true
+              tooltip
+              icon-only
+            ) sterge
 
 
-  buton.more(
-    v-if="ids && ids.length < itemsCount"
-    @click="criteriu.limit = criteriu.limit + criteriu.limit"
-  ) ...
+    buton.more(
+      v-if="ids && ids.length < itemsCount"
+      @click="criteriu.limit = criteriu.limit + criteriu.limit"
+    ) ...
 </template>
 
 <script lang="ts">
@@ -115,58 +128,18 @@ enum Errors {
 
 @Component({
   props: {
-    fetching: {
-      type: Boolean,
-      default: false
-    },
-
     taxonomy: {
       type: [String, Array]
     },
 
-    items: {
-      type: Object,
-      default: () => {}
-    },
-
-    showElements: {
-      type: Object,
-      default: () => {}
-    },
-
-    criteriu: {
-      type: Object,
-      default: () => {}
-    },
-
-    /**
-     * reference taxonomies
-    */
-    references: {
-      type: Array,
-      default: null
-    },
-
-    /**
-     * Selected item(s)
-     * array for multiple selects
-     */
-    selected: {
-      type: [String, Array],
-      default: () => []
-    },
-
-    sortOptions: {
-      type: Object,
-      default: null
-    },
-
-    /**
-     * Last added item's ID
-     */
-    last: {
+    subscriber: {
       type: String,
-      default: null
+      default: 'main'
+    },
+
+    deselectOnClickAway: {
+      type: Boolean,
+      default: false
     },
 
     // for multiple taxonomies
@@ -186,16 +159,6 @@ enum Errors {
 })
 export default class ListTaxonomyItems extends Vue {
   itemsCount = 0
-
-  // xfind = this.referencesIds
-  // criteriu = {
-  //   limit: 5,
-  //   sort: {
-  //     key: 'la',
-  //     direction: 1
-  //   },
-  //   find: {}
-  // }
   /**
    * Used for multiple taxonomies subcribers
    * eg. transactii / transactions
@@ -219,50 +182,75 @@ export default class ListTaxonomyItems extends Vue {
   //   }
   // }
 
-  // get criteriu () {
-  //   const { taxonomy, referencesIds, debug } = this
-  //   let criteriu = getCriteriu(taxonomy)
-  //   if (!referencesIds) return criteriu
-  //   Object.assign(criteriu.find, referencesIds)
-  //   debug('criteriu', criteriu)
-  //   return criteriu
-  //   // Object.keys(referencesIds).forEach(refTaxId => {
-  //   //   Vue.set(this.criteriu.find, refTaxId, newVal[refTaxId])
-  //   // })
-  // }
+
+  get subscriberData () {
+    return this.$lodger.subscriberData(this.taxonomy, this.subscriber)
+  }
+
+  get items () {
+    if (!this.subscriberData) return
+    return { ...this.subscriberData.items }
+  }
 
   get ids () {
-    return Object.keys(this.items || {})
+    if (!this.items) return []
+    return Object.keys(this.items)
+  }
+
+  get fetching () {
+    if (!this.subscriberData) return
+    return this.subscriberData.fetching
+  }
+
+  get criteriu () {
+    if (!this.subscriberData) return
+    return this.subscriberData.criteriu
+  }
+
+  get form () {
+    if (typeof this.taxonomy !== 'string') return
+    return this.$lodger.forms[this.taxonomy]
+  }
+
+  get references () {
+    if (!this.form) return
+    return this.form.referenceTaxonomies
   }
 
   get referencesIds () {
+    if (!this.references) return
     return this.$lodger.activeReferencesIds(this.references)
   }
 
-  // get referencesIds () {
-  //   const reffies = this.$lodger.activeReferencesIds(this.references)
-  //   if (!reffies) return
-  //   if (!this.criteriu) return reffies
-  //   const { criteriu } = this
+  get sortOptions () {
+    if (!this.form) return
+    return this.form.sortOptions
+  }
 
-  //   const { find } = criteriu
-  //   this.debug('F', find)
-  //   if (find) {
-  //     let same = true
-  //     Object.keys(reffies).forEach(ref => {
-  //       if (!reffies[ref]) return
-  //       this.debug('ref', ref)
-  //       if (reffies[ref] !== find[ref]) same = false
-  //     })
-  //     this.debug('same', same)
-  //     if (!same) this.debug('!same!!!')
-  //   } else {
-  //     this.$emit('subscribe', reffies)
-  //   }
-  //   this.debug('refIds getter !', reffies)
+  get isDev () {
+    return this.$lodger.devMode
+  }
 
-  //   return reffies
-  // }
+  /**
+   * last added item
+   */
+  get last () {
+    const { taxonomy, $lodger: { getters } } = this
+    if (typeof taxonomy !== 'string') return
+    return getters[`${taxonomy}/last`]
+  }
+
+  /**
+   * Selected item(s)
+   * !! => array for multiple selects
+   */
+  get selected () {
+    const { taxonomy, $lodger: { getters } } = this
+    const selPath = `${taxonomy}/selected`
+    return typeof getters[selPath] !== 'object' ?
+      getters[selPath] :
+      getters[selPath].id
+  }
 
   /**
    * This knows when to show the add button,
@@ -294,7 +282,7 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   created () {
-    this.$emit('subscribe')
+    this.$lodger.subscribe(this.subscriber, this.taxonomy)
   }
 
   get _sort () {
@@ -303,7 +291,8 @@ export default class ListTaxonomyItems extends Vue {
   }
 
   set _sort (e) {
-    this.$emit('subscribe', { sort: { key: e } })
+    // this.$emit('subscribe', { sort: { key: e } })
+    this.criteriu.sort = { key: e }
   }
 
   get _find () {
@@ -331,7 +320,7 @@ typeColors = config.typography.palette
 
     em
       font-size 10px
-      margin 0 10px
+      margin 0 8px
       opacity .5
 
       &.active
@@ -348,7 +337,7 @@ typeColors = config.typography.palette
       align-items center
 
       > *:not(:first-child)
-        margin-left 20px
+        margin-left auto
 
     .left
       display flex
@@ -356,7 +345,8 @@ typeColors = config.typography.palette
       align-items flex-start
 
       > *
-        flex 1 1 100%
+        flex 0 0 100%
+        width 100%
 
   .split
     .left

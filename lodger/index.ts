@@ -2,7 +2,7 @@ import Debug from 'debug'
 import { Store, GetterTree } from 'vuex'
 import { RxDatabase, RxCollectionCreator, RxDocument, isRxDocument } from 'rxdb'
 import fs from 'fs'
-import osHomedir from 'os-homedir'
+
 import yaml from 'json2yaml'
 import equal from 'deep-equal'
 
@@ -33,7 +33,8 @@ const subscribers: SubscribersList = {
   main: {},
   registru: {},
   listeDePlata: {},
-  statistici: {}
+  statistici: {},
+  playground: {}
   // altSubscriber: { ... }
 }
 
@@ -83,7 +84,9 @@ const docsHolderObj = {
  * and methods to accezss / manipulate them
  */
 const docsHolder = new Vue({
-  data: { main: {}, playground: {} },
+  data () {
+    return Object.assign({}, { ...subscribers })
+  },
   methods: {
     async getItem (
       taxonomie: Plural<Taxonomie>,
@@ -188,7 +191,8 @@ class Lodger {
    */
   async put (
     taxonomy: Taxonomie,
-    data: LodgerFormData
+    data: LodgerFormData,
+    subscriber ?: string
   ) {
     const debug = Debug('lodger:put')
     if (!data || Object.keys(data).length < 1) throw new LodgerError(Errors.missingData, data)
@@ -226,7 +230,7 @@ class Lodger {
       const doc = await colectie[method](internallyHandledData)
       const id = doc._id
       store.dispatch(`${taxonomy}/set_last`, id)
-      this.select(taxonomy, { doc, id })
+      this.select(taxonomy, { doc, id, subscriber })
 
       this.notify({
         type: 'success',
@@ -356,7 +360,8 @@ class Lodger {
       const { plural, referenceTaxonomies } = forms[taxonomie]
       const colectie = collections[plural]
       if (!colectie) throw new LodgerError('invalid collection %%', plural)
-      const criteriu = { ...getCriteriu(plural, JSON.parse(JSON.stringify(criteriuCerut || {})) ) }
+      // const criteriu = { ...getCriteriu(plural, JSON.parse(JSON.stringify(criteriuCerut || {})) ) }
+      const criteriu = Object.assign({}, { ...getCriteriu(plural, JSON.parse(JSON.stringify(criteriuCerut || {})) ) })
 
       debug(`${taxonomie}: criteriu cerut`, { ...criteriuCerut })
       debug(`${taxonomie}: criteriu`, criteriu)
@@ -374,16 +379,18 @@ class Lodger {
         // add watcher for criteriu and when it changes
         // fire this subscribe func again
         if (!taxIsMultipleSelect(taxonomie)) {
-          const everyKeyInCriteriu = (vm) => {
-            const c = vm[subscriberName][plural].criteriu
-            return { ...c }
-          }
+          // const everyKeyInCriteriu = (vm) => {
+          //   const c = vm[subscriberName][plural].criteriu
+          //   return { ...c }
+          // }
+          const everyKeyInCriteriu = vm => ({ ...vm[subscriberName][plural].criteriu })
+
           docsHolder.$watch(everyKeyInCriteriu, (newC, oldC) => {
             if (!newC || equal(newC, oldC) ) return
-            const diff = {}
-            if (newC.find) Object.assign(diff, { find: { ...newC.find } })
-            if (newC.sort) Object.assign(diff, { sort: newC.sort })
-            debug('parsedNew', diff)
+            // const diff = {}
+            // if (newC.find) Object.assign(diff, { find: { ...newC.find } })
+            // if (newC.sort) Object.assign(diff, { sort: newC.sort })
+            // debug('parsedNew', diff)
             this.subscribe(subscriberName, taxonomie, diff)
           }, { deep: true, immediate: false })
         }
@@ -395,7 +402,7 @@ class Lodger {
           debug('first init, adaugat predefinite')
         }
       } else {
-        docsHolder[subscriberName][plural].criteriu = criteriu
+        // docsHolder[subscriberName][plural].criteriu = criteriu
         docsHolder[subscriberName][plural].fetching = true
         this.unsubscribe(plural, subscriberName)
       }
@@ -624,7 +631,7 @@ class Lodger {
     const debug = Debug('lodger:export')
     const json = await this.db.dump()
     const extension = 'ldb'
-    if (!path) path = `${osHomedir()}/downloads/`
+    if (!path) path = `${require('os').homeDir}/downloads/`
 
     if (!filename) {
       const date = new Date()
@@ -692,7 +699,12 @@ class Lodger {
     return (
       taxonomy: Taxonomii,
       subscriberName: string
-    ) => docsHolder.$data[subscriberName][forms[taxonomy].plural] || docsHolderObj
+    ) => {
+      const { plural }  = forms[taxonomy]
+      try {
+        return docsHolder.$data[subscriberName][plural]
+      } catch (e) { throw new LodgerError('nu exista %%', { plural, subscriberName })}
+    }
 
   }
 }

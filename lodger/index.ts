@@ -354,7 +354,7 @@ class Lodger {
 
     const subscriber = <Subscriber>subscribers[subscriberName]
 
-    if (!docsHolder[subscriberName]) Vue.set(docsHolder, subscriberName, {})
+    if (!docsHolder.$data[subscriberName]) Vue.set(docsHolder, subscriberName, {})
 
     taxonomii.forEach(taxonomie => {
       const { plural, referenceTaxonomies } = forms[taxonomie]
@@ -370,7 +370,7 @@ class Lodger {
       const paging = Number(limit || 0) * (index || 1)
 
       // first init -> define the data object container
-      if (!docsHolder[subscriberName][plural]) {
+      if (!docsHolder.$data[subscriberName][plural]) {
         const freshO = Object.assign({}, docsHolderObj)
         freshO.criteriu = Object.assign({}, criteriu)
 
@@ -391,7 +391,7 @@ class Lodger {
             // if (newC.find) Object.assign(diff, { find: { ...newC.find } })
             // if (newC.sort) Object.assign(diff, { sort: newC.sort })
             // debug('parsedNew', diff)
-            this.subscribe(subscriberName, taxonomie, diff)
+            this.subscribe(subscriberName, taxonomie, newC)
           }, { deep: true, immediate: false })
         }
 
@@ -403,7 +403,7 @@ class Lodger {
         }
       } else {
         // docsHolder[subscriberName][plural].criteriu = criteriu
-        docsHolder[subscriberName][plural].fetching = true
+        docsHolder.$data[subscriberName][plural].fetching = true
         this.unsubscribe(plural, subscriberName)
       }
 
@@ -417,11 +417,11 @@ class Lodger {
           debug(`${plural} for subscriber[${subscriberName}]`, changes)
 
           // update data objects inside
-          docsHolder[subscriberName][plural].docs = changes.map(change => Object.freeze(change)) || []
-          docsHolder[subscriberName][plural].items = Object.assign({},
+          docsHolder.$data[subscriberName][plural].docs = changes.map(change => Object.freeze(change)) || []
+          docsHolder.$data[subscriberName][plural].items = Object.assign({},
             ...changes.map((item: RxDocument<any>) => ({ [item._id]: item._data }))
           )
-          docsHolder[subscriberName][plural].fetching = false
+          docsHolder.$data[subscriberName][plural].fetching = false
         })
     })
   }

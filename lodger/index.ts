@@ -2,7 +2,7 @@ import Debug from 'debug'
 import { Store, GetterTree } from 'vuex'
 import { RxDatabase, RxCollectionCreator, RxDocument, isRxDocument } from 'rxdb'
 import fs from 'fs'
-import osHomedir from 'os-homedir'
+
 import yaml from 'json2yaml'
 import equal from 'deep-equal'
 
@@ -625,7 +625,7 @@ class Lodger {
     const debug = Debug('lodger:export')
     const json = await this.db.dump()
     const extension = 'ldb'
-    if (!path) path = `${osHomedir()}/downloads/`
+    if (!path) path = `${require('os').homeDir}/downloads/`
 
     if (!filename) {
       const date = new Date()

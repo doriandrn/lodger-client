@@ -184,12 +184,16 @@ export default class ListTaxonomyItems extends Vue {
 
 
   get subscriberData () {
-    return this.$lodger.subscriberData(this.taxonomy, this.subscriber)
+    const { taxonomy, subscriber, debug, $lodger: { subscriberData } } = this
+    const { items, fetching, criteriu } = subscriberData(taxonomy, subscriber)
+    debug('test', items)
+    return { items, fetching, criteriu }
   }
 
   get items () {
     if (!this.subscriberData) return
-    return { ...this.subscriberData.items }
+    return this.subscriberData.items
+    // return { ...this.subscriberData.items }
   }
 
   get ids () {

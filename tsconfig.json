@@ -21,9 +21,7 @@
       "node",
       "debug",
       "jest",
-      "faker",
-      "vue",
-      "os-homedir"
+      "faker"
     ],
     "strict": true,
     "sourceMap": true,

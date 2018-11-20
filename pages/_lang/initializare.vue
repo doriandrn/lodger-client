@@ -12,7 +12,7 @@ sction#init(v-if="idsAsociatii.length > 0")
   )
 
   h1 {{ initMessage.titlu }}
-  
+
   servicii(
     v-if=             "initprgrs === 0"
     @input=           "toggleServiciu",
@@ -36,18 +36,18 @@ sction#init(v-if="idsAsociatii.length > 0")
         @click="openModal('furnizor.new')"
       ) {{ $t('furnizor.new.title') }}
 
-  
+
   blocuri(
     v-else-if=  "initprgrs === 2 && idsBlocuri.length"
     :blocuri=   "blocuri"
   )
 
-  frm(
-    v-else-if=  "initprgrs === 3"
-    :formData=   "require('forms/initFinanc')"
-  )
-    p ultima incasare
-    p facturi / cheltuieli active
+  //- frm(
+  //-   v-else-if=  "initprgrs === 3"
+  //-   :formData=   "require('forms/initFinanc')"
+  //- )
+  //-   p ultima incasare
+  //-   p facturi / cheltuieli active
 
   buton(
     v-else-if=  "initprgrs === 2 && !idsBlocuri.length"
@@ -313,7 +313,7 @@ ul.activitate
   > li
     margin -20px -20px 20px
     padding 20px
-    
+
     &:not(:last-child)
       border-bottom: 1px solid config.palette.borders
 

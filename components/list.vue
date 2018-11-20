@@ -93,13 +93,11 @@
   ) ...
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import Component from 'vue-class-component'
 // import { State, Action, Getter } from 'vuex-class'
 import { Action } from 'vuex-class'
-import { LodgerError } from 'lodger/lib/Errors'
-import { getCriteriu } from 'lodger/lib/helpers/functions'
 
 /** Components Imports */
 import field from 'form/field'
@@ -108,10 +106,6 @@ import buton from 'form/button'
 import bani from 'c/bani'
 import viw from 'c/viewElement'
 import split from 'c/split'
-
-enum Errors {
-  missingReferenceId = 'Missing reference ID'
-}
 
 @Component({
   props: {

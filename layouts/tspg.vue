@@ -7,7 +7,7 @@
   toasts
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import toasts from 'c/toasts'
 import headr from 'c/header'

@@ -147,18 +147,13 @@ import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 
-import { get_bigrams, string_similarity } from 'helpers/search'
-import { transformOnInput } from 'lodger/plugins/nuxt'
+import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   mixins: [ clickaway ],
   computed: {
-    ...mapGetters([
-      'apartamente',
-      'furnizori'
-    ]),
     val () {
       const { type, searchTaxonomy, selected, debug } = this
       let { value } = this
@@ -178,6 +173,7 @@ export default {
       }
       return value
     },
+
     selected () {
       const { type, value, searchTaxonomy } = this
       if (type !== 'search' || !value) return
@@ -408,43 +404,8 @@ export default {
       this.clearResults()
     },
 
-    clearResults () {
-      const { type } = this
-      if (type !== 'search') return
 
-      const { results } = this
-      Object.keys(results).forEach(result => results[result] = [])
-    },
 
-    /**
-     * Cauta in searchMap
-     * @param input - string de cautat
-     */
-    search (input) {
-      if (!input) return
-      let { searchTaxonomy } = this
-      const searchMap = this.$store.getters['searchMap']
-      const results = {}
-
-      Object.keys(searchMap).forEach(tax => {
-        if (searchTaxonomy && searchTaxonomy !== tax) return
-        const iterator = searchMap[tax].entries()
-        results[tax] = []
-
-        for (let [ key, value ] of iterator) {
-          const relevance = string_similarity(String(input), value)
-          results[tax]
-            .push({ id: key, relevance, value })
-        }
-
-        results[tax] = results[tax]
-          .sort((a, b) => Number(a.relevance) - Number(b.relevance))
-          .reverse()
-          .slice(0, 6)
-      })
-
-      return results
-    },
 
     handleClick (e) {
       const { click, debug } = this

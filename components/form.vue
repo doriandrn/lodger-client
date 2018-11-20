@@ -60,7 +60,7 @@ form.form(@submit.prevent="validate()")
     ) {{ isNew ? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import buton from 'form/button'
 import field from 'form/field'
@@ -69,7 +69,6 @@ import split from 'c/split'
 
 import Component from 'vue-class-component';
 import { State, Action, Getter } from 'vuex-class'
-import { Form } from 'lodger/lib/Form'
 
 @Component({
   name: 'frm',
@@ -80,7 +79,7 @@ import { Form } from 'lodger/lib/Form'
   },
   props: {
     form: {
-      type: Form,
+      type: Object,
       default: null
     },
     isNew: {
@@ -91,9 +90,9 @@ import { Form } from 'lodger/lib/Form'
 })
 
   export default class FormComponent extends Vue {
-    @Getter('content', { namespace: 'modal' }) modalContent: string
-    @Action('trimite', { namespace: 'feedback' }) trimiteFeedback: any
-    @Action('close', { namespace: 'modal' }) closeModal: () => void
+    @Getter('content', { namespace: 'modal' }) modalContent
+    @Action('trimite', { namespace: 'feedback' }) trimiteFeedback
+    @Action('close', { namespace: 'modal' }) closeModal
 
     get $fields () {
       return this.form.data.fields
@@ -122,7 +121,7 @@ import { Form } from 'lodger/lib/Form'
     }
 
     /**
-     * 
+     *
      */
     async handleChange (actionName, id, type, e, scope) {
       const { validate, debug, $store: { dispatch } } = this
@@ -142,7 +141,7 @@ import { Form } from 'lodger/lib/Form'
         [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
       })
     }
-    
+
   }
 </script>
 
@@ -153,7 +152,7 @@ import { Form } from 'lodger/lib/Form'
   display flex
   flex-flow row wrap
   width 100%
-  
+
   &+.form
     margin-top 32px
 

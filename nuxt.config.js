@@ -1,6 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
-const tsconfig = require('./tsconfig.json')
+// const tsconfig = require('./tsconfig.json')
 // const tslint = require('./tslint.json')
 
 const debug = !(process && process.env.NODE_ENV === 'production')
@@ -29,6 +29,7 @@ module.exports = {
     ]
   },
   mode: 'spa',
+  debug,
   manifest: {
     name: 'Lodger',
     short_name: 'Lodger',
@@ -113,35 +114,29 @@ module.exports = {
       })
 
       // TS Support
-      config.module.rules.push({
-        loader: 'ts-loader',
-        test: new RegExp(/\.ts$/),
-        options: {
-          appendTsSuffixTo: [/\.vue$/],
-          transpileOnly: true // SET TO FALSE FOR TSLINT
-        }
-      })
-      if (config.resolve.extensions.indexOf('.ts') === -1) {
-        config.resolve.extensions.push('.ts')
-      }
+      // config.module.rules.push({
+      //   loader: 'ts-loader',
+      //   test: new RegExp(/\.ts$/),
+      //   options: {
+      //     appendTsSuffixTo: [/\.vue$/],
+      //     transpileOnly: true // SET TO FALSE FOR TSLINT
+      //   }
+      // })
+      // if (config.resolve.extensions.indexOf('.ts') === -1) {
+      //   config.resolve.extensions.push('.ts')
+      // }
 
       // Extend aliases
       Object.assign(config.resolve.alias, {
         'c': resolve('components'),
-
         styles: resolve('assets/styles'),
+        helpers: resolve('helpers'),
+
         UI: resolve('components/UI'),
         widgets: resolve('components/widgets'),
         form: resolve('components/formElements'),
         pg: resolve('components/.playground'),
-        struct: resolve('components/struct'),
-
-        lodger: resolve('lodger'),
-        // lib: resolve('lodger/lib'), -> this doesnt work as it interfers to other libs
-        'lodger-plugins': resolve('lodger/plugins'),
-        cfg: resolve('lodger/config'),
-        forms: resolve('lodger/lib/forms'),
-        helpers: resolve('lodger/lib/helpers')
+        struct: resolve('components/struct')
       })
     }
   }

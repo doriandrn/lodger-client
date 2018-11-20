@@ -48,37 +48,37 @@ export default {
       openModal: 'modal/open'
     }),
     formularSetari (tab) {
-      const form = require(`forms/${tab}.js`)
-      if (!form) return
+      // const form = require(`forms/${tab}.js`)
+      // if (!form) return
 
-      const setari = { ...form.setari }
-      if (form.campuri && form.campuri.length > -1) {
-        setari.default = {
-          campuri: form.campuri.filter(camp => !camp.notInForm)
-        }
-      }
-      this.debug('setari dupa merge cu campuri', setari)
+      // const setari = { ...form.setari }
+      // if (form.campuri && form.campuri.length > -1) {
+      //   setari.default = {
+      //     campuri: form.campuri.filter(camp => !camp.notInForm)
+      //   }
+      // }
+      // this.debug('setari dupa merge cu campuri', setari)
 
-      // adauga labeluri n shit pt traduceri
-      Object.keys(setari).forEach(sectiune => {
-        let tabSetari = `${tab}.setari.`
-        setari[sectiune].title = `${tabSetari}${sectiune}.titlu`
-        setari[sectiune].desc = `${tabSetari}${sectiune}.desc`
-        const { campuri } = setari[sectiune]
-        if (!campuri || !campuri.length) return
-        campuri.forEach(camp => {
-          camp.label = `${sectiune === 'default' ? `${tab}.new.` : tabSetari}${camp.click || camp.id}`
-          camp['@click'] = camp.click ? `${tab}/${camp.click}` : null
-          if (sectiune === 'periculoase') camp.dangerous = true
-          if (sectiune === 'default') {
-            camp['@change'] = `${tab}/updateaza`
-          } else {
-            camp.required = true
-          }
-        })
-      })
-      
-      return setari
+      // // adauga labeluri n shit pt traduceri
+      // Object.keys(setari).forEach(sectiune => {
+      //   let tabSetari = `${tab}.setari.`
+      //   setari[sectiune].title = `${tabSetari}${sectiune}.titlu`
+      //   setari[sectiune].desc = `${tabSetari}${sectiune}.desc`
+      //   const { campuri } = setari[sectiune]
+      //   if (!campuri || !campuri.length) return
+      //   campuri.forEach(camp => {
+      //     camp.label = `${sectiune === 'default' ? `${tab}.new.` : tabSetari}${camp.click || camp.id}`
+      //     camp['@click'] = camp.click ? `${tab}/${camp.click}` : null
+      //     if (sectiune === 'periculoase') camp.dangerous = true
+      //     if (sectiune === 'default') {
+      //       camp['@change'] = `${tab}/updateaza`
+      //     } else {
+      //       camp.required = true
+      //     }
+      //   })
+      // })
+
+      // return setari
     }
   }
 }

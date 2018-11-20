@@ -62,7 +62,7 @@ sction#pg
 
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Action } from 'vuex-class'
@@ -77,7 +77,7 @@ import servicii from 'c/servicii'
 import buton from 'form/button'
 
 // this should only stay here, on playground
-import fakeData from 'lodger/lib/helpers/dev/fakeData'
+import fakeData from 'helpers/fakeData'
 
 @Component({
   components: {
@@ -94,7 +94,7 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
   }
 })
   export default class Playground extends Vue {
-    @Action('open', { namespace: 'modal' }) openModal: any
+    @Action('open', { namespace: 'modal' }) openModal
 
     get playgroundSubscriber () {
       return 'playground'
@@ -108,7 +108,7 @@ import fakeData from 'lodger/lib/helpers/dev/fakeData'
         }
       } = this
 
-      return (taxonomy: Taxonomie) => subscriberData(taxonomy, playgroundSubscriber)
+      return (taxonomy) => subscriberData(taxonomy, playgroundSubscriber)
     }
   }
 </script>

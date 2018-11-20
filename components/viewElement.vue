@@ -27,9 +27,9 @@
   span(v-else) {{ type }}: {{ value }}
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'vue'
-import Component from 'vue-class-component';
+import Component from 'vue-class-component'
 import timp from 'c/dateTime'
 import bani from 'c/bani'
 import suprafata from 'c/suprafata'

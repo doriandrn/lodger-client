@@ -5,7 +5,7 @@
  * @param {string} value - input value for
  * @param {filters} the object containing the filters ($options.filters)
  */
-export default transformOnInput = (filtersList, value, filters, debug) => {
+export default function (filtersList, value, filters, debug) {
   let val = value
   if (!filtersList) return val
   const _filters = filtersList.split('|')

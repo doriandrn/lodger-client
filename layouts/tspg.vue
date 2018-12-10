@@ -8,26 +8,23 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import toasts from 'c/toasts'
 import headr from 'c/header'
-import Component from 'vue-class-component'
 
-@Component({
-  components: {
+export default {
+   components: {
     toasts,
     headr
-  }
-})
-export default class TSPGLayout extends Vue {
+  },
   beforeCreate () {
     // this.$store.registerModule('LodgerStore', this.$lodger.store)
     this.debug(this.$lodger)
     // this.$store = this.$lodger.store
-  }
-
-  async beforeDestroy () {
-    await this.$lodger.destroy()
+  },
+  methods: {
+    async beforeDestroy () {
+      await this.$lodger.destroy()
+    }
   }
 }
 </script>

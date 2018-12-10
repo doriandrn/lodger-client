@@ -28,14 +28,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import Component from 'vue-class-component'
 import timp from 'c/dateTime'
 import bani from 'c/bani'
 import suprafata from 'c/suprafata'
 import servicii from 'c/servicii'
 
-@Component({
+export default {
   props: {
     type: {
       type: String,
@@ -52,8 +50,5 @@ import servicii from 'c/servicii'
     suprafata,
     servicii
   }
-})
-export default class ViewElement extends Vue {
-
 }
 </script>

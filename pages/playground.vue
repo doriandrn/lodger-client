@@ -17,9 +17,9 @@ sction#pg
 
       :deselectOnClickAway = false
 
-      @subscribe=   "$lodger.subscribe(playgroundSubscriber, tax, $event)"
+      @subscribe=   "$lodger.subscribe(tax, $event, playgroundSubscriber)"
 
-      @fakeNew=     "$lodger.put(tax, fakeData(tax))"
+      @fakeNew=     "$lodger.fake(tax)"
       @new=         "openModal(`${tax}.new`)"
       @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
       @trash=       "$lodger.trash(tax, $event)"
@@ -63,10 +63,6 @@ sction#pg
 </template>
 
 <script>
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Action } from 'vuex-class'
-
 import sction from 'c/section'
 import frm from 'c/form'
 import list from 'c/list'
@@ -75,11 +71,9 @@ import servicii from 'c/servicii'
 // import blocuri from 'c/blocuri'
 
 import buton from 'form/button'
+import { mapActions } from 'vuex';
 
-// this should only stay here, on playground
-import fakeData from 'helpers/fakeData'
-
-@Component({
+export default {
   components: {
     sction,
     frm,
@@ -89,18 +83,12 @@ import fakeData from 'helpers/fakeData'
     // blocuri,
     buton
   },
-  methods: {
-    fakeData
-  }
-})
-  export default class Playground extends Vue {
-    @Action('open', { namespace: 'modal' }) openModal
-
-    get playgroundSubscriber () {
+  computed: {
+    playgroundSubscriber () {
       return 'playground'
-    }
+    },
 
-    get subscriberData () {
+    subscriberData () {
       const {
         playgroundSubscriber,
         $lodger: {
@@ -110,7 +98,13 @@ import fakeData from 'helpers/fakeData'
 
       return (taxonomy) => subscriberData(taxonomy, playgroundSubscriber)
     }
+  },
+  methods: {
+    ...mapActions({
+      closeModal: 'modal/close'
+    })
   }
+}
 </script>
 
 <style lang="stylus">

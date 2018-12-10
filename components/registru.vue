@@ -11,17 +11,11 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
 import list from 'c/list'
 
-@Component({
+export default {
   components: {
     list
   }
-})
-export default class Registru extends Vue {
-
 }
 </script>

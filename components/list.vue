@@ -94,11 +94,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import Component from 'vue-class-component'
-// import { State, Action, Getter } from 'vuex-class'
-import { Action } from 'vuex-class'
-
 /** Components Imports */
 import field from 'form/field'
 import empty from 'c/empty'
@@ -107,7 +102,8 @@ import bani from 'c/bani'
 import viw from 'c/viewElement'
 import split from 'c/split'
 
-@Component({
+
+export default {
   props: {
     fetching: {
       type: Boolean,
@@ -176,10 +172,50 @@ import split from 'c/split'
     bani,
     viw,
     split
+  },
+  computed: {
+    ids () { return Object.keys(this.items || {}) },
+    referencesIds () { return this.$lodger.activeReferencesIds(this.references) },
+    allReferencesHaveValues () {
+      const { referencesIds } = this
+      let HV = true
+      if (!referencesIds) return HV
+
+      Object.values(referencesIds).forEach(val => {
+        if (val === undefined) { HV = false }
+        if (typeof val === 'object' && val.id === null ) { HV = false }
+      })
+
+      return HV
+    },
+    __displayItemLocations () {
+      const { showElements } = this
+      const locations = Object.values(showElements).filter((item, pos, self) => self.indexOf(item) === pos)
+      const o = {}
+      if (!(locations && locations.length)) return o
+      locations.forEach(location => {
+        o[location] = Object.keys(showElements).filter(el => showElements[el] === location)
+      })
+      return o
+    }
+  },
+  created () {
+    this.$emit('subscribe')
+  },
+  methods: {
+    get _sort () {
+      if (!this.criteriu || !this.criteriu.sort) return
+      return Object.keys(this.criteriu.sort)[0]
+    },
+
+    set _sort (e) {
+      this.$emit('subscribe', { sort: { key: e } })
+    },
+
+    get _find () {
+      return this.criteriu.find
+    }
   }
-})
-export default class ListTaxonomyItems extends Vue {
-  itemsCount = 0
 
   // xfind = this.referencesIds
   // criteriu = {
@@ -225,13 +261,7 @@ export default class ListTaxonomyItems extends Vue {
   //   // })
   // }
 
-  get ids () {
-    return Object.keys(this.items || {})
-  }
 
-  get referencesIds () {
-    return this.$lodger.activeReferencesIds(this.references)
-  }
 
   // get referencesIds () {
   //   const reffies = this.$lodger.activeReferencesIds(this.references)
@@ -263,46 +293,7 @@ export default class ListTaxonomyItems extends Vue {
    *
    * checks if references provided exist so the add goes ok
    */
-  get allReferencesHaveValues () {
-    const { referencesIds } = this
-    let HV = true
-    if (!referencesIds) return HV
 
-    Object.values(referencesIds).forEach(val => {
-      if (val === undefined) { HV = false }
-      if (typeof val === 'object' && val.id === null ) { HV = false }
-    })
-
-    return HV
-  }
-
-  get __displayItemLocations () {
-    const { showElements } = this
-    const locations = Object.values(showElements).filter((item, pos, self) => self.indexOf(item) === pos)
-    const o = {}
-    if (!(locations && locations.length)) return o
-    locations.forEach(location => {
-      o[location] = Object.keys(showElements).filter(el => showElements[el] === location)
-    })
-    return o
-  }
-
-  created () {
-    this.$emit('subscribe')
-  }
-
-  get _sort () {
-    if (!this.criteriu || !this.criteriu.sort) return
-    return Object.keys(this.criteriu.sort)[0]
-  }
-
-  set _sort (e) {
-    this.$emit('subscribe', { sort: { key: e } })
-  }
-
-  get _find () {
-    return this.criteriu.find
-  }
 
   // changeSortDirectionIfChecked (e) {
   //   const { index, checked } = e

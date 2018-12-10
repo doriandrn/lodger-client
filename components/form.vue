@@ -61,17 +61,18 @@ form.form(@submit.prevent="validate()")
 </template>
 
 <script>
-import Vue from 'vue'
 import buton from 'form/button'
 import field from 'form/field'
-// import frm from './form.vue'
 import split from 'c/split'
+import { mapGetters, mapActions } from 'vuex'
 
-import Component from 'vue-class-component';
-import { State, Action, Getter } from 'vuex-class'
-
-@Component({
+export default {
   name: 'frm',
+  data () {
+    const { form, isNew } = this
+    if (!form) throw new Error('No form supplied')
+    return form.componentData(isNew, this.$store.getters)
+  },
   components: {
     buton,
     split,
@@ -86,43 +87,34 @@ import { State, Action, Getter } from 'vuex-class'
       type: Boolean,
       default: true
     }
-  }
-})
-
-  export default class FormComponent extends Vue {
-    @Getter('content', { namespace: 'modal' }) modalContent
-    @Action('trimite', { namespace: 'feedback' }) trimiteFeedback
-    @Action('close', { namespace: 'modal' }) closeModal
-
-    get $fields () {
+  },
+  computed: {
+    ...mapGetters({
+      modalContent: 'modal/content',
+    }),
+    $fields () {
       return this.form.data.fields
-    }
+    },
 
-    data () {
-      const { form, isNew } = this
-      if (!form) throw new Error('No form supplied')
-      return form.componentData(isNew, this.$store.getters)
-    }
-
-    mounted () {
-      this.debug('Form Mounted')
-    }
-
+  },
+  methods: {
+    ...mapActions({
+      trimiteFeedback: 'feedback/trimite',
+      closeModal: 'modal/close'
+    }),
     async validate () {
       this.$validator.validateAll(this.form.name).then(valid => {
         if (!valid) throw new Error('invalid')
         this.submit()
       })
-    }
-
+    },
     submit () {
       this.$emit('submit', this.$data)
       this.closeModal()
-    }
-
+    },
     /**
-     *
-     */
+    *
+    */
     async handleChange (actionName, id, type, e, scope) {
       const { validate, debug, $store: { dispatch } } = this
       if (!actionName) {
@@ -141,8 +133,8 @@ import { State, Action, Getter } from 'vuex-class'
         [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
       })
     }
-
   }
+}
 </script>
 
 <style lang="stylus">

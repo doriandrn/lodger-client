@@ -52,7 +52,7 @@ module.exports = {
     { src: '~plugins/lodger' },
     { src: '~plugins/filters' },
     { src: '~plugins/validate' },
-    { src: '~plugins/tabs' },
+    // { src: '~plugins/tabs' },
     { src: '~plugins/portal' },
     { src: '~plugins/range' },
     { src: '~plugins/i18n' },
@@ -89,6 +89,20 @@ module.exports = {
   build: {
     externals: {
       fs: 'commonjs fs'
+    },
+
+    babel: {
+      babelrc: true
+      // presets: [
+      //   '@babel/env',
+      //   '@babel/typescript'
+      // ],
+      // plugins: [
+      //   ["@babel/proposal-class-properties", { "loose": true }],
+      //   "@babel/proposal-object-rest-spread",
+      //   ["@babel/proposal-decorators", { legacy: false, decoratorsBeforeExport: true }],
+      //   '@babel/syntax-dynamic-import'
+      // ]
     },
 
     extend (config) {

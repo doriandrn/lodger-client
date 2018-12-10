@@ -31,7 +31,7 @@
     @keyup.up=      "indexSelectat(0)"
     @keydown.esc=   "inchideModale"
     :class=         "{ av: !!value }"
-    @clickAway=     "clearResults"
+    @clickAway=     "$emit('clickedAway')"
   )
   buton(
     v-else-if=    "type === 'button'"

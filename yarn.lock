@@ -6764,6 +6764,10 @@ lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.3, lodash@^4.17.4
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
+"lodger-shared@git+ssh://git@github.com/doriandrn/lodger-shared.git":
+  version "1.0.0"
+  resolved "git+ssh://git@github.com/doriandrn/lodger-shared.git#f11534958a532ab703c233bc41f2b5ed507c47d6"
+
 "lodger@git+ssh://git@github.com/doriandrn/lodger-api#master":
   version "0.0.1"
   resolved "git+ssh://git@github.com/doriandrn/lodger-api#9a50dcf348132f67abcc244b873755e6eb2076bf"

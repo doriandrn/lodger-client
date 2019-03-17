@@ -44,7 +44,7 @@ input(
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import tooltip from 'c/tooltip'
+// import tooltip from 'c/tooltip' -> tooltip is a plugin
 
 export default {
   data () {
@@ -262,7 +262,7 @@ button
 
       &.iconOnly
         font-size 0
-        
+
 
     &:hover
     &:focus
@@ -292,7 +292,7 @@ button
 
   &[data-size="medium"]
     padding: (config.spacings.inBoxes/2) config.spacings.inBoxes
-  
+
   &[data-size="small"]
     padding: (config.spacings.inBoxes/4) (config.spacings.inBoxes/2)
 
@@ -322,7 +322,7 @@ button
       &:before
       &:after
         background-color: config.palette.primary
-  
+
   &[data-styl="unstyled"]
     border 0
     padding 0

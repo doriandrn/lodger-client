@@ -5,7 +5,6 @@ span.bani(
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import numeral from 'numeral'
 
 export default {

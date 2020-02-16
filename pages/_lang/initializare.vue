@@ -190,28 +190,28 @@ export default {
       if (!this.furnizori) return false
       return Object.keys(this.furnizori).length > 0
     },
-    ...mapGetters({
-      blocuri: 'blocuri',
-      idsBlocuri: 'bloc/ids',
-      asociatii: 'asociatii',
-      idsAsociatii: 'asociatie/ids',
-      apartamente: 'apartamente',
-      activa: 'asociatie/activa',
-      defineste: 'asociatie/defineste',
-      incasari: 'incasari',
-      ultimulFurnizorAdaugat: 'furnizor/ultim',
-      servicii: 'servicii',
-      furnizori: 'furnizori'
-    })
+    // ...mapGetters({
+    //   blocuri: 'blocuri',
+    //   idsBlocuri: 'bloc/ids',
+    //   asociatii: 'asociatii',
+    //   idsAsociatii: 'asociatie/ids',
+    //   apartamente: 'apartamente',
+    //   activa: 'asociatie/activa',
+    //   defineste: 'asociatie/defineste',
+    //   incasari: 'incasari',
+    //   ultimulFurnizorAdaugat: 'furnizor/ultim',
+    //   servicii: 'servicii',
+    //   furnizori: 'furnizori'
+    // })
   },
   methods: {
-    ...mapActions({
-      openModal: 'modal/open',
-      backup: 'backup',
-      stergeAsociatie: 'asociatie/sterge',
-      stergeServiciu: 'serviciu/sterge',
-      toggleServiciu: 'asociatie/toggleServiciu'
-    })
+    // ...mapActions({
+    //   openModal: 'modal/open',
+    //   backup: 'backup',
+    //   stergeAsociatie: 'asociatie/sterge',
+    //   stergeServiciu: 'serviciu/sterge',
+    //   toggleServiciu: 'asociatie/toggleServiciu'
+    // })
   },
   mounted () {
     this.initprgrs = this.poateTreceLaUrmPas

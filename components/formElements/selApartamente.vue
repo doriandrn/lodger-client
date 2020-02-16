@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 
 export default {
   name: 'selApartamente',
@@ -67,7 +67,7 @@ export default {
         return []
       }
     },
-    /** 
+    /**
      * Id-uri de apartamente
     */
     optiuni: {
@@ -188,10 +188,10 @@ export default {
       })
       return b
     },
-    ...mapGetters(['apartamente', 'blocuri']),
-    ...mapGetters({
-      loc: 'apartament/localizeaza'
-    })
+    // ...mapGetters(['apartamente', 'blocuri']),
+    // ...mapGetters({
+    //   loc: 'apartament/localizeaza'
+    // })
   }
 }
 </script>
@@ -222,5 +222,5 @@ export default {
   &__apartament
     input[type="checkbox"]:checked
       &+label:before
-        background-color: config.palette.tertiary 
+        background-color: config.palette.tertiary
 </style>

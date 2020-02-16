@@ -39,7 +39,6 @@ import bani from 'c/bani'
 import apartament from 'struct/apartament'
 import furnizor from 'c/furnizor'
 import split from 'c/split'
-import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -48,10 +47,6 @@ export default {
       sugestiiSubRelevanta: -1
     }
   },
-  computed: mapGetters({
-    modalContent: 'modal/content',
-    aps: 'apartamente'
-  }),
   props: {
     selectedIndex: {
       type: Number,

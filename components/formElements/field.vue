@@ -37,7 +37,7 @@
     v-else-if=    "type === 'button'"
     :dangerous=   "dangerous"
     @click=       "handleClick"
-  ) {{ $t(label) || $(text) || '~' }}
+  ) {{ label || text }}
   textarea(
     v-else-if=    "['textarea'].indexOf(type) > -1"
     :placeholder= "placeholder",
@@ -64,7 +64,6 @@
     :id=          "id"
     :arrow=       "arrow"
   )
-    li(v-if="id === 'asociatieSwitch'") {{ $t('asociatie.new.title') }}
 
   scari(
     v-else-if=    "type === 'scari'",
@@ -111,7 +110,7 @@
     v-show=         "!hideLabel && type !== 'button'"
     :required=      "required"
     :for=           "id"
-  ) {{ $t( label ) }}
+  ) {{ label }}
 
   //- p.field__message(v-if="message") {{ message }}
   span.field__limit(
@@ -407,22 +406,22 @@ export default {
 
 
 
-    handleClick (e) {
-      const { click, debug } = this
-      debug('click', click)
-      let what
-      if (click.indexOf('/')) {
-        what = click.split('/')[0]
-      }
-      if (what) {
-        const { _id } = this.$store.getters[`${what}/active`]
-        this.$store.dispatch(click, { _id })
-      } else {
-        const f = this[click]
-        if (!f) return
-        f(this)
-      }
-    },
+    // handleClick (e) {
+    //   const { click, debug } = this
+    //   debug('click', click)
+    //   let what
+    //   if (click.indexOf('/')) {
+    //     what = click.split('/')[0]
+    //   }
+    //   if (what) {
+    //     const { _id } = this.$store.getters[`${what}/active`]
+    //     this.$store.dispatch(click, { _id })
+    //   } else {
+    //     const f = this[click]
+    //     if (!f) return
+    //     f(this)
+    //   }
+    // },
 
     handleInput (e) {
       let { value, type } = e.target

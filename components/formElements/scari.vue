@@ -15,7 +15,7 @@ ul.scari.zebra
     )
 
     field(
-      :id=          "`scara-${i}`", 
+      :id=          "`scara-${i}`",
       type=         "number"
       label=        "bloc.etaje"
       data-for=     "etaje",
@@ -26,7 +26,7 @@ ul.scari.zebra
       :min=         "ultimulEtajDinScaraCuApartamente(i, scara.mansarda)"
       :max=          "124"
     )
-    
+
     field(
       :id=            "`lift-${i}`",
       type=           "checkbox",
@@ -117,22 +117,22 @@ export default {
       this.$emit('input', this.scari)
     },
     ultimulEtajDinScaraCuApartamente (index, cuMansarda) {
-      const { scari, $store: { getters } } = this
-      const blocActiv = getters['bloc/selectat']
-      if (!blocActiv) return
-      const { apartamente } = blocActiv
-      if (!apartamente || !apartamente.length) return -1
-      const etaje = []
-      apartamente.forEach(apId => {
-        const { etaj, scara } = this.$store.getters.apartamente[apId]
-        if (scara !== index) return
-        if (etaje.indexOf(etaj) > -1) return
-        etaje.push(etaj)
-      })
+      // const { scari, $store: { getters } } = this
+      // const blocActiv = getters['bloc/selectat']
+      // if (!blocActiv) return
+      // const { apartamente } = blocActiv
+      // if (!apartamente || !apartamente.length) return -1
+      // const etaje = []
+      // apartamente.forEach(apId => {
+      //   const { etaj, scara } = this.$store.getters.apartamente[apId]
+      //   if (scara !== index) return
+      //   if (etaje.indexOf(etaj) > -1) return
+      //   etaje.push(etaj)
+      // })
 
-      const max = etaje.sort((a, b) => Number(b) > Number(a))[0]
+      // const max = etaje.sort((a, b) => Number(b) > Number(a))[0]
 
-      return cuMansarda ? max - 1 : max
+      // return cuMansarda ? max - 1 : max
     }
   },
   props: {
@@ -199,7 +199,7 @@ export default {
           z-index 0
           pointer-events none
           font-weight 100
-    
+
     > *
       margin 8px
 

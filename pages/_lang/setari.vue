@@ -1,5 +1,5 @@
 <template lang="pug">
-sction.setari(:title="$t('defaults.settings')")
+sction.setari(title="settings")
 
   tabs(v-if="asociatieActiva && asociatieActiva._id")
     tab(
@@ -22,8 +22,6 @@ import sction from 'c/section'
 import frm from 'c/form.vue'
 import buton from 'form/button'
 
-import { mapGetters, mapActions } from 'vuex'
-
 export default {
   data () {
     return {
@@ -31,11 +29,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      asociatieActiva: 'asociatie/activa'
-    }),
     campuri () {
-      return sectiune => sectiune.campuri
+      return section => section.fields
     }
   },
   components: {
@@ -44,9 +39,6 @@ export default {
     buton
   },
   methods: {
-    ...mapActions({
-      openModal: 'modal/open'
-    }),
     formularSetari (tab) {
       // const form = require(`forms/${tab}.js`)
       // if (!form) return

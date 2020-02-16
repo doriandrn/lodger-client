@@ -9,7 +9,7 @@ ul.servicii
     @keydown.enter=     "toggleServiciu(serviciu.denumire)"
     @keydown.space=     "toggleServiciu(serviciu.denumire)"
     tabIndex=           0
-  ) 
+  )
     span.nume {{ modificabil(serviciu.denumire) ? serviciu.denumire : $t(`serviciu.nume.${serviciu.denumire}`) }}
     .serviciu__actiuni(v-if="modificabil(serviciu.denumire)")
       buton(
@@ -38,17 +38,10 @@ ul.servicii
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import buton from 'form/button'
 
 export default {
   components: { buton },
-  computed: {
-    ...mapGetters({
-      serviciiPredefinite: 'serviciu/predefinite',
-      ultimulAdaugat: 'serviciu/ultim'
-    })
-  },
   methods: {
     toggleServiciu (e) {
       const value = this.value || []
@@ -163,11 +156,11 @@ serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff g
 
     .nume
       transition all .1s ease
-      
+
     &.nou
       > button
         size 100%
-        position absolute 0  
+        position absolute 0
 
     &.modificabil
       &:hover
@@ -182,7 +175,7 @@ serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff g
         .serviciu__actiuni
           opacity 1
           visibility visible
-  
+
 
 .serviciu
   &__actiuni

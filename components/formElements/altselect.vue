@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import split from 'c/split'
 import progres from 'c/progres'
 
@@ -45,9 +44,6 @@ export default {
       return 20
     }
   },
-  computed: mapGetters({
-    asociatii: 'asociatii'
-  }),
   components: {
     progres,
     split
@@ -125,7 +121,7 @@ export default {
         .progres
         &:before
           display none
-      
+
       &:not([data-sel])
         &:hover
         &:focus
@@ -138,7 +134,7 @@ export default {
     right 20px
     top 12px
     transition all .1s ease
-  
+
   &:active
   &:focus
   &:hover
@@ -152,5 +148,5 @@ export default {
 
     &:after
       background-color: config.typography.palette.headings !important
-      
+
 </style>

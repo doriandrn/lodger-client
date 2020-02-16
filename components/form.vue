@@ -20,7 +20,6 @@ form.form(@submit.prevent="validate()")
       :min=           "field.min"
       :max=           "field.max",
       :step=          "field.type === 'bani' ? 0.01 : field.step",
-      :options=       "typeof field.options === 'function' ? field.options($store.getters) : field.options"
       :value=         "field.value"
       :data-slot=     "field.slot"
       :searchTaxonomy="field.taxonomy"
@@ -28,8 +27,6 @@ form.form(@submit.prevent="validate()")
       :dangerous=     "field.dangerous"
       :transform=     "field.transform"
       @change=        "handleChange(field['@change'], field.id, field.type, $event, form.name)"
-
-      :servicii=      "field.type === 'servicii' && typeof field.servicii === 'function' ? field.servicii($store.getters) : null"
 
       v-model.trim=   "$data[field.id]"
 
@@ -47,31 +44,30 @@ form.form(@submit.prevent="validate()")
 
   split.actions
     buton(
-      v-if= "form.name === 'apartament' && $store.getters['apartament/selected']"
       size= "small"
       styl= "unstyled"
       icon= "trash"
       dangerous
-    ) {{ $t('defaults.sterge') }}
+    ) delete
     buton(
       type= "submit",
       icon= "plus-circle"
       slot= "right"
-    ) {{ isNew ? $t('defaults.forms.add') : $t('defaults.forms.edit') }}
+    ) {{ isNew ? 'add' : 'edit' }}
 </template>
 
 <script>
 import buton from 'form/button'
 import field from 'form/field'
 import split from 'c/split'
-import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'frm',
   data () {
     const { form, isNew } = this
     if (!form) throw new Error('No form supplied')
-    return form.componentData(isNew, this.$store.getters)
+    // return form.componentData(isNew, this.$store.getters)
+    return {}
   },
   components: {
     buton,
@@ -89,19 +85,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      modalContent: 'modal/content',
-    }),
     $fields () {
       return this.form.data.fields
     },
 
   },
   methods: {
-    ...mapActions({
-      trimiteFeedback: 'feedback/trimite',
-      closeModal: 'modal/close'
-    }),
     async validate () {
       this.$validator.validateAll(this.form.name).then(valid => {
         if (!valid) throw new Error('invalid')

@@ -20,7 +20,7 @@ export default {
     },
   },
   created () {
-  	moment.locale(this.$store.state.locale)
+  	// moment.locale(this.$store.state.locale)
   },
   mounted () {
     if (!this.liveUpdate) return

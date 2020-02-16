@@ -122,7 +122,7 @@ export default {
       default () {
         return {
           type: 'warning',
-          message: this.$t('defaults.prompt.message')
+          // message: this.$t('defaults.prompt.message')
         }
       }
     },

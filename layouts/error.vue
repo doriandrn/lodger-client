@@ -4,19 +4,19 @@ sction.eroare(
   :data-cod=  "error.statusCode"
 )
   span.eroare__il(slot="beforeTitle")
-  p {{ $t('erori.inContinuare') }}
-  .actiuni
-    buton(
-      size=   "small"
-      @click= "openModal('feedback.new')"
-    ) {{ $t('defaults.feedback') }}
+  //- p {{ $t('erori.inContinuare') }}
+  //- .actiuni
+  //-   buton(
+  //-     size=   "small"
+  //-     @click= "openModal('feedback.new')"
+  //-   ) {{ $t('defaults.feedback') }}
 </template>
 
 <script>
 import sction from 'c/section'
 import buton from 'form/button'
 
-import { mapActions } from 'vuex'
+// import { mapActions } from 'vuex'
 
 export default {
   props: ['error'],
@@ -24,13 +24,14 @@ export default {
     sction,
     buton
   },
-  methods: mapActions({
-    openModal: 'modal/open'
-  }),
+  // methods: mapActions({
+  //   openModal: 'modal/open'
+  // }),
   computed: {
     titluEroare () {
-      const { $t, error: { statusCode } } = this
-      return $t(`erori.${ statusCode }`)
+      // const { $t, error: { statusCode } } = this
+      // return $t(`erori.${ statusCode }`)
+      return 'Eroare'
     }
   }
 }

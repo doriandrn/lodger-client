@@ -19,19 +19,11 @@ transition(name="modal")
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-
 export default {
-  methods: mapActions({
-    inchide: 'modal/close'
-  }),
   computed: {
     shouldOverflow () {
       return this.modalContent === 'incasare.new'
     },
-    ...mapGetters({
-      modalContent: 'modal/content'
-    })
   },
   directives: {
     focus: {
@@ -159,7 +151,7 @@ lrPad = 32px
     +above(xl)
       padding-left: lrPad
       padding-right: lrPad
-  
+
   &__footer
   &__header
     padding-top: (config.spacings.inBoxes/2)
@@ -175,7 +167,7 @@ lrPad = 32px
     lost-utility clearfix
     background: config.palette.bgs.body
 
-  
+
 .modal
   &-enter
     opacity 0
@@ -184,7 +176,7 @@ lrPad = 32px
     opacity: 0
 
   &-enter
-  &-leave-active 
+  &-leave-active
     .modal__container
       transform scale(.5, .5) translate(-50%, -50%)
       // transform: scale(1.1)

@@ -3,16 +3,15 @@
   headr
     logo
 
-    field.switch(
-      v-if=       "administreazaCelPutinOAsociatie"
-      v-model=    "idAsociatieActiva",
-      id=         "asociatieSwitch"
-      label=      "defaults.asociatia"
-      type=       "altselect",
-      :options=   "switchOptions"
-      :arrow=     "true"
-      :required=  "true"
-    )
+    //- field.switch(
+    //-   v-model=    "idAsociatieActiva",
+    //-   id=         "asociatieSwitch"
+    //-   label=      "defaults.asociatia"
+    //-   type=       "altselect",
+    //-   :options=   "switchOptions"
+    //-   :arrow=     "true"
+    //-   :required=  "true"
+    //- )
 
     nav(
       data-orientation="horizontal"
@@ -26,15 +25,15 @@
         li
           nuxt-link(to="/dashboard") {{ navInitializare }}
 
-    nuxt-link(
-      v-if=     "balanta"
-      to=       "/registru"
-      slot=     "right"
-    )
-      bani(
-        :valoare= "balanta",
-        data-icon="shield"
-      )
+    //- nuxt-link(
+    //-   v-if=     "balanta"
+    //-   to=       "/registru"
+    //-   slot=     "right"
+    //- )
+    //-   bani(
+    //-     :valoare= "balanta",
+    //-     data-icon="shield"
+    //-   )
 
     field(
       slot=     "right"
@@ -42,8 +41,8 @@
       v-model=  "search"
       size=     "small"
       id=       "search"
-      :label=  "$t('defaults.search')"
-      :placeholder=  "$t('defaults.search')"
+      :label=  "'defaults.search'"
+      :placeholder=  "'defaults.search'"
       hide-label
     )
 
@@ -53,35 +52,35 @@
       slot=   "right"
       to=     "/setari#asociatie"
       icon-only
-    ) {{ $t('settings.title') }}
+    ) {{ 'settings.title' }}
 
   main
     nuxt
 
   footr
-    p(v-if="app") {{ app.name }} v{{ app.version }} - Copyright 2018 {{ app.author }}
+    p(v-if="app") {{ app.name }} v{{ app.version }} - Copyright 2020 {{ app.author }}
     ul.footer__stuff(slot="right")
       li
         nuxt-link(to="/credits") Credits
       li
         buton Feedback
 
-  toasts
-  modal(
-      v-show=  "modalOpen"
-      :title=   "modalContent && modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
-    )
-      frm#main(
-        v-if=       "modalContent && modalContent !== 'prompt'",
-        :form=      "modalForm",
-        :isNew=     "modalContent.split('.')[1] === 'new'"
-        @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
-      )
+  //- toasts
+  //- modal(
+  //-     v-show=  "modalOpen"
+  //-     :title=   "modalContent && modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
+  //-   )
+  //-     frm#main(
+  //-       v-if=       "modalContent && modalContent !== 'prompt'",
+  //-       :form=      "modalForm",
+  //-       :isNew=     "modalContent.split('.')[1] === 'new'"
+  //-       @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
+  //-     )
 
-      prompt(v-else-if= "modalContent === 'prompt'")
+  //-     prompt(v-else-if= "modalContent === 'prompt'")
 
-      p(v-else) loading
-      //- cale(slot="footer")
+  //-     p(v-else) loading
+  //-     //- cale(slot="footer")
 </template>
 
 <script>
@@ -99,7 +98,6 @@ import buton from 'form/button'
 import toasts from 'c/toasts'
 import dropdown from 'c/dropdown'
 
-import { mapGetters, mapActions } from 'vuex'
 import { version, name, author } from '../package.json'
 
 export default {
@@ -113,11 +111,11 @@ export default {
       search: '',
       navItems: [
         {
-          title: this.$t('navigation[0]'),
+          title: 'dash',
           url: '/dashboard'
         },
         {
-          title: this.$t('navigation[1]'),
+          title: 'liste',
           url: '/liste'
         },
         // {
@@ -127,37 +125,37 @@ export default {
       ]
     }
   },
-  methods: {
-    ...mapActions({
-      schimbaAsociatieActiva: 'asociatie/schimba',
-    })
-  },
   computed: {
-    modalForm () {
-      const name = this.modalContent.split('.')[0]
-      return this.$lodger.forms[name]
-    },
-    switchOptions () {
-      const { idsAsociatii, asociatii } = this
-      const selector = {}
-      idsAsociatii.map(asoc => {
-        selector[asoc] = asociatii[asoc].name
-      })
-      return selector
-    },
-    navInitializare () {
-      const { $lodger: { getters } } = this
-      const $activa = getters['$asociatie']
-      if (!$activa || !$activa.name) return this.$t('navigation[0]')
-      return `${ this.$t( 'asociatie.init.title' ) } - ${ this.$t( 'defaults.asociatia' ) } ${ $activa.name }`
-    },
-    $activa () {
-      return this.$lodger.getters['$asociatie']
-    },
-    balanta () {
-      if (!this.$activa) return
-      return this.$activa.balanta
-    },
+    administreazaCelPutinOAsociatie () {
+      return true
+    }
+    // modalForm () {
+    //   const name = this.modalContent.split('.')[0]
+    //   return this.$lodger.forms[name]
+    // },
+    // switchOptions () {
+    //   const { idsAsociatii, asociatii } = this
+    //   const selector = {}
+    //   idsAsociatii.map(asoc => {
+    //     selector[asoc] = asociatii[asoc].name
+    //   })
+    //   return selector
+    // },
+    // navInitializare () {
+    //   // const { $lodger: { getters } } = this
+    //   // const $activa = getters['$asociatie']
+    //   // if (!$activa || !$activa.name) return this.$t('navigation[0]')
+    //   // return `${ this.$t( 'asociatie.init.title' ) } - ${ this.$t( 'defaults.asociatia' ) } ${ $activa.name }`
+    //   return 'dash'
+    // },
+    // $activa () {
+    //   console.log('l', this.$lodger)
+    //   return this.$lodger['asociatie'].active
+    // },
+    // balanta () {
+    //   if (!this.$activa) return
+    //   return this.$activa.balanta
+    // },
     // idAsociatieActiva: {
     //   get () { return this.$activa._id },
     //   set (asocId) {
@@ -166,18 +164,18 @@ export default {
     //     this.schimbaAsociatieActiva(asocId)
     //   }
     // },
-    administreazaCelPutinOAsociatie () {
-      const { idsAsociatii } = this
-      return idsAsociatii && idsAsociatii.length > 1
-    },
-    idsAsociatii () {
-      return []
-    },
-    ...mapGetters({
-      modalOpen: 'modal/open',
-      modalContent: 'modal/content',
-      modalData: 'modal/data'
-    })
+    // administreazaCelPutinOAsociatie () {
+    //   const { idsAsociatii } = this
+    //   return idsAsociatii && idsAsociatii.length > 1
+    // },
+    // idsAsociatii () {
+    //   return []
+    // },
+    // ...mapGetters({
+    //   modalOpen: 'modal/open',
+    //   modalContent: 'modal/content',
+    //   modalData: 'modal/data'
+    // })
   },
   beforeDestroy () {
     // this.$store.commit('DESTROYMAIN', 1)

@@ -72,10 +72,6 @@ import widget from 'c/widget'
 import split from 'c/split'
 import bani from 'c/bani'
 
-// import incasari from 'c/incasari'
-
-import { mapGetters } from 'vuex'
-
 export default {
   async asyncData ({ params, store, app: { $db, $dbSubs } }) {
   },
@@ -106,9 +102,6 @@ export default {
     ap () {
       return this.apartamente[this.$route.params.id]
     },
-    ...mapGetters({
-      apartamente: 'apartamente'
-    })
   }
 }
 </script>

@@ -76,10 +76,6 @@ export default {
       if (!activeElement) return
       return activeElement === this.$el
     },
-    ...mapGetters({
-      modalContent: 'modal/content',
-      _prompted: 'prompt/prompted'
-    })
   },
   methods: {
     ...mapActions({

@@ -58,12 +58,16 @@
     nuxt
 
   footr
-    p(v-if="app") {{ app.name }} v{{ app.version }} - Copyright 2020 {{ app.author }}
-    ul.footer__stuff(slot="right")
-      li
-        nuxt-link(to="/credits") Credits
-      li
-        buton Feedback
+    a user
+    p Utilizator adaugat! bla bla
+    div(slot="right")
+      .lang-switch
+        a en
+        a ro
+      buton Feedback
+      .copyright
+        p(v-if="app") {{ app.name }} v{{ app.version }} - Copyright 2020 {{ app.author }}
+        a credits
 
   //- toasts
   //- modal(
@@ -205,6 +209,7 @@ footerHeight = 24px
   display flex
   flex-flow column nowrap
   min-height 100vh
+  position relative
 
   .actions
     width 100%
@@ -303,14 +308,16 @@ footerHeight = 24px
         fullflex(1)
 
   > footer
-    position fixed
+    position absolute
     bottom 0
     left 0
     right 0
     height: footerHeight
     line-height: footerHeight
-    z-index -1
+    z-index 2
     background: config.palette.borders
+    display flex
+    flex-flow row nowrap
 
 .inner
   max-width: config.sizes.maxContainerWidth

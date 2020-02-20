@@ -7,104 +7,105 @@
   :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
-  input(
-    v-if=         "['text', 'number', 'search', 'bani', 'checkbox', 'date'].indexOf(type) > -1",
-    :type=        "type !== 'bani' ? type : 'number'",
-    :placeholder= "placeholder",
-    :autocomplete="autocomplete ? 'on' : 'off'",
-    :autosuggest= "autosuggest"
-    :id=          "id",
-    :name=        "id"
-    :focus=       "focus",
-    :required=    "required",
-    :min=         "type === 'number' ? min : null"
-    :max=         "type === 'number' ? max : null"
-    :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
-    :value=       "val",
-    :checked=     "checked"
-    @input=       "handleInput",
-    @change=      "handleChange"
+  validation-provider(:rules="v" v-slot="{ errors }")
+    input(
+      v-if=         "['text', 'number', 'search', 'bani', 'checkbox', 'date'].indexOf(type) > -1",
+      :type=        "type !== 'bani' ? type : 'number'",
+      :placeholder= "placeholder",
+      :autocomplete="autocomplete ? 'on' : 'off'",
+      :autosuggest= "autosuggest"
+      :id=          "id",
+      :name=        "id"
+      :focus=       "focus",
+      :required=    "required",
+      :min=         "type === 'number' ? min : null"
+      :max=         "type === 'number' ? max : null"
+      :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
+      :value=       "val",
+      :checked=     "checked"
+      @input=       "handleInput",
+      @change=      "handleChange"
 
-    @keydown.enter= "selecteaza"
-    @keyup.tab=     "selecteaza"
-    @keyup.down=    "indexSelectat(1)"
-    @keyup.up=      "indexSelectat(0)"
-    @keydown.esc=   "inchideModale"
-    :class=         "{ av: !!value }"
-    @clickAway=     "$emit('clickedAway')"
-  )
-  buton(
-    v-else-if=    "type === 'button'"
-    :dangerous=   "dangerous"
-    @click=       "handleClick"
-  ) {{ label || text }}
-  textarea(
-    v-else-if=    "['textarea'].indexOf(type) > -1"
-    :placeholder= "placeholder",
-    :value=       "value",
-    @input=       "$emit('input', $event)"
-    :required=    "required",
-    :id=          "id",
-  )
-  slect(
-    v-else-if=    "type === 'select'"
-    :options=     "options"
-    :value=       "value",
-    :required=    "required",
-    @input=       "$emit('input', $event)"
-    :id=          "id"
-    :arrow=       "arrow"
-  )
-  altslect(
-    v-else-if=    "type === 'altselect'"
-    :options=     "options"
-    :value=       "value",
-    :required=    "required",
-    @input=       "$emit('input', $event)"
-    :id=          "id"
-    :arrow=       "arrow"
-  )
+      @keydown.enter= "selecteaza"
+      @keyup.tab=     "selecteaza"
+      @keyup.down=    "indexSelectat(1)"
+      @keyup.up=      "indexSelectat(0)"
+      @keydown.esc=   "inchideModale"
+      :class=         "{ av: !!value }"
+      @clickAway=     "$emit('clickedAway')"
+    )
+    buton(
+      v-else-if=    "type === 'button'"
+      :dangerous=   "dangerous"
+      @click=       "handleClick"
+    ) {{ label || text }}
+    textarea(
+      v-else-if=    "['textarea'].indexOf(type) > -1"
+      :placeholder= "placeholder",
+      :value=       "value",
+      @input=       "$emit('input', $event)"
+      :required=    "required",
+      :id=          "id",
+    )
+    slect(
+      v-else-if=    "type === 'select'"
+      :options=     "options"
+      :value=       "value",
+      :required=    "required",
+      @input=       "$emit('input', $event)"
+      :id=          "id"
+      :arrow=       "arrow"
+    )
+    altslect(
+      v-else-if=    "type === 'altselect'"
+      :options=     "options"
+      :value=       "value",
+      :required=    "required",
+      @input=       "$emit('input', $event)"
+      :id=          "id"
+      :arrow=       "arrow"
+    )
 
-  scari(
-    v-else-if=    "type === 'scari'",
-    :value=       "value",
-    @input=       "$emit('input', $event)"
-  )
+    scari(
+      v-else-if=    "type === 'scari'",
+      :value=       "value",
+      @input=       "$emit('input', $event)"
+    )
 
-  radios(
-    v-else-if=    "type === 'radios'",
-    :id=          "id",
-    :value=       "value",
-    @change=      "$emit('input', $event); debug($event)"
-    @click=       "$emit('click', $event)"
-    :options=     "options"
-  )
-  checkboxes(
-    v-else-if=    "type === 'checkboxes'",
-    :id=          "id",
-    :value=       "value",
-    @change=      "$emit('input', $event)"
-    :options=     "options"
-  )
-  contoare(
-    v-else-if=      "type === 'contoare'"
-  )
-  sel-apartamente(
-    v-else-if=      "type === 'selApartamente'"
-    :optiuni=       "options"
-    @input=         "$emit('input', $event)"
-    :value=         "value || []"
-  )
-  distribuire(
-    v-else-if=      "type === 'distribuire'"
-  )
-  servicii(
-    v-else-if=        "type === 'servicii'"
-    @input=           "$emit('input', $event)"
-    :value=           "value"
-    :servicii=        "servicii"
-  )
-  p(v-else-if=        "type === 'contactFields'") contactFields
+    radios(
+      v-else-if=    "type === 'radios'",
+      :id=          "id",
+      :value=       "value",
+      @change=      "$emit('input', $event); debug($event)"
+      @click=       "$emit('click', $event)"
+      :options=     "options"
+    )
+    checkboxes(
+      v-else-if=    "type === 'checkboxes'",
+      :id=          "id",
+      :value=       "value",
+      @change=      "$emit('input', $event)"
+      :options=     "options"
+    )
+    contoare(
+      v-else-if=      "type === 'contoare'"
+    )
+    sel-apartamente(
+      v-else-if=      "type === 'selApartamente'"
+      :optiuni=       "options"
+      @input=         "$emit('input', $event)"
+      :value=         "value || []"
+    )
+    distribuire(
+      v-else-if=      "type === 'distribuire'"
+    )
+    servicii(
+      v-else-if=        "type === 'servicii'"
+      @input=           "$emit('input', $event)"
+      :value=           "value"
+      :servicii=        "servicii"
+    )
+    p(v-else-if=        "type === 'contactFields'") contactFields
 
   labl.field__label(
     v-show=         "!hideLabel && type !== 'button'"
@@ -149,6 +150,15 @@ import apartament from 'struct/apartament'
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
 import { mapActions } from 'vuex'
+
+
+import { ValidationProvider, extend } from 'vee-validate';
+// import { required } from 'vee-validate/dist/rules';
+
+// extend('required', {
+//   ...required,
+//   message: 'This field is required'
+// });
 
 export default {
   mixins: [ clickaway ],
@@ -368,7 +378,8 @@ export default {
     servicii,
     selApartamente,
     slect,
-    txtarea
+    txtarea,
+    ValidationProvider
   },
   methods: {
     ...mapActions({

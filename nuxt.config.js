@@ -51,7 +51,6 @@ module.exports = {
     { src: '~plugins/debug' },
     { src: '~plugins/lodger' },
     { src: '~plugins/filters' },
-    { src: '~plugins/validate' },
     // { src: '~plugins/tabs' },
     { src: '~plugins/portal' },
     { src: '~plugins/range' },

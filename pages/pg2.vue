@@ -6,37 +6,32 @@ sction#pg
       size=     "large"
       rounded=  true
       icon=     "incaseaza"
-      @click=   "openModal('incasare.new')"
     ) incaseaza
   .boxes
     list.box(
       v-for=        "tax in $lodger.taxonomies"
       :key=         "tax"
-      :taxonomy=    "tax"
-      :plural=      "$lodger[tax].name"
-
-      :deselectOnClickAway = false
-
-      @subscribe=   "$lodger.subscribe(tax, $event, playgroundSubscriber)"
-
-      @fakeNew=     "$lodger.fake(tax)"
-      @new=         "openModal(`${tax}.new`)"
-      @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
-      @trash=       "$lodger.trash(tax, $event)"
-
-      @select=      "$lodger.select(tax, {id: $event, subscriber: playgroundSubscriber })"
-      :selected=    "$lodger[tax].selected"
-      :last=        "$lodger[tax].last"
-
-      :sortOptions= "$lodger.forms[tax].sortOptions"
-
-      :items=       "subscriberData(tax).items"
-      :criteriu=    "subscriberData(tax).criteriu"
-      :fetching=    "subscriberData(tax).fetching"
-
-      :references=  "$lodger.forms[tax].referenceTaxonomies"
-      :showElements="$lodger.forms[tax].__displayItemKeys"
+      :taxonomy=    "$lodger[tax]"
+      :subscriberName="subscriberName"
     )
+      div(slot-scope="{ taxonomy, subscriber }")
+        h3 {{ taxonomy.plural }}
+        button.new(@click="taxonomy.put(taxonomy.form.fakeData)") add
+
+      div(
+        slot="item" slot-scope="{ item, subscriber }"
+        @click="subscriber.select(item[subscriber.primaryPath])"
+      )
+        //- a(:href="`${$lodger[tax].form.name}/${item[subscriber.primaryPath]}`") {{ item.name }}
+        a(href="#" @click="subscriber.edit(item[subscriber.primaryPath])") {{ item.name }}
+    //- @new=         "openModal(`${tax}.new`)"
+    //- @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
+    //- :items=       "subscriberData(tax).items"
+    //- :criteriu=    "subscriberData(tax).criteriu"
+    //- :fetching=    "subscriberData(tax).fetching"
+
+    //- :references=  "$lodger.forms[tax].referenceTaxonomies"
+    //- :showElements="$lodger.forms[tax].__displayItemKeys"
     //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
     //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"
 
@@ -65,7 +60,7 @@ sction#pg
 <script>
 import sction from 'c/section'
 import frm from 'c/form'
-import list from 'c/list'
+import list from 'c/renderlessTax'
 import registru from 'c/registru'
 import servicii from 'c/servicii'
 // import blocuri from 'c/blocuri'
@@ -74,8 +69,25 @@ import buton from 'form/button'
 import { mapActions } from 'vuex';
 
 export default {
+  data () {
+    return {
+      subscriberName: 'pg2'
+    }
+  },
+  mounted () {
+    console.log(this.$lodger)
+    console.log(this.$lodger.taxonomies)
+  },
+  // computed: {
+  //   items() {
+  //     return (taxonomy, subscriberName) => subscriberName && taxonomy[subscriberName] ?
+  //       taxonomy[subscriberName].items :
+  //       {}
+
+  //   }
+  // },
   components: {
-    // sction,
+    sction,
     // frm,
     list,
     // registru,

@@ -14,9 +14,12 @@ sction#pg
       :taxonomy=    "$lodger[tax]"
       :subscriberName="subscriberName"
     )
-      div(slot-scope="{ taxonomy, subscriber }")
+      div(slot-scope="{ taxonomy, subscriber, refsIds }")
         h3 {{ taxonomy.plural }}
-        button.new(@click="taxonomy.put(taxonomy.form.fakeData)") add
+        p(v-if="refsIds") {{ refsIds[0] }}
+        button.new(
+          @click="taxonomy.put(taxonomy.form.fakeData)"
+        ) add
 
       div(
         slot="item" slot-scope="{ item, subscriber }"
@@ -63,6 +66,7 @@ import frm from 'c/form'
 import list from 'c/renderlessTax'
 import registru from 'c/registru'
 import servicii from 'c/servicii'
+import modal from 'c/modal'
 // import blocuri from 'c/blocuri'
 
 import buton from 'form/button'

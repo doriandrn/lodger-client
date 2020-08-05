@@ -105,8 +105,6 @@ module.exports = {
     },
 
     extend (config) {
-      config.node = { fs: 'empty' }
-
       const stylLoader = config.module.rules.filter(module => String(module.test).indexOf('styl') > -1)[0]
 
       stylLoader.oneOf.forEach(one => {
@@ -119,8 +117,12 @@ module.exports = {
         })
       })
 
+      config.node = { fs: 'empty' }
       // Extend aliases
       Object.assign(config.resolve.alias, {
+        stream: 'stream-browserify',
+        os: 'os-browserify/browser',
+        // fs: 'empty',
         'c': resolve('components'),
         styles: resolve('assets/styles'),
         helpers: resolve('helpers'),

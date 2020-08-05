@@ -32,7 +32,6 @@ module.exports = {
       }
     },
     'postcss-short': {},
-    'postcss-flexbox': {},
     'postcss-pxtorem': {},
     'autoprefixer': {}
   }

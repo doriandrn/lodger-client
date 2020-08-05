@@ -9,7 +9,10 @@
 
 <template lang="pug">
 .list
-  slot(:taxonomy="taxonomy")
+  slot(
+    :taxonomy="taxonomy"
+    :refsIds= "refsIds"
+  )
   ul
     li(
       v-for=  "item, id in taxonomy.subscribers[subscriberName].items"
@@ -110,9 +113,9 @@ import bani from 'c/bani'
 import viw from 'c/viewElement'
 import split from 'c/split'
 import { SubscribableTaxonomy } from 'lodger'
-import { observer } from 'mobx-vue'
+import { Observer } from 'mobx-vue'
 
-export default observer({
+export default Observer({
   props: {
     taxonomy: {
       type: SubscribableTaxonomy
@@ -133,6 +136,20 @@ export default observer({
     itemsCount () {
       return 0
     },
+    refsIds () {
+      const { subscriberName, taxonomy: { name, parents }} = this
+      if (!parents) return
+      console.log(`${name.toUpperCase()} parents:`, parents)
+      const x = parents.map(tax => {
+        const { form: { plural }, subscribers } = this.$lodger[tax]
+        // console.log('pl', plural)
+        if (subscribers[subscriberName]) {
+          return { [`${plural}`]: subscribers[subscriberName].selectedId }
+        }
+      })
+      console.log('x', x)
+      return x
+    }
     // items () {
     //   return this.taxonomy.data[this.subscriberName].items
     // }

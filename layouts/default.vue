@@ -62,8 +62,10 @@
     p Utilizator adaugat! bla bla
     div(slot="right")
       .lang-switch
-        a en
-        a ro
+        a(
+          v-for=      "lang in $lodger.supportedLangs"
+          v-tooltip=  "lang.nativeName"
+        ) {{ lang.code }}
       buton Feedback
       .copyright
         p(v-if="app") {{ app.name }} v{{ app.version }} - Copyright 2020 {{ app.author }}
@@ -102,7 +104,8 @@ import buton from 'form/button'
 import toasts from 'c/toasts'
 import dropdown from 'c/dropdown'
 
-import { version, name, author } from '../package.json'
+import Package from '../package.json'
+const { version, name, author } = Package
 
 export default {
   data () {

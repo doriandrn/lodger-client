@@ -19,7 +19,9 @@ transition(name="modal")
 </template>
 
 <script>
-export default {
+import { observer } from 'mobx-vue'
+
+export default observer({
   computed: {
     shouldOverflow () {
       return this.modalContent === 'incasare.new'
@@ -39,7 +41,7 @@ export default {
       default: 'Modal title'
     }
   }
-}
+})
 </script>
 
 <style lang="stylus">

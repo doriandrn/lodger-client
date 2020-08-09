@@ -9,17 +9,26 @@
 
 <template lang="pug">
 .list
-  slot(
-    :taxonomy="taxonomy"
-    :refsIds= "refsIds"
-  )
-  ul
+  slot(:taxonomy="taxonomy")
+  field.sort(
+    v-if=     "subscriber && subscriber.documents.length > 1"
+    type=     "radios"
+    label=    "sort.label"
+    v-model=  "subscriber.criteria"
+    :id=       "`sort-${ subscriber.name }`"
+    :options=  "{} || sortOptions"
+    required= true
+    :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
+    @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort")
+
+  ul(v-if="taxonomy.subscribers[subscriberName].ids.length")
     li(
       v-for=  "item, id in taxonomy.subscribers[subscriberName].items"
       :key=   "id"
       :class= "{ last: id === taxonomy.lastItems[0], selected: String(taxonomy.subscribers[subscriberName].selectedId).indexOf(id) > -1 }"
     )
       slot(name="item" :item="item" :subscriber="taxonomy.subscribers[subscriberName]")
+  p(v-else-if="taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga
   //- split.list__header
   //-   .top
   //-     h2.list__heading {{ plural }}
@@ -112,16 +121,26 @@ import buton from 'form/button'
 import bani from 'c/bani'
 import viw from 'c/viewElement'
 import split from 'c/split'
+
 import { SubscribableTaxonomy } from 'lodger'
+import { reaction } from 'mobx'
 import { Observer } from 'mobx-vue'
 
 export default Observer({
+  data () {
+    return {
+      selectedId: ''
+    }
+  },
   props: {
     taxonomy: {
-      type: SubscribableTaxonomy
+      type: SubscribableTaxonomy,
+      required: true
     },
     subscriberName: {
-      type: String
+      type: String,
+      required: true,
+      default: 'main'
     }
   },
   components: {
@@ -136,27 +155,58 @@ export default Observer({
     itemsCount () {
       return 0
     },
-    refsIds () {
-      const { subscriberName, taxonomy: { name, parents }} = this
-      if (!parents) return
-      console.log(`${name.toUpperCase()} parents:`, parents)
-      const x = parents.map(tax => {
-        const { form: { plural }, subscribers } = this.$lodger[tax]
-        // console.log('pl', plural)
-        if (subscribers[subscriberName]) {
-          return { [`${plural}`]: subscribers[subscriberName].selectedId }
-        }
-      })
-      console.log('x', x)
-      return x
+    subscriber () {
+      return this.taxonomy.subscribers[this.subscriberName]
     }
-    // items () {
-    //   return this.taxonomy.data[this.subscriberName].items
-    // }
   },
   created () {
-    // this.$emit('subscribe')
-    this.taxonomy.subscribe(this.subscriberName)
+    const { subscriberName } = this
+    this.taxonomy.subscribe(subscriberName)
+  },
+  mounted () {
+    const {
+      subscriberName,
+      subscriber,
+      taxonomy: {
+        name,
+        parents,
+        children,
+        subscribers,
+        form: { plural }
+      },
+    } = this
+
+    setTimeout(() => {
+
+      reaction(() => subscriber.activeId, id => {
+        this.$lodger.modal = { name, id }
+      })
+
+      reaction(() => subscriber.selectedId, ids => {
+        this.selectedId = ids
+
+        if (children.length) {
+          children.map(tax => {
+            const $tax = this.$lodger[tax]
+            const { parents } = $tax
+            const sub  = $tax.subscribers[subscriberName]
+            let sOrP, op, val
+            if (parents && parents.length) {
+              const isSingular = parents.indexOf(name) > -1
+              sOrP = isSingular ? `${name}Id` : plural
+              op = isSingular ? '$eq' : '$in'
+              val = isSingular ? ids : [ids]
+            }
+
+            if (sOrP && op && val)
+              sub.criteria.filter = { [sOrP]: { [op]: val } }
+            else if (sub.criteria.filter[sOrP]) {
+              delete sub.criteria.filter[sOrP]
+            }
+          })
+        }
+      })
+    }, 1500);
   },
   methods: {
     // get _sort () {

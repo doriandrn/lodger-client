@@ -72,21 +72,18 @@
         a credits
 
   //- toasts
-  //- modal(
-  //-     v-show=  "modalOpen"
-  //-     :title=   "modalContent && modalContent !== 'prompt' ? $t(`${modalContent}.title`) : null"
-  //-   )
-  //-     frm#main(
-  //-       v-if=       "modalContent && modalContent !== 'prompt'",
-  //-       :form=      "modalForm",
-  //-       :isNew=     "modalContent.split('.')[1] === 'new'"
-  //-       @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
-  //-     )
+  modal
+    //- frm#main(
+    //-   v-if=       "modalContent && modalContent !== 'prompt'",
+    //-   :form=      "modalForm",
+    //-   :isNew=     "modalContent.split('.')[1] === 'new'"
+    //-   @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
+    //- )
 
-  //-     prompt(v-else-if= "modalContent === 'prompt'")
+    //- prompt(v-else-if= "modalContent === 'prompt'")
 
-  //-     p(v-else) loading
-  //-     //- cale(slot="footer")
+    //- p(v-else) loading
+      //- cale(slot="footer")
 </template>
 
 <script>

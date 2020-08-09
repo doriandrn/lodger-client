@@ -12,21 +12,21 @@ sction#pg
       v-for=        "tax in $lodger.taxonomies"
       :key=         "tax"
       :taxonomy=    "$lodger[tax]"
-      :subscriberName="subscriberName"
+      :subscriberName=  "subscriberName"
     )
-      div(slot-scope="{ taxonomy, subscriber, refsIds }")
+      header(slot-scope="{ taxonomy, subscriber }")
         h3 {{ taxonomy.plural }}
-        p(v-if="refsIds") {{ refsIds[0] }}
         button.new(
-          @click="taxonomy.put(taxonomy.form.fakeData)"
-        ) add
+          @click="taxonomy.put(Object.assign({}, taxonomy.form.fakeData, refsIds(taxonomy)))"
+        ) +
 
       div(
         slot="item" slot-scope="{ item, subscriber }"
         @click="subscriber.select(item[subscriber.primaryPath])"
       )
-        //- a(:href="`${$lodger[tax].form.name}/${item[subscriber.primaryPath]}`") {{ item.name }}
-        a(href="#" @click="subscriber.edit(item[subscriber.primaryPath])") {{ item.name }}
+        //- :href="`${ $lodger[tax].name }/${ item[subscriber.primaryPath] }`"
+        a( @click="subscriber.edit(item[subscriber.primaryPath])") {{ item.name || item[subscriber.primaryPath] }}
+        //- a(href='' @click="openModal({ id: item[subscriber.primaryPath], tax: $lodger[tax].form.plural })") {{ item.name }}
     //- @new=         "openModal(`${tax}.new`)"
     //- @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
     //- :items=       "subscriberData(tax).items"
@@ -69,6 +69,7 @@ import servicii from 'c/servicii'
 import modal from 'c/modal'
 // import blocuri from 'c/blocuri'
 
+import field from 'form/field'
 import buton from 'form/button'
 import { mapActions } from 'vuex';
 
@@ -78,18 +79,45 @@ export default {
       subscriberName: 'pg2'
     }
   },
+  watch: {
+    '$route.path': function () {
+      console.log(arguments)
+    }
+  },
   mounted () {
     console.log(this.$lodger)
     console.log(this.$lodger.taxonomies)
   },
-  // computed: {
-  //   items() {
-  //     return (taxonomy, subscriberName) => subscriberName && taxonomy[subscriberName] ?
-  //       taxonomy[subscriberName].items :
-  //       {}
+  computed: {
+    refsIds () {
+      return tax => {
+        const x = {}
+        const { name, parents } = tax
+        const { subscriberName } = this
+        if (parents && parents.length) {
+          parents.map(tax => {
+            const $tax = this.$lodger[tax] || this.$lodger[tax.plural]
+            if (!$tax) return
+            const { form: { plural }, subscribers } = $tax
+            const sub = subscribers[subscriberName]
 
-  //   }
-  // },
+            if (sub) {
+              const { selectedId } = sub
+              if (selectedId)
+                x[plural === tax ? plural : `${tax}Id`] = plural === tax ? [ selectedId ] : selectedId
+            }
+          })
+        }
+        return x
+      }
+    }
+    // items() {
+    //   return (taxonomy, subscriberName) => subscriberName && taxonomy[subscriberName] ?
+    //     taxonomy[subscriberName].items :
+    //     {}
+
+    // }
+  },
   components: {
     sction,
     // frm,
@@ -122,6 +150,13 @@ export default {
     margin 8px
     padding 8px
     border 1px solid rgba(black, .05)
+
+    header
+      display flex
+      flex-flow row nowrap
+
+      .new
+        margin-left auto
 
     &.list
       flex 0 1 280px

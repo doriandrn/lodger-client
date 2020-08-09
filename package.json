@@ -15,10 +15,10 @@
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.4.1",
+    "@nuxtjs/axios": "^5.12.1",
     "acorn": "^7.4.0",
     "lodger": "git+ssh://git@gitlab.com/doriandrn/lodger-api.git#master",
-    "mobx": "^5.15.4",
+    "mobx": "^5.15.5",
     "mobx-vue": "^2.0.10",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",

@@ -361,6 +361,10 @@ export default {
     valid: {
       type: Boolean,
       default: false
+    },
+    v: {
+      type: String,
+      default: ''
     }
   },
   components: {

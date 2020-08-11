@@ -3,14 +3,15 @@
   details
     dateTime(:datetime= "createdAt")
 
-  div(v-if="docdata" v-for="field in fields")
+  section(v-if= "docdata")
     field(
+      v-for=    "field in fields",
       :id=      "field",
       :key=     "field"
       :label =  "field"
       :value=   "docdata[field]"
       :required = "schema.required.indexOf(field) > -1"
-      :type= "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : schema.properties[field].type"
+      :type= "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field].type || 'string')"
     )
 </template>
 
@@ -63,3 +64,27 @@ export default {
   }
 }
 </script>
+
+<style lang="styl">
+#single
+  .list
+    display flex
+    flex-flow row-reverse nowrap
+
+  button.new
+    size 40px
+    line-height 40px
+    border-radius 50px
+
+  section
+    > div
+      display flex
+      flex-flow column-reverse nowrap
+      padding 8px 0
+
+      &:not(:first-child)
+        border-top 1px solid rgba(black, .05)
+
+      > span
+        flex 1 1 100%
+</style>

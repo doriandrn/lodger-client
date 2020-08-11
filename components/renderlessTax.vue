@@ -28,11 +28,11 @@
       :class= "{ last: taxonomy && id === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(id) > -1 }"
     )
       slot(
-        v-if=   "taxonomy"
         name=   "item"
         :item=  "item"
-        :subscriber="taxonomy.subscribers[subscriberName]"
+        :subscriber="taxonomy ? taxonomy.subscribers[subscriberName] : null"
       )
+
 
   //- empty state
   p(v-else-if="taxonomy && taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga

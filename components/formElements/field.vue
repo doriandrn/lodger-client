@@ -109,6 +109,9 @@
       v-else-if=  "type === 'taxonomy'"
       :documents= "value"
     )
+      div(slot="item" slot-scope="{ item }") {{ item.name }}
+      button.new(@click="") +
+
     p(v-else-if=        "type === 'contactFields'") contactFields
 
   labl.field__label(

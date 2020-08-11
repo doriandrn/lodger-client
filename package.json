@@ -23,6 +23,7 @@
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
     "nuxt": "^2.14.1",
+    "postcss-styl": "^0.7.2",
     "pouchdb-adapter-memory": "^7.2.1",
     "rxcollection-subscriber": "^1.0.7",
     "rxdb": "^9.5.0",

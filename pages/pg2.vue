@@ -13,6 +13,7 @@ sction#pg
       :key=         "tax"
       :taxonomy=    "$lodger[tax]"
       :subscriberName=  "subscriberName"
+      :data-tax=  "tax"
     )
       header(slot-scope="{ taxonomy, subscriber }")
         h3 {{ taxonomy.plural }}
@@ -20,20 +21,40 @@ sction#pg
           @click="taxonomy.put(Object.assign({}, taxonomy.form.fakeData, refsIds(taxonomy)))"
         ) +
 
+        field.sort(
+          v-if=     "subscriber && subscriber.documents.length > 1"
+          type=     "radios"
+          label=    "sort.label"
+          v-model=  "subscriber.criteria"
+          :id=       "`sort-${ subscriber.name }`"
+          :options=  "taxonomy.form.schema.indexes"
+          required= true
+          :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
+          @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort"
+        )
+
       div(
-        slot="item" slot-scope="{ item, subscriber }"
+        slot="item" slot-scope="{ item, subscriber, taxonomy }"
         @click="subscriber.select(item[subscriber.primaryPath])"
       )
+        viw(
+          v-for=  "key, i in taxonomy.form.previewFields"
+          :type=  "key",
+          :key=   "key",
+          :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
+          @click= "subscriber.edit(item[subscriber.primaryPath])"
+        )
         //- :href="`${ $lodger[tax].name }/${ item[subscriber.primaryPath] }`"
-        a( @click="subscriber.edit(item[subscriber.primaryPath])") {{ item.name || item[subscriber.primaryPath] }}
-        //- a(href='' @click="openModal({ id: item[subscriber.primaryPath], tax: $lodger[tax].form.plural })") {{ item.name }}
+        //- a( @click="subscriber.edit(item[subscriber.primaryPath])") {{ item[taxonomy.form.previewFields[0]] }}
+        //- span(v-for="field, i in taxonomy.form.previewFields" v-if="i > 0") {{ item[field] }}
+        //- //- a(href='' @click="openModal({ id: item[subscriber.primaryPath], tax: $lodger[tax].form.plural })") {{ item.name }}
     //- @new=         "openModal(`${tax}.new`)"
     //- @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
     //- :items=       "subscriberData(tax).items"
     //- :criteriu=    "subscriberData(tax).criteriu"
     //- :fetching=    "subscriberData(tax).fetching"
 
-    //- :references=  "$lodger.forms[tax].referenceTaxonomies"
+    //- :references=  "$FFlodger.forms[tax].referenceTaxonomies"
     //- :showElements="$lodger.forms[tax].__displayItemKeys"
     //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
     //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"
@@ -67,6 +88,7 @@ import list from 'c/renderlessTax'
 import registru from 'c/registru'
 import servicii from 'c/servicii'
 import modal from 'c/modal'
+import viw from 'c/viewElement'
 // import blocuri from 'c/blocuri'
 
 import field from 'form/field'
@@ -120,12 +142,14 @@ export default {
   },
   components: {
     sction,
+    field,
     // frm,
     list,
     // registru,
     // servicii,
     // blocuri,
-    buton
+    buton,
+    viw
   },
 }
 </script>

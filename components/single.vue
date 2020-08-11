@@ -1,5 +1,8 @@
 <template lang="pug">
 #single
+  ul.breadcrumbs(v-if="asAccordion")
+    li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
+
   details
     dateTime(:datetime= "createdAt")
 
@@ -9,9 +12,9 @@
       :id=      "field",
       :key=     "field"
       :label =  "field"
-      :value=   "docdata[field]"
+      :value=   "docdata[field] || form.fields[field].default"
       :required = "schema.required.indexOf(field) > -1"
-      :type= "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field].type || 'string')"
+      :type=    "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
     )
 </template>
 
@@ -54,8 +57,24 @@ export default {
       const { _id }  = this.docdata
       return _id.split(':')[1]
     },
+    taxonomy () {
+      return this.doc.collection.name.plural
+    },
+    form () {
+      return this.$lodger[this.taxonomy].form
+    },
     schema () {
-      return this.$lodger[this.doc.collection.name.plural].form.schema
+      return this.form.schema
+    },
+    breadcrumbs () {
+      const $tax = this.$lodger[this.taxonomy]
+      const { parents } = $tax
+      if (!parents || !parents.length) return
+      return parents.filter(parent => this.fields.indexOf(parent + 'Id') > - 1)
+    },
+
+    asAccordion () {
+      return this.breadcrumbs && this.breadcrumbs.length
     }
   },
   components: {
@@ -66,6 +85,18 @@ export default {
 </script>
 
 <style lang="styl">
+.breadcrumbs
+  position absolute
+  top -100px
+  left 0
+  padding 0
+  width 100%
+
+  li
+    background rgba(black, .05)
+    line-height 20px
+    padding 12px
+
 #single
   .list
     display flex

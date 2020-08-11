@@ -8,6 +8,7 @@ transition(name="modal")
   )
     .backdrop(@click="inchide")
 
+    slot(name="beforeContainer")
     .container
       header(v-if="$slots.header || title")
         slot(name="header")
@@ -22,6 +23,7 @@ transition(name="modal")
         )
       footer(v-if="$slots.footer")
         slot(name="footer")
+    slot(name="afterContainer")
 </template>
 
 <script>
@@ -124,7 +126,6 @@ lrPad = 32px
   .content
     position relative
     flex 1 1 100%
-    overflow auto
     padding 20px
 
     +above(xl)

@@ -1,7 +1,7 @@
 <template lang="pug">
 label
   slot
-  span.input__optional(v-if="!required") optional
+  small(v-if="!required") optional
 </template>
 
 <script>
@@ -19,7 +19,8 @@ export default {
 
 <style lang="stylus">
 @require '~styles/config'
-defColor = config.typography.palette.labels
+typeColors = config.typography.palette
+defColor = typeColors.labels
 
 label
   display inline-flex
@@ -28,4 +29,9 @@ label
 
   &:before
     background-color: defColor
+
+  small
+    margin-left 4px
+    color: typeColors.meta
+    font-weight 100
 </style>

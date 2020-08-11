@@ -10,16 +10,16 @@
 <template lang="pug">
 .list
   slot(:taxonomy="taxonomy")
-  field.sort(
-    v-if=     "subscriber && subscriber.documents.length > 1"
-    type=     "radios"
-    label=    "sort.label"
-    v-model=  "subscriber.criteria"
-    :id=       "`sort-${ subscriber.name }`"
-    :options=  "{} || sortOptions"
-    required= true
-    :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
-    @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort")
+  //- field.sort(
+  //-   v-if=     "subscriber && subscriber.documents.length > 1"
+  //-   type=     "radios"
+  //-   label=    "sort.label"
+  //-   v-model=  "subscriber.criteria"
+  //-   :id=       "`sort-${ subscriber.name }`"
+  //-   :options=  "{} || sortOptions"
+  //-   required= true
+  //-   :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
+  //-   @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort")
 
   ul(v-if="documents && documents.length || taxonomy && taxonomy.subscribers[subscriberName].ids.length")
     li(
@@ -31,6 +31,7 @@
         name=   "item"
         :item=  "item"
         :subscriber="taxonomy ? taxonomy.subscribers[subscriberName] : null"
+        :taxonomy="taxonomy"
       )
 
 
@@ -122,7 +123,7 @@
 
 <script>
 /** Components Imports */
-import field from 'form/field'
+// import field from 'form/field'
 import empty from 'c/empty'
 import buton from 'form/button'
 import bani from 'c/bani'
@@ -155,7 +156,7 @@ export default Observer({
   },
   components: {
     empty,
-    field,
+    // field,
     buton,
     bani,
     viw,
@@ -406,6 +407,8 @@ typeColors = config.typography.palette
     > div
       padding 8px
       width 100%
+      display flex
+      justify-content space-between
 
       a
         text-decoration none
@@ -419,13 +422,13 @@ typeColors = config.typography.palette
       display inline
       color: typeColors.headings
 
-    &.last
-      > div
-        &:after
-          content ''
-          display inline-block
-          vertical-align middle
-          bubble()
+    // &.last
+    //   > div
+    //     &:after
+    //       content ''
+    //       display inline-block
+    //       vertical-align middle
+    //       bubble()
 
     &:not(:last-child)
       border-bottom: 1px solid colors.borders

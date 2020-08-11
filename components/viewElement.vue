@@ -1,30 +1,30 @@
 <template lang="pug">
-.view
-  strong(
-    v-if="['name', 'proprietar', 'denumire'].indexOf(type) > -1"
-  ) {{ value }}
-  timp(
-    v-else-if= "['la', 'dataScadenta'].indexOf(type) > -1"
-    :unixTime = "value"
-    ago=  true
-    liveUpdate= true
-  )
-  bani(
-    v-else-if="['suma', 'bani', 'balanta'].indexOf(type) > -1"
-    :valoare="value"
-  )
-  suprafata(
-    v-else-if="type === 'suprafata'"
-    :value="value"
-  )
-  servicii(
-    v-else-if="type === 'servicii'"
-    :value="value"
-  )
-  span.ap__nr(
-    v-else-if="type === 'nr'"
-  ) {{ value }}
-  span(v-else) {{ type }}: {{ value }}
+strong(
+  v-if="['name', 'proprietar', 'denumire'].indexOf(type) > -1"
+  @click="$emit('click')"
+) {{ value }}
+timp(
+  v-else-if= "['la', 'dataScadenta'].indexOf(type) > -1"
+  :unixTime = "value"
+  ago=  true
+  liveUpdate= true
+)
+bani(
+  v-else-if="['suma', 'bani', 'balanta'].indexOf(type) > -1"
+  :valoare="value"
+)
+suprafata(
+  v-else-if="type === 'suprafata'"
+  :value="value"
+)
+servicii(
+  v-else-if="type === 'servicii'"
+  :value="value"
+)
+span.ap__nr(
+  v-else-if="type === 'nr'"
+) {{ value }}
+span(v-else) {{ value }}
 </template>
 
 <script>

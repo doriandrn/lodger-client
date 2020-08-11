@@ -114,7 +114,7 @@
 
     p(v-else-if=        "type === 'contactFields'") contactFields
 
-  labl.field__label(
+  labl(
     v-show=         "!hideLabel && type !== 'button'"
     :required=      "required"
     :for=           "id"
@@ -649,12 +649,12 @@ input[type="checkbox"]
       size 40px
       transition background-color .15s ease-in-out
 
-      &:not(.input__optional)
+      &:not(small)
         display block
         border-radius 50%
         border: 1px solid config.typography.palette.meta
 
-    .input__optional
+    small
       display none
 
   &:checked
@@ -695,11 +695,6 @@ input[type="checkbox"]
 
     > input[type="checkbox"]
       display none
-
-  &__optional
-    margin-left 4px
-    color: typeColors.meta
-    font-weight 100
 
   &__radio
     display flex

@@ -51,7 +51,7 @@ ul.scari.zebra
       styl=         "unstyled"
       icon-only
       tooltip
-    ) {{ $t('scara.sterge') }}
+    ) scara.sterge
   buton(
     v-if=     "scari.length < 14"
     size=     "small"
@@ -59,7 +59,7 @@ ul.scari.zebra
     @click=   "scari.push({ id: scari.length + 1, etaje: 1, lift: false, mansarda: false })"
     icon-only
     tooltip
-  ) {{ $t('scara.new.title') }}
+  ) scara.new.title
 </template>
 
 <script>

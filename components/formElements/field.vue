@@ -105,6 +105,10 @@
       :value=           "value"
       :servicii=        "servicii"
     )
+    tax(
+      v-else-if=  "type === 'taxonomy'"
+      :documents= "value"
+    )
     p(v-else-if=        "type === 'contactFields'") contactFields
 
   labl.field__label(
@@ -146,6 +150,7 @@ import contoare from 'form/contoare'
 import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
+import tax from  'c/renderlessTax'
 
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -234,7 +239,7 @@ export default {
       indexRezultatSelectat: 0
     }
   },
-  name: 'field',
+  name: 'Field',
   props: {
     type: {
       type: String,
@@ -250,6 +255,7 @@ export default {
         return this.id
       }
     },
+
     transform: {
       type: String,
       default: null
@@ -382,6 +388,7 @@ export default {
     servicii,
     selApartamente,
     slect,
+    tax,
     txtarea,
     ValidationProvider
   },

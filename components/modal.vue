@@ -1,31 +1,41 @@
 <template lang="pug">
 transition(name="modal")
   .modal(
-    :class= "{'modal--hasFooter': $slots.footer, overflow: shouldOverflow }"
+    v-show=     "$lodger.modal.activeDoc"
+    :data-tax=  "$lodger.modal.tax"
+    :class= "{'hasFooter': $slots.footer, overflow}"
     v-focus
   )
-    .modal__backdrop(@click="inchide")
-    .modal__container
-      header.modal__header(v-if="$slots.header || title")
+    .backdrop(@click="inchide")
+
+    .container
+      header(v-if="$slots.header || title")
         slot(name="header")
-        h2.modal__title(v-if="title") {{ title }}
-      .modal__content(
-        v-if=   "$slots.default",
-        :class= "{ prompt: modalContent === 'prompt' }"
-      )
+        h2(v-if="$lodger.modal.activeDoc") {{ $lodger.modal.activeDoc.name || $lodger.modal.activeDoc.denumire }}
+        h2(v-else-if="title") {{ title }}
+
+      main.content
         slot
-      .modal__footer(v-if="$slots.footer")
+        single(
+          v-if= "$lodger.modal.activeDoc"
+          :doc= "$lodger.modal.activeDoc"
+        )
+      footer(v-if="$slots.footer")
         slot(name="footer")
 </template>
 
 <script>
 import { observer } from 'mobx-vue'
+import single from 'c/single'
 
 export default observer({
   computed: {
     shouldOverflow () {
       return this.modalContent === 'incasare.new'
     },
+    // doc () {
+    //   return this.$lodger.modal.activeDoc
+    // }
   },
   directives: {
     focus: {
@@ -35,11 +45,27 @@ export default observer({
       }
     }
   },
+  methods: {
+    inchide () {
+      this.$lodger.modal.close()
+    }
+  },
   props: {
+    overflow: {
+      type: Boolean,
+      default: false
+    },
+    id: {
+      type: String,
+      default: ''
+    },
     title: {
       type: String,
       default: 'Modal title'
     }
+  },
+  components: {
+    single
   }
 })
 </script>
@@ -59,7 +85,7 @@ lrPad = 32px
   // visibility hidden
   transition all .15s ease-in-out
 
-  &__backdrop
+  .backdrop
     position absolute 0
     z-index 201
     background rgba(white, .85)
@@ -67,7 +93,7 @@ lrPad = 32px
     // visibility hidden
     transition opacity .15s ease-in-out
 
-  &__container
+  .container
     position absolute
     top calc(50% - 20px)
     left 50%
@@ -92,10 +118,10 @@ lrPad = 32px
     +above(m)
       width 85%
 
-  &__header
+  header
     background transparent
 
-  &__content
+  .content
     position relative
     flex 1 1 100%
     overflow auto
@@ -140,11 +166,11 @@ lrPad = 32px
           min-width 120px
 
   &.overflow
-    .modal__content
+    .content
       overflow visible
 
-  &__footer
-  &__header
+  footer
+  header
     padding-left 10px
     padding-right 10px
     +above(m)
@@ -154,8 +180,8 @@ lrPad = 32px
       padding-left: lrPad
       padding-right: lrPad
 
-  &__footer
-  &__header
+  footer
+  header
     padding-top: (config.spacings.inBoxes/2)
     padding-bottom: (config.spacings.inBoxes/2)
 
@@ -163,14 +189,13 @@ lrPad = 32px
       padding-top: config.spacings.inBoxes
       padding-bottom: config.spacings.inBoxes
 
-  &__title
+  h2
     margin-bottom 0
-  &__footer
+
+  footer
     lost-utility clearfix
     background: config.palette.bgs.body
 
-
-.modal
   &-enter
     opacity 0
 

@@ -74,7 +74,7 @@
     "ts-loader": "^8.0.2",
     "typescript": "^3.8.2",
     "v-tooltip": "^2.0.0-rc.33",
-    "vee-validate": "^3.2.5",
+    "vee-validate": "^3.3.9",
     "vue-class-component": "^7.0.1",
     "vue-for-range": "^1.0.2",
     "vue-loader": "^15.7.0",

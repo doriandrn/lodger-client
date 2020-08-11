@@ -21,14 +21,21 @@
     :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
     @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort")
 
-  ul(v-if="taxonomy.subscribers[subscriberName].ids.length")
+  ul(v-if="documents && documents.length || taxonomy && taxonomy.subscribers[subscriberName].ids.length")
     li(
-      v-for=  "item, id in taxonomy.subscribers[subscriberName].items"
+      v-for=  "item, id in documents ? documents : taxonomy.subscribers[subscriberName].items"
       :key=   "id"
-      :class= "{ last: id === taxonomy.lastItems[0], selected: String(taxonomy.subscribers[subscriberName].selectedId).indexOf(id) > -1 }"
+      :class= "{ last: taxonomy && id === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(id) > -1 }"
     )
-      slot(name="item" :item="item" :subscriber="taxonomy.subscribers[subscriberName]")
-  p(v-else-if="taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga
+      slot(
+        v-if=   "taxonomy"
+        name=   "item"
+        :item=  "item"
+        :subscriber="taxonomy.subscribers[subscriberName]"
+      )
+
+  //- empty state
+  p(v-else-if="taxonomy && taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga
   //- split.list__header
   //-   .top
   //-     h2.list__heading {{ plural }}
@@ -132,15 +139,18 @@ export default Observer({
       selectedId: ''
     }
   },
+  name: 'Tax',
   props: {
     taxonomy: {
       type: SubscribableTaxonomy,
-      required: true
     },
     subscriberName: {
       type: String,
-      required: true,
       default: 'main'
+    },
+    documents: {
+      type: [Promise, Array],
+      default: null
     }
   },
   components: {
@@ -153,33 +163,41 @@ export default Observer({
   },
   computed: {
     itemsCount () {
+      if (this.documents) return this.documents.length
       return 0
     },
     subscriber () {
+      if (!this.taxonomy) return
       return this.taxonomy.subscribers[this.subscriberName]
     }
   },
   created () {
-    const { subscriberName } = this
-    this.taxonomy.subscribe(subscriberName)
+    const { subscriberName, taxonomy } = this
+    if (!taxonomy || !subscriberName) return
+    taxonomy.subscribe(subscriberName)
   },
   mounted () {
     const {
       subscriberName,
       subscriber,
-      taxonomy: {
-        name,
-        parents,
-        children,
-        subscribers,
-        form: { plural }
-      },
+      taxonomy
     } = this
+
+    if (!taxonomy) return
+
+    const {
+      name,
+      parents,
+      children,
+      subscribers,
+      form: { plural }
+    } = taxonomy
 
     setTimeout(() => {
 
-      reaction(() => subscriber.activeId, id => {
-        this.$lodger.modal = { name, id }
+      reaction(() => subscriber.activeId, async id => {
+        const activeDoc = await this.taxonomy.collection.findOne(id).exec()
+        this.$lodger.modal.activeDoc = activeDoc
       })
 
       reaction(() => subscriber.selectedId, ids => {

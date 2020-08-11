@@ -111,7 +111,8 @@ export default {
     },
 
     taxonomy: {
-      type: [String, Array]
+      type: [String, Array],
+      default: null
     },
 
     items: {

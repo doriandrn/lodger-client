@@ -58,7 +58,7 @@
     nuxt
 
   footr
-    a user
+    a user select
     p Utilizator adaugat! bla bla
     div(slot="right")
       .lang-switch
@@ -72,18 +72,20 @@
         a credits
 
   //- toasts
+
   modal
-    //- frm#main(
-    //-   v-if=       "modalContent && modalContent !== 'prompt'",
-    //-   :form=      "modalForm",
-    //-   :isNew=     "modalContent.split('.')[1] === 'new'"
-    //-   @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
-    //- )
 
-    //- prompt(v-else-if= "modalContent === 'prompt'")
+      //- frm#main(
+      //-   v-if=       "modalContent && modalContent !== 'prompt'",
+      //-   :form=      "modalForm",
+      //-   :isNew=     "modalContent.split('.')[1] === 'new'"
+      //-   @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
+      //- )
 
-    //- p(v-else) loading
-      //- cale(slot="footer")
+      //- prompt(v-else-if= "modalContent === 'prompt'")
+
+      //- p(v-else) loading
+        //- cale(slot="footer")
 </template>
 
 <script>
@@ -100,6 +102,7 @@ import buton from 'form/button'
 
 import toasts from 'c/toasts'
 import dropdown from 'c/dropdown'
+
 
 import Package from '../package.json'
 const { version, name, author } = Package

@@ -9,7 +9,16 @@ export default async ({ app, store }, inject) => {
     title: '',
     taxonomy: '',
     id: '',
-    isPrompt: false
+    activeDoc: null,
+    isPrompt: false,
+    close: function () {
+      console.log(this)
+      this.title = ''
+      this.taxonomy = ''
+      this.id = ''
+      this.activeDoc = null
+      this.isPrompt = false
+    }
   }) })
   inject('lodger', lodger)
   app.store = lodger.store

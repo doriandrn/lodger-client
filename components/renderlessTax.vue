@@ -9,111 +9,19 @@
 
 <template lang="pug">
 .list
-  slot(:taxonomy="taxonomy")
-  //- field.sort(
-  //-   v-if=     "subscriber && subscriber.documents.length > 1"
-  //-   type=     "radios"
-  //-   label=    "sort.label"
-  //-   v-model=  "subscriber.criteria"
-  //-   :id=       "`sort-${ subscriber.name }`"
-  //-   :options=  "{} || sortOptions"
-  //-   required= true
-  //-   :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
-  //-   @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort")
+  slot(:taxonomy="taxonomy" :subscriber="subscriber")
 
   ul(v-if="documents && documents.length || taxonomy && taxonomy.subscribers[subscriberName].ids.length")
-    li(
+    slot(
+      name=   "item"
       v-for=  "item, id in documents ? documents : taxonomy.subscribers[subscriberName].items"
-      :key=   "id"
-      :class= "{ last: taxonomy && id === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(id) > -1 }"
+      :item=  "item"
+      :subscriber="taxonomy ? taxonomy.subscribers[subscriberName] : null"
+      :taxonomy="taxonomy"
     )
-      slot(
-        name=   "item"
-        :item=  "item"
-        :subscriber="taxonomy ? taxonomy.subscribers[subscriberName] : null"
-        :taxonomy="taxonomy"
-      )
-
 
   //- empty state
   p(v-else-if="taxonomy && taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga
-  //- split.list__header
-  //-   .top
-  //-     h2.list__heading {{ plural }}
-  //-       em(
-  //-         v-for="ref in references"
-  //-         :class="{ active: typeof referencesIds[`${ref}Id`] === 'object' ? referencesIds[`${ref}Id`].id : referencesIds[`${ref}Id`]}"
-  //-       ) {{ ref }}
-
-  //-     buton(
-  //-       @click=     "$emit($event.shiftKey ? 'fakeNew' : 'new')"
-  //-       :disabled = "!allReferencesHaveValues"
-  //-       styl=       "unstyled"
-  //-       icon=       "plus"
-  //-       icon-only
-  //-     ) adauga
-
-  //-   .bottom
-  //-     //- span(v-if="ids.length") {{ ids.length }}/{{ itemsCount }}
-
-  //-   //- buton(slot="right") ceva
-
-  //- p.empty(v-if="!ids.length") gol
-
-  //- field.sort(
-  //-   v-if=     "ids.length > 1"
-  //-   type=     "radios",
-  //-   label=    "sort.label"
-  //-   v-model=  "_sort"
-  //-   :id=       "`sort-${taxonomy}`"
-  //-   :options=  "sortOptions"
-  //-   required= true
-  //-   @click=    "criteriu.sort = $event.checked ? { key: $event.index, direction: -1 } : criteriu.sort"
-  //-   :class=     "{ reverseActive: criteriu && criteriu.sort && criteriu.sort.direction < 1}"
-  //- )
-
-  //- ul(
-  //-   v-if=     "items && ids.length"
-  //-   :class=   "{ fetching }"
-  //- )
-  //-   li(
-  //-     v-for=  "item, id in items"
-  //-     :data-id=    "id"
-  //-     :class= "{ last: last === id, selected: typeof selected === 'string' ? selected === id : selected && selected.length && selected.contains(id) }"
-  //-     @click= "$emit('select', id)"
-  //-   )
-  //-     split
-  //-       div(
-  //-         v-if=   "__displayItemLocations"
-  //-         v-for=  "location in Object.keys(__displayItemLocations)"
-  //-         :class= "location"
-  //-         )
-  //-         viw(
-  //-           v-for=  "key in __displayItemLocations[location]"
-  //-           v-if=   "item[key] && __displayItemLocations[location] && key !== 'moneda'"
-  //-           :type=  "key",
-  //-           :key=   "key",
-  //-           :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
-  //-           :class= "`${taxonomy}__${key}`"
-  //-         )
-
-  //-       .item__controls(slot="right")
-  //-         buton(
-  //-           @click= "$emit('edit', item)"
-  //-           styl=   "unstyled"
-  //-           icon=   "edit"
-  //-           tooltip
-  //-           icon-only
-  //-         ) modifica
-  //-         buton(
-  //-           @click= "$emit('trash', id)"
-  //-           styl=   "unstyled"
-  //-           icon=   "trash"
-  //-           dangerous= true
-  //-           tooltip
-  //-           icon-only
-  //-         ) sterge
-
 
   //- buton.more(
   //-   v-if="ids && ids.length < itemsCount"
@@ -401,20 +309,17 @@ typeColors = config.typography.palette
   li
     display flex
     flex-flow row nowrap
+    justify-content space-between
     position relative
     overflow hidden
+    padding 8px
+    width 100%
 
-    > div
-      padding 8px
-      width 100%
-      display flex
-      justify-content space-between
+    a
+      text-decoration none
 
-      a
-        text-decoration none
-
-        &:hover
-          text-decoration underline
+      &:hover
+        text-decoration underline
 
     strong
       font-weight 400
@@ -422,13 +327,13 @@ typeColors = config.typography.palette
       display inline
       color: typeColors.headings
 
-    // &.last
-    //   > div
-    //     &:after
-    //       content ''
-    //       display inline-block
-    //       vertical-align middle
-    //       bubble()
+    &.last
+      > a
+        &:after
+          content ''
+          display inline-block
+          vertical-align middle
+          bubble()
 
     &:not(:last-child)
       border-bottom: 1px solid colors.borders

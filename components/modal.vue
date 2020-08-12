@@ -10,19 +10,12 @@ transition(name="modal")
 
     slot(name="beforeContainer")
     .container
-      header(v-if="$slots.header || title")
-        slot(name="header")
-        h2(v-if="$lodger.modal.activeDoc") {{ $lodger.modal.activeDoc.name || $lodger.modal.activeDoc.denumire }}
-        h2(v-else-if="title") {{ title }}
-
       main.content
         slot
         single(
           v-if= "$lodger.modal.activeDoc"
           :doc= "$lodger.modal.activeDoc"
         )
-      footer(v-if="$slots.footer")
-        slot(name="footer")
     slot(name="afterContainer")
 </template>
 

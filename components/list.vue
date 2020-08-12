@@ -306,126 +306,126 @@ export default {
 </script>
 
 <style lang="stylus">
-@require '~styles/config'
-colors = config.palette
-typeColors = config.typography.palette
+// @require '~styles/config'
+// colors = config.palette
+// typeColors = config.typography.palette
 
-.list
-  &__heading
-    margin-bottom 0
+// .list
+//   &__heading
+//     margin-bottom 0
 
-    em
-      font-size 10px
-      margin 0 10px
-      opacity .5
+//     em
+//       font-size 10px
+//       margin 0 10px
+//       opacity .5
 
-      &.active
-        opacity 1
-        color blue
+//       &.active
+//         opacity 1
+//         color blue
 
-  &__header
-    max-height 60px
-    margin-bottom 0
+//   &__header
+//     max-height 60px
+//     margin-bottom 0
 
-    .top
-      display flex
-      flex-flow row nowrap
-      align-items center
+//     .top
+//       display flex
+//       flex-flow row nowrap
+//       align-items center
 
-      > *:not(:first-child)
-        margin-left 20px
+//       > *:not(:first-child)
+//         margin-left 20px
 
-    .left
-      display flex
-      flex-flow column nowrap
-      align-items flex-start
+//     .left
+//       display flex
+//       flex-flow column nowrap
+//       align-items flex-start
 
-      > *
-        flex 1 1 100%
+//       > *
+//         flex 1 1 100%
 
-  .split
-    .left
-      flex-flow column nowrap
-      align-items flex-start
+//   .split
+//     .left
+//       flex-flow column nowrap
+//       align-items flex-start
 
-  .sort
-    background-color: rgba(black, .05)
-
-
-  ul
-    position relative
-    background: colors.bgs.ui
-    padding 0
-    max-height 300px
-    overflow auto
-    position relative
-
-    &:before
-      content ''
-      position absolute 0
-      z-index -1
-      background-color white
-      background-image embedurl('~static/loaders/preload.svg')
-      background-position 50% 50%
-      background-repeat no-repeat
-      transform translateY(-100%)
-      transition transform .15s ease-out
-
-    &.fetching
-      &:before
-        z-index 5
-        transform translateY(0)
+//   .sort
+//     background-color: rgba(black, .05)
 
 
-  li
-    display flex
-    flex-flow row nowrap
-    position relative
-    // padding 8px
-    overflow hidden
+//   ul
+//     position relative
+//     background: colors.bgs.ui
+//     padding 0
+//     max-height 300px
+//     overflow auto
+//     position relative
 
-    strong
-      font-weight 400
-      font-size 14px
-      display inline
-      color: typeColors.headings
+//     &:before
+//       content ''
+//       position absolute 0
+//       z-index -1
+//       background-color white
+//       background-image embedurl('~static/loaders/preload.svg')
+//       background-position 50% 50%
+//       background-repeat no-repeat
+//       transform translateY(-100%)
+//       transition transform .15s ease-out
 
-    &.last
-      strong
-        &:after
-          content ''
-          display inline-block
-          vertical-align middle
-          bubble()
+//     &.fetching
+//       &:before
+//         z-index 5
+//         transform translateY(0)
 
-    &:not(:last-child)
-      border-bottom: 1px solid colors.borders
 
-    &.selected
-      strong
-        color: colors.primary !important
+//   li
+//     display flex
+//     flex-flow row nowrap
+//     position relative
+//     // padding 8px
+//     overflow hidden
 
-    &:hover
-    &:active
-      .item
-        &__controls
-          right 0
+//     strong
+//       font-weight 400
+//       font-size 14px
+//       display inline
+//       color: typeColors.headings
 
-  .item
-    &__controls
-      margin-left auto
-      display flex
-      flex-flow row nowrap
-      position absolute
-      right -120px
-      transition right .1s ease
+//     &.last
+//       strong
+//         &:after
+//           content ''
+//           display inline-block
+//           vertical-align middle
+//           bubble()
 
-      *
-        line-height 14px
+//     &:not(:last-child)
+//       border-bottom: 1px solid colors.borders
 
-      > button:first-child
-        margin-left 64px
+//     &.selected
+//       strong
+//         color: colors.primary !important
 
-      button
-        background transparent
+//     &:hover
+//     &:active
+//       .item
+//         &__controls
+//           right 0
+
+//   .item
+//     &__controls
+//       margin-left auto
+//       display flex
+//       flex-flow row nowrap
+//       position absolute
+//       right -120px
+//       transition right .1s ease
+
+//       *
+//         line-height 14px
+
+//       > button:first-child
+//         margin-left 64px
+
+//       button
+//         background transparent
 </style>

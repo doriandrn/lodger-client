@@ -22,7 +22,7 @@ sction#pg
         ) +
 
         field.sort(
-          v-if=     "subscriber && subscriber.documents.length > 1"
+          v-if=     "subscriber && subscriber.ids.length > 1"
           type=     "radios"
           label=    "sort.label"
           v-model=  "subscriber.criteria"
@@ -33,8 +33,10 @@ sction#pg
           @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort"
         )
 
-      div(
-        slot="item" slot-scope="{ item, subscriber, taxonomy }"
+      li(
+        slot= "item"
+        slot-scope="{ item, subscriber, taxonomy }"
+        :class= "{ last: taxonomy && item._id === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item._id) > -1 }"
         @click="subscriber.select(item[subscriber.primaryPath])"
       )
         viw(
@@ -101,15 +103,7 @@ export default {
       subscriberName: 'pg2'
     }
   },
-  watch: {
-    '$route.path': function () {
-      console.log(arguments)
-    }
-  },
-  mounted () {
-    console.log(this.$lodger)
-    console.log(this.$lodger.taxonomies)
-  },
+
   computed: {
     refsIds () {
       return tax => {
@@ -175,12 +169,17 @@ export default {
     padding 8px
     border 1px solid rgba(black, .05)
 
+    h3
+      margin-bottom 0
+
     header
       display flex
-      flex-flow row nowrap
+      flex-flow row wrap
 
       .new
-        margin-left auto
+        size 24px
+        line-height 24px
+        border-radius 50px
 
     &.list
       flex 0 1 280px
@@ -191,6 +190,7 @@ export default {
 
       .sort
         margin 8px -8px
+        flex 1 1 100%
 
     > button
       margin auto auto 0

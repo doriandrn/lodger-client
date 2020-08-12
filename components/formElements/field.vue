@@ -9,8 +9,8 @@
 )
   validation-provider(:rules="v" v-slot="{ errors }")
     input(
-      v-if=         "['text', 'number', 'search', 'bani', 'checkbox', 'date'].indexOf(type) > -1",
-      :type=        "type !== 'bani' ? type : 'number'",
+      v-if=         "type !== 'taxonomy' && ['string', 'number'].indexOf(String(type).asRxDBType) > -1",
+      :type=        "String(type).asRxDBType",
       :placeholder= "placeholder",
       :autocomplete="autocomplete ? 'on' : 'off'",
       :autosuggest= "autosuggest"

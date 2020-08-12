@@ -1,21 +1,39 @@
 <template lang="pug">
 #single
-  ul.breadcrumbs(v-if="asAccordion")
-    li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
+  header
+    ul.breadcrumbs(v-if="asAccordion")
+      li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
 
-  details
-    dateTime(:datetime= "createdAt")
-
-  section(v-if= "docdata")
     field(
-      v-for=    "field in fields",
+      v-for=    "field in previewFields",
       :id=      "field",
       :key=     "field"
       :label =  "field"
       :value=   "docdata[field] || form.fields[field].default"
       :required = "schema.required.indexOf(field) > -1"
+      :hideLabel = "true"
+      :disabled="!editable"
       :type=    "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
     )
+
+    dateTime(:datetime= "createdAt")
+
+  section.tabs tabs
+
+  section.main(v-if= "docdata")
+    field(
+      v-for=    "field in fields",
+      :id=      "field",
+      :key=     "field"
+      :label =  "field"
+      :disabled="!editable"
+      :value=   "docdata[field] || form.fields[field].default"
+      :required = "schema.required.indexOf(field) > -1"
+      :type=    "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
+    )
+
+  footer.actions
+    button trash
 </template>
 
 <script>
@@ -33,6 +51,10 @@ export default {
     doc: {
       type: Object,
       default: null
+    },
+    editable: {
+      type: Boolean,
+      default: false
     }
   },
   async fetch () {
@@ -51,7 +73,7 @@ export default {
   },
   computed: {
     fields () {
-      return Object.keys(this.docdata).filter(k => k.indexOf('_') !== 0)
+      return Object.keys(this.docdata).filter(k => k.indexOf('_') !== 0 && this.previewFields.indexOf(k) === -1)
     },
     createdAt () {
       const { _id }  = this.docdata
@@ -71,6 +93,9 @@ export default {
       const { parents } = $tax
       if (!parents || !parents.length) return
       return parents.filter(parent => this.fields.indexOf(parent + 'Id') > - 1)
+    },
+    previewFields () {
+      return this.form.previewFields
     },
 
     asAccordion () {
@@ -98,6 +123,7 @@ export default {
     padding 12px
 
 #single
+
   .list
     display flex
     flex-flow row-reverse nowrap
@@ -108,6 +134,10 @@ export default {
     border-radius 50px
 
   section
+    &.main
+      display grid
+      grid-template-columns repeat(3, 1fr)
+
     > div
       display flex
       flex-flow column-reverse nowrap

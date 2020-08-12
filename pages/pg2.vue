@@ -4,12 +4,12 @@ sction#pg
     h5 main actions
     buton(
       size=     "large"
-      rounded=  true
       icon=     "incaseaza"
     ) incaseaza
   .boxes
-    list.box(
+    list(
       v-for=        "tax in $lodger.taxonomies"
+      v-if=         "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
       :key=         "tax"
       :taxonomy=    "$lodger[tax]"
       :subscriberName=  "subscriberName"
@@ -27,7 +27,7 @@ sction#pg
           label=    "sort.label"
           v-model=  "subscriber.criteria"
           :id=       "`sort-${ subscriber.name }`"
-          :options=  "taxonomy.form.schema.indexes"
+          :options=  "Object.assign({}, { ...taxonomy.form.schema.indexes })"
           required= true
           :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
           @click=    "subscriber.criteria.sort = $event.checked ? { key: $event.index, direction: -1 } : subscriber.criteria.sort"
@@ -40,7 +40,7 @@ sction#pg
         @click="subscriber.select(item[subscriber.primaryPath])"
       )
         viw(
-          v-for=  "key, i in taxonomy.form.previewFields"
+          v-for=  "key, i in taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2)"
           :type=  "key",
           :key=   "key",
           :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
@@ -100,11 +100,14 @@ import { mapActions } from 'vuex';
 export default {
   data () {
     return {
-      subscriberName: 'pg2'
+      subscriberName: 'pg2',
     }
   },
 
   computed: {
+    taxAsPlural () {
+      return p => p.indexOf('Id') === p.length - 2 ? p.replace('Id').plural : p
+    },
     refsIds () {
       return tax => {
         const x = {}
@@ -149,6 +152,28 @@ export default {
 </script>
 
 <style lang="stylus">
+@require '~styles/config'
+colors = config.palette
+typeColors = config.typography.palette
+
+.item
+  &__controls
+    margin-left auto
+    display flex
+    flex-flow row nowrap
+    position absolute
+    right -120px
+    transition right .1s ease
+
+    *
+      line-height 14px
+
+    > button:first-child
+      margin-left 64px
+
+    button
+      background transparent
+
 #pg
   .inner
     display grid
@@ -159,15 +184,90 @@ export default {
   *
     user-select none
 
-  li
-    cursor pointer
-
   .box
-    display flex
-    flex-flow column nowrap
-    margin 8px
-    padding 8px
-    border 1px solid rgba(black, .05)
+    &es
+      > div
+        display flex
+        flex-flow column nowrap
+        margin 8px
+        padding 8px
+        border 1px solid rgba(black, .05)
+        flex 0 1 280px
+
+      .sort
+        background-color: rgba(black, .05)
+
+
+      li
+        display flex
+        flex-flow row nowrap
+        justify-content space-between
+        position relative
+        overflow hidden
+        padding 8px
+        width 100%
+
+        strong
+          font-weight 400
+          font-size 14px
+          display inline
+          color: typeColors.headings
+
+          &:first-of-type
+            &:hover
+              text-decoration underline
+
+        &.last
+          > strong:first-of-type
+            &:after
+              content ''
+              display inline-block
+              vertical-align middle
+              bubble()
+
+        &:not(:last-child)
+          border-bottom: 1px solid colors.borders
+
+        &.selected
+          > strong:first-of-type
+            color: colors.primary !important
+
+        &:hover
+        &:active
+          .item
+            &__controls
+              right 0
+
+
+      ul
+        margin -8px
+        width calc(100% + 16px)
+        position relative
+        background: colors.bgs.ui
+        padding 0
+        max-height 300px
+        overflow auto
+        position relative
+
+        &:before
+          content ''
+          position absolute 0
+          z-index -1
+          background-color white
+          background-image embedurl('~static/loaders/preload.svg')
+          background-position 50% 50%
+          background-repeat no-repeat
+          transform translateY(-100%)
+          transition transform .15s ease-out
+
+        &.fetching
+          &:before
+            z-index 5
+            transform translateY(0)
+
+      .sort
+        margin 8px -8px
+        flex 1 1 100%
 
     h3
       margin-bottom 0
@@ -180,17 +280,6 @@ export default {
         size 24px
         line-height 24px
         border-radius 50px
-
-    &.list
-      flex 0 1 280px
-
-      > ul
-        margin -8px
-        width calc(100% + 16px)
-
-      .sort
-        margin 8px -8px
-        flex 1 1 100%
 
     > button
       margin auto auto 0

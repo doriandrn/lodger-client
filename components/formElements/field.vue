@@ -107,7 +107,7 @@
     )
     tax(
       v-else-if=  "type === 'taxonomy'"
-      :documents= "value"
+      :populated= "value || []"
     )
       div(slot="item" slot-scope="{ item }") {{ item.name }}
       button.new(@click="") +

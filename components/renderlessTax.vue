@@ -8,16 +8,17 @@
  */
 
 <template lang="pug">
-.list
+div
+  p ss: {{ shouldShow }} {{ subscriber.name }} {{ activeId }}
   slot(:taxonomy="taxonomy" :subscriber="subscriber")
 
-  ul(v-if="documents && documents.length || taxonomy && taxonomy.subscribers[subscriberName].ids.length")
+  ul(v-if="documents.length || taxonomy && subscriber.ids.length")
     slot(
       name=   "item"
-      v-for=  "item, id in documents ? documents : taxonomy.subscribers[subscriberName].items"
+      v-for=  "item, id in documents.length ? documents : subscriber.items"
       :item=  "item"
-      :subscriber="taxonomy ? taxonomy.subscribers[subscriberName] : null"
-      :taxonomy="taxonomy"
+      :subscriber=  "taxonomy ? subscriber : null"
+      :taxonomy=    "taxonomy"
     )
 
   //- empty state
@@ -45,8 +46,25 @@ import { Observer } from 'mobx-vue'
 export default Observer({
   data () {
     return {
-      selectedId: ''
+      subscriber: {
+        name: 'unsubbscribed',
+        ids: [],
+        selectedId: '',
+        activeId: '',
+        items: {}
+      },
+      documents: []
     }
+  },
+  async fetch () {
+    const { taxonomy, subscriberName, populated, subscriber } = this
+    if (populated) {
+      this.documents = populated
+      return
+    }
+    if (subscriber.name === 'unsubscribed') return
+    await taxonomy.subscribe(subscriberName)
+    this.subscriber = taxonomy.subscribers[subscriberName]
   },
   name: 'Tax',
   props: {
@@ -57,7 +75,7 @@ export default Observer({
       type: String,
       default: 'main'
     },
-    documents: {
+    populated: {
       type: [Promise, Array],
       default: null
     }
@@ -71,69 +89,142 @@ export default Observer({
     split
   },
   computed: {
+    selectedId () {
+      return this.subscriber.selectedId
+    },
+    activeId () {
+      return this.subscriber.selectedId
+    },
+    shouldShow () {
+      const { taxonomy, documents, subscriberName} = this
+      if (documents || !taxonomy) return true
+
+      const { parents, form: { schema: { required } } } = taxonomy
+      if (!parents) return true
+
+      return required.filter(p => {
+        const tax = p.indexOf('Id') === p.length - 2 ? p.replace('Id').plural : p
+        const $tax = this.$lodger[tax]
+        if (!$tax) return
+        const subscriber = $tax.subscribers[subscriberName]
+        if (!subscriber) return
+        return Boolean(subscriber.ids.length)
+      }).length > 0
+      // taxonomy || taxonomy && taxonomy.parents && taxonomy.form.schema.required.filter(p => $lodger[taxAsPlural(p)] && $lodger[taxAsPlural(p)].subscribers[subscriberName] && $lodger[taxAsPlural(p)].subscribers[subscriberName].ids.length > 0).length > 0
+    },
     itemsCount () {
       if (this.documents) return this.documents.length
       return 0
     },
-    subscriber () {
-      if (!this.taxonomy) return
-      return this.taxonomy.subscribers[this.subscriberName]
-    }
+    // subscriber () {
+    //   if (!this.taxonomy) return
+    //   return this.taxonomy.subscribers[this.subscriberName]
+    // }
   },
-  created () {
-    const { subscriberName, taxonomy } = this
-    if (!taxonomy || !subscriberName) return
-    taxonomy.subscribe(subscriberName)
-  },
-  mounted () {
-    const {
-      subscriberName,
-      subscriber,
-      taxonomy
-    } = this
+  watch: {
+    selectedId: function (ids, prevIds) {
+      if (!ids) return
 
-    if (!taxonomy) return
+      const {
+        subscriberName,
+        subscriber,
+        taxonomy
+      } = this
 
-    const {
-      name,
-      parents,
-      children,
-      subscribers,
-      form: { plural }
-    } = taxonomy
+      if (!taxonomy) return
 
-    setTimeout(() => {
+      const {
+        name,
+        parents,
+        children,
+        subscribers,
+        form: { plural }
+      } = taxonomy
 
-      reaction(() => subscriber.activeId, async id => {
-        const activeDoc = await this.taxonomy.collection.findOne(id).exec()
-        this.$lodger.modal.activeDoc = activeDoc
-      })
+      if (!children.length) return
 
-      reaction(() => subscriber.selectedId, ids => {
-        this.selectedId = ids
+      children.map(tax => {
+        const $tax = this.$lodger[tax]
+        const { parents } = $tax
+        const sub  = $tax.subscribers[subscriberName]
+        if (!sub) return
+        let sOrP, op, val
+        if (parents && parents.length) {
+          const isSingular = parents.indexOf(name) > -1
+          sOrP = isSingular ? `${name}Id` : plural
+          op = isSingular ? '$eq' : '$in'
+          val = isSingular ? ids : [ids]
+        }
 
-        if (children.length) {
-          children.map(tax => {
-            const $tax = this.$lodger[tax]
-            const { parents } = $tax
-            const sub  = $tax.subscribers[subscriberName]
-            let sOrP, op, val
-            if (parents && parents.length) {
-              const isSingular = parents.indexOf(name) > -1
-              sOrP = isSingular ? `${name}Id` : plural
-              op = isSingular ? '$eq' : '$in'
-              val = isSingular ? ids : [ids]
-            }
-
-            if (sOrP && op && val)
-              sub.criteria.filter = { [sOrP]: { [op]: val } }
-            else if (sub.criteria.filter[sOrP]) {
-              delete sub.criteria.filter[sOrP]
-            }
-          })
+        if (sOrP && op && val)
+          sub.criteria.filter = { [sOrP]: { [op]: val } }
+        else if (sub.criteria.filter[sOrP]) {
+          delete sub.criteria.filter[sOrP]
         }
       })
-    }, 1500);
+
+    },
+    activeId: async function (id, prevId) {
+      if (id === prevId) return
+      const activeDoc = await this.taxonomy.collection.findOne(id).exec()
+      this.$lodger.modal.activeDoc = activeDoc
+    }
+  },
+  // created () {
+  //   const { subscriberName, taxonomy } = this
+  //   if (!taxonomy || !subscriberName) return
+  //   taxonomy.subscribe(subscriberName)
+  // },
+  mounted () {
+    // const {
+    //   subscriberName,
+    //   subscriber,
+    //   taxonomy
+    // } = this
+
+    // if (!taxonomy) return
+
+    // const {
+    //   name,
+    //   parents,
+    //   children,
+    //   subscribers,
+    //   form: { plural }
+    // } = taxonomy
+
+    // setTimeout(() => {
+
+    //   reaction(() => subscriber.activeId, async id => {
+    //     const activeDoc = await this.taxonomy.collection.findOne(id).exec()
+    //     this.$lodger.modal.activeDoc = activeDoc
+    //   })
+
+    //   reaction(() => subscriber.selectedId, ids => {
+    //     this.selectedId = ids
+
+        // if (children.length) {
+        //   children.map(tax => {
+        //     const $tax = this.$lodger[tax]
+        //     const { parents } = $tax
+        //     const sub  = $tax.subscribers[subscriberName]
+        //     if (!sub) return
+        //     let sOrP, op, val
+        //     if (parents && parents.length) {
+        //       const isSingular = parents.indexOf(name) > -1
+        //       sOrP = isSingular ? `${name}Id` : plural
+        //       op = isSingular ? '$eq' : '$in'
+        //       val = isSingular ? ids : [ids]
+        //     }
+
+        //     if (sOrP && op && val)
+        //       sub.criteria.filter = { [sOrP]: { [op]: val } }
+        //     else if (sub.criteria.filter[sOrP]) {
+        //       delete sub.criteria.filter[sOrP]
+        //     }
+        //   })
+        // }
+    //   })
+    // }, 1500);
   },
   methods: {
     // get _sort () {
@@ -233,136 +324,3 @@ export default Observer({
   // }
 })
 </script>
-
-<style lang="stylus">
-@require '~styles/config'
-colors = config.palette
-typeColors = config.typography.palette
-
-.list
-  &__heading
-    margin-bottom 0
-
-    em
-      font-size 10px
-      margin 0 10px
-      opacity .5
-
-      &.active
-        opacity 1
-        color blue
-
-  &__header
-    max-height 60px
-    margin-bottom 0
-
-    .top
-      display flex
-      flex-flow row nowrap
-      align-items center
-
-      > *:not(:first-child)
-        margin-left 20px
-
-    .left
-      display flex
-      flex-flow column nowrap
-      align-items flex-start
-
-      > *
-        flex 1 1 100%
-
-  .split
-    .left
-      flex-flow column nowrap
-      align-items flex-start
-
-  .sort
-    background-color: rgba(black, .05)
-
-
-  ul
-    position relative
-    background: colors.bgs.ui
-    padding 0
-    max-height 300px
-    overflow auto
-    position relative
-
-    &:before
-      content ''
-      position absolute 0
-      z-index -1
-      background-color white
-      background-image embedurl('~static/loaders/preload.svg')
-      background-position 50% 50%
-      background-repeat no-repeat
-      transform translateY(-100%)
-      transition transform .15s ease-out
-
-    &.fetching
-      &:before
-        z-index 5
-        transform translateY(0)
-
-
-  li
-    display flex
-    flex-flow row nowrap
-    justify-content space-between
-    position relative
-    overflow hidden
-    padding 8px
-    width 100%
-
-    a
-      text-decoration none
-
-      &:hover
-        text-decoration underline
-
-    strong
-      font-weight 400
-      font-size 14px
-      display inline
-      color: typeColors.headings
-
-    &.last
-      > a
-        &:after
-          content ''
-          display inline-block
-          vertical-align middle
-          bubble()
-
-    &:not(:last-child)
-      border-bottom: 1px solid colors.borders
-
-    &.selected
-      > div a
-        color: colors.primary !important
-
-    &:hover
-    &:active
-      .item
-        &__controls
-          right 0
-
-  .item
-    &__controls
-      margin-left auto
-      display flex
-      flex-flow row nowrap
-      position absolute
-      right -120px
-      transition right .1s ease
-
-      *
-        line-height 14px
-
-      > button:first-child
-        margin-left 64px
-
-      button
-        background transparent
-</style>

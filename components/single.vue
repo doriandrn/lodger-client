@@ -16,7 +16,7 @@
       :type=    "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
     )
 
-    dateTime(:datetime= "createdAt")
+    dateTime(:unixTime= "createdAt")
 
   section.tabs tabs
 
@@ -77,7 +77,7 @@ export default {
     },
     createdAt () {
       const { _id }  = this.docdata
-      return _id.split(':')[1]
+      return Number(_id.split(':')[1])
     },
     taxonomy () {
       return this.doc.collection.name.plural
@@ -123,6 +123,8 @@ export default {
     padding 12px
 
 #single
+  > header
+    border-bottom 1px solid
 
   .list
     display flex

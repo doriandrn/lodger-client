@@ -9,7 +9,7 @@ span.input__file(:class="[(error ? 'field--error' : '')]")
     v-if=   "image",
     :src=   "image"
   )
-  inpt(
+  input(
     v-else,
     type=   "file",
     :id=    "id",
@@ -20,7 +20,7 @@ span.input__file(:class="[(error ? 'field--error' : '')]")
     type=     "button",
     :text=    "`$`",
     @clicked= "image ? removeImage : createImage"
-  ) {{ (image ? 'Remove' : 'Upload') }} 
+  ) {{ (image ? 'Remove' : 'Upload') }}
   p.field__message {{ message }}
 </template>
 

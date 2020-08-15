@@ -1,5 +1,5 @@
 <template lang="pug">
-footer.footer
+footer
   .inner.split
     .left
       slot
@@ -7,13 +7,15 @@ footer.footer
       slot(name="right")
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 @require '~styles/config'
 
-.footer
+footer
+  overflow hidden
+
   p
     margin-bottom 0
-    line-height 24px
+    line-height 40px
     font-size 10px
     color rgba(black, .25)
 

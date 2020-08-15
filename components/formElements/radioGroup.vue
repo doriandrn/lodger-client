@@ -28,7 +28,8 @@ div(
       label.label(
         :for=       "optionId(option)"
         :data-id=   "option.id || option.label"
-      ) #[span] {{ options instanceof Array ? option : $t(option.label) }}
+      ) #[span] {{ option }}
+      //- ) #[span] {{ options instanceof Array ? option : $t(option.label) }}
 </template>
 
 <script>
@@ -42,7 +43,7 @@ export default {
         ${ desc ? `<p>${ this.$t(desc) }</p>`: ''}
       `
     },
-    
+
   },
   computed: {
     tooltipsPosition () {

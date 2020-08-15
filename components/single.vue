@@ -5,15 +5,16 @@
       li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
 
     field(
-      v-for=    "field in previewFields",
-      :id=      "field",
-      :key=     "field"
-      :label =  "field"
-      :value=   "docdata[field] || form.fields[field].default"
+      v-for=      "field in previewFields",
+      :id=        "field",
+      :key=       "field"
+      :label =    "field"
+      :value=     "doc._data[field] || form.fields[field].default"
       :required = "schema.required.indexOf(field) > -1"
       :hideLabel = "true"
-      :disabled="!editable"
-      :type=    "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
+      :disabled=  "!editable"
+      :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
+      @input=     "doc.atomicSet(field, $event)"
     )
 
     dateTime(:unixTime= "createdAt")
@@ -22,14 +23,14 @@
 
   section.main(v-if= "docdata")
     field(
-      v-for=    "field in fields",
-      :id=      "field",
-      :key=     "field"
-      :label =  "field"
-      :disabled="!editable"
-      :value=   "docdata[field] || form.fields[field].default"
+      v-for=      "field in fields",
+      :id=        "field",
+      :key=       "field"
+      :label =    "field"
+      :disabled=  "!editable"
+      :value=     "docdata[field] || form.fields[field].default"
       :required = "schema.required.indexOf(field) > -1"
-      :type=    "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
+      :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
     )
 
   footer.actions
@@ -40,38 +41,53 @@
 import field from 'form/field'
 import dateTime from 'c/dateTime'
 
-export default {
+import { Observer } from 'mobx-vue'
+
+export default Observer ({
   data () {
     return {
-      docdata: { ...this.doc._data },
       fetched: false
     }
   },
   props: {
+    // taxonomy: {
+    //   type: String
+    // },
+    // id: {
+    //   type: String,
+    //   required: true
+    // },
     doc: {
       type: Object,
-      default: null
+      default: null,
+      required: true
     },
+
     editable: {
       type: Boolean,
       default: false
     }
   },
-  async fetch () {
-    if (this.fetched) return
-    const fields = Object.keys(this.doc._data)
+  // async fetch () {
+  //   // populate fields
+  //   if (this.fetched) return
+  //   const fields = Object.keys(this.docdata)
 
-    await Promise.all(fields.map(async f => {
-      if (this.$lodger.taxonomies.indexOf(f) > 1) {
-        this.docdata[f] = await this.doc[`${f}_`]
-      }
-    }))
+  //   await Promise.all(fields.map(async f => {
+  //     if (this.$lodger.taxonomies.indexOf(f) > 1) {
+  //       this.docdata[f] = await this.doc[`${f}_`]
+  //     }
+  //   }))
 
-    this.fetched = true
+  //   this.fetched = true
 
-    return true
-  },
+  //   return true
+  // },
+
   computed: {
+    docdata () {
+      return this.doc._data
+    },
     fields () {
       return Object.keys(this.docdata).filter(k => k.indexOf('_') !== 0 && this.previewFields.indexOf(k) === -1)
     },
@@ -106,7 +122,7 @@ export default {
     field,
     dateTime
   }
-}
+})
 </script>
 
 <style lang="styl">

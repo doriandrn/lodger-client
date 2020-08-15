@@ -206,12 +206,13 @@ export default {
 
 <style lang="stylus">
 @require '~styles/config'
-footerHeight = 24px
+footerHeight = 40px
 
 #layout
   display flex
   flex-flow column nowrap
-  min-height 100vh
+  max-height 100vh
+  overflow hidden
   position relative
 
   .actions

@@ -9,8 +9,8 @@
 )
   validation-provider(:rules="v" v-slot="{ errors }")
     input(
-      v-if=         "type !== 'taxonomy' && ['string', 'number'].indexOf(String(type).asRxDBType) > -1",
-      :type=        "String(type).asRxDBType",
+      v-if=         "['taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1",
+      :type=        "type",
       :placeholder= "placeholder",
       :autocomplete="autocomplete ? 'on' : 'off'",
       :autosuggest= "autosuggest"
@@ -64,6 +64,10 @@
       @input=       "$emit('input', $event)"
       :id=          "id"
       :arrow=       "arrow"
+    )
+    file(
+      v-else-if= "['avatar', 'userAvatar'].indexOf(type) > -1"
+      :id=  "id"
     )
 
     scari(

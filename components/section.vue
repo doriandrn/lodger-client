@@ -3,7 +3,7 @@ section(:class="{ sidebar: $slots.sidebar }")
   .inner
     slot(name="beforeTitle")
     h1(v-if="title") {{ title }}
-    .inner__content
+    .inner__content(:class="{ boxes }")
       slot
 
     .inner__sidebar(v-if="$slots.sidebar")
@@ -13,6 +13,11 @@ section(:class="{ sidebar: $slots.sidebar }")
 <script>
 export default {
   props: {
+
+    boxes: {
+      type: Boolean,
+      default: false
+    },
     title: {
       type: String,
       default: null
@@ -28,7 +33,7 @@ section
   padding-top 24px
   padding-bottom 24px
   position relative
-  overflow hidden
+  overflow-x hidden
 
   &.sidebar
     > .inner

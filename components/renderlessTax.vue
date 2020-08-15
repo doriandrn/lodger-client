@@ -9,10 +9,13 @@
 
 <template lang="pug">
 div
-  p ss: {{ shouldShow }} {{ subscriber.name }} {{ activeId }}
+  p ss: {{ shouldShow }} {{ subscriber.name }}
   slot(:taxonomy="taxonomy" :subscriber="subscriber")
 
-  ul(v-if="documents.length || taxonomy && subscriber.ids.length")
+  ul(
+    v-if=   "documents.length || taxonomy && subscriber.ids.length"
+    :class= "{ fetching: subscriber.feetching }"
+  )
     slot(
       name=   "item"
       v-for=  "item, id in documents.length ? documents : subscriber.items"
@@ -51,7 +54,8 @@ export default Observer({
         ids: [],
         selectedId: '',
         activeId: '',
-        items: {}
+        items: {},
+        fetching: true
       },
       documents: []
     }
@@ -93,11 +97,11 @@ export default Observer({
       return this.subscriber.selectedId
     },
     activeId () {
-      return this.subscriber.selectedId
+      return this.subscriber.activeId
     },
     shouldShow () {
-      const { taxonomy, documents, subscriberName} = this
-      if (documents || !taxonomy) return true
+      const { taxonomy, documents, subscriberName } = this
+      if (documents.length || !taxonomy) return true
 
       const { parents, form: { schema: { required } } } = taxonomy
       if (!parents) return true
@@ -169,62 +173,6 @@ export default Observer({
       const activeDoc = await this.taxonomy.collection.findOne(id).exec()
       this.$lodger.modal.activeDoc = activeDoc
     }
-  },
-  // created () {
-  //   const { subscriberName, taxonomy } = this
-  //   if (!taxonomy || !subscriberName) return
-  //   taxonomy.subscribe(subscriberName)
-  // },
-  mounted () {
-    // const {
-    //   subscriberName,
-    //   subscriber,
-    //   taxonomy
-    // } = this
-
-    // if (!taxonomy) return
-
-    // const {
-    //   name,
-    //   parents,
-    //   children,
-    //   subscribers,
-    //   form: { plural }
-    // } = taxonomy
-
-    // setTimeout(() => {
-
-    //   reaction(() => subscriber.activeId, async id => {
-    //     const activeDoc = await this.taxonomy.collection.findOne(id).exec()
-    //     this.$lodger.modal.activeDoc = activeDoc
-    //   })
-
-    //   reaction(() => subscriber.selectedId, ids => {
-    //     this.selectedId = ids
-
-        // if (children.length) {
-        //   children.map(tax => {
-        //     const $tax = this.$lodger[tax]
-        //     const { parents } = $tax
-        //     const sub  = $tax.subscribers[subscriberName]
-        //     if (!sub) return
-        //     let sOrP, op, val
-        //     if (parents && parents.length) {
-        //       const isSingular = parents.indexOf(name) > -1
-        //       sOrP = isSingular ? `${name}Id` : plural
-        //       op = isSingular ? '$eq' : '$in'
-        //       val = isSingular ? ids : [ids]
-        //     }
-
-        //     if (sOrP && op && val)
-        //       sub.criteria.filter = { [sOrP]: { [op]: val } }
-        //     else if (sub.criteria.filter[sOrP]) {
-        //       delete sub.criteria.filter[sOrP]
-        //     }
-        //   })
-        // }
-    //   })
-    // }, 1500);
   },
   methods: {
     // get _sort () {

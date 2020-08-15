@@ -3,24 +3,22 @@ form.form(@submit.prevent="validate()")
   //- h5.form__title(v-if="title") {{ $t( title ) }}
   //- p.form__desc(v-if="desc") {{ $t( desc ) }}
 
-  .form__content(v-if="$fields && $fields.length")
+  .form__content(v-if="fields && Object.keys(fields).length")
     slot(name=        "beforeFields")
 
     field(
-      v-for=          "field in $fields"
-      v-if=           "!field.notInForm"
+      v-for=          "field, id in fields"
 
-      :key=           "`${field.type}-${field.id}`"
-      :id=            "field.id"
-      :type=          "field.type || 'text'"
+      :key=           "`${field._type}-${id}`"
+      :id=            "id"
+      :type=          "field._type || 'text'"
       :label=         "field.label"
-      :placeholder=   "field.type === 'bani' ? '0.00' : field.placeholder"
+      :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
       :focus=         "field.focus"
       :required=      "field.required"
       :min=           "field.min"
       :max=           "field.max",
-      :step=          "field.type === 'bani' ? 0.01 : field.step",
-      :value=         "field.value"
+      :step=          "field._type === 'bani' ? 0.01 : field.step",
       :data-slot=     "field.slot"
       :searchTaxonomy="field.taxonomy"
       :click=         "field['@click']"
@@ -32,13 +30,14 @@ form.form(@submit.prevent="validate()")
 
       v-validate=     "field.v || null"
       :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
-      :data-vv-scope= "form.name",
-      :data-vv-as=    "$t( field.label )"
+      :data-vv-scope= "title",
+      :data-vv-as=    "field.label"
       :data-vv-name=  "field.id"
-      :error=         "errors.has(field.id, form.name)"
-      :valid=         "!errors.has(field.id, form.name)"
-      :message=       "errors.first(field.id, form.name)"
     )
+      //- :value=         "field.value()"
+      //- :error=         "errors.has(field.id, form.name)"
+      //- :valid=         "!errors.has(field.id, form.name)"
+      //- :message=       "errors.first(field.id, form.name)"
 
     slot(name=        "afterFields")
 
@@ -64,8 +63,8 @@ import split from 'c/split'
 export default {
   name: 'frm',
   data () {
-    const { form, isNew } = this
-    if (!form) throw new Error('No form supplied')
+    const { fields, isNew } = this
+    if (!fields) throw new Error('No form supplied')
     // return form.componentData(isNew, this.$store.getters)
     return {}
   },
@@ -75,7 +74,11 @@ export default {
     field
   },
   props: {
-    form: {
+    title:{
+      type: String,
+      default: 'form'
+    },
+    fields: {
       type: Object,
       default: null
     },
@@ -84,18 +87,12 @@ export default {
       default: true
     }
   },
-  computed: {
-    $fields () {
-      return this.form.data.fields
-    },
-
-  },
   methods: {
     async validate () {
-      this.$validator.validateAll(this.form.name).then(valid => {
-        if (!valid) throw new Error('invalid')
-        this.submit()
-      })
+      // this.$validator.validateAll(this.form.name).then(valid => {
+      //   if (!valid) throw new Error('invalid')
+      //   this.submit()
+      // })
     },
     submit () {
       this.$emit('submit', this.$data)

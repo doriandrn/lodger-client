@@ -3,10 +3,10 @@ section(:class="{ sidebar: $slots.sidebar }")
   .inner
     slot(name="beforeTitle")
     h1(v-if="title") {{ title }}
-    .inner__content(:class="{ boxes }")
-      slot
 
-    .inner__sidebar(v-if="$slots.sidebar")
+    slot
+
+    aside(v-if="$slots.sidebar")
       slot(name="sidebar")
 </template>
 
@@ -34,15 +34,15 @@ section
   padding-bottom 24px
   position relative
   overflow-x hidden
+  text-align center
 
   &.sidebar
     > .inner
       flex-flow row nowrap !important
       align-items flex-start !important
 
-    .inner
-      &__sidebar
-        flex 0 0 280px
+  aside
+    flex 0 0 280px
 
   &#nuExista
     > .inner

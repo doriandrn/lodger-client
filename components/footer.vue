@@ -1,10 +1,7 @@
 <template lang="pug">
 footer
-  .inner.split
-    .left
-      slot
-    .right(v-if="$slots.right")
-      slot(name="right")
+  .inner
+    slot
 </template>
 
 <style lang="stylus" scoped>

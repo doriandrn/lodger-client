@@ -1,122 +1,127 @@
 <template lang="pug">
-.field(
+ValidationProvider(
+  :name=        "label"
+  :vid=         "id"
+  :rules=       "v"
+  v-slot=       "{ errors }"
   :data-size=   "size"
   :data-type=   "type"
   :data-icon=   "type === 'search' ? 'search' : icon"
+  :data-req=    "required"
   :data-results="hasResults",
   :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
-  validation-provider(:rules="v" v-slot="{ errors }")
-    input(
-      v-if=         "['taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1",
-      :type=        "type",
-      :placeholder= "placeholder",
-      :autocomplete="autocomplete ? 'on' : 'off'",
-      :autosuggest= "autosuggest"
-      :id=          "id",
-      :name=        "id"
-      :focus=       "focus",
-      :required=    "required",
-      :min=         "type === 'number' ? min : null"
-      :max=         "type === 'number' ? max : null"
-      :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
-      :value=       "val",
-      :checked=     "checked"
-      @input=       "handleInput",
-      @change=      "handleChange"
+  input(
+    v-if=         "['taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1",
+    :type=        "type.asRxDBType === 'string' && type !== 'search' ? 'text' : type",
+    :placeholder= "placeholder",
+    :autocomplete="autocomplete ? 'on' : 'off'",
+    :autosuggest= "autosuggest"
+    spellcheck=   "false"
+    :id=          "id",
+    :name=        "id"
+    :focus=       "focus",
+    :required=    "required",
+    :min=         "type === 'number' ? min : null"
+    :max=         "type === 'number' ? max : null"
+    :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
+    :value=       "type.asRxDBType === 'string' && typeof value === 'boolean' ? '' : value",
+    :checked=     "checked"
+    @input=       "$emit('input', $event.target.value)",
+    @change=      "handleChange"
 
-      @keydown.enter= "selecteaza"
-      @keyup.tab=     "selecteaza"
-      @keyup.down=    "indexSelectat(1)"
-      @keyup.up=      "indexSelectat(0)"
-      @keydown.esc=   "inchideModale"
-      :class=         "{ av: !!value }"
-      @clickAway=     "$emit('clickedAway')"
-    )
-    buton(
-      v-else-if=    "type === 'button'"
-      :dangerous=   "dangerous"
-      @click=       "handleClick"
-    ) {{ label || text }}
-    textarea(
-      v-else-if=    "['textarea'].indexOf(type) > -1"
-      :placeholder= "placeholder",
-      :value=       "value",
-      @input=       "$emit('input', $event)"
-      :required=    "required",
-      :id=          "id",
-    )
-    slect(
-      v-else-if=    "type === 'select'"
-      :options=     "options"
-      :value=       "value",
-      :required=    "required",
-      @input=       "$emit('input', $event)"
-      :id=          "id"
-      :arrow=       "arrow"
-    )
-    altslect(
-      v-else-if=    "type === 'altselect'"
-      :options=     "options"
-      :value=       "value",
-      :required=    "required",
-      @input=       "$emit('input', $event)"
-      :id=          "id"
-      :arrow=       "arrow"
-    )
-    file(
-      v-else-if= "['avatar', 'userAvatar'].indexOf(type) > -1"
-      :id=  "id"
-    )
+    @keydown.enter= "selecteaza"
+    @keyup.tab=     "selecteaza"
+    @keyup.down=    "indexSelectat(1)"
+    @keyup.up=      "indexSelectat(0)"
+    @keydown.esc=   "inchideModale"
+    :class=         "{ av: !!value }"
+    @clickAway=     "$emit('clickedAway')"
+  )
+  buton(
+    v-else-if=    "type === 'button'"
+    :dangerous=   "dangerous"
+    @click=       "handleClick"
+  ) {{ label || text }}
+  textarea(
+    v-else-if=    "['textarea'].indexOf(type) > -1"
+    :placeholder= "placeholder",
+    :value=       "value",
+    @input=       "$emit('input', $event)"
+    :required=    "required",
+    :id=          "id",
+  )
+  slect(
+    v-else-if=    "type === 'select'"
+    :options=     "options"
+    :value=       "value",
+    :required=    "required",
+    @input=       "$emit('input', $event)"
+    :id=          "id"
+    :arrow=       "arrow"
+  )
+  altslect(
+    v-else-if=    "type === 'altselect'"
+    :options=     "options"
+    :value=       "value",
+    :required=    "required",
+    @input=       "$emit('input', $event)"
+    :id=          "id"
+    :arrow=       "arrow"
+  )
+  file(
+    v-else-if= "['avatar', 'userAvatar'].indexOf(type) > -1"
+    :id=  "id"
+  )
 
-    scari(
-      v-else-if=    "type === 'scari'",
-      :value=       "value",
-      @input=       "$emit('input', $event)"
-    )
+  scari(
+    v-else-if=    "type === 'scari'",
+    :value=       "value",
+    @input=       "$emit('input', $event)"
+  )
 
-    radios(
-      v-else-if=    "type === 'radios'",
-      :id=          "id",
-      :value=       "value",
-      @change=      "$emit('input', $event); debug($event)"
-      @click=       "$emit('click', $event)"
-      :options=     "options"
-    )
-    checkboxes(
-      v-else-if=    "type === 'checkboxes'",
-      :id=          "id",
-      :value=       "value",
-      @change=      "$emit('input', $event)"
-      :options=     "options"
-    )
-    contoare(
-      v-else-if=      "type === 'contoare'"
-    )
-    sel-apartamente(
-      v-else-if=      "type === 'selApartamente'"
-      :optiuni=       "options"
-      @input=         "$emit('input', $event)"
-      :value=         "value || []"
-    )
-    distribuire(
-      v-else-if=      "type === 'distribuire'"
-    )
-    servicii(
-      v-else-if=        "type === 'servicii'"
-      @input=           "$emit('input', $event)"
-      :value=           "value"
-      :servicii=        "servicii"
-    )
-    tax(
-      v-else-if=  "type === 'taxonomy'"
-      :populated= "value || []"
-    )
-      div(slot="item" slot-scope="{ item }") {{ item.name }}
-      button.new(@click="") +
+  radios(
+    v-else-if=    "type === 'radios'",
+    :id=          "id",
+    :value=       "value",
+    @change=      "$emit('input', $event); debug($event)"
+    @click=       "$emit('click', $event)"
+    :options=     "options"
+  )
+  checkboxes(
+    v-else-if=    "type === 'checkboxes'",
+    :id=          "id",
+    :value=       "value",
+    @change=      "$emit('input', $event)"
+    :options=     "options"
+  )
+  contoare(
+    v-else-if=      "type === 'contoare'"
+  )
+  sel-apartamente(
+    v-else-if=      "type === 'selApartamente'"
+    :optiuni=       "options"
+    @input=         "$emit('input', $event)"
+    :value=         "value || []"
+  )
+  distribuire(
+    v-else-if=      "type === 'distribuire'"
+  )
+  servicii(
+    v-else-if=        "type === 'servicii'"
+    @input=           "$emit('input', $event)"
+    :value=           "value"
+    :servicii=        "servicii"
+  )
+  tax(
+    v-else-if=  "type === 'taxonomy'"
+    :populated= "value || []"
+  )
+    div(slot="item" slot-scope="{ item }") {{ item.name }}
+    button.new(@click="") +
 
-    p(v-else-if=        "type === 'contactFields'") contactFields
+  div(v-else-if=        "type === 'contactFields'") contactFields
 
   labl(
     v-show=         "!hideLabel && type !== 'button'"
@@ -262,7 +267,10 @@ export default {
         return this.id
       }
     },
-
+    rules: {
+      type: [Object, String],
+      default: ""
+    },
     transform: {
       type: String,
       default: null
@@ -454,27 +462,27 @@ export default {
 
     handleInput (e) {
       let { value, type } = e.target
-      const { search, transform, debug, $options: { filters } } = this
+      // const { search, transform, debug, $options: { filters } } = this
 
-      switch (type) {
-        case 'search':
-          this.results = search(value)
-          break
+      // switch (type) {
+      //   case 'search':
+      //     this.results = search(value)
+      //     break
 
-        case 'checkbox':
-          return
-          // value = Boolean(value)
-          // value = !value
-          // break
+      //   case 'checkbox':
+      //     return
+      //     // value = Boolean(value)
+      //     // value = !value
+      //     // break
 
-        case 'number':
-          value = Number(value)
-          break
+      //   case 'number':
+      //     value = Number(value)
+      //     break
 
-        case 'text':
-          value = transformOnInput(transform, value, filters, debug)
-          break
-      }
+      //   case 'text':
+      //     value = transformOnInput(transform, value, filters, debug)
+      //     break
+      // }
 
       this.$emit('input', value)
     },
@@ -540,14 +548,13 @@ input[type="number"]
 input[type="password"]
 input[type="date"]
 textarea
-  font-size 14px
-  line-height 18px
+  font-size 18px
+  line-height 24px
   background-color transparent
   border 0
   min-width 32px
-  border-bottom: 1px solid config.palette.borders
   transition all .15s ease-in-out
-  padding 8px 0
+  // padding 8px 0
   width 100%
 
   &::placeholder
@@ -559,7 +566,6 @@ textarea
 
   &:active
   &:focus
-    border-color: palette.primary
     color: palette.primary
 
     &::placeholder
@@ -568,13 +574,6 @@ textarea
     &+.field__label
       moveFieldLabel()
 
-input[type="text"]
-  &:focus
-  &:active
-    padding-right 48px // pt field limit
-    &+.field__label+.field__limit
-      opacity 1
-      visibility visible
 
 input[type="radio"]
   &+label
@@ -721,156 +720,6 @@ input[type="checkbox"]
   align-items center
   margin -4px
   cursor default
-
-.field
-  display flex
-  position relative
-  align-items center // pt radios
-
-  &[data-size="small"]
-    input
-      padding 4px
-      border-radius 24px
-
-  &[data-icon]
-    > input
-      padding-left 20px
-
-  &[data-type="scari"]
-    flex-direction column-reverse !important
-    flex-wrap nowrap !important
-    flex-basis 100% !important
-    height auto
-
-    .field
-      margin-bottom 0
-      margin-top 0
-
-    > label
-      font-weight 600
-      margin-bottom 32px
-      flex 0 0 14px
-      align-self flex-start
-
-  &[data-type="servicii"]
-  &[data-type="detaliiApSelectat"]
-    flex 0 0 100% !important
-
-  &[data-type="search"]
-    position relative
-    padding-left 0
-    max-width 100%
-    flex-flow row wrap !important
-
-    &:before
-      position absolute
-      top 8px
-      left 0
-      background-color: config.typography.palette.meta
-
-    > label.field__label
-        left 22px
-
-    &[data-results]
-      .field__label
-        moveFieldLabel()
-
-    .results
-      top 36px
-      left -12px
-      right auto
-      opacity 1
-      visibility visible
-      z-index 51
-      max-width 350px
-
-      &.singleTax
-        .results
-          &__heading
-            display none
-
-    &[data-size="small"]
-      input
-        max-width 130px
-        min-width 96px
-        padding-right 16px
-        transition all .15s ease-in-out
-
-        &:focus
-          max-width 155px
-
-  &[data-type="bani"]
-    flex-basis 120px
-
-  &__message
-    margin-bottom 0
-    position absolute
-    top 35px
-    z-index 2
-    font-size 12px
-    background white
-    padding 0 4px
-
-  &__label
-    user-select none
-    flex 1 1 24px
-
-  &__limit
-    user-select none
-    position absolute
-    right 0
-    color: config.typography.palette.meta
-    opacity 0
-    font-size 10px
-    visibility hidden
-
-  &[data-type="text"]
-  &[data-type="textarea"]
-  &[data-type="number"]
-  &[data-type="search"]
-  &[data-type="bani"]
-    .field
-      &__label
-        position absolute 8px 0 auto 0
-        transition all .05s ease-in-out
-        margin-bottom 0
-        min-width 100px
-        pointer-events none
-
-    &.field--val
-      .field__label
-        moveFieldLabel()
-
-  &[data-type="checkbox"]
-    display inline-flex
-    flex-wrap nowrap
-    cursor pointer
-
-  &[data-type="radios"]
-    flex-direction row-reverse
-
-  // &:not([data-type="text"])
-  //   &:not([data-type="textarea"])
-  //     &:not([data-type="altselect"])
-  //       &:not([data-type="scari"])
-  //         &:not([data-type="radios"])
-  //           // flex-direction row-reverse
-  //           height auto
-  //           flex-flow column-reverse nowrap
-  //           align-items flex-start
-  //           justify-content flex-end
-  //           // margin-top 0
-
-  &[data-vv-name="nr"]
-    flex 0 0 60px !important
-
-  &--error
-    .field__message
-    > .field__label
-        color: config.palette.error
-
-    input
-      border-color: config.palette.error !important
 
 .sort
   &.field

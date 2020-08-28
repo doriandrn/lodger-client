@@ -60,11 +60,12 @@
   footr
     a user select
     p Utilizator adaugat! bla bla
-    div(slot="right")
+    div
       .lang-switch
         a(
           v-for=      "lang in $lodger.supportedLangs"
           v-tooltip=  "lang.nativeName"
+          @click=     "$Lodger.locale = lang.code"
         ) {{ lang.code }}
       buton Feedback
       .copyright
@@ -217,11 +218,13 @@ footerHeight = 40px
 
   .actions
     width 100%
+    display flex
+    flex-flow row wrap
+    flex-basis 100%
+    justify-content center
 
-    &:not(.split)
-      display flex
-      flex-flow row wrap
-      flex-basis 100%
+    > *
+      margin 10px
 
   > header
     position fixed 0 0 auto 0
@@ -328,5 +331,8 @@ footerHeight = 40px
   margin 0 auto
   padding: 0 baseSpacingUnit*3
   position relative
+  display flex
+  width: 100%;
+  justify-content: space-between;
 
 </style>

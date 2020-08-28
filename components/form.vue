@@ -1,77 +1,94 @@
 <template lang="pug">
-form.form(@submit.prevent="validate()")
-  //- h5.form__title(v-if="title") {{ $t( title ) }}
-  //- p.form__desc(v-if="desc") {{ $t( desc ) }}
+ValidationObserver(v-slot="{ passes }")
+  form.form(@submit.prevent="passes(validation)")
+    //- h5.form__title(v-if="title") {{ $t( title ) }}
+    //- p.form__desc(v-if="desc") {{ $t( desc ) }}
 
-  .form__content(v-if="fields && Object.keys(fields).length")
-    slot(name=        "beforeFields")
+    fieldset(v-if="fields && Object.keys(fields).length")
+      legend bla
 
-    field(
-      v-for=          "field, id in fields"
+      .content
+        slot(name=        "beforeFields")
 
-      :key=           "`${field._type}-${id}`"
-      :id=            "id"
-      :type=          "field._type || 'text'"
-      :label=         "field.label"
-      :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
-      :focus=         "field.focus"
-      :required=      "field.required"
-      :min=           "field.min"
-      :max=           "field.max",
-      :step=          "field._type === 'bani' ? 0.01 : field.step",
-      :data-slot=     "field.slot"
-      :searchTaxonomy="field.taxonomy"
-      :click=         "field['@click']"
-      :dangerous=     "field.dangerous"
-      :transform=     "field.transform"
-      @change=        "handleChange(field['@change'], field.id, field.type, $event, form.name)"
+        field(
+          v-for=          "field, id in fields"
 
-      v-model.trim=   "$data[field.id]"
+          :key=           "`${field._type}-${id}`"
+          :id=            "id"
+          :type=          "field._type || 'text'"
+          :label=         "field.label(translationObject)"
+          :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
+          :focus=         "field.focus"
+          :required=      "field.v && field.v.indexOf('required') > -1"
+          :min=           "field.min"
+          :max=           "field.max",
+          :step=          "field._type === 'bani' ? 0.01 : field.step",
+          :data-slot=     "field.slot"
+          :searchTaxonomy="field.taxonomy"
+          :click=         "field['@click']"
+          :dangerous=     "field.dangerous"
+          :transform=     "field.transform"
+          :rules=         "field.v || null"
 
-      v-validate=     "field.v || null"
-      :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
-      :data-vv-scope= "title",
-      :data-vv-as=    "field.label"
-      :data-vv-name=  "field.id"
-    )
-      //- :value=         "field.value()"
-      //- :error=         "errors.has(field.id, form.name)"
-      //- :valid=         "!errors.has(field.id, form.name)"
-      //- :message=       "errors.first(field.id, form.name)"
+          v-model=   "$data[id]"
 
-    slot(name=        "afterFields")
+          :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
+        )
+          //- :data-vv-scope= "title",
+          //- :data-vv-as=    "field.id"
+          //- :data-vv-name=  "field.id"
+          //- @change=        "handleChange(field['@change'], field.id, field.type, $event, form.name)"
+          //- :value=         "field.value()"
+          //- :error=         "errors.has(field.id, form.name)"
+          //- :valid=         "!errors.has(field.id, form.name)"
+          //- :message=       "errors.first(field.id, form.name)"
 
-  split.actions
-    buton(
-      size= "small"
-      styl= "unstyled"
-      icon= "trash"
-      dangerous
-    ) delete
-    buton(
-      type= "submit",
-      icon= "plus-circle"
-      slot= "right"
-    ) {{ isNew ? 'add' : 'edit' }}
+        slot(name=        "afterFields")
+
+    .actions
+      buton(
+        v-if="!isNew"
+        size= "small"
+        styl= "unstyled"
+        icon= "trash"
+        dangerous
+      ) delete
+      buton(
+        type= "submit",
+        icon= "plus-circle"
+        slot= "right"
+        :disabled = "!Object.keys(filteredData).length"
+      ) {{ submitText }}
 </template>
 
 <script>
 import buton from 'form/button'
 import field from 'form/field'
 import split from 'c/split'
+import { ValidationObserver, extend } from "vee-validate"
 
 export default {
-  name: 'frm',
+  name: 'F0rm',
   data () {
+    const data = {}
     const { fields, isNew } = this
     if (!fields) throw new Error('No form supplied')
-    // return form.componentData(isNew, this.$store.getters)
-    return {}
+    Object.keys(fields).map(field => { data[field] = null })
+    return { ...data }
+  },
+  computed: {
+    filteredData () {
+      const { $data } = this
+      const data = {}
+      Object.keys(this.$data).filter(k => $data[k]).map(k => data[k] = $data[k])
+      return data
+    }
   },
   components: {
     buton,
     split,
-    field
+    field,
+    ValidationObserver
   },
   props: {
     title:{
@@ -85,40 +102,46 @@ export default {
     isNew: {
       type: Boolean,
       default: true
+    },
+    translationObject: {
+      type: Object,
+      default: null
+    },
+    submitText: {
+      type: String,
+      default: ''
+      // default () {
+      //   return this.isNew ? ''
+      // }
     }
   },
   methods: {
-    async validate () {
-      // this.$validator.validateAll(this.form.name).then(valid => {
-      //   if (!valid) throw new Error('invalid')
-      //   this.submit()
-      // })
-    },
-    submit () {
-      this.$emit('submit', this.$data)
-      this.closeModal()
+    async validation () {
+      this.$children[0].validate().then(ok => {
+        if (ok) this.$emit('submit', this.filteredData)
+      })
     },
     /**
     *
     */
-    async handleChange (actionName, id, type, e, scope) {
-      const { validate, debug, $store: { dispatch } } = this
-      if (!actionName) {
-        debug('handleChange: invalid action name supplied, dats ok!', ... arguments)
-        return
-      }
-      const { value } = e.target
+    // async handleChange (actionName, id, type, e, scope) {
+    //   const { validate, debug, $store: { dispatch } } = this
+    //   if (!actionName) {
+    //     debug('handleChange: invalid action name supplied, dats ok!', ... arguments)
+    //     return
+    //   }
+    //   const { value } = e.target
 
-      if (value === 'undefined' || value === null) return
-      const valid = await validate(scope)
-      if (!valid) {
-        debug(`camp invalid ${id}`)
-        return
-      }
-      dispatch(actionName, {
-        [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
-      })
-    }
+    //   if (value === 'undefined' || value === null) return
+    //   const valid = await validate(scope)
+    //   if (!valid) {
+    //     debug(`camp invalid ${id}`)
+    //     return
+    //   }
+    //   dispatch(actionName, {
+    //     [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
+    //   })
+    // }
   }
 }
 </script>
@@ -129,6 +152,7 @@ export default {
 .form
   display flex
   flex-flow row wrap
+  justify-content center
   width 100%
 
   &+.form
@@ -147,37 +171,217 @@ export default {
       padding-top 12px
       margin-top 12px
 
-  &__content
+fieldset
+  padding 16px
+  background rgba(black, .05)
+  border 0
+  position relative
+
+  legend
+    position absolute
+    top 0
+    left auto
+
+  .content
     display flex
     flex-flow row wrap
     flex 1 0 100%
     height 100%
     justify-content flex-start
-    margin 0 -16px
 
-    .field
-      margin 16px
+    > span
+      margin 10px
+      padding 8px 12px
+      border-radius 8px
+      display flex
+      flex-flow row wrap
+      position relative
+      align-items flex-start
+      justify-content flex-start
+      flex 1 1 auto
+      order 2
+      max-width 335px
 
-  label
-    margin-bottom: (baseSpacingUnit*1.5)
-    line-height: 16px
+      > div
+        flex 1 1 100%
+
+      &.error
+        label
+        p:last-child
+            color: config.palette.error
+
+        input
+          border-color: config.palette.error !important
+
+      &[data-type="userAvatar"]
+        size 80px
+        flex-basis 80px
+        flex-grow 0
+        order 0
+        background rgba(black, .05)
+        border-radius 50px
+        position relative
+        overflow hidden
+        margin 0 auto
 
 
-  .field
-    display flex
-    flex-flow row wrap
-    align-items flex-start
-    justify-content flex-start
-    flex 1 1
-    // max-width 335px
+      &:not([data-type="userAvatar"])
+        background rgba(white, .75)
 
-    &[data-type="number"]
-      flex-basis 110px
-      flex-grow 1
+        &[data-req]
+          background rgba(white, .9)
+          order 1
 
-    &[data-type="separator"]
-      flex-basis 100%
-      flex-shrink 0
+      &[data-type="radios"]
+        align-items center
+
+      &[data-type="contactFields"]
+        flex-basis 100%
+
+      &[data-type="number"]
+        flex-basis 110px
+        flex-grow 1
+
+      &[data-type="separator"]
+        flex-basis 100%
+        flex-shrink 0
+
+      &[data-size="small"]
+        input
+          padding 4px
+          border-radius 24px
+
+      &[data-icon]
+        > input
+          padding-left 20px
+
+      &[data-type="scari"]
+        flex-direction column-reverse !important
+        flex-wrap nowrap !important
+        flex-basis 100% !important
+        height auto
+
+        .field
+          margin-bottom 0
+          margin-top 0
+
+        > label
+          font-weight 600
+          margin-bottom 32px
+          flex 0 0 14px
+          align-self flex-start
+
+      &[data-type="servicii"]
+      &[data-type="detaliiApSelectat"]
+        flex 0 0 100% !important
+
+      &[data-type="search"]
+        position relative
+        padding-left 0
+        max-width 100%
+        flex-flow row wrap !important
+
+        &:before
+          position absolute
+          top 8px
+          left 0
+          background-color: config.typography.palette.meta
+
+        > label
+            left 22px
+
+        &[data-results]
+          label
+            moveFieldLabel()
+
+        .results
+          top 36px
+          left -12px
+          right auto
+          opacity 1
+          visibility visible
+          z-index 51
+          max-width 350px
+
+          &.singleTax
+            .results
+              &__heading
+                display none
+
+        &[data-size="small"]
+          input
+            max-width 130px
+            min-width 96px
+            padding-right 16px
+            transition all .15s ease-in-out
+
+            &:focus
+              max-width 155px
+
+      &[data-type="bani"]
+        flex-basis 120px
+
+        > p
+          margin-bottom 0
+          position absolute
+          top 35px
+          z-index 2
+          font-size 12px
+          background white
+          padding 0 4px
+
+        label
+          user-select none
+          flex 1 1 24px
+
+        .limit
+          user-select none
+          position absolute
+          right 0
+          color: config.typography.palette.meta
+          opacity 0
+          font-size 10px
+          visibility hidden
+
+      &[data-type="text"]
+      &[data-type="textarea"]
+      &[data-type="number"]
+      &[data-type="search"]
+      &[data-type="bani"]
+        label
+            position absolute 8px 0 auto 0
+            transition all .05s ease-in-out
+            margin-bottom 0
+            min-width 100px
+            pointer-events none
+
+        &.field--val
+          .field__label
+            moveFieldLabel()
+
+      &[data-type="checkbox"]
+        display inline-flex
+        flex-wrap nowrap
+        cursor pointer
+
+      &[data-type="radios"]
+        flex-direction row-reverse
+
+    // &:not([data-type="text"])
+    //   &:not([data-type="textarea"])
+    //     &:not([data-type="altselect"])
+    //       &:not([data-type="scari"])
+    //         &:not([data-type="radios"])
+    //           // flex-direction row-reverse
+    //           height auto
+    //           flex-flow column-reverse nowrap
+    //           align-items flex-start
+    //           justify-content flex-end
+    //           // margin-top 0
+
+    &[data-vv-name="nr"]
+      flex 0 0 60px !important
+
 
   .separator
     margin-top 0

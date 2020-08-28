@@ -1,7 +1,6 @@
 <template lang="pug">
 label
   slot
-  small(v-if="!required") optional
 </template>
 
 <script>

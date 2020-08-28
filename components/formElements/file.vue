@@ -1,27 +1,14 @@
 <template lang="pug">
-span.input__file(:class="[(error ? 'field--error' : '')]")
-  labl.field__label(
-    :for= "id",
-    :label= "label",
-    :required= "required"
-  )
-  img(
-    v-if=   "image",
-    :src=   "image"
-  )
-  input(
-    v-else,
-    type=   "file",
-    :id=    "id",
-    @change="onFileChange"
-  )
-  buton(
-    size=     "medium",
-    type=     "button",
-    :text=    "`$`",
-    @clicked= "image ? removeImage : createImage"
-  ) {{ (image ? 'Remove' : 'Upload') }}
-  p.field__message {{ message }}
+img(
+  v-if=   "image",
+  :src=   "image"
+)
+input(
+  v-else
+  type=   "file",
+  :id=    "id",
+  @change="onFileChange"
+)
 </template>
 
 <script>

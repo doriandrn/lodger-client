@@ -28,7 +28,7 @@ ValidationProvider(
     :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
     :value=       "type.asRxDBType === 'string' && typeof value === 'boolean' ? '' : value",
     :checked=     "checked"
-    @input=       "$emit('input', $event.target.value)",
+    @input=       "handleInput",
     @change=      "handleChange"
 
     @keydown.enter= "selecteaza"
@@ -121,7 +121,12 @@ ValidationProvider(
     div(slot="item" slot-scope="{ item }") {{ item.name }}
     button.new(@click="") +
 
-  div(v-else-if=        "type === 'contactFields'") contactFields
+  multi(
+    v-else-if= "type === 'contactFields'"
+    :fields= "{ tip: { type: 'select', options: {tel: $lodger.i18n.taxonomies.utilizatori.fields.tel, email: '', social: ''} }, val: {} }"
+  )
+
+  div(v-else) {{ type }} UNSUPOORTED YET
 
   labl(
     v-show=         "!hideLabel && type !== 'button'"
@@ -156,6 +161,8 @@ import buton from 'form/button'
 import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
+import multi from 'form/presets/multi'
+
 import servicii from 'c/servicii'
 import results from 'c/searchResults'
 import contoare from 'form/contoare'
@@ -397,6 +404,7 @@ export default {
     distribuire,
     file,
     labl,
+    multi,
     radios,
     results,
     scari,
@@ -462,27 +470,27 @@ export default {
 
     handleInput (e) {
       let { value, type } = e.target
-      // const { search, transform, debug, $options: { filters } } = this
+      const { search, transform, debug, $options: { filters } } = this
 
-      // switch (type) {
-      //   case 'search':
-      //     this.results = search(value)
-      //     break
+      switch (type) {
+        case 'search':
+          this.results = search(value)
+          break
 
-      //   case 'checkbox':
-      //     return
-      //     // value = Boolean(value)
-      //     // value = !value
-      //     // break
+        case 'checkbox':
+          return
+          // value = Boolean(value)
+          // value = !value
+          // break
 
-      //   case 'number':
-      //     value = Number(value)
-      //     break
+        case 'number':
+          value = Number(value)
+          break
 
-      //   case 'text':
-      //     value = transformOnInput(transform, value, filters, debug)
-      //     break
-      // }
+        case 'text':
+          value = transformOnInput(transform, value, filters, debug)
+          break
+      }
 
       this.$emit('input', value)
     },
@@ -571,7 +579,7 @@ textarea
     &::placeholder
       opacity 1
 
-    &+.field__label
+    &+label
       moveFieldLabel()
 
 
@@ -720,6 +728,16 @@ input[type="checkbox"]
   align-items center
   margin -4px
   cursor default
+
+span[data-type]
+  text-align left
+  padding 4px 0
+
+input[name="nr"]
+  font-family: config.typography.fams.headings
+  color: config.palette.tertiary
+  letter-spacing 1.2px
+  font-size 14px
 
 .sort
   &.field

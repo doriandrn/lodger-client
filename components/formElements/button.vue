@@ -76,6 +76,7 @@ export default {
       if (!activeElement) return
       return activeElement === this.$el
     },
+
   },
   methods: {
     ...mapActions({
@@ -271,6 +272,10 @@ button
     &:after
       mask-image embedurl('~static/icons/ui/arrow-down.svg')
       background-color: butTextColor
+
+  &[data-size="xl"]
+    padding 16px 40px
+    border-radius 10px
 
   &[data-size="large"]
     padding: 16px 31px

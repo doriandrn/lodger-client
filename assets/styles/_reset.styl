@@ -29,6 +29,9 @@ button
 a
 button
   cursor pointer
+  display inline-flex
+  margin 0 auto
+  cursor pointer
 
 blockquote
   margin 0
@@ -39,6 +42,9 @@ p
   margin-top 0
   text-align left
 
+  &:last-child
+    margin-bottom 0
+
 h1
 h2
 h3
@@ -48,6 +54,9 @@ h6
   word-break break-word
   white-space normal
   max-width 100%
+
+  &::first-letter
+    text-transform uppercase
 
 pre
   white-space pre
@@ -60,3 +69,8 @@ code
 ul
   li
     display block
+
+main
+  justify-content: center;
+  display: flex;
+  flex-flow: row wrap;

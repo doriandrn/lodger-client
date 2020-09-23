@@ -9,7 +9,8 @@ sction#pg(boxes)
     :data-tax=  "tax"
   )
     header(slot-scope="{ taxonomy, subscriber }")
-      h3 {{ taxonomy.plural }} - {{ subscriber.ids.length }} / {{ taxonomy.totals }}
+      h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
+        small(v-if="taxonomy.totals") {{ subscriber.ids.length }} / {{ taxonomy.totals }}
       button.new(
         @click="taxonomy.put(Object.assign({}, taxonomy.form.fakeData, refsIds(taxonomy)))"
       ) +
@@ -175,112 +176,126 @@ typeColors = config.typography.palette
   *
     user-select none
 
-  .box
-    &es
-      > div[data-tax]
-        display flex
-        flex-flow column nowrap
-        margin 8px
-        padding 8px
-        border 1px solid rgba(black, .05)
-        flex 0 1 280px
+  aside
+    background rgba(black, .05)
+    padding 24px
 
-      .sort
-        background-color: rgba(black, .05)
-
-
-      li
-        display flex
-        flex-flow row nowrap
-        justify-content space-between
-        position relative
-        overflow hidden
-        padding 8px
-        width 100%
-
-        strong
-          font-weight 400
-          font-size 14px
-          display inline
-          color: typeColors.headings
-
-          &:first-of-type
-            &:hover
-              text-decoration underline
-
-        &.last
-          > strong:first-of-type
-            &:after
-              content ''
-              display inline-block
-              vertical-align middle
-              bubble()
-
-        &:not(:last-child)
-          border-bottom: 1px solid colors.borders
-
-        &.selected
-          > strong:first-of-type
-            color: colors.primary !important
-
-        &:hover
-        &:active
-          .item
-            &__controls
-              right 0
-
-
-      ul
-        margin -8px
-        width calc(100% + 16px)
-        position relative
-        background: colors.bgs.ui
-        padding 0
-        max-height 300px
-        overflow auto
-        position relative
-
-        &:before
-          content ''
-          position absolute 0
-          z-index -1
-          background-color white
-          background-image embedurl('~static/loaders/preload.svg')
-          background-position 50% 50%
-          background-repeat no-repeat
-          transform translateY(-100%)
-          transition transform .15s ease-out
-
-        &.fetching
-          &:before
-            z-index 5
-            transform translateY(0)
-
-      .sort
-        margin 8px -8px
-        flex 1 1 100%
-
-    h3
-      margin-bottom 0
-
-    header
+  &.boxes
+    [data-tax]
       display flex
-      flex-flow row wrap
+      flex-flow column nowrap
+      margin 8px
+      padding 8px
+      border 1px solid rgba(black, .05)
+      flex 0 1 280px
 
-      .new
-        size 24px
-        line-height 24px
-        border-radius 50px
+    .sort
+      background-color: rgba(black, .05)
 
-    > button
-      margin auto auto 0
 
-    &es
+    li
       display flex
-      flex-flow row wrap
+      flex-flow row nowrap
+      justify-content space-between
+      position relative
+      overflow hidden
+      padding 8px
+      width 100%
+
+      strong
+        font-weight 400
+        font-size 14px
+        display inline
+        color: typeColors.headings
+
+        &:first-of-type
+          &:hover
+            text-decoration underline
+
+      &.last
+        > strong:first-of-type
+          &:after
+            content ''
+            display inline-block
+            vertical-align middle
+            bubble()
+
+      &:not(:last-child)
+        border-bottom: 1px solid colors.borders
+
+      &.selected
+        > strong:first-of-type
+          color: colors.primary !important
+
+      &:hover
+      &:active
+        .item
+          &__controls
+            right 0
+
+
+    ul
       margin -8px
+      width calc(100% + 16px)
+      position relative
+      background: colors.bgs.ui
+      padding 0
+      max-height 300px
+      overflow auto
+      position relative
 
-    &.prefs
-      margin-left auto
-      min-width 200px
+      &:before
+        content ''
+        position absolute 0
+        z-index -1
+        background-color white
+        background-image embedurl('~static/loaders/preload.svg')
+        background-position 50% 50%
+        background-repeat no-repeat
+        transform translateY(-100%)
+        transition transform .15s ease-out
+
+      &.fetching
+        &:before
+          z-index 5
+          transform translateY(0)
+
+    .sort
+      margin 8px -8px
+      flex 1 1 100%
+
+  h3
+    margin-bottom 0
+    white-space nowrap
+    flex 1 1 auto
+    text-align left
+
+    small
+      margin-left 8px
+      opacity .6
+
+  header
+    display flex
+    flex-flow row wrap
+
+    &+p
+      padding 12px
+      font-style italic
+
+    .new
+      size 24px
+      line-height 24px
+      border-radius 50px
+
+  > button
+    margin auto auto 0
+
+  &es
+    display flex
+    flex-flow row wrap
+    margin -8px
+
+  &.prefs
+    margin-left auto
+    min-width 200px
 </style>

@@ -9,7 +9,7 @@
 
 <template lang="pug">
 div
-  p ss: {{ shouldShow }} {{ subscriber.name }}
+  //- p ss: {{ shouldShow }} {{ subscriber.name }}
   slot(:taxonomy="taxonomy" :subscriber="subscriber")
 
   ul(

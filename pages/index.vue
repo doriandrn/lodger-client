@@ -1,5 +1,5 @@
 <template lang="pug">
-sction#init.user(v-if="!hasUsers")
+sction#init.user(v-if="!ids.length")
   header
     h1 {{ $lodger.i18n.welcome.title }}
     p.intro {{ $lodger.i18n.welcome.intro }}

@@ -16,7 +16,7 @@ ValidationObserver(v-slot="{ passes }")
           :key=           "`${field._type}-${id}`"
           :id=            "id"
           :type=          "field._type || 'text'"
-          :label=         "field.label(translationObject)"
+          :label=         "typeof field.label === 'function' ? field.label(translationObject) : ''"
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
           :required=      "field.v && field.v.indexOf('required') > -1"
@@ -27,7 +27,7 @@ ValidationObserver(v-slot="{ passes }")
           :searchTaxonomy="field.taxonomy"
           :click=         "field['@click']"
           :dangerous=     "field.dangerous"
-          :transform=     "field.transform"
+          :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
 
           v-model=   "$data[id]"
@@ -56,7 +56,7 @@ ValidationObserver(v-slot="{ passes }")
       buton(
         type= "submit",
         icon= "plus-circle"
-        slot= "right"
+        size= "xl"
         :disabled = "!Object.keys(filteredData).length"
       ) {{ submitText }}
 </template>
@@ -154,32 +154,33 @@ export default {
   flex-flow row wrap
   justify-content center
   width 100%
+  max-width 480px
 
   &+.form
     margin-top 32px
 
-  &__title
-    margin-right 16px
-
-  &__title
-  &__desc
-    margin-bottom 0
-    flex 0 1 auto
-
-    &+.form__content
-      border-top: 1px solid config.palette.borders
-      padding-top 12px
-      margin-top 12px
+  .actions
+    margin-top 20px
 
 fieldset
   padding 16px
   background rgba(black, .05)
+  border-radius 4px
   border 0
   position relative
 
+  +above(l)
+    padding 24px
+
+  +above(xl)
+    padding 32px
+
   legend
-    position absolute
-    top 0
+    position: absolute;
+    top: -24px;
+    background: rgba(black,.05);
+    border-top-radius 2px
+    padding: 4px 8px;
     left auto
 
   .content
@@ -226,11 +227,15 @@ fieldset
 
 
       &:not([data-type="userAvatar"])
-        background rgba(white, .75)
+        background rgba(white, .35)
 
         &[data-req]
           background rgba(white, .9)
           order 1
+
+          &:hover
+          &:focus
+            box-shadow 2px 1px 15px 5px rgba(black, .025)
 
       &[data-type="radios"]
         align-items center

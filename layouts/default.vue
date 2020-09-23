@@ -18,9 +18,9 @@
     )
       ul(v-if=   "administreazaCelPutinOAsociatie")
         li(
-          v-for="item in navItems"
+          v-for="item in $lodger.i18n.nav"
         )
-          nuxt-link(:to="item.url") {{ item.title }}
+          nuxt-link(:to="item[0]") {{ item[1] }}
       ul(v-else)
         li
           nuxt-link(to="/dashboard") {{ navInitializare }}
@@ -55,7 +55,7 @@
     ) {{ 'settings.title' }}
 
   main
-    nuxt
+    nuxt(:nuxt-child-key="activePage")
 
   footr
     a user select
@@ -90,6 +90,8 @@
 </template>
 
 <script>
+import { Observer } from 'mobx-vue'
+
 import logo from 'c/logo'
 import headr from 'c/header'
 import footr from 'c/footer'
@@ -104,11 +106,12 @@ import buton from 'form/button'
 import toasts from 'c/toasts'
 import dropdown from 'c/dropdown'
 
-
 import Package from '../package.json'
-const { version, name, author } = Package
 
-export default {
+const { version, name, author } = Package
+const subName = 'default'
+
+export default Observer ({
   data () {
     return {
       app: {
@@ -116,6 +119,7 @@ export default {
         name,
         author
       },
+      activeUserId: '',
       search: '',
       navItems: [
         {
@@ -126,6 +130,10 @@ export default {
           title: 'liste',
           url: '/liste'
         },
+        {
+          title: 'istoric',
+          url: '/istoric'
+        }
         // {
         //   title: $t('navigation[2]'),
         //   url: '/community'
@@ -133,60 +141,25 @@ export default {
       ]
     }
   },
+
+  // async asyncData ({ $lodger }) {
+
+  // },
+
+  beforeCreate () {
+    this.$lodger.utilizatori.subscribe(subName)
+  },
+
   computed: {
+    activePage () {
+      return this.$route.fullPath
+    },
     administreazaCelPutinOAsociatie () {
       return true
     }
-    // modalForm () {
-    //   const name = this.modalContent.split('.')[0]
-    //   return this.$lodger.forms[name]
-    // },
-    // switchOptions () {
-    //   const { idsAsociatii, asociatii } = this
-    //   const selector = {}
-    //   idsAsociatii.map(asoc => {
-    //     selector[asoc] = asociatii[asoc].name
-    //   })
-    //   return selector
-    // },
-    // navInitializare () {
-    //   // const { $lodger: { getters } } = this
-    //   // const $activa = getters['$asociatie']
-    //   // if (!$activa || !$activa.name) return this.$t('navigation[0]')
-    //   // return `${ this.$t( 'asociatie.init.title' ) } - ${ this.$t( 'defaults.asociatia' ) } ${ $activa.name }`
-    //   return 'dash'
-    // },
-    // $activa () {
-    //   console.log('l', this.$lodger)
-    //   return this.$lodger['asociatie'].active
-    // },
-    // balanta () {
-    //   if (!this.$activa) return
-    //   return this.$activa.balanta
-    // },
-    // idAsociatieActiva: {
-    //   get () { return this.$activa._id },
-    //   set (asocId) {
-    //     this.debug('asoc', asocId)
-    //     if (typeof asocId !== 'string') return
-    //     this.schimbaAsociatieActiva(asocId)
-    //   }
-    // },
-    // administreazaCelPutinOAsociatie () {
-    //   const { idsAsociatii } = this
-    //   return idsAsociatii && idsAsociatii.length > 1
-    // },
-    // idsAsociatii () {
-    //   return []
-    // },
-    // ...mapGetters({
-    //   modalOpen: 'modal/open',
-    //   modalContent: 'modal/content',
-    //   modalData: 'modal/data'
-    // })
   },
   beforeDestroy () {
-    // this.$store.commit('DESTROYMAIN', 1)
+
   },
   components: {
     headr,
@@ -202,7 +175,7 @@ export default {
     toasts,
     dropdown
   }
-}
+})
 </script>
 
 <style lang="stylus">
@@ -229,6 +202,11 @@ footerHeight = 40px
   > header
     position fixed 0 0 auto 0
     z-index 99
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items center
+    background-color: rgba(black, .05);
 
     nav
       position fixed
@@ -247,6 +225,7 @@ footerHeight = 40px
 
     &+main
       padding-top 48px
+      flex-direction column
 
     .switch
       position relative
@@ -335,4 +314,6 @@ footerHeight = 40px
   width: 100%;
   justify-content: space-between;
 
+.lang-switch a
+  margin 0 8px
 </style>

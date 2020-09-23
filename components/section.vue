@@ -1,10 +1,11 @@
 <template lang="pug">
-section(:class="{ sidebar: $slots.sidebar }")
+section(:class="{ sidebar: $slots.sidebar, boxes }")
   .inner
-    slot(name="beforeTitle")
-    h1(v-if="title") {{ title }}
+    div
+      slot(name="beforeTitle")
+      h1(v-if="title") {{ title }}
 
-    slot
+      slot
 
     aside(v-if="$slots.sidebar")
       slot(name="sidebar")
@@ -40,6 +41,11 @@ section
     > .inner
       flex-flow row nowrap !important
       align-items flex-start !important
+
+      > div
+        flex 1 1 100%
+        display flex
+        flex-flow row wrap
 
   aside
     flex 0 0 280px

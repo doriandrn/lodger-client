@@ -9,7 +9,7 @@ sction#init.user(v-if="!ids.length")
     frm(
       v-if=   "$lodger.utilizatori"
       :fields = "$lodger.utilizatori.form.fields"
-      :translationObject = "$lodger.i18n.taxonomies.utilizatori.fields"
+      :i18n = "$lodger.i18n.taxonomies.utilizatori.fields"
       :isNew="true"
       :submitText = "$lodger.i18n.next"
       @submit=  "$lodger.utilizatori.put($event)"

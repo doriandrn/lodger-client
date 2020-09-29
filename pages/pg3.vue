@@ -1,5 +1,5 @@
 <template lang="pug">
-sction#pg(boxes)
+sction#pg3(boxes)
   ul.view
     li tree
     li boxes
@@ -168,7 +168,7 @@ typeColors = config.typography.palette
     button
       background transparent
 
-#pg
+#pg3
   .inner
     display grid
     grid-template-columns 12px 12px 12px

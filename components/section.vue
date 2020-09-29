@@ -46,6 +46,7 @@ section
         flex 1 1 100%
         display flex
         flex-flow row wrap
+        justify-content space-between
 
   aside
     flex 0 0 280px

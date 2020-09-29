@@ -11,7 +11,7 @@ div(
   span.radios(
     :id=              "id"
   )
-    span.input__radio(
+    span(
       v-for=          "option, index in options"
       v-tooltip=      "{ content: tooltipData(option), placement: tooltipsPosition }"
     )
@@ -21,13 +21,12 @@ div(
         :name=      "id",
         :disabled=  "option.disabled"
         :checked=   "String(index) === String(value)"
-        :id=        "optionId(option)",
+        :id=        "`${id}-${index}`",
         @change=    "$emit('change', index)"
         @click=     "$emit('click', { index, checked: String(index) === String(value) })"
       )
       label.label(
-        :for=       "optionId(option)"
-        :data-id=   "option.id || option.label"
+        :for=       "`${id}-${index}`"
       ) #[span] {{ option }}
       //- ) #[span] {{ options instanceof Array ? option : $t(option.label) }}
 </template>
@@ -52,7 +51,7 @@ export default {
       return 'top-center'
     },
     optionId () {
-      return option => `${this.id}-${option.id || option.label}`
+      return option => `${this.id}-${option && option.id ? option.id || option.label : this.index}`
     }
   },
   components: {

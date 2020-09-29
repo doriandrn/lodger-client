@@ -8,14 +8,24 @@ export default async ({ app, store }, inject) => {
     Lodger.locale = window.navigator.language
   }
 
-  Object.assign(lodger, { modal: observable({
-    activeDoc: null,
-    close: function () {
-      this.activeDoc = null
+  const { $axios } = app
+
+  console.log(Object.getOwnPropertyNames(app))
+
+  Object.assign(lodger, {
+    modal: observable({
+      activeDoc: null,
+      close: function () {
+        this.activeDoc = null
+      }
+    }),
+    cursValutar: async () => {
+      const { data } = await $axios.get(`https://openexchangerates.org/api/latest.json?app_id=1c424442229347b3b922a2daa809ff1c`)
+      console.log('d', data)
     }
-  }) })
+  })
   inject('lodger', lodger)
-  inject('Lodger', Lodger)
-  inject('t', lodger.translate.bind(lodger))
+  // inject('Lodger', Lodger)
+  // inject('t', lodger.translate.bind(lodger))
   app.store = lodger.store
 }

@@ -53,16 +53,19 @@ header
     a
       color: config.typography.palette.headings
 
-  .field[data-type="search"]
+  [data-type="search"]
     > input
       padding-left 32px !important
       border: 1px solid config.palette.borders
 
       &::placeholder
         opacity 1
+
     &:before
-      top 7px
+      top 13px
       left 11px
+      position absolute
+      background-color rgba(black, .5)
 
 </style>
 

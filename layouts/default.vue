@@ -1,58 +1,59 @@
 <template lang="pug">
 #layout
   headr
-    logo
+    .inner
+      logo
 
-    //- field.switch(
-    //-   v-model=    "idAsociatieActiva",
-    //-   id=         "asociatieSwitch"
-    //-   label=      "defaults.asociatia"
-    //-   type=       "altselect",
-    //-   :options=   "switchOptions"
-    //-   :arrow=     "true"
-    //-   :required=  "true"
-    //- )
+      //- field.switch(
+      //-   v-model=    "idAsociatieActiva",
+      //-   id=         "asociatieSwitch"
+      //-   label=      "defaults.asociatia"
+      //-   type=       "altselect",
+      //-   :options=   "switchOptions"
+      //-   :arrow=     "true"
+      //-   :required=  "true"
+      //- )
 
-    nav(
-      data-orientation="horizontal"
-    )
-      ul(v-if=   "administreazaCelPutinOAsociatie")
-        li(
-          v-for="item in $lodger.i18n.nav"
+      nav(
+        data-orientation="horizontal"
+      )
+        ul(v-if=   "administreazaCelPutinOAsociatie")
+          li(
+            v-for="item, url in $lodger.i18n.nav"
+          )
+            nuxt-link(:to="url") {{ item }}
+        ul(v-else)
+          li
+            nuxt-link(to="/dashboard") {{ navInitializare }}
+
+      //- nuxt-link(
+      //-   v-if=     "balanta"
+      //-   to=       "/registru"
+      //-   slot=     "right"
+      //- )
+      //-   bani(
+      //-     :valoare= "balanta",
+      //-     data-icon="shield"
+      //-   )
+
+      .right
+        field(
+          type=     "search"
+          v-model=  "search"
+          size=     "small"
+          id=       "search"
+          :label=        "$lodger.i18n.search"
+          :placeholder=  "$lodger.i18n.search"
+          hide-label
         )
-          nuxt-link(:to="item[0]") {{ item[1] }}
-      ul(v-else)
-        li
-          nuxt-link(to="/dashboard") {{ navInitializare }}
 
-    //- nuxt-link(
-    //-   v-if=     "balanta"
-    //-   to=       "/registru"
-    //-   slot=     "right"
-    //- )
-    //-   bani(
-    //-     :valoare= "balanta",
-    //-     data-icon="shield"
-    //-   )
-
-    field(
-      slot=     "right"
-      type=     "search"
-      v-model=  "search"
-      size=     "small"
-      id=       "search"
-      :label=  "'defaults.search'"
-      :placeholder=  "'defaults.search'"
-      hide-label
-    )
-
-    buton(
-      styl=   "unstyled"
-      icon=   "settings"
-      slot=   "right"
-      to=     "/setari#asociatie"
-      icon-only
-    ) {{ 'settings.title' }}
+        buton(
+          styl=   "unstyled"
+          icon=   "settings"
+          slot=   "right"
+          to=     "/setari#asociatie"
+          icon-only
+        ) {{ 'settings.title' }}
 
   main
     nuxt(:nuxt-child-key="activePage")
@@ -182,6 +183,9 @@ export default Observer ({
 @require '~styles/config'
 footerHeight = 40px
 
+.right
+  margin-left auto
+
 #layout
   display flex
   flex-flow column nowrap
@@ -207,6 +211,17 @@ footerHeight = 40px
     justify-content: center;
     align-items center
     background-color: rgba(black, .05);
+
+    .inner
+      align-items center
+      flex-flow row nowrap
+
+      .right
+        display flex
+        flex-flow row nowrap
+
+      > div
+        max-height 40px
 
     nav
       position fixed

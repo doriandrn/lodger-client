@@ -1,22 +1,56 @@
 <template lang="pug">
 ValidationObserver(v-slot="{ passes }")
   form.form(@submit.prevent="passes(validation)")
+    button.lacatel modifica
     //- h5.form__title(v-if="title") {{ $t( title ) }}
     //- p.form__desc(v-if="desc") {{ $t( desc ) }}
+    fieldset.header
+      legend Cap
 
-    fieldset(v-if="fields && Object.keys(fields).length")
-      legend bla
-
-      .content
-        slot(name=        "beforeFields")
-
+      .fields
         field(
-          v-for=          "field, id in fields"
-
+          v-for=  "field, id in Object.keys(fields).filter(field => typeof fields[field].fieldset === 'undefined').reduce((a, b) => ({...a, [b]: fields[b]}),{})"
           :key=           "`${field._type}-${id}`"
           :id=            "id"
-          :type=          "field._type || 'text'"
-          :label=         "typeof field.label === 'function' ? field.label(translationObject) : ''"
+
+          :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
+          :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
+          :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
+          :focus=         "field.focus"
+          :required =     "form.schema.required.indexOf(field) > -1"
+          :min=           "field.min"
+          :max=           "field.max",
+          :step=          "field._type === 'bani' ? 0.01 : field.step",
+          :data-slot=     "field.slot"
+          :searchTaxonomy="field.taxonomy"
+          :click=         "field['@click']"
+          :dangerous=     "field.dangerous"
+          :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
+          :rules=         "field.v || null"
+          :disabled=      "!editable"
+
+          v-model=   "value[id]"
+          @input=     "doc.atomicSet(id, $event)"
+
+          :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
+        )
+
+      slot(name="headerEnd")
+
+    fieldset(
+      v-if=   "fieldsets"
+      v-for=  "fset, i in fieldsets"
+    )
+      legend {{ i18n.fieldsets[fset] }}
+
+      .fields
+        field(
+          v-for=  "field, id in Object.keys(fields).filter(field => Number(fields[field].fieldset) === i).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
+          :key=           "`${field._type}-${id}`"
+          :id=            "id"
+
+          :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
+          :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
           :required=      "field.v && field.v.indexOf('required') > -1"
@@ -29,21 +63,54 @@ ValidationObserver(v-slot="{ passes }")
           :dangerous=     "field.dangerous"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
+          :disabled=      "!editable || id.indexOf('Id') === id.length - 2"
 
-          v-model=   "$data[id]"
+          v-model=   "value[id]"
+          @input=     "doc.atomicSet(id, $event)"
 
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
-          //- :data-vv-scope= "title",
-          //- :data-vv-as=    "field.id"
-          //- :data-vv-name=  "field.id"
-          //- @change=        "handleChange(field['@change'], field.id, field.type, $event, form.name)"
-          //- :value=         "field.value()"
-          //- :error=         "errors.has(field.id, form.name)"
-          //- :valid=         "!errors.has(field.id, form.name)"
-          //- :message=       "errors.first(field.id, form.name)"
 
-        slot(name=        "afterFields")
+    //- fieldset(v-else-if="fields && Object.keys(fields).length")
+    //-   legend bla
+
+    //-   .content
+    //-     slot(name=        "beforeFields")
+
+    //-     field(
+    //-       v-for=          "field, id in fields"
+    //-       v-if=           "field.fieldset === undefined"
+    //-       :key=           "`${field._type}-${id}`"
+    //-       :id=            "id"
+    //-       :type=          "field._type || 'text'"
+    //-       :label=         "typeof field.label === 'function' ? field.label(i18n) : ''"
+    //-       :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
+    //-       :focus=         "field.focus"
+    //-       :required=      "field.v && field.v.indexOf('required') > -1"
+    //-       :min=           "field.min"
+    //-       :max=           "field.max",
+    //-       :step=          "field._type === 'bani' ? 0.01 : field.step",
+    //-       :data-slot=     "field.slot"
+    //-       :searchTaxonomy="field.taxonomy"
+    //-       :click=         "field['@click']"
+    //-       :dangerous=     "field.dangerous"
+    //-       :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
+    //-       :rules=         "field.v || null"
+
+    //-       v-model=   "$data[id]"
+
+    //-       :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
+    //-     )
+    //-       //- :data-vv-scope= "title",
+    //-       //- :data-vv-as=    "field.id"
+    //-       //- :data-vv-name=  "field.id"
+    //-       //- @change=        "handleChange(field['@change'], field.id, field.type, $event, form.name)"
+    //-       //- :value=         "field.value()"
+    //-       //- :error=         "errors.has(field.id, form.name)"
+    //-       //- :valid=         "!errors.has(field.id, form.name)"
+    //-       //- :message=       "errors.first(field.id, form.name)"
+
+    //-     slot(name=        "afterFields")
 
     .actions
       buton(
@@ -66,17 +133,26 @@ import buton from 'form/button'
 import field from 'form/field'
 import split from 'c/split'
 import { ValidationObserver, extend } from "vee-validate"
+import { Observer } from 'mobx-vue'
 
-export default {
+export default Observer ({
   name: 'F0rm',
   data () {
-    const data = {}
-    const { fields, isNew } = this
+    const { fields, isNew } = this.form
     if (!fields) throw new Error('No form supplied')
+    const data = {
+      fetched: false
+    }
     Object.keys(fields).map(field => { data[field] = null })
     return { ...data }
   },
   computed: {
+    fieldsets () {
+      return this.form.fieldsets
+    },
+    fields () {
+      return this.form.fields
+    },
     filteredData () {
       const { $data } = this
       const data = {}
@@ -91,19 +167,36 @@ export default {
     ValidationObserver
   },
   props: {
+    form: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    value: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    doc: {
+      type: Object,
+      default: null,
+      required: true
+    },
+    editable: {
+      type: Boolean,
+      default: false
+    },
     title:{
       type: String,
       default: 'form'
-    },
-    fields: {
-      type: Object,
-      default: null
     },
     isNew: {
       type: Boolean,
       default: true
     },
-    translationObject: {
+    i18n: {
       type: Object,
       default: null
     },
@@ -143,7 +236,7 @@ export default {
     //   })
     // }
   }
-}
+})
 </script>
 
 <style lang="stylus">
@@ -163,25 +256,35 @@ export default {
     margin-top 20px
 
 fieldset
-  padding 16px
-  background rgba(black, .05)
-  border-radius 4px
+  padding 0
   border 0
   position relative
+  width 100%
 
-  +above(l)
-    padding 24px
-
-  +above(xl)
-    padding 32px
+  &+fieldset
+    margin-top 20px
 
   legend
-    position: absolute;
-    top: -24px;
-    background: rgba(black,.05);
-    border-top-radius 2px
-    padding: 4px 8px;
-    left auto
+    display block
+    text-transform: uppercase;
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    &+.fields
+      margin-top 8px
+
+  &.header
+    border-bottom 1px solid rgba(black, .05)
+    > legend
+      display none
+
+  .fields
+    display flex
+    flex-flow row wrap
+
+    &+time
+      margin 8px 4px
 
   .content
     display flex

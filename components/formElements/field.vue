@@ -5,7 +5,7 @@ ValidationProvider(
   :rules=       "v"
   v-slot=       "{ errors }"
   :data-size=   "size"
-  :data-type=   "type"
+  :data-type=   "isRel ? 'rel' : type"
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-req=    "required"
   :data-results="hasResults",
@@ -13,7 +13,7 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1",
+    v-if=         "['taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel",
     :type=        "type.asRxDBType === 'string' && type !== 'search' ? 'text' : type",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
@@ -22,6 +22,7 @@ ValidationProvider(
     :id=          "id",
     :name=        "id"
     :focus=       "focus",
+    :disabled=    "disabled"
     :required=    "required",
     :min=         "type === 'number' ? min : null"
     :max=         "type === 'number' ? max : null"
@@ -38,6 +39,11 @@ ValidationProvider(
     @keydown.esc=   "inchideModale"
     :class=         "{ av: !!value }"
     @clickAway=     "$emit('clickedAway')"
+  )
+  rel(
+    v-else-if= "isRel"
+    :id=      "value"
+    :taxonomy ="id.replace('Id', '').plural"
   )
   buton(
     v-else-if=    "type === 'button'"
@@ -99,12 +105,12 @@ ValidationProvider(
   contoare(
     v-else-if=      "type === 'contoare'"
   )
-  sel-apartamente(
-    v-else-if=      "type === 'selApartamente'"
-    :optiuni=       "options"
-    @input=         "$emit('input', $event)"
-    :value=         "value || []"
-  )
+  //- sel-apartamente(
+  //-   v-else-if=      "type === 'selApartamente'"
+  //-   :optiuni=       "options"
+  //-   @input=         "$emit('input', $event)"
+  //-   :value=         "value || []"
+  //- )
   distribuire(
     v-else-if=      "type === 'distribuire'"
   )
@@ -170,6 +176,7 @@ import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 import tax from  'c/renderlessTax'
+import rel from 'c/rel'
 
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -187,6 +194,9 @@ import { ValidationProvider, extend } from 'vee-validate';
 export default {
   mixins: [ clickaway ],
   computed: {
+    isRel () {
+      return this.id.indexOf('Id') === this.id.length - 2
+    },
     val () {
       const { type, searchTaxonomy, selected, debug } = this
       let { value } = this
@@ -406,6 +416,7 @@ export default {
     labl,
     multi,
     radios,
+    rel,
     results,
     scari,
     servicii,
@@ -556,6 +567,8 @@ input[type="number"]
 input[type="password"]
 input[type="date"]
 textarea
+[data-type="rel"] a
+  color black
   font-size 18px
   line-height 24px
   background-color transparent
@@ -564,6 +577,7 @@ textarea
   transition all .15s ease-in-out
   // padding 8px 0
   width 100%
+  max-width 100%
 
   &::placeholder
     color: config.typography.palette.meta
@@ -571,6 +585,10 @@ textarea
     font-weight 100
     opacity 0
     transition opacity .1s ease
+
+  &:disabled
+    &+label
+      color #1a1a1a
 
   &:active
   &:focus
@@ -582,6 +600,14 @@ textarea
     &+label
       moveFieldLabel()
 
+
+[data-type="rel"]
+  a
+    text-decoration underline
+    cursor pointer
+
+input[type="number"]
+  width 80px
 
 input[type="radio"]
   &+label
@@ -707,21 +733,6 @@ input[type="checkbox"]
     > input[type="checkbox"]
       display none
 
-  &__radio
-    display flex
-    flex-flow column nowrap
-    margin 4px 4px 8px
-    position relative
-    min-width 40px
-
-    > input[type="radio"]
-      display none
-
-    &:hover
-      > input[type="radio"]:not(:checked)+label
-        > span
-          background-color: lighten(palette.primary, 90%)
-
 .radios
   display flex
   flex-flow row nowrap
@@ -729,9 +740,31 @@ input[type="checkbox"]
   margin -4px
   cursor default
 
+  > span
+    display flex
+    flex-flow column nowrap
+    margin 4px 4px 8px
+    position relative
+    min-width 40px
+
+  input[type="radio"]
+    display none
+
+    &:hover
+      > input[type="radio"]:not(:checked)+label
+        > span
+          background-color: lighten(palette.primary, 90%)
+
 span[data-type]
   text-align left
-  padding 4px 0
+  padding 4px
+  display flex
+  flex-flow column-reverse nowrap
+
+[data-type="search"]
+  max-height 40px
+  display flex
+  flex-flow row nowrap
 
 input[name="nr"]
   font-family: config.typography.fams.headings

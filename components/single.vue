@@ -1,45 +1,53 @@
 <template lang="pug">
-#single
-  header
-    ul.breadcrumbs(v-if="asAccordion")
-      li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
-
-    field(
-      v-for=      "field in previewFields",
-      :id=        "field",
-      :key=       "field"
-      :label =    "field"
-      :value=     "doc._data[field] || form.fields[field].default"
-      :required = "schema.required.indexOf(field) > -1"
-      :hideLabel = "true"
-      :disabled=  "!editable"
-      :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
-      @input=     "doc.atomicSet(field, $event)"
+ul#single.accordion
+  li
+    frm(
+      :form=    "$lodger[plural].form"
+      :value =  "docdata"
+      :doc=     "doc"
+      :i18n=    "$lodger.i18n.taxonomies[plural]"
     )
+      dateTime(:unixTime= "createdAt" slot="headerEnd")
 
-    dateTime(:unixTime= "createdAt")
+  //- header
+  //-   ul.breadcrumbs(v-if="asAccordion")
+  //-     li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
 
-  section.tabs tabs
+  //-   field(
+  //-     v-for=      "field in previewFields",
+  //-     :id=        "field",
+  //-     :key=       "field"
+  //-     :label =    "field"
+  //-     :value=     "doc._data[field] || form.fields[field].default"
+  //-     :required = "schema.required.indexOf(field) > -1"
+  //-     :hideLabel = "true"
+  //-     :disabled=  "!editable"
+  //-     :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
+  //-     @input=     "doc.atomicSet(field, $event)"
+  //-   )
 
-  section.main(v-if= "docdata")
-    field(
-      v-for=      "field in fields",
-      :id=        "field",
-      :key=       "field"
-      :label =    "field"
-      :disabled=  "!editable"
-      :value=     "docdata[field] || form.fields[field].default"
-      :required = "schema.required.indexOf(field) > -1"
-      :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
-    )
 
-  footer.actions
-    button trash
+
+
+
+  //- section.main(v-if= "docdata")
+  //-   field(
+  //-     v-for=      "field in fields",
+  //-     :id=        "field",
+  //-     :key=       "field"
+  //-     :label =    "field"
+  //-     :disabled=  "!editable"
+  //-     :value=     "docdata[field] || form.fields[field].default"
+  //-     :required = "schema.required.indexOf(field) > -1"
+  //-     :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
+  //-   )
+
 </template>
 
 <script>
 import field from 'form/field'
 import dateTime from 'c/dateTime'
+import frm from 'c/form'
 
 import { Observer } from 'mobx-vue'
 
@@ -61,11 +69,6 @@ export default Observer ({
       type: Object,
       default: null,
       required: true
-    },
-
-    editable: {
-      type: Boolean,
-      default: false
     }
   },
   // async fetch () {
@@ -88,6 +91,9 @@ export default Observer ({
     docdata () {
       return this.doc._data
     },
+    plural () {
+      return this.doc.collection.name.plural
+    },
     fields () {
       return Object.keys(this.docdata).filter(k => k.indexOf('_') !== 0 && this.previewFields.indexOf(k) === -1)
     },
@@ -108,7 +114,7 @@ export default Observer ({
       const $tax = this.$lodger[this.taxonomy]
       const { parents } = $tax
       if (!parents || !parents.length) return
-      return parents.filter(parent => this.fields.indexOf(parent + 'Id') > - 1)
+      return parents.filter(parent => this.fields.indexOf(parent + 'Id') > - 1).push('current')
     },
     previewFields () {
       return this.form.previewFields
@@ -119,6 +125,7 @@ export default Observer ({
     }
   },
   components: {
+    frm,
     field,
     dateTime
   }
@@ -139,6 +146,9 @@ export default Observer ({
     padding 12px
 
 #single
+  padding 0
+  width 100%
+
   > header
     border-bottom 1px solid
 

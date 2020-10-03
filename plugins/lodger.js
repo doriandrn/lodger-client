@@ -17,33 +17,35 @@ export default async ({ app, store }, inject) => {
         this.activeDoc = null
       }
     }),
-    cursValutar: async (displayCurrency) => {
-      if (!displayCurrency) return
-      const { localStorage } = window
 
-      const id = `cursValutar-${displayCurrency}`
-      let prevTimestamp
+    mainSubName: 'prince'
+    // cursValutar: async (displayCurrency) => {
+    //   if (!displayCurrency) return
+    //   const { localStorage } = window
 
-      try {
-        prevTimestamp = JSON.parse(localStorage.getItem(id))
-        prevTimestamp = prevTimestamp.timestamp
-      } catch (e) {
+    //   const id = `cursValutar-${displayCurrency}`
+    //   let prevTimestamp
 
-      }
+    //   try {
+    //     prevTimestamp = JSON.parse(localStorage.getItem(id))
+    //     prevTimestamp = prevTimestamp.timestamp
+    //   } catch (e) {
 
-      if (prevTimestamp && Date.now() / 1000 - prevTimestamp < 100000) {
-        console.error('cannot fetch exchange rates too often')
-        return
-      }
+    //   }
 
-      const { data } = await $axios.get(`https://openexchangerates.org/api/latest.json?app_id=1c424442229347b3b922a2daa809ff1c&base=${displayCurrency}`)
-      const { base, rates, timestamp } = data
+    //   if (prevTimestamp && Date.now() / 1000 - prevTimestamp < 100000) {
+    //     console.error('cannot fetch exchange rates too often')
+    //     return
+    //   }
 
-      if (base !== displayCurrency)
-        throw new Error('diferrent currencies supplied')
+    //   const { data } = await $axios.get(`https://openexchangerates.org/api/latest.json?app_id=1c424442229347b3b922a2daa809ff1c&base=${displayCurrency}`)
+    //   const { base, rates, timestamp } = data
 
-      localStorage.setItem(id, JSON.stringify({ rates, timestamp }) )
-    }
+    //   if (base !== displayCurrency)
+    //     throw new Error('diferrent currencies supplied')
+
+    //   localStorage.setItem(id, JSON.stringify({ rates, timestamp }) )
+    // }
   })
   inject('lodger', lodger)
   inject('Lodger', Lodger)

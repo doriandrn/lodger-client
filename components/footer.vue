@@ -16,7 +16,7 @@ footer
     font-size 10px
     color rgba(black, .25)
 
-  &__stuff
+  .inner > div:last-child
     display flex
     flex-flow row nowrap
 </style>

@@ -4,26 +4,30 @@ strong(
   @click="$emit('click')"
 ) {{ value }}
 timp(
-  v-else-if= "['la', 'dataScadenta'].indexOf(type) > -1"
+  v-else-if=  "['la', 'dataScadenta'].indexOf(type) > -1"
   :unixTime = "value"
   ago=  true
   liveUpdate= true
 )
 span.bani(
-  v-else-if="['suma', 'bani', 'balanta'].indexOf(type) > -1"
+  v-else-if=  "['suma', 'bani', 'balanta'].indexOf(type) > -1"
   :valoare="value"
 )
 suprafata(
-  v-else-if="type === 'suprafata'"
+  v-else-if=  "type === 'suprafata'"
   :value="value"
 )
 servicii(
-  v-else-if="type === 'servicii'"
+  v-else-if=  "type === 'servicii'"
   :value="value"
 )
 span.ap__nr(
-  v-else-if="type === 'nr'"
+  v-else-if=  "type === 'nr'"
 ) {{ value }}
+
+span.scari(
+  v-else-if=  "type === 'scari' && value"
+) {{ value.length }} scari
 span(v-else) {{ value }}
 </template>
 

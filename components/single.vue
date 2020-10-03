@@ -13,6 +13,12 @@ ul#single.accordion
         liveUpdate
       )
 
+      blocuri.struct(
+        v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"
+        layout=     "interactiv"
+        :blocuri=   "$lodger.blocuri.subscribers.single.items"
+      )
+
   //- header
   //-   ul.breadcrumbs(v-if="asAccordion")
   //-     li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
@@ -52,27 +58,55 @@ ul#single.accordion
 import field from 'form/field'
 import dateTime from 'c/dateTime'
 import frm from 'c/form'
+import blocuri from 'c/blocuri'
 
 import { Observer } from 'mobx-vue'
 
 export default Observer ({
   data () {
     return {
-      fetched: false
+      fetched: false,
+      extraSubs: []
     }
   },
   props: {
-    // taxonomy: {
-    //   type: String
-    // },
-    // id: {
-    //   type: String,
-    //   required: true
-    // },
     doc: {
       type: Object,
       default: null,
       required: true
+    }
+  },
+  async fetch () {
+    const { plural, fetched, docdata } = this
+    if (fetched) return
+
+    const o = {
+      asociatii: async () => {
+        const asociatieId = this.docdata._id
+        const sub = this.$lodger.blocuri.subscribe('single', { criteria: { filter: { asociatieId }, limit: 0 }})
+        this.extraSubs.push(sub)
+        await sub.updates
+      }
+    }
+
+    if (o[plural]) await o[plural]()
+
+    // const fields = Object.keys(docdata)
+
+    // await Promise.all(fields.map(async f => {
+    //   if (this.$lodger.taxonomies.indexOf(f) > 1) {
+    //     this.docdata[f] = await this.doc[`${f}_`]
+    //   }
+    // }))
+
+    this.fetched = true
+    return true
+  },
+
+  beforeDestroy () {
+    const { extraSubs } = this
+    if (extraSubs.length) {
+      extraSubs.map(sub => { if (sub.kill) sub.kill() })
     }
   },
   // async fetch () {
@@ -131,7 +165,8 @@ export default Observer ({
   components: {
     frm,
     field,
-    dateTime
+    dateTime,
+    blocuri
   }
 })
 </script>

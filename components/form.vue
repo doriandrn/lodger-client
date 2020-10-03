@@ -71,6 +71,8 @@ ValidationObserver(v-slot="{ passes }")
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
 
+    slot
+
     //- fieldset(v-else-if="fields && Object.keys(fields).length")
     //-   legend bla
 
@@ -276,9 +278,11 @@ fieldset
       margin-top 8px
 
   &.header
-    border-bottom 1px solid rgba(black, .05)
     > legend
       display none
+
+    &+fieldset
+      border-top 1px solid rgba(black, .05)
 
   .fields
     display flex

@@ -1,14 +1,14 @@
 <template lang="pug">
-ul.servicii
+ul.servicii(:class="{ disabled }")
   li(
     v-for=              "serviciu, id in servicii"
     :data-icon=         "serviciu.denumire"
     :data-sel=          "value instanceof Array && value.indexOf(serviciu.denumire) > -1"
-    :class=             "{ modificabil }"
     @click=             "toggleServiciu(serviciu.denumire)"
     @keydown.enter=     "toggleServiciu(serviciu.denumire)"
     @keydown.space=     "toggleServiciu(serviciu.denumire)"
     tabIndex=           0
+    v-tooltip=          "$lodger.i18n.taxonomies.servicii.predefinite[serviciu.denumire]"
   )
     //- span.nume {{ modificabil(serviciu.denumire) ? serviciu.denumire : $t(`serviciu.nume.${serviciu.denumire}`) }}
     //- .serviciu__actiuni(v-if="modificabil(serviciu.denumire)")
@@ -64,7 +64,7 @@ export default {
         return {}
       }
     },
-    modificabil: {
+    disabled: {
       type: Boolean,
       default: false
     },
@@ -81,6 +81,7 @@ export default {
 <style lang="stylus">
 @require '~styles/config'
 serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff gaze #5300ff termoficare #ff5722 internet #9c27b0
+butSize = 40px
 
 .servicii
   list-style-type none
@@ -88,25 +89,26 @@ serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff g
   width 100%
   display flex
   flex-flow row wrap
-  justify-content center
+  // justify-content center
 
   > li
     display flex
     flex-flow column nowrap
-    padding 10px
+
     border: 1px solid config.palette.bgs.body
     justify-content center
     text-align center
     align-items center
-    flex 0 0 120px
-    height 120px
-    border-radius 60px
-    margin 8px
+    size: butSize
+
+    border-radius 20px
+    padding 0
+    margin 2px
     position relative
     transition all .15s ease-in-out
     cursor pointer
-    font-size 12px
-    line-height 16px
+    // font-size 12px
+    // line-height 16px
     background: config.palette.bgs.body
     box-shadow inset 0px 2px 3px 1px rgba(black, .025)
     user-select none
@@ -129,7 +131,7 @@ serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff g
 
     &[data-icon="electricitate"]
       &:before
-        mask-size 22px
+        mask-size 12px
 
     &:hover
       box-shadow none
@@ -139,19 +141,25 @@ serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff g
       box-shadow: 0px 2px 3px 1px rgba(config.palette.secondary, .15)
       // background-color: rgba(config.palette.primary, .05)
       border-color: config.palette.secondary
-      border-style dotted
       outline: none
 
       .nume
         color: config.typography.palette.headings
 
+    &:hover
+    &:focus
+    &:active
+      &:before
+        opacity 1
+
     &:before
-      background-color: config.palette.borders
-      mask-size 32px
-      flex-basis 32px
+      background-color: config.typography.palette.meta
+      mask-size 20px
+      flex-basis 20px
       flex-shrink 0
-      size 32px
-      margin 0 0 8px
+      size 20px
+      margin 0
+      opacity .5
       transition all .1s ease
 
     .nume

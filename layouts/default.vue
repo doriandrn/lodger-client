@@ -322,8 +322,7 @@ footerHeight = 40px
     bottom 0
     left 0
     right 0
-    // height: footerHeight
-    height 240px // debuggin
+    height: footerHeight
     line-height: footerHeight
     z-index 2
     background: config.palette.borders

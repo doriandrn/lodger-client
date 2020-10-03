@@ -14,7 +14,7 @@ ValidationProvider(
 )
   input(
     v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel",
-    :type=        "type.asRxDBType === 'string' && type !== 'search' ? 'text' : type",
+    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox'].indexOf(type) < 0 ? 'text' : type",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
@@ -126,6 +126,7 @@ ValidationProvider(
     @input=           "$emit('input', $event)"
     :value=           "value"
     :servicii=        "$lodger.servicii.subscribers.pg2.items"
+    :disabled=        "disabled"
   )
   tax(
     v-else-if=  "type === 'taxonomy'"
@@ -592,9 +593,9 @@ textarea
     opacity 0
     transition opacity .1s ease
 
-  &:disabled
-    &+label
-      color #1a1a1a
+  // &:disabled
+  //   &+label
+  //     color #1a1a1a
 
   &:active
   &:focus
@@ -606,6 +607,10 @@ textarea
     &+label
       moveFieldLabel()
 
+.disabled
+:disabled
+  &+label
+    color #1a1a1a
 
 [data-type="rel"]
   a

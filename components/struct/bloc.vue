@@ -4,14 +4,13 @@
 )
   h4.bloc__title
     span(
-      v-if=       "modificabil"
-      v-tooltip=  "$t('bloc.edit.title')"
-      @click=     "openModal('bloc.edit')"
-    ) {{ bloc.nume }}
-    nuxt-link(
-      :to="`/bloc/${bloc._id}`"
-      v-else
-    ) {{ bloc.nume }}
+    ) {{ bloc.name }}
+      //- v-tooltip=  "bloc.edit.title"
+      //- @click=     "openModal('bloc.edit')"
+    //- nuxt-link(
+    //-   :to="`/bloc/${bloc._id}`"
+    //-   v-else
+    //- ) {{ bloc.nume }}
 
   ol.scari(
     v-if=   "bloc.scari && bloc.scari.length > 0"
@@ -36,7 +35,7 @@
               :disabled=  "!navigabil"
             ) {{ ap.proprietar }}
               em.ap__nr {{ ap.nr }}
-            
+
             buton.adauga(
               v-if=   "modificabil"
               styl=   "unstyled"
@@ -46,19 +45,28 @@
               @click= "selecteazaAp({ id: null }); selecteazaEtaj({ bloc: bloc._id, scara: Number(iScara), etaj: i, modificabil })",
               icon=   "plus-circle"
               icon-only
-            ) {{ $t('apartament.new.title') }}
+            ) apartament.new.title
 </template>
 
 <script>
 import buton from 'form/button'
-import { mapGetters, mapActions } from 'vuex'
+// import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
-    id: {
-      type: String,
-      default: null
+    bloc: {
+      type: Object,
+      required: true,
+      default () {
+        return {
+          name: 'none'
+        }
+      }
     },
+    // id: {
+    //   type: String,
+    //   default: null
+    // },
     modificabil: {
       type: Boolean,
       default: false
@@ -80,22 +88,25 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      blocuri: 'blocuri',
-      apartamenteEtaj: 'apartament/localizeaza',
-      apTooltip: 'apartament/tooltip',
-      ultimulApAdaugat: 'apartament/ultim'
-    }),
-    bloc () {
-      return this.blocuri[this.id]
+    id () {
+      return this.bloc._id
+    },
+    // ...mapGetters({
+    //   blocuri: 'blocuri',
+    //   apartamenteEtaj: 'apartament/localizeaza',
+    //   apTooltip: 'apartament/tooltip',
+    //   ultimulApAdaugat: 'apartament/ultim'
+    // }),
+    apartamenteEtaj () {
+      return () => []
     }
   },
   methods: {
-    ...mapActions({
-      openModal: 'modal/open',
-      selecteazaEtaj: 'etaj/selecteaza',
-      selecteazaAp: 'apartament/selecteaza'
-    })
+    // ...mapAsctions({
+    //   openModal: 'modal/open',
+    //   selecteazaEtaj: 'etaj/selecteaza',
+    //   selecteazaAp: 'apartament/selecteaza'
+    // })
   },
   components: {
     buton,
@@ -134,7 +145,7 @@ colors = config.palette
   &__actiuni
     display flex
     flex-flow row nowrap
-    
+
     > button
       &:not(:first-child)
         margin-left 8px
@@ -302,7 +313,7 @@ colors = config.palette
           background-color: transparent
           color: config.typography.palette.ui
           font-size 0
-          
+
           &:hover
             background-color transparent !important
             color: config.typography.palette.headings

@@ -1,32 +1,32 @@
 <template lang="pug">
 .blocuri__container
   //- bloc-heading(v-if="idsBlocuri && swiperIndexBlocActiv < idsBlocuri.length")
-  swiper.blocuri(
+  #swiper.blocuri(
     v-if=       "layout === 'interactiv'"
     ref=        "blocuriSwiper"
     :options=   "swiperOpts"
   )
-    swiper-slide(
+    #swiper-slide(
       v-for=      "bloc, blocId in blocuri",
       :key=       "blocId",
-      :data-nume= "bloc.nume"
+      :data-nume= "bloc.name"
     )
       bloc(
-        :id=          "blocId",
-        :ultimul=     "blocId === ultimulBlocAdaugat"
-        :navigabil =  "blocId === activ"
-        :modificabil= "blocId === activ"
+        :bloc=          "bloc",
       )
+        //- :ultimul=     "blocId === ultimulBlocAdaugat"
+        //- :navigabil =  "blocId === activ"
+        //- :modificabil= "blocId === activ"
     .swiper-slide(
       v-if=   "modificabile"
     )
       buton.bloc__add(
         icon=   "plus-circle",
-        @click= "openModal('bloc.new')"
+        @click= "debug('bloc nou')"
         size=   "medium"
 
         icon-only
-      ) {{ $t('bloc.new.title') }}
+      ) bloc.new.title
     //- buton.urm.blocuri__nav(
     //-   slot=     "button-next"
     //-   arrow=    "right"
@@ -61,8 +61,6 @@ import bloc from 'struct/bloc'
 import buton from 'form/button'
 // import blocHeading from 'cc/headingActiuniBloc'
 
-import { mapActions, mapGetters } from 'vuex'
-
 let index = 0
 
 export default {
@@ -80,10 +78,10 @@ export default {
           },
           slideChangeTransitionStart: () => {
             this.swiperIndexBlocActiv = index
-            this.selecteazaBloc(this.idsBlocuri[index])
+            // this.selecteazaBloc(this.idsBlocuri[index])
           },
           init: () => {
-            this.selecteazaBloc(this.activ)
+            // this.selecteazaBloc(this.activ)
           }
         },
         // pagination: {
@@ -115,40 +113,23 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters({
-      idsBlocuri: 'bloc/ids',
-      blocSelectat: 'bloc/selectat',
-      ultimulBlocAdaugat: 'bloc/ultim'
-    }),
-    activ () {
-      const { idsBlocuri, swiperIndexBlocActiv } = this
-      return idsBlocuri[swiperIndexBlocActiv]
-    }
-  },
-  watch: {
-    idsBlocuri (dupa, inainte) {
-      if (inainte === dupa) return
-      const { blocSelectat, activ, debug, layout } = this
-      if (!blocSelectat) return
-      if (layout !== 'interactiv') return
-      const { _id } = blocSelectat
-      if (!_id) return
-      if (activ === _id) return
-      debug('id-uri', activ, _id)
-      const { swiper } = this.$refs.blocuriSwiper
-      const newIndex = dupa.indexOf(_id)
-      swiper.slideTo(newIndex)
-      debug('sunt diferite, schimbat', newIndex, dupa)
-    }
-  },
-  methods: {
-    ...mapActions({
-      openModal: 'modal/open',
-      stergeBloc: 'bloc/sterge',
-      selecteazaBloc: 'bloc/selecteaza'
-    })
-  },
+  // watch: {
+  //   idsBlocuri (dupa, inainte) {
+  //     if (inainte === dupa) return
+  //     const { blocSelectat, activ, debug, layout } = this
+  //     if (!blocSelectat) return
+  //     if (layout !== 'interactiv') return
+  //     const { _id } = blocSelectat
+  //     if (!_id) return
+  //     if (activ === _id) return
+  //     debug('id-uri', activ, _id)
+  //     const { swiper } = this.$refs.blocuriSwiper
+  //     const newIndex = dupa.indexOf(_id)
+  //     swiper.slideTo(newIndex)
+  //     debug('sunt diferite, schimbat', newIndex, dupa)
+  //   }
+  // },
+
   props: {
     blocuri: {
       type: Object,

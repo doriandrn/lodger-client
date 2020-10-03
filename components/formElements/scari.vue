@@ -105,7 +105,7 @@ export default {
     },
     etaje (i, cuMansarda) {
       const { value } = this
-      if (value === undefined) return
+      if (value === undefined || value === null) return
 
       if (cuMansarda) return Number(value[i].etaje) - 1
       return Number(value[i].etaje)

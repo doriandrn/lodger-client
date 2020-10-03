@@ -7,7 +7,11 @@ ul#single.accordion
       :doc=     "doc"
       :i18n=    "$lodger.i18n.taxonomies[plural]"
     )
-      dateTime(:unixTime= "createdAt" slot="headerEnd")
+      dateTime(
+        :unixTime=  "createdAt"
+        slot=       "headerEnd"
+        liveUpdate
+      )
 
   //- header
   //-   ul.breadcrumbs(v-if="asAccordion")

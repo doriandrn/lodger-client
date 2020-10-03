@@ -62,6 +62,15 @@
     a user select
     p Utilizator adaugat! bla bla
     div
+      field(
+        type=       "altselect"
+        id=         "displayCurrency"
+        :options=   "$Lodger.currencies"
+        :value=     "$Lodger.currencies.indexOf($Lodger.displayCurrency)"
+        @input=     "$Lodger.displayCurrency = $event"
+        hideLabel
+      )
+
       .lang-switch
         a(
           v-for=      "lang in $lodger.supportedLangs"
@@ -313,7 +322,8 @@ footerHeight = 40px
     bottom 0
     left 0
     right 0
-    height: footerHeight
+    // height: footerHeight
+    height 240px // debuggin
     line-height: footerHeight
     z-index 2
     background: config.palette.borders

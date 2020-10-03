@@ -113,6 +113,9 @@ lrPad = 32px
     +above(m)
       width 85%
 
+    +above(l)
+      max-width 640px
+
   header
     background transparent
 

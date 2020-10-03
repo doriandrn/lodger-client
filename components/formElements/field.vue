@@ -13,7 +13,7 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel",
+    v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel",
     :type=        "type.asRxDBType === 'string' && type !== 'search' ? 'text' : type",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
@@ -44,6 +44,13 @@ ValidationProvider(
     v-else-if= "isRel"
     :id=      "value"
     :taxonomy ="id.replace('Id', '').plural"
+  )
+  bani(
+    v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
+    :valoare=   "value"
+    :base=      "$Lodger.displayCurrency"
+    @input=       "$emit('input', $event)"
+    showBoth
   )
   buton(
     v-else-if=    "type === 'button'"
@@ -115,10 +122,10 @@ ValidationProvider(
     v-else-if=      "type === 'distribuire'"
   )
   servicii(
-    v-else-if=        "type === 'servicii'"
+    v-else-if=        "type === 'taxonomy' && id === 'servicii'"
     @input=           "$emit('input', $event)"
     :value=           "value"
-    :servicii=        "servicii"
+    :servicii=        "$lodger.servicii.subscribers.pg2.items"
   )
   tax(
     v-else-if=  "type === 'taxonomy'"
@@ -177,6 +184,7 @@ import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 import tax from  'c/renderlessTax'
 import rel from 'c/rel'
+import bani from 'c/bani'
 
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -376,10 +384,6 @@ export default {
       default: null
     },
 
-    servicii: {
-      type: [Object, Array],
-      default: null
-    },
     arrow: {
       type: Boolean,
       default: false
@@ -408,6 +412,7 @@ export default {
   components: {
     altslect,
     apartament,
+    bani,
     buton,
     checkboxes,
     contoare,
@@ -569,7 +574,7 @@ input[type="date"]
 textarea
 [data-type="rel"] a
   color black
-  font-size 18px
+  font-size 16px
   line-height 24px
   background-color transparent
   border 0
@@ -577,6 +582,7 @@ textarea
   transition all .15s ease-in-out
   // padding 8px 0
   width 100%
+  height 100%
   max-width 100%
 
   &::placeholder
@@ -605,6 +611,9 @@ textarea
   a
     text-decoration underline
     cursor pointer
+
+    &+label
+      color #1a1a1a
 
 input[type="number"]
   width 80px
@@ -765,6 +774,27 @@ span[data-type]
   max-height 40px
   display flex
   flex-flow row nowrap
+
+span[data-type="$"]
+  margin-left auto
+
+  *
+    text-align right
+    justify-content flex-end
+
+  span
+    white-space nowrap
+    display flex
+    flex-flow row nowrap
+    align-items baseline
+
+    &:first-child
+      *
+        color black
+        font-weight bold
+
+span[data-type="taxonomy"]
+  flex-basis 50%
 
 input[name="nr"]
   font-family: config.typography.fams.headings

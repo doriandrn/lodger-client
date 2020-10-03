@@ -9,7 +9,7 @@ timp(
   ago=  true
   liveUpdate= true
 )
-bani(
+span.bani(
   v-else-if="['suma', 'bani', 'balanta'].indexOf(type) > -1"
   :valoare="value"
 )

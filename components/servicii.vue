@@ -1,40 +1,40 @@
 <template lang="pug">
 ul.servicii
   li(
-    v-for=              "serviciu in servicii"
+    v-for=              "serviciu, id in servicii"
     :data-icon=         "serviciu.denumire"
     :data-sel=          "value instanceof Array && value.indexOf(serviciu.denumire) > -1"
-    :class=             "{ ultimul: ultimulAdaugat === serviciu._id, modificabil: modificabil(serviciu.denumire) }"
-    @click=             "toggleServiciu(serviciu.denumire); debug(value.indexOf(serviciu.denumire) > -1)"
+    :class=             "{ modificabil }"
+    @click=             "toggleServiciu(serviciu.denumire)"
     @keydown.enter=     "toggleServiciu(serviciu.denumire)"
     @keydown.space=     "toggleServiciu(serviciu.denumire)"
     tabIndex=           0
   )
-    span.nume {{ modificabil(serviciu.denumire) ? serviciu.denumire : $t(`serviciu.nume.${serviciu.denumire}`) }}
-    .serviciu__actiuni(v-if="modificabil(serviciu.denumire)")
-      buton(
-        @click=     "$emit('modificaServiciu', serviciu)"
-        :tooltip=   "true"
-        styl=       "unstyled"
-        icon=       "edit"
-        icon-only
-      ) {{ $t('serviciu.modifica') }}
-      buton(
-        dangerous,
-        :prompt=    "{ type: 'warning', message: $t('serviciu.deletePrompt') }"
-        @click=     "$emit('stergeServiciu', serviciu.denumire)"
-        :tooltip=   "true"
-        styl=       "unstyled"
-        icon=       "trash"
-        icon-only
-      ) {{ $t('serviciu.sterge') }}
-  li.nou(v-if="areAdauga")
-    buton(
-      icon=   "plus-circle",
-      @click= "$emit('serviciuNou')",
-      styl=   "unstyled"
-      icon-only
-    ) {{ $t('serviciu.adauga') }}
+    //- span.nume {{ modificabil(serviciu.denumire) ? serviciu.denumire : $t(`serviciu.nume.${serviciu.denumire}`) }}
+    //- .serviciu__actiuni(v-if="modificabil(serviciu.denumire)")
+    //-   buton(
+    //-     @click=     "$emit('modificaServiciu', serviciu)"
+    //-     :tooltip=   "true"
+    //-     styl=       "unstyled"
+    //-     icon=       "edit"
+    //-     icon-only
+    //-   ) serviciu.modifica
+    //-   buton(
+    //-     dangerous,
+    //-     :prompt=    "{ type: 'warning', message: $t('serviciu.deletePrompt') }"
+    //-     @click=     "$emit('stergeServiciu', serviciu.denumire)"
+    //-     :tooltip=   "true"
+    //-     styl=       "unstyled"
+    //-     icon=       "trash"
+    //-     icon-only
+    //-   ) serviciu.sterge
+  //- li.nou(v-if="areAdauga")
+  //-   buton(
+  //-     icon=   "plus-circle",
+  //-     @click= "$emit('serviciuNou')",
+  //-     styl=   "unstyled"
+  //-     icon-only
+  //-   ) serviciu.adauga
 </template>
 
 <script>
@@ -53,9 +53,9 @@ export default {
       }
       this.$emit('input', value)
     },
-    modificabil (denumire) {
-      return this.areAdauga && this.serviciiPredefinite.indexOf(denumire) < 0
-    },
+    // modificabil (denumire) {
+    //   return this.areAdauga && this.serviciiPredefinite.indexOf(denumire) < 0
+    // },
   },
   props: {
     servicii: {
@@ -64,7 +64,7 @@ export default {
         return {}
       }
     },
-    areAdauga: {
+    modificabil: {
       type: Boolean,
       default: false
     },

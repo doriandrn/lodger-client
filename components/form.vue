@@ -1,7 +1,7 @@
 <template lang="pug">
 ValidationObserver(v-slot="{ passes }")
   form.form(@submit.prevent="passes(validation)")
-    button.lacatel modifica
+    button.lacatel(@click="editing = !editing") modifica
     //- h5.form__title(v-if="title") {{ $t( title ) }}
     //- p.form__desc(v-if="desc") {{ $t( desc ) }}
     fieldset.header
@@ -27,7 +27,7 @@ ValidationObserver(v-slot="{ passes }")
           :dangerous=     "field.dangerous"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
-          :disabled=      "!editable"
+          :disabled=      "!editing"
 
           v-model=   "value[id]"
           @input=     "doc.atomicSet(id, $event)"
@@ -63,7 +63,7 @@ ValidationObserver(v-slot="{ passes }")
           :dangerous=     "field.dangerous"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
-          :disabled=      "!editable || id.indexOf('Id') === id.length - 2"
+          :disabled=      "!editing || id.indexOf('Id') === id.length - 2"
 
           v-model=   "value[id]"
           @input=     "doc.atomicSet(id, $event)"
@@ -112,20 +112,20 @@ ValidationObserver(v-slot="{ passes }")
 
     //-     slot(name=        "afterFields")
 
-    .actions
-      buton(
-        v-if="!isNew"
-        size= "small"
-        styl= "unstyled"
-        icon= "trash"
-        dangerous
-      ) delete
-      buton(
-        type= "submit",
-        icon= "plus-circle"
-        size= "xl"
-        :disabled = "!Object.keys(filteredData).length"
-      ) {{ submitText }}
+    //- .actions
+    //-   buton(
+    //-     v-if="!isNew"
+    //-     size= "small"
+    //-     styl= "unstyled"
+    //-     icon= "trash"
+    //-     dangerous
+    //-   ) delete
+    //-   buton(
+    //-     type= "submit",
+    //-     icon= "plus-circle"
+    //-     size= "xl"
+    //-     :disabled = "!Object.keys(filteredData).length"
+    //-   ) {{ submitText }}
 </template>
 
 <script>
@@ -141,7 +141,8 @@ export default Observer ({
     const { fields, isNew } = this.form
     if (!fields) throw new Error('No form supplied')
     const data = {
-      fetched: false
+      fetched: false,
+      editing: false
     }
     Object.keys(fields).map(field => { data[field] = null })
     return { ...data }
@@ -247,7 +248,7 @@ export default Observer ({
   flex-flow row wrap
   justify-content center
   width 100%
-  max-width 480px
+  // max-width 480px
 
   &+.form
     margin-top 32px
@@ -282,6 +283,7 @@ fieldset
   .fields
     display flex
     flex-flow row wrap
+    align-items baseline
 
     &+time
       margin 8px 4px

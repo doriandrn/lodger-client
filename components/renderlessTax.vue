@@ -55,7 +55,8 @@ export default Observer({
         selectedId: '',
         activeId: '',
         items: {},
-        fetching: true
+        fetching: true,
+        kill: () => {}
       },
       documents: []
     }
@@ -173,6 +174,9 @@ export default Observer({
       const activeDoc = await this.taxonomy.collection.findOne(id).exec()
       this.$lodger.modal.activeDoc = activeDoc
     }
+  },
+  beforeDestroy () {
+    this.subscriber.kill()
   },
   methods: {
     // get _sort () {

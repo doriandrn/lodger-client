@@ -1,34 +1,71 @@
 <template lang="pug">
-span.bani(
-  :class="{ negativ: suma < 0 }"
-) {{ numeral(suma).format('0,0[.]00') }} {{ moneda }}
+//- span.bani(
+//-   v-if= "valoare"
+//-   :class="{ negativ: suma < 0 }"
+//- ) {{ numeral(suma).format('0,0[.]00') }} {{ moneda }}
+
+div
+  span(v-if="showBoth")
+    input(
+      type="text"
+      :value="suma"
+      @change="$emit('input', `${$event.target.value} ${moneda}`)"
+    )
+    .select {{ moneda }}
+  span.bani.conv(
+    v-if="moneda && base && moneda !== base"
+  ) ~ {{ numeral(convert(suma, { from: moneda, to: base, rates: $lodger.rates, base })).format(isCrypto ? '0,0[.]00000000' : '0,0[.]00') }} {{ $Lodger.displayCurrency }}
+
 </template>
 
 <script>
 import numeral from 'numeral'
+import { Observer } from 'mobx-vue'
+import { parse, convert } from 'cashify'
 
-export default {
-  methods: { numeral },
+export default Observer ({
+  methods: { numeral, convert },
   props: {
     valoare: {
-      type: [Number, Object],
-      default: 0
+      type: String,
+      default: null
+    },
+    showBoth: {
+      type: Boolean,
+      default: false
+    },
+    base: {
+      type: String,
+      default () {
+        return this.$Lodger.displayCurrency
+      }
     }
   },
+  mounted () {
+    console.log(this.base, this.moneda, this.$lodger.rates)
+  },
   computed: {
+    parsed () {
+      return parse(this.valoare)
+    },
     suma () {
-       return typeof this.valoare === Number ?
-        this.valoare :
-        this.valoare.suma
+      return this.parsed.amount
+      //  return typeof this.valoare === Number ?
+      //   this.valoare :
+      //   this.valoare.suma
+    },
+    isCrypto () {
+      return ['BTC', 'NANO', 'LTC', 'ETH', 'DASH', 'BCH', 'XRP', 'CLP', 'TEL', 'DAI', 'USDT', 'AVA'].indexOf(this.base) > -1
     },
     moneda () {
-      const def = 'ron'
-      return typeof this.valoare === Number ?
-        def :
-        this.valoare.moneda || def
+      return this.parsed.from
+    },
+    convertedSum () {
+      const { suma, moneda, base, $lodger: { rates }} = this
+      return convert(suma, { from: moneda, to: base, rates, base })
     }
   }
-}
+})
 </script>
 
 <style lang="stylus">
@@ -42,13 +79,15 @@ export default {
   align-items center
   font-size 11px
   letter-spacing 1px
-  color: config.palette.tertiary
   justify-content flex-end
   text-align right
 
   &:before
     background-color: config.palette.tertiary
 
-  &.negativ
+  *.poz
+    color: config.palette.tertiary
+
+  &.neg
     color: config.palette.error
 </style>

@@ -16,7 +16,7 @@ sction#pg3(boxes)
       h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
         small(v-if="taxonomy.totals") {{ subscriber.ids.length }} / {{ taxonomy.totals }}
       button.new(
-        @click="taxonomy.put(Object.assign({}, taxonomy.form.fakeData, refsIds(taxonomy)))"
+        @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, refsIds(taxonomy)))"
       ) +
 
       field.sort(
@@ -179,10 +179,9 @@ typeColors = config.typography.palette
     user-select none
 
   aside
-    background rgba(black, .05)
-    padding 24px
-
+    margin-top 30px
     +above(xl)
+      margin-top 0
       margin-left 48px
 
   .view
@@ -200,6 +199,19 @@ typeColors = config.typography.palette
       padding 8px
       border 1px solid rgba(black, .05)
       flex 0 1 266px
+      order 10
+
+    [data-tax="utilizatori"]
+      order 0
+
+    [data-tax="asociatii"]
+      order 1
+
+    [data-tax="blocuri"]
+      order 2
+
+    [data-tax="apartamente"]
+      order 3
 
     .sort
       background-color: rgba(black, .05)

@@ -6,7 +6,11 @@ time(
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ro'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 export default {
   data () {
@@ -23,17 +27,22 @@ export default {
   	// moment.locale(this.$store.state.locale)
   },
   mounted () {
+    dayjs.locale(this.$Lodger.locale)
     if (!this.liveUpdate) return
-    if (this.ago) this.liveTime = this.timeFromNow()
 
-    setInterval(() => {
+    if (this.ago) this.liveTime = this.timeFromNow()
+    this.updater = () => {
       this.liveTime = this.timeFromNow()
-    }, 30000)
+    }
+
+    setInterval(this.updater, 30000)
+  },
+  beforeDestroy () {
+    clearInterval(this.updater)
   },
   methods: {
-    moment,
     timeFromNow () {
-      return moment(this.unixTime).fromNow()
+      return dayjs(this.unixTime).fromNow()
     }
   },
   props: {

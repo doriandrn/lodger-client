@@ -125,7 +125,7 @@ ValidationProvider(
     v-else-if=        "type === 'taxonomy' && id === 'servicii'"
     @input=           "$emit('input', $event)"
     :value=           "value"
-    :servicii=        "$lodger.servicii.subscribers.pg2.items"
+    :servicii=        "$lodger.servicii.subscribers[$lodger.mainSubName].items"
     :disabled=        "disabled"
   )
   tax(

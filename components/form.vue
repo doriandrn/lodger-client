@@ -1,7 +1,10 @@
 <template lang="pug">
 ValidationObserver(v-slot="{ passes }")
   form.form(@submit.prevent="passes(validation)")
-    button.lacatel(@click="editing = !editing") modifica
+    a.lacatel(
+      v-if=   "!isNew"
+      @click= "editing = !editing"
+    ) modifica
     //- h5.form__title(v-if="title") {{ $t( title ) }}
     //- p.form__desc(v-if="desc") {{ $t( desc ) }}
     fieldset.header
@@ -30,7 +33,7 @@ ValidationObserver(v-slot="{ passes }")
           :disabled=      "!editing"
 
           v-model=   "value[id]"
-          @input=     "doc.atomicSet(id, $event)"
+          @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"
 
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
@@ -66,7 +69,7 @@ ValidationObserver(v-slot="{ passes }")
           :disabled=      "!editing || id.indexOf('Id') === id.length - 2"
 
           v-model=   "value[id]"
-          @input=     "doc.atomicSet(id, $event)"
+          @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"
 
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
@@ -114,20 +117,20 @@ ValidationObserver(v-slot="{ passes }")
 
     //-     slot(name=        "afterFields")
 
-    //- .actions
-    //-   buton(
-    //-     v-if="!isNew"
-    //-     size= "small"
-    //-     styl= "unstyled"
-    //-     icon= "trash"
-    //-     dangerous
-    //-   ) delete
-    //-   buton(
-    //-     type= "submit",
-    //-     icon= "plus-circle"
-    //-     size= "xl"
-    //-     :disabled = "!Object.keys(filteredData).length"
-    //-   ) {{ submitText }}
+    .actions(v-if="isNew")
+      //- buton(
+      //-   v-if="!isNew"
+      //-   size= "small"
+      //-   styl= "unstyled"
+      //-   icon= "trash"
+      //-   dangerous
+      //- ) delete
+      buton(
+        type= "submit",
+        icon= "plus-circle"
+        size= "xl"
+        :disabled = "!Object.keys(filteredData).length"
+      ) {{ submitText }}
 </template>
 
 <script>
@@ -144,7 +147,7 @@ export default Observer ({
     if (!fields) throw new Error('No form supplied')
     const data = {
       fetched: false,
-      editing: false
+      editing: !isNew
     }
     Object.keys(fields).map(field => { data[field] = null })
     return { ...data }
@@ -197,7 +200,7 @@ export default Observer ({
     },
     isNew: {
       type: Boolean,
-      default: true
+      default: false
     },
     i18n: {
       type: Object,
@@ -213,6 +216,7 @@ export default Observer ({
   },
   methods: {
     async validation () {
+      if (!this.doc._isTemporary) return
       this.$children[0].validate().then(ok => {
         if (ok) this.$emit('submit', this.filteredData)
       })

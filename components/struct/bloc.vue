@@ -25,19 +25,19 @@
         ol.etaje
           li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
             buton(
-              v-for=      "ap in apartamenteEtaj({ bloc: bloc._id, scara: iScara, etaj: i })",
+              v-if=       "$lodger.apartamente.subscribers.single"
+              v-for=      "ap in Object.values($lodger.apartamente.subscribers.single.items).filter(ap => ap.scara === iScara && ap.etaj === i)",
               :key=       "ap._id"
               data-for=   "ap"
               @keyUp=     "debug('butonsus')"
               :class=     "{ ultimul: ap._id === ultimulApAdaugat}"
               @click=     "selecteazaAp(ap._id); if (modificabil) openModal('apartament.edit')"
-              :tooltip=   "apTooltip(ap._id)"
+              :tooltip=   "ap.proprietar"
               :disabled=  "!navigabil"
             ) {{ ap.proprietar }}
               em.ap__nr {{ ap.nr }}
 
             buton.adauga(
-              v-if=   "modificabil"
               styl=   "unstyled"
               data-for= "ap"
               tooltip
@@ -53,6 +53,23 @@ import buton from 'form/button'
 // import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  data () {
+    return {
+      fetched: false
+    }
+  },
+  async fetch () {
+    const { id } = this
+    const criteria = { filter: { blocId: id }, limit: 0 }
+
+    const sub = this.$lodger.apartamente.subscribers.single
+
+    if (sub) {
+      sub.criteria = criteria
+    } else {
+      this.$lodger.apartamente.subscribe('single', { criteria })
+    }
+  },
   props: {
     bloc: {
       type: Object,
@@ -98,7 +115,7 @@ export default {
     //   ultimulApAdaugat: 'apartament/ultim'
     // }),
     apartamenteEtaj () {
-      return () => []
+      return () => [{},  {},  {}, {}]
     }
   },
   methods: {

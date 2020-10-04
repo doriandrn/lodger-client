@@ -6,8 +6,11 @@ ul#single.accordion
       :value =  "docdata"
       :doc=     "doc"
       :i18n=    "$lodger.i18n.taxonomies[plural]"
+      :isNew=   "doc._isTemporary"
+      @submit=  "doc.save($event); $lodger.modal.close()"
     )
       dateTime(
+        v-if=       "!doc._isTemporary"
         :unixTime=  "createdAt"
         slot=       "headerEnd"
         liveUpdate
@@ -79,17 +82,29 @@ export default Observer ({
   async fetch () {
     const { plural, fetched, docdata } = this
     if (fetched) return
+    const id = docdata._id
 
-    const o = {
-      asociatii: async () => {
-        const asociatieId = this.docdata._id
-        const sub = this.$lodger.blocuri.subscribe('single', { criteria: { filter: { asociatieId }, limit: 0 }})
-        this.extraSubs.push(sub)
-        await sub.updates
+    if (plural === 'asociatii') {
+      const criteria = { filter: { asociatieId: id }, limit: 0 }
+      const sub = this.$lodger.blocuri.subscribers.single
+
+      if (sub) {
+        sub.criteria = criteria
+      } else {
+        this.$lodger.blocuri.subscribe('single', { criteria })
+        this.extraSubs.push['blocuri']
       }
     }
 
-    if (o[plural]) await o[plural]()
+    // const o = {
+    //   asociatii: async () => {
+
+
+
+    //   }
+    // }
+
+    // if (o[plural]) await o[plural]()
 
     // const fields = Object.keys(docdata)
 
@@ -105,8 +120,9 @@ export default Observer ({
 
   beforeDestroy () {
     const { extraSubs } = this
+    this.fetched = false
     if (extraSubs.length) {
-      extraSubs.map(sub => { if (sub.kill) sub.kill() })
+      extraSubs.map(sub => { this.$lodger[sub].subscribers.single.kill(); delete this.$lodger[sub].subscribers.single })
     }
   },
   // async fetch () {
@@ -137,6 +153,7 @@ export default Observer ({
     },
     createdAt () {
       const { _id }  = this.docdata
+      if (!_id) return // temp docs
       return Number(_id.split(':')[1])
     },
     taxonomy () {

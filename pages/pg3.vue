@@ -16,6 +16,8 @@ sction#pg3(boxes)
       h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
         small(v-if="taxonomy.totals") {{ subscriber.ids.length }} / {{ taxonomy.totals }}
       button.new(
+        :disabled=    "$lodger[tax].parents && $lodger[tax].parents.filter(t => (Object.keys(refsIds(taxonomy)).indexOf(t) > -1 || Object.keys(refsIds(taxonomy)).indexOf(`${t}Id`) > -1) && !(refsIds(taxonomy)[t] || refsIds(taxonomy)[`${t}Id`])).length"
+        @click=       "debug(refsIds(taxonomy), tax); $lodger.modal.activeDoc = taxonomy.collection.newDocument(refsIds(taxonomy))"
         @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, refsIds(taxonomy)))"
       ) +
 
@@ -85,20 +87,15 @@ import registru from 'c/registru'
 import servicii from 'c/servicii'
 import modal from 'c/modal'
 import viw from 'c/viewElement'
-// import blocuri from 'c/blocuri'
 
 import field from 'form/field'
 import buton from 'form/button'
-import { mapActions } from 'vuex';
 
 export default {
-  data () {
-    return {
-      subscriberName: 'pg2',
-    }
-  },
-
   computed: {
+    subscriberName () {
+      return this.$lodger.mainSubName
+    },
     taxAsPlural () {
       return p => p.indexOf('Id') === p.length - 2 ? p.replace('Id').plural : p
     },
@@ -124,21 +121,11 @@ export default {
         return x
       }
     }
-    // items() {
-    //   return (taxonomy, subscriberName) => subscriberName && taxonomy[subscriberName] ?
-    //     taxonomy[subscriberName].items :
-    //     {}
-
-    // }
   },
   components: {
     sction,
     field,
-    // frm,
     list,
-    // registru,
-    // servicii,
-    // blocuri,
     buton,
     viw
   },
@@ -180,6 +167,7 @@ typeColors = config.typography.palette
 
   aside
     margin-top 30px
+
     +above(xl)
       margin-top 0
       margin-left 48px

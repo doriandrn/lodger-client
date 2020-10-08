@@ -4,7 +4,7 @@
 //-   :class="{ negativ: suma < 0 }"
 //- ) {{ numeral(suma).format('0,0[.]00') }} {{ moneda }}
 
-div
+div(v-if="parsed")
   span(v-if="showBoth")
     input(
       type="text"
@@ -27,7 +27,7 @@ export default Observer ({
   methods: { numeral, convert },
   props: {
     valoare: {
-      type: String,
+      type: [String, Object],
       default: null
     },
     showBoth: {
@@ -46,10 +46,12 @@ export default Observer ({
   },
   computed: {
     parsed () {
-      return parse(this.valoare)
+      const { valoare } = this
+      if (!valoare) return
+      return parse(typeof valoare === 'string' ? valoare : Object.values(valoare).join(' '))
     },
     suma () {
-      return this.parsed.amount
+      if (this.parsed) return this.parsed.amount
       //  return typeof this.valoare === Number ?
       //   this.valoare :
       //   this.valoare.suma
@@ -58,7 +60,7 @@ export default Observer ({
       return ['BTC', 'NANO', 'LTC', 'ETH', 'DASH', 'BCH', 'XRP', 'CLP', 'TEL', 'DAI', 'USDT', 'AVA'].indexOf(this.base) > -1
     },
     moneda () {
-      return this.parsed.from
+      if (this.parsed) return this.parsed.from
     },
     convertedSum () {
       const { suma, moneda, base, $lodger: { rates }} = this

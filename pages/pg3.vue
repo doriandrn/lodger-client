@@ -1,6 +1,6 @@
 <template lang="pug">
 sction#pg3(boxes)
-  ul.view
+  nav.view
     li tree
     li boxes
 
@@ -15,10 +15,11 @@ sction#pg3(boxes)
     header(slot-scope="{ taxonomy, subscriber }")
       h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
         small(v-if="taxonomy.totals") {{ subscriber.ids.length }} / {{ taxonomy.totals }}
+
       button.new(
-        :disabled=    "$lodger[tax].parents && $lodger[tax].parents.filter(t => (Object.keys(refsIds(taxonomy)).indexOf(t) > -1 || Object.keys(refsIds(taxonomy)).indexOf(`${t}Id`) > -1) && !(refsIds(taxonomy)[t] || refsIds(taxonomy)[`${t}Id`])).length"
-        @click=       "debug(refsIds(taxonomy), tax); $lodger.modal.activeDoc = taxonomy.collection.newDocument(refsIds(taxonomy))"
-        @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, refsIds(taxonomy)))"
+        :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
+        @click=       "$lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
+        @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
       ) +
 
       field.sort(
@@ -33,11 +34,14 @@ sction#pg3(boxes)
         @click=    "subscriber.criteria.sort = $event.checked ? { [$event.index]: -1 } : subscriber.criteria.sort"
       )
 
+      //- p(v-if="subscriber.refsIds") {{ subscriber.refsIds }}
+      //- p(v-if="subscriber.criteria") {{ subscriber.criteria.filter }}
+
     li(
       slot= "item"
       slot-scope="{ item, subscriber, taxonomy }"
-      :class= "{ last: taxonomy && item._id === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item._id) > -1 }"
-      @click="subscriber.select(item[subscriber.primaryPath])"
+      :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
+      @click="debug('wtf', item[subscriber.primaryPath]); subscriber.select(item[subscriber.primaryPath])"
     )
       viw(
         v-for=  "key, i in taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2)"
@@ -99,28 +103,28 @@ export default {
     taxAsPlural () {
       return p => p.indexOf('Id') === p.length - 2 ? p.replace('Id').plural : p
     },
-    refsIds () {
-      return tax => {
-        const x = {}
-        const { name, parents } = tax
-        const { subscriberName } = this
-        if (parents && parents.length) {
-          parents.map(tax => {
-            const $tax = this.$lodger[tax] || this.$lodger[tax.plural]
-            if (!$tax) return
-            const { form: { plural }, subscribers } = $tax
-            const sub = subscribers[subscriberName]
+    // refsIds () {
+    //   return tax => {
+    //     const x = {}
+    //     const { name, parents } = tax
+    //     const { subscriberName } = this
+    //     if (parents && parents.length) {
+    //       parents.map(tax => {
+    //         const $tax = this.$lodger[tax] || this.$lodger[tax.plural]
+    //         if (!$tax) return
+    //         const { form: { plural }, subscribers } = $tax
+    //         const sub = subscribers[subscriberName]
 
-            if (sub) {
-              const { selectedId } = sub
-              if (selectedId)
-                x[plural === tax ? plural : `${tax}Id`] = plural === tax ? [ selectedId ] : selectedId
-            }
-          })
-        }
-        return x
-      }
-    }
+    //         if (sub) {
+    //           const { selectedId } = sub
+    //           if (selectedId)
+    //             x[plural === tax ? plural : `${tax}Id`] = plural === tax ? [ selectedId ] : selectedId
+    //         }
+    //       })
+    //     }
+    //     return x
+    //   }
+    // }
   },
   components: {
     sction,
@@ -177,6 +181,13 @@ typeColors = config.typography.palette
     display flex
     flex-flow row nowrap
 
+    > li
+      width auto !important
+      flex 0 0 auto
+
+      &:first-child
+        margin-left auto
+
   &.boxes
     .inner > div > *
       margin 8px
@@ -185,7 +196,7 @@ typeColors = config.typography.palette
       display flex
       flex-flow column nowrap
       padding 8px
-      border 1px solid rgba(black, .05)
+      // border 1px solid rgba(black, .05)
       flex 0 1 266px
       order 10
 
@@ -257,7 +268,7 @@ typeColors = config.typography.palette
 
 
     ul
-      margin -8px
+      margin 0 -8px
       width calc(100% + 16px)
       position relative
       background: colors.bgs.ui
@@ -283,7 +294,7 @@ typeColors = config.typography.palette
           transform translateY(0)
 
     .sort
-      margin 8px -8px
+      margin 0 -8px
       flex 1 1 100%
 
   h3
@@ -299,6 +310,7 @@ typeColors = config.typography.palette
   header
     display flex
     flex-flow row wrap
+    min-height 40px
 
     &+p
       padding 12px

@@ -143,11 +143,11 @@ import { Observer } from 'mobx-vue'
 export default Observer ({
   name: 'F0rm',
   data () {
-    const { fields, isNew } = this.form
+    const { form: { fields }, isNew } = this
     if (!fields) throw new Error('No form supplied')
     const data = {
       fetched: false,
-      editing: !isNew
+      editing: isNew
     }
     Object.keys(fields).map(field => { data[field] = null })
     return { ...data }
@@ -291,7 +291,7 @@ fieldset
   .fields
     display flex
     flex-flow row wrap
-    align-items baseline
+    align-items flex-start
 
     &+time
       margin 8px 4px

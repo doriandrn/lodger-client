@@ -21,40 +21,6 @@ ul#single.accordion
         layout=     "interactiv"
         :blocuri=   "$lodger.blocuri.subscribers.single.items"
       )
-
-  //- header
-  //-   ul.breadcrumbs(v-if="asAccordion")
-  //-     li(v-for="b in breadcrumbs" @click="$emit('focus', { b })") {{ b }}
-
-  //-   field(
-  //-     v-for=      "field in previewFields",
-  //-     :id=        "field",
-  //-     :key=       "field"
-  //-     :label =    "field"
-  //-     :value=     "doc._data[field] || form.fields[field].default"
-  //-     :required = "schema.required.indexOf(field) > -1"
-  //-     :hideLabel = "true"
-  //-     :disabled=  "!editable"
-  //-     :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
-  //-     @input=     "doc.atomicSet(field, $event)"
-  //-   )
-
-
-
-
-
-  //- section.main(v-if= "docdata")
-  //-   field(
-  //-     v-for=      "field in fields",
-  //-     :id=        "field",
-  //-     :key=       "field"
-  //-     :label =    "field"
-  //-     :disabled=  "!editable"
-  //-     :value=     "docdata[field] || form.fields[field].default"
-  //-     :required = "schema.required.indexOf(field) > -1"
-  //-     :type=      "$lodger.taxonomies.indexOf(field) > -1 ? 'taxonomy' : (schema.properties[field]._type || 'string')"
-  //-   )
-
 </template>
 
 <script>

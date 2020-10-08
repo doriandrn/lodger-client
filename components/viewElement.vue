@@ -9,8 +9,8 @@ timp(
   ago=  true
   liveUpdate= true
 )
-span.bani(
-  v-else-if=  "['suma', 'bani', 'balanta'].indexOf(type) > -1"
+bani(
+  v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
   :valoare="value"
 )
 suprafata(

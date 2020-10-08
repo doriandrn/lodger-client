@@ -25,7 +25,7 @@ div
     )
 
   //- empty state
-  p(v-else-if="taxonomy && taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga
+  //- p(v-else-if="taxonomy && taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga
 
   //- buton.more(
   //-   v-if="ids && ids.length < itemsCount"
@@ -126,55 +126,55 @@ export default Observer({
     //   return this.taxonomy.subscribers[this.subscriberName]
     // }
   },
-  watch: {
-    selectedId: function (ids, prevIds) {
-      if (!ids) return
+  // watch: {
+  //   selectedId: function (ids, prevIds) {
+  //     if (!ids) return
 
-      const {
-        subscriberName,
-        subscriber,
-        taxonomy
-      } = this
+  //     const {
+  //       subscriberName,
+  //       subscriber,
+  //       taxonomy
+  //     } = this
 
-      if (!taxonomy) return
+  //     if (!taxonomy) return
 
-      const {
-        name,
-        parents,
-        children,
-        subscribers,
-        form: { plural }
-      } = taxonomy
+  //     const {
+  //       name,
+  //       parents,
+  //       children,
+  //       subscribers,
+  //       form: { plural }
+  //     } = taxonomy
 
-      if (!children.length) return
+  //     if (!children.length) return
 
-      children.map(tax => {
-        const $tax = this.$lodger[tax]
-        const { parents } = $tax
-        const sub  = $tax.subscribers[subscriberName]
-        if (!sub) return
-        let sOrP, op, val
-        if (parents && parents.length) {
-          const isSingular = parents.indexOf(name) > -1
-          sOrP = isSingular ? `${name}Id` : plural
-          op = isSingular ? '$eq' : '$in'
-          val = isSingular ? ids : [ids]
-        }
+  //     children.map(tax => {
+  //       const $tax = this.$lodger[tax]
+  //       const { parents } = $tax
+  //       const sub  = $tax.subscribers[subscriberName]
+  //       if (!sub) return
+  //       let sOrP, op, val
+  //       if (parents && parents.length) {
+  //         const isSingular = parents.indexOf(name) > -1
+  //         sOrP = isSingular ? `${name}Id` : plural
+  //         op = isSingular ? '$eq' : '$in'
+  //         val = isSingular ? ids : [ids]
+  //       }
 
-        if (sOrP && op && val)
-          sub.criteria.filter = { [sOrP]: { [op]: val } }
-        else if (sub.criteria.filter[sOrP]) {
-          delete sub.criteria.filter[sOrP]
-        }
-      })
+  //       if (sOrP && op && val)
+  //         sub.criteria.filter = { [sOrP]: { [op]: val } }
+  //       else if (sub.criteria.filter[sOrP]) {
+  //         delete sub.criteria.filter[sOrP]
+  //       }
+  //     })
 
-    },
-    activeId: async function (id, prevId) {
-      if (id === prevId) return
-      const activeDoc = await this.taxonomy.collection.findOne(id).exec()
-      this.$lodger.modal.activeDoc = activeDoc
-    }
-  },
+  //   },
+  //   activeId: async function (id, prevId) {
+  //     if (id === prevId) return
+  //     const activeDoc = await this.taxonomy.collection.findOne(id).exec()
+  //     this.$lodger.modal.activeDoc = activeDoc
+  //   }
+  // },
   beforeDestroy () {
     this.subscriber.kill()
   },

@@ -754,6 +754,9 @@ input[type="checkbox"]
   margin -4px
   cursor default
 
+  *
+    margin 0
+
   > span
     display flex
     flex-flow column nowrap

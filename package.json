@@ -15,7 +15,9 @@
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
   "dependencies": {
+    "@dicebear/avatars-avataaars-sprites": "^4.2.5",
     "@nuxtjs/axios": "^5.12.2",
+    "@popperjs/core": "^2.5.3",
     "acorn": "^7.4.0",
     "dayjs": "^1.9.1",
     "lodger": "git+ssh://git@gitlab.com/doriandrn/lodger-api.git#master",

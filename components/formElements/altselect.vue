@@ -4,7 +4,7 @@
   :id=          "id",
   tabIndex=     "-1"
 )
-  ul.altselect__options
+  ul
     li(
       v-for=        "option, key in options",
       :tabIndex=    "value === key ? 0 : -1"
@@ -14,21 +14,19 @@
       :data-icon=   "option.icon || id === 'asociatieSwitch' && asocInitProgr(option) < 100 ? 'alert-circle' : null || null"
     )
       span {{ option }}
-      //- split(v-if=     "value !== key")
-        //- progres(
-        //-   slot=     "right"
-        //-   v-if=     "id === 'asociatieSwitch'"
-        //-   :procent= "asocInitProgr(option)"
-        //- )
-      //- span(v-else) {{ option }}
-    slot
+    slot(name="items")
+  slot
 </template>
 
 <script>
-import split from 'c/split'
 import progres from 'c/progres'
+import { createPopper } from '@popperjs/core'
 
 export default {
+  mounted () {
+    const pop = this.$el.querySelector('ul')
+    createPopper(this.$el, pop, { placement: 'top' })
+  },
   methods: {
     alege (value) {
       this.debug('ales', value)
@@ -45,8 +43,7 @@ export default {
     }
   },
   components: {
-    progres,
-    split
+    progres
   },
   props: {
     id: {

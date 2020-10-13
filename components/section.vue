@@ -39,8 +39,9 @@ section
 
   &.sidebar
     > .inner
-      flex-flow row nowrap !important
-      align-items flex-start !important
+      +above(xl)
+        flex-flow row nowrap !important
+        align-items flex-start !important
 
       > div
         flex 1 1 100%

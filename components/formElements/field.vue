@@ -82,9 +82,12 @@ ValidationProvider(
     :id=          "id"
     :arrow=       "arrow"
   )
-  file(
-    v-else-if= "['avatar', 'userAvatar'].indexOf(type) > -1"
-    :id=  "id"
+  avatar(
+    v-else-if=    "['avatar', 'userAvatar'].indexOf(type) > -1"
+    :id=          "id"
+    :value=       "value"
+    :seed=        "avatarSeed"
+    :disabled=    "disabled"
   )
 
   scari(
@@ -175,6 +178,7 @@ import apartament from 'struct/apartament'
 import tax from  'c/renderlessTax'
 import rel from 'c/rel'
 import bani from 'c/bani'
+import avatar from 'c/avatar'
 
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -377,11 +381,16 @@ export default {
     v: {
       type: String,
       default: ''
+    },
+    avatarSeed: {
+      type: String,
+      default: 'drn'
     }
   },
   components: {
     altslect,
     apartament,
+    avatar,
     bani,
     buton,
     checkboxes,

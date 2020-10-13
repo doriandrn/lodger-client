@@ -41,8 +41,8 @@
           type=     "search"
           size=     "small"
           id=       "search"
-          :label=        "$lodger.i18n.search"
-          :placeholder=  "$lodger.i18n.search"
+          :label=        "$lodger.i18n.search.do"
+          :placeholder=  "$lodger.i18n.search.do"
           @input=   "Search($event)"
           :value=   "search.input"
           hide-label
@@ -222,7 +222,7 @@ footerHeight = 40px
     flex-flow: row wrap;
     justify-content: center;
     align-items center
-    background-color: rgba(black, .05);
+    background-color white
 
     .inner
       align-items center

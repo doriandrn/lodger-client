@@ -3,7 +3,7 @@
   .load(v-if= "fetching")
 
   section(v-else-if=  "Object.keys(results).filter(tax => results[tax].length > 0).length < 1")
-    p no results
+    p {{ $lodger.i18n.search.noResults }}
 
   section(
     v-for=  "tax in Object.keys(results)"
@@ -95,8 +95,7 @@ spacings = 16px
     padding 0
 
     > *
-      padding 8px
-
+      padding 8px 16px
 
     .bani
       position absolute

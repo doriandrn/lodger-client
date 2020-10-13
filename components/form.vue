@@ -31,6 +31,7 @@ ValidationObserver(v-slot="{ passes }")
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
           :disabled=      "!editing"
+          :avatarSeed=    "value['name']"
 
           v-model=   "value[id]"
           @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"
@@ -262,11 +263,16 @@ export default Observer ({
   .actions
     margin-top 20px
 
+.avatar
+  img
+    size 120px
+
 fieldset
   padding 0
   border 0
   position relative
   width 100%
+  margin -4px
 
   &+fieldset
     margin-top 20px
@@ -278,8 +284,10 @@ fieldset
     font-weight: bold;
     letter-spacing: 1px;
 
-    &+.fields
-      margin-top 8px
+  &:not(.header)
+    legend
+      &+.fields
+        margin-top 8px
 
   &.header
     > legend

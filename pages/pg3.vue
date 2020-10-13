@@ -155,8 +155,11 @@ typeColors = config.typography.palette
       flex-flow column nowrap
       padding 8px
       // border 1px solid rgba(black, .05)
-      flex 0 1 266px
       order 10
+      flex 1 1 100%
+
+      +above(l)
+        flex 0 1 266px
 
     [data-tax="utilizatori"]
       order 0

@@ -2,6 +2,7 @@
 .avatar(:class="{ disabled }")
   img(:src="value || placeholder")
   file(v-if=  "!disabled" :id="id")
+  span.holder(v-if= "!disabled")
 </template>
 
 <script>
@@ -47,7 +48,17 @@ export default {
 <style lang="stylus">
 .avatar
   position relative
+
+  &:not(.disabled)
+    cursor pointer
+
   img
     max-width 160px
     height auto
+
+  input[type="file"]
+    position absolute
+
+    &+.holder
+      display none
 </style>

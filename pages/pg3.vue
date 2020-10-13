@@ -49,6 +49,7 @@ sction#pg3(boxes)
         :type=  "key",
         :key=   "key",
         :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
+        :avatarSeed= "item['name']"
         @click= "subscriber.edit(item[subscriber.primaryPath])"
       )
 
@@ -181,6 +182,7 @@ typeColors = config.typography.palette
       display flex
       flex-flow row nowrap
       justify-content space-between
+      align-items center
       position relative
       overflow hidden
       padding 8px
@@ -190,6 +192,11 @@ typeColors = config.typography.palette
         width 30px
         margin-right 8px
         text-align right
+
+      .avatar
+        margin-right 12px
+        img
+          size 32px
 
       strong
         font-weight 400

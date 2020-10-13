@@ -28,12 +28,18 @@ span.ap__nr(
 span.scari(
   v-else-if=  "type === 'scari' && value"
 ) {{ value.length }} scari
+avatar(
+  v-else-if=  "type === 'avatar'"
+  :seed=    "avatarSeed"
+  :value=   "value"
+)
 span(v-else) {{ value }}
 </template>
 
 <script>
 import timp from 'c/dateTime'
 import bani from 'c/bani'
+import avatar from 'c/avatar'
 import suprafata from 'c/suprafata'
 import servicii from 'c/servicii'
 
@@ -46,9 +52,14 @@ export default {
     value: {
       type: [Number, Object, Boolean, String, Array],
       default: null
+    },
+    avatarSeed: {
+      type: String,
+      default: 'drn'
     }
   },
   components: {
+    avatar,
     bani,
     timp,
     suprafata,

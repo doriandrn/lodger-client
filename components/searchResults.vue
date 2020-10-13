@@ -1,44 +1,32 @@
 <template lang="pug">
 .results(data-box-arrow)
-  .results__section(
+  .load(v-if= "fetching")
+
+  section(v-else-if=  "Object.keys(results).filter(tax => results[tax].length > 0).length < 1")
+    p no results
+
+  section(
     v-for=  "tax in Object.keys(results)"
     v-if=   "results[tax].length > 0"
   )
-    h6.results__heading {{ tax }}
+    h4 {{ $lodger.i18n.taxonomies[tax.plural] ? $lodger.i18n.taxonomies[tax.plural].plural : tax.plural }}
     ul
       li(
         v-for=    "res, i in results[tax]"
-        v-if=     "res.relevance > sugestiiSubRelevanta"
+        v-if=     "res.score > sugestiiSubRelevanta"
         :data-sel=   "i === selectedIndex"
-        @click=   "$emit('selecteaza', { id: res.id, tax })"
+        @click=   "$emit('selecteaza', { id: res.obj._id, tax })"
       )
-        split(
-          v-if=     "tax === 'apartamente'"
-          v-tooltip=  "'nume n shit'"
+        viw(
+          v-for=  "o in Object.keys(res.obj).filter(key => key.indexOf('_') !== 0)"
+          :type=  "o"
+          :key=   "o"
+          :value= "res.obj[o]"
         )
-          apartament(
-            :key=     "i"
-            :apId=    "res.id"
-            clickabil=false
-          )
-          bani.restanta(
-            slot=       "right"
-            v-if=       "modalContent === 'incasare.new' && tax === 'apartamente'"
-            :valoare=   "aps[res.id].balanta"
-          )
-        furnizor(
-          v-if= "tax === 'furnizori'"
-          :key= "res.id"
-          :id=  "res.id"
-        )
-
 </template>
 
 <script>
-import bani from 'c/bani'
-import apartament from 'struct/apartament'
-import furnizor from 'c/furnizor'
-import split from 'c/split'
+import viw from 'c/viewElement'
 
 export default {
   data () {
@@ -55,13 +43,14 @@ export default {
     results: {
       type: Object,
       default () { return {} }
+    },
+    fetching: {
+      type: Boolean,
+      default: true
     }
   },
   components: {
-    apartament,
-    bani,
-    furnizor,
-    split
+    viw
   }
 }
 </script>
@@ -73,11 +62,11 @@ spacings = 16px
 .results
   position absolute
   top calc(100% + 25px)
-  right 0
+  left 0
+  width calc(100% + 40px)
   background white
   line-height 20px
   max-height 50vh
-  min-width 320px
   box-shadow: config.shadows.boxes
   border-top-radius: (config.radiuses.boxes/2)
   border-bottom-radius: config.radiuses.boxes
@@ -88,11 +77,26 @@ spacings = 16px
   visibility hidden
   transition all .15s ease-in-out
 
-  &__section
+  &.v
+    top 36px
+    opacity 1
+    visibility visible
+    z-index 51
+    max-width 300px
+
+    &.singleTax
+      h5
+        display none
+
+  section
     display flex
     flex-flow row wrap
     overflow-y auto
-    padding 8px 0
+    padding 0
+
+    > *
+      padding 8px
+
 
     .bani
       position absolute
@@ -153,10 +157,11 @@ spacings = 16px
 
     .adresa__owner
       flex 0 0 20px
-  &__heading
-    padding: 0 spacings
+
+  h4
     flex 1 0 100%
-    margin 4px 0 12px
+    margin 4px 0 4px
+    text-align left
     // text-transform capitalize
 
 </style>

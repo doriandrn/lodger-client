@@ -408,23 +408,6 @@ fieldset
         > label
             left 22px
 
-        &[data-results]
-          label
-            moveFieldLabel()
-
-        .results
-          top 36px
-          left -12px
-          right auto
-          opacity 1
-          visibility visible
-          z-index 51
-          max-width 350px
-
-          &.singleTax
-            .results
-              &__heading
-                display none
 
         &[data-size="small"]
           input

@@ -7,11 +7,11 @@
 div(v-if="parsed")
   span(v-if="showBoth")
     input(
-      type="text"
-      :value="suma"
+      type=   "text"
+      :value= "suma"
       @change="$emit('input', `${$event.target.value} ${moneda}`)"
     )
-    .select {{ moneda }}
+    .select {{ moneda || base }}
   span.bani.conv(
     v-if="moneda && base && moneda !== base"
   ) ~ {{ numeral(convert(suma, { from: moneda, to: base, rates: $lodger.rates, base })).format(isCrypto ? '0,0[.]00000000' : '0,0[.]00') }} {{ $Lodger.displayCurrency }}
@@ -27,7 +27,7 @@ export default Observer ({
   methods: { numeral, convert },
   props: {
     valoare: {
-      type: [String, Object],
+      type: [String, Object, Number],
       default: null
     },
     showBoth: {

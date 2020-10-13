@@ -39,13 +39,19 @@
       .right
         field(
           type=     "search"
-          v-model=  "search"
           size=     "small"
           id=       "search"
           :label=        "$lodger.i18n.search"
           :placeholder=  "$lodger.i18n.search"
+          @input=   "Search($event)"
+          :value=   "search.input"
           hide-label
         )
+          results(
+            :class=     "{ v: search.input }"
+            :fetching=  "search.fetching"
+            :results=   "search.results"
+          )
 
         buton(
           styl=   "unstyled"
@@ -60,7 +66,6 @@
 
   footr
     a user select
-    p Utilizator adaugat! bla bla
     div
       field(
         type=       "altselect"
@@ -115,49 +120,46 @@ import buton from 'form/button'
 
 import toasts from 'c/toasts'
 import dropdown from 'c/dropdown'
+import results from 'c/searchResults'
 
 import Package from '../package.json'
 
 const { version, name, author } = Package
-const subName = 'default'
+// const subName = 'default'
 
 export default Observer ({
   data () {
+    const results = {}
+    this.$lodger.taxonomies.map(t => results[t] = [])
     return {
       app: {
         version,
         name,
         author
       },
-      activeUserId: '',
-      search: '',
-      navItems: [
-        {
-          title: 'dash',
-          url: '/dashboard'
-        },
-        {
-          title: 'liste',
-          url: '/liste'
-        },
-        {
-          title: 'istoric',
-          url: '/istoric'
-        }
-        // {
-        //   title: $t('navigation[2]'),
-        //   url: '/community'
-        // }
-      ]
+      search: {
+        input: '',
+        results,
+        fetching: true
+      },
     }
   },
 
-  // async asyncData ({ $lodger }) {
-
-  // },
-
   beforeCreate () {
-    this.$lodger.utilizatori.subscribe(subName)
+    // this.$lodger.utilizatori.subscribe(subName)
+  },
+
+  methods: {
+    Search (input) {
+      this.search.input = input
+      this.search.fetching = true
+      this.$lodger.taxonomies.map(tax => {
+        Promise.resolve(this.$lodger[tax].collection.search(input)).then(results => {
+          this.search.results[tax] = results
+          this.search.fetching = false
+        })
+      })
+    }
   },
 
   computed: {
@@ -183,7 +185,8 @@ export default Observer ({
     field,
     bani,
     toasts,
-    dropdown
+    dropdown,
+    results
   }
 })
 </script>

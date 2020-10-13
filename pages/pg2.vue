@@ -266,16 +266,16 @@ typeColors = config.typography.palette
       overflow auto
       position relative
 
-      &:before
-        content ''
-        position absolute 0
-        z-index -1
-        background-color white
-        background-image embedurl('~static/loaders/preload.svg')
-        background-position 50% 50%
-        background-repeat no-repeat
-        transform translateY(-100%)
-        transition transform .15s ease-out
+      // &:before
+      //   content ''
+      //   position absolute 0
+      //   z-index -1
+      //   background-color white
+      //   background-image embedurl('~static/loaders/preload.svg')
+      //   background-position 50% 50%
+      //   background-repeat no-repeat
+      //   transform translateY(-100%)
+      //   transition transform .15s ease-out
 
       &.fetching
         &:before

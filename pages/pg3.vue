@@ -18,8 +18,8 @@ sction#pg3(boxes)
 
       button.new(
         :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
-        @click=       "$lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
         @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
+        @click=       "$lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
       ) +
 
       field.sort(
@@ -35,13 +35,14 @@ sction#pg3(boxes)
       )
 
       //- p(v-if="subscriber.refsIds") {{ subscriber.refsIds }}
-      //- p(v-if="subscriber.criteria") {{ subscriber.criteria.filter }}
+      //- p(v-if="subscriber.criteria") {{ subscriber.criteria.filter || 'no filters' }}
 
     li(
       slot= "item"
       slot-scope="{ item, subscriber, taxonomy }"
+
       :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
-      @click="debug('wtf', item[subscriber.primaryPath]); subscriber.select(item[subscriber.primaryPath])"
+      @click= "subscriber.select(item[subscriber.primaryPath])"
     )
       viw(
         v-for=  "key, i in taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2)"
@@ -50,27 +51,6 @@ sction#pg3(boxes)
         :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
         @click= "subscriber.edit(item[subscriber.primaryPath])"
       )
-      //- :href="`${ $lodger[tax].name }/${ item[subscriber.primaryPath] }`"
-      //- a( @click="subscriber.edit(item[subscriber.primaryPath])") {{ item[taxonomy.form.previewFields[0]] }}
-      //- span(v-for="field, i in taxonomy.form.previewFields" v-if="i > 0") {{ item[field] }}
-      //- //- a(href='' @click="openModal({ id: item[subscriber.primaryPath], tax: $lodger[tax].form.plural })") {{ item.name }}
-  //- @new=         "openModal(`${tax}.new`)"
-  //- @edit=        "openModal({ id: `${tax}.edit`, data: $event })"
-  //- :items=       "subscriberData(tax).items"
-  //- :criteriu=    "subscriberData(tax).criteriu"
-  //- :fetching=    "subscriberData(tax).fetching"
-
-  //- :references=  "$FFlodger.forms[tax].referenceTaxonomies"
-  //- :showElements="$lodger.forms[tax].__displayItemKeys"
-  //- :referencesIds="$lodger.activeReferencesIds($lodger.referenceTaxonomies(tax))"
-  //- :items=       "$lodger[$lodger.plurals.get(tax)](playgroundSubscriber)"
-
-  //- servicii.box
-
-  //- registru
-    //- blocuri(
-    //-   layout= "interactiv"
-    //- )
 
   .stats(slot="sidebar")
     h3 stats
@@ -102,29 +82,7 @@ export default {
     },
     taxAsPlural () {
       return p => p.indexOf('Id') === p.length - 2 ? p.replace('Id').plural : p
-    },
-    // refsIds () {
-    //   return tax => {
-    //     const x = {}
-    //     const { name, parents } = tax
-    //     const { subscriberName } = this
-    //     if (parents && parents.length) {
-    //       parents.map(tax => {
-    //         const $tax = this.$lodger[tax] || this.$lodger[tax.plural]
-    //         if (!$tax) return
-    //         const { form: { plural }, subscribers } = $tax
-    //         const sub = subscribers[subscriberName]
-
-    //         if (sub) {
-    //           const { selectedId } = sub
-    //           if (selectedId)
-    //             x[plural === tax ? plural : `${tax}Id`] = plural === tax ? [ selectedId ] : selectedId
-    //         }
-    //       })
-    //     }
-    //     return x
-    //   }
-    // }
+    }
   },
   components: {
     sction,
@@ -277,16 +235,7 @@ typeColors = config.typography.palette
       overflow auto
       position relative
 
-      &:before
-        content ''
-        position absolute 0
-        z-index -1
-        background-color white
-        background-image embedurl('~static/loaders/preload.svg')
-        background-position 50% 50%
-        background-repeat no-repeat
-        transform translateY(-100%)
-        transition transform .15s ease-out
+
 
       &.fetching
         &:before

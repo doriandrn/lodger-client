@@ -8,13 +8,12 @@ ValidationProvider(
   :data-type=   "isRel ? 'rel' : type"
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-req=    "required"
-  :data-results="hasResults",
   :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
     v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel",
-    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox'].indexOf(type) < 0 ? 'text' : type",
+    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search'].indexOf(type) < 0 ? 'text' : type",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
@@ -154,15 +153,6 @@ ValidationProvider(
   ) {{ val.length }} / {{ textLengthLimit }}
 
   slot
-
-  //- && !selectedResult._id
-  results(
-    v-if=             "hasResults",
-    :results=         "results",
-    :selectedIndex=   "indexRezultatSelectat"
-    @selecteaza=      "selecteaza"
-    :class=           "{ singleTax: searchTaxonomy }"
-  )
 </template>
 
 <script>
@@ -178,7 +168,6 @@ import scari from 'form/scari'
 import multi from 'form/presets/multi'
 
 import servicii from 'c/servicii'
-import results from 'c/searchResults'
 import contoare from 'form/contoare'
 import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
@@ -236,26 +225,6 @@ export default {
       return tax[value] || { _id: null }
     },
 
-    hasResults () {
-      const { type } = this
-      if (type !== 'search') return
-
-      const { results, resultsTaxes, searchTaxonomy, debug, taxes } = this
-      let has = null
-
-      if (!results) return has
-
-      taxes.forEach(tax => {
-        if (has) return
-        has = false
-        if (tax && results[tax]) {
-          if (results[tax].length > 0) has = true
-          return
-        }
-      })
-
-      return has
-    },
 
     taxes () {
       const { results, type } = this
@@ -423,7 +392,6 @@ export default {
     multi,
     radios,
     rel,
-    results,
     scari,
     servicii,
     selApartamente,
@@ -490,10 +458,6 @@ export default {
       const { search, transform, debug, $options: { filters } } = this
 
       switch (type) {
-        case 'search':
-          this.results = search(value)
-          break
-
         case 'checkbox':
           return
           // value = Boolean(value)
@@ -531,10 +495,7 @@ export default {
     },
 
     clickAway () {
-      const { type, hasResults } = this
-      if (type !== 'search') return
-      if (!hasResults) return
-
+      if (this.type !== 'search') return
       this.$emit('clickAway')
     },
 

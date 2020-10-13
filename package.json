@@ -15,14 +15,15 @@
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
   "dependencies": {
+    "@dicebear/avatars": "^4.2.5",
     "@dicebear/avatars-avataaars-sprites": "^4.2.5",
     "@nuxtjs/axios": "^5.12.2",
     "@popperjs/core": "^2.5.3",
-    "acorn": "^7.4.0",
+    "acorn": "^7.4.1",
     "dayjs": "^1.9.1",
     "lodger": "git+ssh://git@gitlab.com/doriandrn/lodger-api.git#master",
     "mobx": "^5.9.4",
-    "mobx-vue": "^2.0.10",
+    "mobx-vue": "^2.0.11",
     "money": "^0.2.0",
     "numeral": "^2.0.6",
     "nuxt": "^2.14.6",
@@ -32,7 +33,7 @@
     "rxdb": "^9.6.0",
     "vue-awesome-swiper": "^4.1.1",
     "vue-clickaway": "^2.2.2",
-    "vue-i18n": "^8.21.1",
+    "vue-i18n": "^8.22.0",
     "vuex-toast": "^0.1.3"
   },
   "devDependencies": {
@@ -46,7 +47,7 @@
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-typescript": "^7.3.3",
     "@types/debug": "^4.1.2",
-    "@types/node": "^14.11.2",
+    "@types/node": "^14.11.7",
     "autoprefixer": "^9.5.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.5",

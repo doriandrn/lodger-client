@@ -1,24 +1,28 @@
 <template lang="pug">
 .dropdown(
-  :class=   "{'dropdown--open': open}",
+  :class=   "{ open }",
   v-on-clickaway=   "inchide"
   data-box-arrow
 )
-  buton.dropdown__toggle(
+  buton(
     :icon=    "icon",
     :icon-only= "iconOnly"
-    @click=   "open = !open",
+    @click=   "open = !open"
     :arrow=   "arrow"
     styl=     "unstyled"
     :tabIndex= "0"
   ) #[slot(name="beforeText")] {{ toggleText }}
     slot(name="buton")
-  .dropdown__content
-    .dropdown__header(v-if="$slots.header")
+
+  div
+    header(v-if="$slots.header || iconOnly")
+      h6(v-if=  "iconOnly") {{ toggleText }}
       slot(name="header")
-    .dropdown__main(v-if="$slots.default")
+
+    main(v-if="$slots.default")
       slot
-    .dropdown__footer(v-if="$slots.footer")
+
+    footer(v-if="$slots.footer")
       slot(name="footer")
 </template>
 
@@ -59,11 +63,6 @@ export default {
       this.open = false
     }
   },
-  watch: {
-    '$route': function () {
-      this.open = false
-    }
-  }
 }
 </script>
 
@@ -78,17 +77,24 @@ shadow = -1px 2px rgba(black, .05)
   z-index 101
   height 100%
   user-select none
-  &__footer
+
+  footer
     border-top: 1px solid colors.borders
     background: colors.bgs.body
-  &__header
+
+  header
+    border-top 3px solid white
     border-bottom: 1px solid colors.borders
+    background rgba(black, .05)
     padding 6px 12px
     p
       color rgba(black, .55)
       margin 0
 
-  &__toggle
+  h6
+    margin-bottom 0
+
+  > button
     background transparent
     color #666
     display flex
@@ -98,14 +104,17 @@ shadow = -1px 2px rgba(black, .05)
     height 100%
     position relative
     padding 0 12px
+
     &:hover
       background: colors.bgs.body
+
     &[data-arrow]
       &:after
         position relative
         mask-image embedurl('~static/icons/ui/chevron-down.svg')
         transition transform .15s ease-in-out
-  &__main
+
+  main
     border 2px solid white
     display flex
     flex-flow row wrap
@@ -119,7 +128,7 @@ shadow = -1px 2px rgba(black, .05)
         justify-content flex-start
         border-radius 0
 
-  &__content
+  > div
     opacity 0
     visibility hidden
     max-height 0
@@ -135,29 +144,29 @@ shadow = -1px 2px rgba(black, .05)
     &:before
     &:after
       opacity 0
-    
-  &--open
+
+  &.open
     &[data-box-arrow]
       &:before
       &:after
         bottom 0
         opacity 1
 
-    .dropdown
-      &__content
-        opacity 1
-        visibility visible
-        max-height 50vh
-        top 100%
+    > div
+      opacity 1
+      visibility visible
+      max-height 50vh
+      top 100%
 
-      &__main
-        > button
-        > a
-          &:hover
-            background-color: colors.selectedItem
-    .dropdown
-      &__toggle
-        background: colors.bgs.body
-        &:after
-          transform rotate(180deg)
+    main
+      > button
+      > a
+        &:hover
+          background-color: colors.selectedItem
+
+    > button
+      background: colors.bgs.body
+
+      &:after
+        transform rotate(180deg)
 </style>

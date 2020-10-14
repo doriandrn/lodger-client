@@ -1,12 +1,24 @@
 <template lang="pug">
 ValidationObserver(v-slot="{ passes }")
   form.form(@submit.prevent="passes(validation)")
-    a.lacatel(
+    drop.more(
       v-if=   "!isNew"
-      @click= "editing = !editing"
-    ) modifica
+      icon=   "more-vertical"
+      toggleText= "mai mult"
+      :arrow= "false"
+      iconOnly
+    )
+      buton(
+        icon=   "edit"
+        @click= "editing = !editing"
+      ) {{ $lodger.i18n.edit }}
+      buton(
+        icon=   "trash"
+      ) {{ $lodger.i18n.trash }}
+
     //- h5.form__title(v-if="title") {{ $t( title ) }}
     //- p.form__desc(v-if="desc") {{ $t( desc ) }}
+
     fieldset.header
       legend Cap
 
@@ -20,7 +32,7 @@ ValidationObserver(v-slot="{ passes }")
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
-          :required =     "form.schema.required.indexOf(field) > -1"
+          :required =     "form.schema.required.indexOf(id) > -1"
           :min=           "field.min"
           :max=           "field.max",
           :step=          "field._type === 'bani' ? 0.01 : field.step",
@@ -57,7 +69,7 @@ ValidationObserver(v-slot="{ passes }")
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
-          :required=      "field.v && field.v.indexOf('required') > -1"
+          :required =     "form.schema.required.indexOf(id) > -1"
           :min=           "field.min"
           :max=           "field.max",
           :step=          "field._type === 'bani' ? 0.01 : field.step",
@@ -138,8 +150,31 @@ ValidationObserver(v-slot="{ passes }")
 import buton from 'form/button'
 import field from 'form/field'
 import split from 'c/split'
+import drop from 'c/dropdown'
+
 import { ValidationObserver, extend } from "vee-validate"
+import { required, confirmed, length, email } from "vee-validate/dist/rules";
 import { Observer } from 'mobx-vue'
+
+extend("required", {
+  ...required,
+  message: "This field is required"
+});
+
+extend("email", {
+  ...email,
+  message: "This field must be a valid email"
+});
+
+extend("confirmed", {
+  ...confirmed,
+  message: "This field confirmation does not match"
+});
+
+extend("length", {
+  ...length,
+  message: "This field must have 2 options"
+});
 
 export default Observer ({
   name: 'F0rm',
@@ -169,6 +204,7 @@ export default Observer ({
   },
   components: {
     buton,
+    drop,
     split,
     field,
     ValidationObserver
@@ -217,7 +253,7 @@ export default Observer ({
   },
   methods: {
     async validation () {
-      if (!this.doc._isTemporary) return
+      // if (!this.doc._isTemporary) return
       this.$children[0].validate().then(ok => {
         if (ok) this.$emit('submit', this.filteredData)
       })
@@ -262,6 +298,12 @@ export default Observer ({
 
   .actions
     margin-top 20px
+
+  .more
+    position absolute
+    right 0
+    top 0
+    height auto
 
 .avatar
   img

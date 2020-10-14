@@ -114,6 +114,10 @@ ValidationProvider(
   contoare(
     v-else-if=      "type === 'contoare'"
   )
+  contact(
+    v-else-if=      "type === 'contactFields'"
+    :disabled=      "disabled"
+  )
   //- sel-apartamente(
   //-   v-else-if=      "type === 'selApartamente'"
   //-   :optiuni=       "options"
@@ -169,6 +173,7 @@ import file from 'form/file'
 import radios from 'form/radioGroup'
 import scari from 'form/scari'
 import multi from 'form/presets/multi'
+import contact from 'form/contact'
 
 import servicii from 'c/servicii'
 import contoare from 'form/contoare'
@@ -394,6 +399,7 @@ export default {
     bani,
     buton,
     checkboxes,
+    contact,
     contoare,
     distribuire,
     file,

@@ -10,7 +10,7 @@
 <template lang="pug">
 div
   //- p ss: {{ shouldShow }} {{ subscriber.name }}
-  slot(:taxonomy="taxonomy" :subscriber="subscriber")
+  slot(:taxonomy="taxonomy" :subscriber="subscriber" :disabled="disabled")
 
   ul(
     v-if=   "documents.length || taxonomy && subscriber.ids.length"
@@ -83,6 +83,10 @@ export default Observer({
     populated: {
       type: [Promise, Array],
       default: null
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   components: {

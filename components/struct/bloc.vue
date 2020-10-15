@@ -294,8 +294,9 @@ colors = config.palette
         padding 8px
         border-radius 0
         box-shadow none
-        border 1px solid transparent
+        // border 1px solid transparent
         // margin -1px
+        background transparent
 
         &:not(:first-child)
           border-left: 1px solid colors.borders

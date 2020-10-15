@@ -160,6 +160,50 @@ export default Observer ({
 </script>
 
 <style lang="styl">
+[data-tax="utilizator"]
+  fieldset.header
+    .fields
+      grid-template-areas:
+        "avatar avatar name name name name"\
+        "avatar avatar rol rol . ."\
+        "contact contact . . . ."
+
+    [data-type="userAvatar"]
+      grid-area avatar
+
+      img
+        size 100%
+
+    [data-type="fullName"]
+      grid-area name
+      align-self flex-end
+
+    [data-type="contactFields"]
+      grid-area contact
+
+    [data-type="number"]
+      grid-area rol
+
+[data-tax="apartament"]
+  fieldset.header
+    .fields
+      grid-template-areas:
+        "nr proprietar proprietar . balanta balanta"\
+        "servicii servicii servicii contoare contoare contoare"
+
+    [data-type="number"]
+      grid-area nr
+
+    [data-type="$"]
+      grid-area balanta
+
+    [data-type="taxonomy"]
+      grid-area contoare
+
+    [data-type="fullName"]
+      grid-area proprietar
+
+
 .breadcrumbs
   position absolute
   top -100px
@@ -204,9 +248,9 @@ export default Observer ({
     border-radius 50px
 
   section
-    &.main
+    /* &.main
       display grid
-      grid-template-columns repeat(3, 1fr)
+      grid-template-columns repeat(3, 1fr) */
 
     > div
       display flex

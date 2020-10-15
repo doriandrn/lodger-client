@@ -24,7 +24,7 @@
         icon=   "plus-circle",
         @click= "debug('bloc nou')"
         size=   "medium"
-
+        styl=   "unstyled"
         icon-only
       ) bloc.new.title
     //- buton.urm.blocuri__nav(

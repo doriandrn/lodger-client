@@ -312,6 +312,7 @@ fieldset
   legend
     display block
     text-transform: uppercase;
+    padding 0
     font-size: 9px
     line-height 10px
     font-weight: 400;
@@ -334,30 +335,11 @@ fieldset
 
     .fields
       display grid
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr
+      grid-template-columns repeat(6, 1fr)
       grid-row-gap 20px
       grid-column-gap 20px
-      grid-template-areas:
-        "avatar avatar name name name name"\
-        "avatar avatar rol rol . ."\
-        "contact contact . . . ."
 
-    [data-type="userAvatar"]
-      grid-area avatar
-      // margin-left 0
 
-      img
-        size 100%
-
-    [data-type="fullName"]
-      grid-area name
-      align-self flex-end
-
-    [data-type="contactFields"]
-      grid-area contact
-
-    [data-type="number"]
-      grid-area rol
 
   .fields
     display flex
@@ -366,6 +348,12 @@ fieldset
 
     &+time
       margin-top 12px
+
+  &:not(.header)
+    .fields
+      > span
+        &:not(:last-child)
+          margin-right 24px
 
   .content
     display flex

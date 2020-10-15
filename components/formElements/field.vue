@@ -50,6 +50,7 @@ ValidationProvider(
     :valoare=   "value"
     :base=      "$Lodger.displayCurrency"
     @input=       "$emit('input', $event)"
+    :disabled=    "disabled"
     showBoth
   )
   buton(
@@ -98,6 +99,7 @@ ValidationProvider(
     v-else-if=    "type === 'scari'",
     :value=       "value",
     @input=       "$emit('input', $event)"
+    :disabled=    "disabled"
   )
 
   radios(
@@ -810,7 +812,7 @@ span[data-type="$"]
         font-weight bold
 
 span[data-type="taxonomy"]
-  flex-basis 50%
+  flex-basis 47%
 
 input[name="nr"]
   font-family: config.typography.fams.headings

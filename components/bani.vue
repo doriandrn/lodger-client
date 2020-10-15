@@ -9,6 +9,7 @@ div(v-if="parsed")
     input(
       type=   "text"
       :value= "suma"
+      :disabled=  "disabled"
       @change="$emit('input', `${$event.target.value} ${moneda}`)"
     )
     .select {{ moneda || base }}
@@ -33,6 +34,10 @@ export default Observer ({
     showBoth: {
       type: Boolean,
       default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: true
     },
     base: {
       type: String,
@@ -72,6 +77,10 @@ export default Observer ({
 
 <style lang="stylus">
 @require '~styles/config'
+
+[data-type="$"]
+  input
+    padding-right 4px !important
 
 .bani
   display flex

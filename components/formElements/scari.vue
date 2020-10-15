@@ -12,6 +12,7 @@ ul.scari.zebra
       :required=    "true",
       @input=       "$emit('input', scari)"
       :hide-label=  "i > 0"
+      :disabled=  "disabled"
     )
 
     field(
@@ -25,6 +26,7 @@ ul.scari.zebra
       :hide-label=  "i > 0"
       :min=         "ultimulEtajDinScaraCuApartamente(i, scara.mansarda)"
       :max=          "124"
+      :disabled=  "disabled"
     )
 
     field(
@@ -34,6 +36,7 @@ ul.scari.zebra
       v-model.bool=   "scara.lift",
       :checked=       "scara.lift"
       @input=         "$emit('input', scari)"
+      :disabled=  "disabled"
     )
 
     field(
@@ -43,6 +46,7 @@ ul.scari.zebra
       v-model.bool=   "scara.mansarda",
       :checked=       "scara.mansarda"
       @input=         "$emit('input', scari)"
+      :disabled=  "disabled"
     )
     buton(
       @click=       "stergeScara(i)"
@@ -141,6 +145,10 @@ export default {
       default () {
         return []
       }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {

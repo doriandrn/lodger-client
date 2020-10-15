@@ -289,8 +289,8 @@ export default Observer ({
 
   .lock
     position absolute
-    right 8px
-    top 8px
+    right 16px
+    top 12px
 
     &:hover
     &:focus
@@ -304,9 +304,10 @@ fieldset
   position relative
   width 100%
   margin -1px
+  user-select none
 
   &+fieldset
-    margin-top 20px
+    margin-top 40px
 
   legend
     display block
@@ -314,8 +315,9 @@ fieldset
     font-size: 9px
     line-height 10px
     font-weight: 400;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     margin-bottom 12px
+    user-select none
 
   &:not(.header)
     legend
@@ -363,7 +365,7 @@ fieldset
     align-items flex-start
 
     &+time
-      margin 8px 4px
+      margin-top 12px
 
   .content
     display flex

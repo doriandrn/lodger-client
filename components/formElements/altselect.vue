@@ -92,24 +92,40 @@ export default {
   overflow hidden
   cursor default
 
+  &.disabled
+    > ul
+      > li
+        padding-left 4px
+        padding-right 0
+
   &:not(.disabled)
     cursor pointer
-    background-color: config.palette.bgs.body
+    background-image embedurl('~static/icons/ui/dropdown.svg', 'utf8')
+    background-repeat no-repeat
+    background-position calc(100% - 16px) 50%
 
     > ul
-      border: 1px solid config.palette.borders
-      border-left-width 2px
+      background-color: #f5f7fb;
+      box-shadow:  6px 6px 12px #d0d2d5, -6px -6px 12px #ffffff;
+
+      > li
+        &:not([data-sel])
+          &:hover
+          &:focus
+            background-color: config.palette.selectedItem !important
+            color: config.typography.palette.headings
 
     &:active
     &:focus
     &:hover
       outline none
       overflow visible
+      box-shadow 0px 1px 2px rgba(#8B7070, .1)
 
       > ul
         background white
         height auto
-        border-left-color: config.typography.palette.light !important
+        border-color: config.typography.palette.light !important
         cursor pointer
         color: config.typography.palette.ui
 
@@ -143,12 +159,6 @@ export default {
         .progres
         &:before
           display none
-
-      &:not([data-sel])
-        &:hover
-        &:focus
-          background-color: config.palette.selectedItem !important
-          color: config.typography.palette.headings
 
   &:after
     position absolute

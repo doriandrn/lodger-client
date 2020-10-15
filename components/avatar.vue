@@ -1,6 +1,6 @@
 <template lang="pug">
 .avatar(:class="{ disabled }")
-  img(:src="value || placeholder")
+  img(:src="value || placeholder" @click="!disabled ? $el.children[1].click() : undefined")
   file(v-if=  "!disabled" :id="id")
   span.holder(v-if= "!disabled")
 </template>

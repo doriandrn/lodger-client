@@ -1,8 +1,8 @@
 <template lang="pug">
 time(
   :datetime=  "datetime"
-  data-icon=  "clock"
-) {{ liveTime || timeFromNow() }}
+  :data-icon=  "icon ? 'clock' : undefined"
+) #[slot] {{ liveTime || timeFromNow() }}
 </template>
 
 <script>
@@ -61,6 +61,10 @@ export default {
     liveUpdate: {
       type: Boolean,
       default: false
+    },
+    icon: {
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -75,7 +79,7 @@ time
   flex-flow row nowrap
   align-items center
   color: tcolor
-  font-size 10px
+  font-size 12px
   padding-left 0 !important
   white-space nowrap
 

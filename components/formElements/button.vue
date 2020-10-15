@@ -209,9 +209,11 @@ input[type="submit"]
 button
 .button
   position relative
-  background-color white
-  border: 1px solid config.palette.borders
-  border-radius: config.radiuses.buttons
+  // background-color white
+  // border: 1px solid config.palette.borders
+  // border: 1px solid transparent
+  border 0
+  // border-radius: config.radiuses.buttons
   color: butTextColor
   // color white
   cursor pointer
@@ -227,7 +229,7 @@ button
   user-select none
   max-width 300px
   // box-shadow inset 0 1px rgba(white, .5)
-  box-shadow 0 1px rgba(black, .05)
+  // box-shadow 0 1px rgba(black, .05)
   font-smoothing antialiased
 
   &:before
@@ -235,6 +237,11 @@ button
     background-color: butTextColor
 
   &:not(:disabled)
+    border-radius: 46px;
+    background: #f5f7fb;
+    box-shadow:  6px 6px 12px rgba(black, .1),
+                -6px -6px 12px #ffffff;
+
     &:hover
     &:focus
     &:active
@@ -339,5 +346,8 @@ button
 
   &.rounded
     border-radius 50%
+
+  &.iconOnly
+    background: linear-gradient(145deg, #ffffff, #dddee2);
 
 </style>

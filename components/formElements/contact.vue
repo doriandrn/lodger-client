@@ -13,7 +13,7 @@
       @validate=  "validate($event, i)"
     )
     button.new(
-      v-if=   "!disabled"
+      v-if=   "!disabled && tel.filter(i => i).length === tel.length"
       @click= "$event.preventDefault(); tel.push('')"
     ) +
 
@@ -29,7 +29,7 @@
       hideLabel
     )
     button.new(
-      v-if=   "!disabled"
+      v-if=   "!disabled && email.filter(i => i).length === email.length"
       @click= "$event.preventDefault(); email.push('')"
     ) +
 </template>
@@ -49,15 +49,14 @@ export default {
       const el = this.$el.children[0].children[i + 1]
       const prefix = international ? String(international.split(' ')[0]) : undefined
 
-      el.classList.toggle('error', !valid)
-
-      if (prefix)
-        el.dataset.prefix = prefix
+      if (input) {
+        el.classList.toggle('error', !valid)
+      }
 
       if (valid && !this.disabled) {
         this.tel[i] = e164
         this.$emit('input', { ...this.$data })
-        this.$el.blur() // ?
+        // this.$el.blur() // ?
       }
     }
   },

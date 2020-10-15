@@ -32,6 +32,7 @@ avatar(
   v-else-if=  "type === 'avatar'"
   :seed=    "avatarSeed"
   :value=   "value"
+  disabled
 )
 span(v-else) {{ value }}
 </template>

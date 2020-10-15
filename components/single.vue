@@ -15,7 +15,7 @@ frm#single(
     :unixTime=  "createdAt"
     slot=       "headerEnd"
     liveUpdate
-  )
+  ) {{ $lodger.i18n.registered }}
 
   blocuri.struct(
     v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"

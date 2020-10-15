@@ -248,7 +248,7 @@ footerHeight = 40px
     flex-flow: row wrap;
     justify-content: center;
     align-items center
-    background-color white
+    background-color transparent
 
     .inner
       align-items center
@@ -257,6 +257,10 @@ footerHeight = 40px
       .right
         display flex
         flex-flow row nowrap
+
+        > *
+          &:not(:first-child)
+            margin-left 12px
 
       > div
         max-height 40px

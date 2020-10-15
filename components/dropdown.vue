@@ -9,7 +9,6 @@
     :icon-only= "iconOnly"
     @click=   "open = !open"
     :arrow=   "arrow"
-    styl=     "unstyled"
     :tabIndex= "0"
   ) #[slot(name="beforeText")] {{ toggleText }}
     slot(name="buton")
@@ -95,7 +94,6 @@ shadow = -1px 2px rgba(black, .05)
     margin-bottom 0
 
   > button
-    background transparent
     color #666
     display flex
     align-items center

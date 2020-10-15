@@ -552,9 +552,11 @@ typeColors = config.typography.palette
 input
 textarea
 .vue-tel-input
-  border 1px solid rgba(black, .2)
-  border-radius 2px
-  background white
+  border 1px solid transparent
+
+.vue-tel-input
+  border-color transparent !important
+
 
 input
 textarea
@@ -578,10 +580,21 @@ textarea
     &::placeholder
       opacity 1
 
+  &:not(:disabled)
+    // border-radius 2px
+    border-radius: 46px;
+    background: #f5f7fb;
+    box-shadow inset 2px 2px 3px rgba(black, .1), inset -3px -3px 6px white
+    // box-shadow: inset 6px 6px 12px #d0d2d5,
+    //             inset -6px -6px 12px #ffffff;
+
   &.disabled
   &:disabled
     background-color transparent
     border-color transparent
+    padding-left 0
+    padding-right 0
+    user-select none
 
     &+label
       color #1a1a1a
@@ -766,7 +779,7 @@ input[type="checkbox"]
 
 span[data-type]
   text-align left
-  padding 4px
+  padding 0
   display flex
   flex-flow column-reverse nowrap
 
@@ -777,9 +790,6 @@ span[data-type]
 
 span[data-type="userAvatar"]
   margin 0 auto
-
-  +above(l)
-    margin 0 32px 32px 0
 
 span[data-type="$"]
   margin-left auto
@@ -877,8 +887,8 @@ input[name="nr"]
     flex-flow row nowrap
     align-items center
 
-    &:before
-      content attr(data-prefix)
+    // &:before
+    //   content attr(data-prefix)
 
     .vti
       &__dropdown

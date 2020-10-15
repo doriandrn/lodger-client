@@ -78,7 +78,7 @@ spacings = 16px
   transition all .15s ease-in-out
 
   &.v
-    top 36px
+    top 42px
     opacity 1
     visibility visible
     z-index 51
@@ -122,6 +122,8 @@ spacings = 16px
           padding: (spacings/2) (spacings*1.5)
           text-transform capitalize
           text-decoration none
+          font-weight 400
+
           &:active
           &:focus
             background-color: config.palette.selectedItem

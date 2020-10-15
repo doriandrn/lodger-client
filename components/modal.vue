@@ -3,7 +3,7 @@ transition(name="modal")
   .modal(
     v-show=     "$lodger.modal.activeDoc"
     :data-tax=  "$lodger.modal.activeDoc ? $lodger.modal.activeDoc.collection.name : undefined"
-    :class= "{'hasFooter': $slots.footer, overflow, editing}"
+    :class=     "{ 'hasFooter': $slots.footer, overflow, editing }"
     v-focus
   )
     .backdrop(@click="inchide")
@@ -60,10 +60,6 @@ export default Observer({
       type: String,
       default: ''
     },
-    title: {
-      type: String,
-      default: 'Modal title'
-    }
   },
   components: {
     single,
@@ -124,6 +120,9 @@ lrPad = 32px
       max-width 640px
 
   &.editing
+    #single
+      padding-top 12px
+
     .container
       background-color #f5f7fb
 

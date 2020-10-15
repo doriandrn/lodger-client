@@ -54,16 +54,18 @@ header
       color: config.typography.palette.headings
 
   [data-type="search"]
+    z-index 103
+
     > input
       padding-left 32px !important
-      border: 1px solid config.palette.borders
+      // border: 1px solid config.palette.borders
 
       &::placeholder
         opacity 1
 
     &:before
       top 13px
-      left 11px
+      left 13px
       position absolute
       background-color rgba(black, .5)
 

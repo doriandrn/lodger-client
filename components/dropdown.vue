@@ -137,7 +137,6 @@ shadow = -1px 2px rgba(black, .05)
     background white
     box-shadow: shadow
     border-radius 2px 3px 5px 8px
-    overflow hidden
     transition all .15s ease-in-out
 
   &[data-box-arrow]

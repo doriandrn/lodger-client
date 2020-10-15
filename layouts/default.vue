@@ -53,39 +53,52 @@
             :results=   "search.results"
           )
 
-        buton(
-          styl=   "unstyled"
+        dropdown(
           icon=   "settings"
-          slot=   "right"
-          to=     "/setari#asociatie"
-          icon-only
-        ) {{ 'settings.title' }}
+          :arrow= "false"
+          iconOnly
+        )
+          form.form
+
+            fieldset
+              legend Afisaj
+
+              field(
+                type=       "altselect"
+                id=         "displayCurrency"
+                :options=   "$Lodger.currencies"
+                :value=     "$Lodger.currencies.indexOf($Lodger.displayCurrency)"
+                @input=     "$Lodger.displayCurrency = $event"
+              )
+
+              .lang-switch
+                a(
+                  v-for=      "lang in $lodger.supportedLangs"
+                  v-tooltip=  "lang.nativeName"
+                  @click=     "$Lodger.locale = lang.code"
+                ) {{ lang.code }}
+
 
   main
     nuxt(:nuxt-child-key="activePage")
 
   footr
-    a user select
-    div
-      field(
-        type=       "altselect"
-        id=         "displayCurrency"
-        :options=   "$Lodger.currencies"
-        :value=     "$Lodger.currencies.indexOf($Lodger.displayCurrency)"
-        @input=     "$Lodger.displayCurrency = $event"
-        hideLabel
-      )
+    nav
+      buton(
+        icon= "life-buoy"
+        styl= "unstyled"
+      ) {{ $lodger.i18n.footer.links.help }}
+      buton(
+        icon= "message-circle"
+        styl= "unstyled"
+      ) {{ $lodger.i18n.footer.links.feedback }}
+      buton(
+        icon= "award"
+        styl= "unstyled"
+      ) {{ $lodger.i18n.footer.links.thanks }}
 
-      .lang-switch
-        a(
-          v-for=      "lang in $lodger.supportedLangs"
-          v-tooltip=  "lang.nativeName"
-          @click=     "$Lodger.locale = lang.code"
-        ) {{ lang.code }}
-      buton Feedback
-      .copyright
-        p(v-if="app") {{ app.name }} v{{ app.version }} - Copyright 2020 {{ app.author }}
-        a credits
+    .copyright
+      p(v-if="app") #[strong {{ app.name }} v{{ app.version }}] - &copy; 2017 - {{ curYear }} {{ app.author }}
 
   //- toasts
 
@@ -168,6 +181,10 @@ export default Observer ({
     },
     administreazaCelPutinOAsociatie () {
       return true
+    },
+    curYear () {
+      const d = new Date()
+      return d.getFullYear()
     }
   },
   beforeDestroy () {
@@ -197,6 +214,15 @@ footerHeight = 40px
 
 .right
   margin-left auto
+
+.inner
+  max-width: config.sizes.maxContainerWidth
+  margin 0 auto
+  padding: 0 baseSpacingUnit*3
+  position relative
+  display flex
+  width: 100%;
+  justify-content: space-between;
 
 #layout
   display flex
@@ -325,21 +351,19 @@ footerHeight = 40px
     bottom 0
     left 0
     right 0
-    height: footerHeight
     line-height: footerHeight
     z-index 2
-    background: config.palette.borders
     display flex
     flex-flow row nowrap
 
-.inner
-  max-width: config.sizes.maxContainerWidth
-  margin 0 auto
-  padding: 0 baseSpacingUnit*3
-  position relative
-  display flex
-  width: 100%;
-  justify-content: space-between;
+    .inner
+      justify-content center
+      flex-flow column nowrap
+      align-items center
+
+    nav > *
+      margin 0 16px
+
 
 .lang-switch a
   margin 0 8px

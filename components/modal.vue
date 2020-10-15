@@ -2,8 +2,8 @@
 transition(name="modal")
   .modal(
     v-show=     "$lodger.modal.activeDoc"
-    :data-tax=  "$lodger.modal.tax"
-    :class= "{'hasFooter': $slots.footer, overflow}"
+    :data-tax=  "$lodger.modal.activeDoc ? $lodger.modal.activeDoc.collection.name : undefined"
+    :class= "{'hasFooter': $slots.footer, overflow, editing}"
     v-focus
   )
     .backdrop(@click="inchide")
@@ -15,22 +15,27 @@ transition(name="modal")
         single(
           v-if= "$lodger.modal.activeDoc"
           :doc= "$lodger.modal.activeDoc"
+          :editing= "editing || $lodger.modal.activeDoc._isTemporary"
         )
+          buton.lock(
+            v-if=     "!$lodger.modal.activeDoc._isTemporary"
+            :icon=    "editing ? 'lock' : 'unlock'"
+            @click=   "editing = !editing"
+            iconOnly
+          ) {{ $lodger.i18n.edit }}
     slot(name="afterContainer")
 </template>
 
 <script>
-import { observer } from 'mobx-vue'
+import { Observer } from 'mobx-vue'
 import single from 'c/single'
+import buton from 'form/button'
 
-export default observer({
-  computed: {
-    shouldOverflow () {
-      return this.modalContent === 'incasare.new'
-    },
-    // doc () {
-    //   return this.$lodger.modal.activeDoc
-    // }
+export default Observer({
+  data () {
+    return {
+      editing: false
+    }
   },
   directives: {
     focus: {
@@ -42,6 +47,7 @@ export default observer({
   },
   methods: {
     inchide () {
+      this.editing = false
       this.$lodger.modal.close()
     }
   },
@@ -60,7 +66,8 @@ export default observer({
     }
   },
   components: {
-    single
+    single,
+    buton
   }
 })
 </script>
@@ -115,6 +122,10 @@ lrPad = 32px
 
     +above(l)
       max-width 640px
+
+  &.editing
+    .container
+      background-color #f5f7fb
 
   header
     background transparent

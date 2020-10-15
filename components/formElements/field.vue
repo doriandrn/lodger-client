@@ -8,12 +8,12 @@ ValidationProvider(
   :data-type=   "isRel ? 'rel' : type"
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-req=    "required"
-  :class=       "{ 'field--error': error, 'field--val': value, zebra: type === 'scari' }"
+  :class=       "{ error, value, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel",
-    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search'].indexOf(type) < 0 ? 'text' : type",
+    v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : type",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
@@ -30,6 +30,7 @@ ValidationProvider(
     :checked=     "checked"
     @input=       "handleInput",
     @change=      "handleChange"
+    :aria-label=  "hideLabel ? label : undefined"
 
     @keydown.enter= "selecteaza"
     @keyup.tab=     "selecteaza"
@@ -53,6 +54,7 @@ ValidationProvider(
   )
   buton(
     v-else-if=    "type === 'button'"
+    :aria-label=  "label"
     :dangerous=   "dangerous"
     @click=       "handleClick"
   ) {{ label || text }}
@@ -72,15 +74,17 @@ ValidationProvider(
     @input=       "$emit('input', $event)"
     :id=          "id"
     :arrow=       "arrow"
+    :disabled=    "disabled"
   )
   altslect(
-    v-else-if=    "type === 'altselect'"
-    :options=     "options"
+    v-else-if=    "type === 'altselect' || name === 'rol'"
+    :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
     :value=       "value",
     :required=    "required",
     @input=       "$emit('input', $event)"
     :id=          "id"
     :arrow=       "arrow"
+    :disabled=    "disabled"
   )
   avatar(
     v-else-if=    "['avatar', 'userAvatar'].indexOf(type) > -1"
@@ -117,6 +121,8 @@ ValidationProvider(
   contact(
     v-else-if=      "type === 'contactFields'"
     :disabled=      "disabled"
+    :value=         "value"
+    @input=         "$emit('input', $event)"
   )
   //- sel-apartamente(
   //-   v-else-if=      "type === 'selApartamente'"
@@ -543,6 +549,43 @@ export default {
 palette = config.palette
 typeColors = config.typography.palette
 
+input
+textarea
+.vue-tel-input
+  border 1px solid rgba(black, .2)
+  border-radius 2px
+  background white
+
+input
+textarea
+  padding 4px 12px
+
+  &::placeholder
+    color: config.typography.palette.meta
+    font-size 12px
+    font-weight 100
+    opacity 0
+    transition opacity .1s ease
+
+  &:active
+    color: palette.primary
+
+  &:focus
+    color: palette.primary
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+    border-color: #66afe9
+
+    &::placeholder
+      opacity 1
+
+  &.disabled
+  &:disabled
+    background-color transparent
+    border-color transparent
+
+    &+label
+      color #1a1a1a
+
 input[type="text"]
 input[type="search"]
 input[type="number"]
@@ -553,8 +596,6 @@ textarea
   color black
   font-size 16px
   line-height 24px
-  background-color transparent
-  border 0
   min-width 32px
   transition all .15s ease-in-out
   // padding 8px 0
@@ -562,31 +603,6 @@ textarea
   height 100%
   max-width 100%
 
-  &::placeholder
-    color: config.typography.palette.meta
-    font-size 12px
-    font-weight 100
-    opacity 0
-    transition opacity .1s ease
-
-  // &:disabled
-  //   &+label
-  //     color #1a1a1a
-
-  &:active
-  &:focus
-    color: palette.primary
-
-    &::placeholder
-      opacity 1
-
-    &+label
-      moveFieldLabel()
-
-.disabled
-:disabled
-  &+label
-    color #1a1a1a
 
 [data-type="rel"]
   a
@@ -759,6 +775,12 @@ span[data-type]
   display flex
   flex-flow row nowrap
 
+span[data-type="userAvatar"]
+  margin 0 auto
+
+  +above(l)
+    margin 0 32px 32px 0
+
 span[data-type="$"]
   margin-left auto
 
@@ -843,4 +865,25 @@ input[name="nr"]
 
           &:after
             transform rotate(180deg)
+
+.vue-tel-input
+  &+.vue-tel-input
+    margin-top 4px
+
+  &.disabled
+    border-color transparent
+    position relative
+    display flex
+    flex-flow row nowrap
+    align-items center
+
+    &:before
+      content attr(data-prefix)
+
+    .vti
+      &__dropdown
+        opacity: 0
+        width 0
+        padding-left 0
+        padding-right 0
 </style>

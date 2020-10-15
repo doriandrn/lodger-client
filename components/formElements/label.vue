@@ -25,7 +25,8 @@ label
   display inline-flex
   user-select none
   color: defColor
-  margin 5px 0
+  margin-bottom 12px
+  font-weight 500
 
   &:before
     background-color: defColor

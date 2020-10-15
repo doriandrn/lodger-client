@@ -3,6 +3,7 @@
   :data-arrow=  "arrow"
   :id=          "id",
   tabIndex=     "-1"
+  :class=   "{ disabled }"
 )
   ul
     li(
@@ -46,6 +47,10 @@ export default {
     progres
   },
   props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     id: {
       type: String,
       default: 'altselect'
@@ -76,26 +81,46 @@ export default {
 .altselect
   position relative
   z-index 11
-  cursor pointer
-  background-color: config.palette.bgs.body
+
+  font-size 14px
+  line-height 16px
+
   max-width 100%
   height 100%
   width 100%
-  overflow hidden
   max-height 36px
+  overflow hidden
+  cursor default
+
+  &:not(.disabled)
+    cursor pointer
+    background-color: config.palette.bgs.body
+
+    > ul
+      border: 1px solid config.palette.borders
+      border-left-width 2px
+
+    &:active
+    &:focus
+    &:hover
+      outline none
+      overflow visible
+
+      > ul
+        background white
+        height auto
+        border-left-color: config.typography.palette.light !important
+        cursor pointer
+        color: config.typography.palette.ui
+
+      &:after
+        background-color: config.typography.palette.headings !important
 
   > ul
     list-style-type none
-    font-size 14px
-    line-height 16px
-    border: 1px solid config.palette.borders
-    border-left-width 2px
-
     padding 0
     width 100%
-    cursor pointer
 
-    color: config.typography.palette.ui
     transition all .15s ease
     display flex
     flex-flow column nowrap
@@ -132,18 +157,5 @@ export default {
     top 12px
     transition all .1s ease
 
-  &:active
-  &:focus
-  &:hover
-    outline none
-    overflow visible
-
-    > ul
-      background white
-      height auto
-      border-left-color: config.typography.palette.light !important
-
-    &:after
-      background-color: config.typography.palette.headings !important
 
 </style>

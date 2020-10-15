@@ -1,26 +1,27 @@
 <template lang="pug">
-ul#single.accordion
-  li
-    frm(
-      :form=    "$lodger[plural].form"
-      :value =  "docdata"
-      :doc=     "doc"
-      :i18n=    "$lodger.i18n.taxonomies[plural]"
-      :isNew=   "doc._isTemporary"
-      @submit=  "doc.save($event); $lodger.modal.close()"
-    )
-      dateTime(
-        v-if=       "!doc._isTemporary"
-        :unixTime=  "createdAt"
-        slot=       "headerEnd"
-        liveUpdate
-      )
+frm#single(
+  :form=    "$lodger[plural].form"
+  :value =  "docdata"
+  :editing= "editing"
+  :doc=     "doc"
+  :i18n=    "$lodger.i18n.taxonomies[plural]"
+  :isNew=   "doc._isTemporary"
+  @submit=  "doc.save($event); $lodger.modal.close()"
+)
+  slot(slot="beforeHeader" :isNew="doc._isTemporary")
 
-      blocuri.struct(
-        v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"
-        layout=     "interactiv"
-        :blocuri=   "$lodger.blocuri.subscribers.single.items"
-      )
+  dateTime(
+    v-if=       "!doc._isTemporary"
+    :unixTime=  "createdAt"
+    slot=       "headerEnd"
+    liveUpdate
+  )
+
+  blocuri.struct(
+    v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"
+    layout=     "interactiv"
+    :blocuri=   "$lodger.blocuri.subscribers.single.items"
+  )
 </template>
 
 <script>
@@ -43,6 +44,10 @@ export default Observer ({
       type: Object,
       default: null,
       required: true
+    },
+    editing: {
+      type: Boolean,
+      default: false
     }
   },
   async fetch () {
@@ -170,6 +175,21 @@ export default Observer ({
 #single
   padding 0
   width 100%
+
+  input#name
+    font-size 22px
+    line-height 24px
+
+    +above(m)
+      font-size 24px
+      line-height 26px
+
+    +above(l)
+      font-size 28px
+      line-height 36px
+
+      &:disabled
+        margin-top 32px
 
   > header
     border-bottom 1px solid

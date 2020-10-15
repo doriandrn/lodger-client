@@ -1,23 +1,7 @@
 <template lang="pug">
 ValidationObserver(v-slot="{ passes }")
   form.form(@submit.prevent="passes(validation)")
-    drop.more(
-      v-if=   "!isNew"
-      icon=   "more-vertical"
-      toggleText= "mai mult"
-      :arrow= "false"
-      iconOnly
-    )
-      buton(
-        icon=   "edit"
-        @click= "editing = !editing"
-      ) {{ $lodger.i18n.edit }}
-      buton(
-        icon=   "trash"
-      ) {{ $lodger.i18n.trash }}
-
-    //- h5.form__title(v-if="title") {{ $t( title ) }}
-    //- p.form__desc(v-if="desc") {{ $t( desc ) }}
+    slot(name="beforeHeader")
 
     fieldset.header
       legend Cap
@@ -44,6 +28,7 @@ ValidationObserver(v-slot="{ passes }")
           :rules=         "field.v || null"
           :disabled=      "!editing"
           :avatarSeed=    "value['name']"
+          :hideLabel=     "!isNew && !editing || form.schema.properties[id]._type === 'userAvatar'"
 
           v-model=   "value[id]"
           @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"
@@ -142,7 +127,7 @@ ValidationObserver(v-slot="{ passes }")
         type= "submit",
         icon= "plus-circle"
         size= "xl"
-        :disabled = "!Object.keys(filteredData).length"
+        :disabled = "!Object.keys(value).length && !Object.keys(filteredData).length"
       ) {{ submitText }}
 </template>
 
@@ -182,8 +167,7 @@ export default Observer ({
     const { form: { fields }, isNew } = this
     if (!fields) throw new Error('No form supplied')
     const data = {
-      fetched: false,
-      editing: isNew
+      fetched: false
     }
     Object.keys(fields).map(field => { data[field] = null })
     return { ...data }
@@ -196,9 +180,9 @@ export default Observer ({
       return this.form.fields
     },
     filteredData () {
-      const { $data } = this
+      const { $data, value } = this
       const data = {}
-      Object.keys(this.$data).filter(k => $data[k]).map(k => data[k] = $data[k])
+      Object.keys(this.$data).filter(k => value[k] || $data[k]).map(k => data[k] = $data[k])
       return data
     }
   },
@@ -230,6 +214,10 @@ export default Observer ({
     editable: {
       type: Boolean,
       default: false
+    },
+    editing: {
+      type: Boolean,
+      default: true
     },
     title:{
       type: String,
@@ -299,22 +287,23 @@ export default Observer ({
   .actions
     margin-top 20px
 
-  .more
+  .lock
     position absolute
-    right 0
-    top 0
-    height auto
+    right 8px
+    top 8px
 
-.avatar
-  img
-    size 120px
+    &:hover
+    &:focus
+    &:active
+      top 9px
+
 
 fieldset
   padding 0
   border 0
   position relative
   width 100%
-  margin -4px
+  margin -1px
 
   &+fieldset
     margin-top 20px
@@ -322,9 +311,11 @@ fieldset
   legend
     display block
     text-transform: uppercase;
-    font-size: 9px;
-    font-weight: bold;
+    font-size: 9px
+    line-height 10px
+    font-weight: 400;
     letter-spacing: 1px;
+    margin-bottom 12px
 
   &:not(.header)
     legend
@@ -337,6 +328,34 @@ fieldset
 
     &+fieldset
       border-top 1px solid rgba(black, .05)
+
+
+    .fields
+      display grid
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr
+      grid-row-gap 20px
+      grid-column-gap 20px
+      grid-template-areas:
+        "avatar avatar name name name name"\
+        "avatar avatar rol rol . ."\
+        "contact contact . . . ."
+
+    [data-type="userAvatar"]
+      grid-area avatar
+      // margin-left 0
+
+      img
+        size 100%
+
+    [data-type="fullName"]
+      grid-area name
+      align-self flex-end
+
+    [data-type="contactFields"]
+      grid-area contact
+
+    [data-type="number"]
+      grid-area rol
 
   .fields
     display flex

@@ -77,39 +77,41 @@ select
   width 100%
   border 0
   position relative
-  box-shadow 0px 1px 2px rgba(#8B7070, .1)
-  cursor pointer
-  background-color: white
-  background-image embedurl('~static/icons/ui/dropdown.svg', 'utf8') 
-  background-repeat no-repeat
-  background-position calc(100% - 16px) 50%
-  color: config.typography.palette.ui
   text-overflow ''
   transition all .15s ease
-  
+
+  &:not(:disabled)
+    cursor pointer
+    color: config.typography.palette.ui
+    background-color: white
+    background-image embedurl('~static/icons/ui/dropdown.svg', 'utf8')
+    background-repeat no-repeat
+    background-position calc(100% - 16px) 50%
+    box-shadow 0px 1px 2px rgba(#8B7070, .1)
+
   &:active
   &:hover
     outline none
-  
+
   &:hover
     color: config.typography.palette.ui
-    
+
   &:focus
     border-radius 0
-  
+
   option
     // display block
     border 0
     padding 8px 24px
     background white
     transition all .1s ease-in-out
-    
+
     &:hover
     &:focus
     &:selected
       background-color: config.palette.primary
       box-shadow: 0 0 10px 100px config.palette.primary inset
-    
+
   optgroup
     box-shadow none
     background white

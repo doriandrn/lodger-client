@@ -12,7 +12,7 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    v-if=         "['$', 'dateTime', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
     :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : type",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
@@ -20,7 +20,7 @@ ValidationProvider(
     spellcheck=   "false"
     :id=          "id",
     :name=        "id"
-    :focus=       "focus",
+    :autofocus=    "focus"
     :disabled=    "disabled"
     :required=    "required",
     :min=         "type === 'number' ? min : null"
@@ -52,6 +52,11 @@ ValidationProvider(
     @input=       "$emit('input', $event)"
     :disabled=    "disabled"
     showBoth
+  )
+  date-time(
+    v-else-if=  "type === 'dateTime'"
+    :unixTime=  "value"
+    liveUpdate
   )
   buton(
     v-else-if=    "type === 'button'"
@@ -192,6 +197,7 @@ import tax from  'c/renderlessTax'
 import rel from 'c/rel'
 import bani from 'c/bani'
 import avatar from 'c/avatar'
+import dateTime from 'c/dateTime'
 
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -409,6 +415,7 @@ export default {
     checkboxes,
     contact,
     contoare,
+    dateTime,
     distribuire,
     file,
     labl,
@@ -556,8 +563,19 @@ textarea
 .vue-tel-input
   border 1px solid transparent
 
-.vue-tel-input
-  border-color transparent !important
+.contact
+  .vue-tel-input
+    border-color transparent
+
+    &:focus-within
+      box-shadow none
+
+  .vti__dropdown
+    padding-left 0
+    outline 0
+
+    &:hover
+      background-color transparent
 
 
 input

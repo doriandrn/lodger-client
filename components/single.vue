@@ -119,9 +119,15 @@ export default Observer ({
     plural () {
       return this.doc.collection.name.plural
     },
-    fields () {
-      return Object.keys(this.docdata).filter(k => k.indexOf('_') !== 0 && this.previewFields.indexOf(k) === -1)
-    },
+    // fields () {
+    //   return Object.keys(this.docdata)
+    //     .filter(k => {
+    //       console.log(k.indexOf('At'), k.length)
+    //       return k.indexOf('_') !== 0 &&
+    //         this.previewFields.indexOf(k) === -1 &&
+    //         k.indexOf('At') !== k.length - 2
+    //     })
+    // },
     createdAt () {
       const { _id }  = this.docdata
       if (!_id) return // temp docs

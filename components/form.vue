@@ -8,7 +8,7 @@ ValidationObserver(v-slot="{ passes }")
 
       .fields
         field(
-          v-for=  "field, id in Object.keys(fields).filter(field => typeof fields[field].fieldset === 'undefined').reduce((a, b) => ({...a, [b]: fields[b]}),{})"
+          v-for=  "field, id in Object.keys(fields).filter(field => typeof fields[field].fieldset === 'undefined' && (isNew ? field.indexOf('At') !== field.length - 2 : true)).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
           :key=           "`${field._type}-${id}`"
           :id=            "id"
 

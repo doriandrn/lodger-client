@@ -4,8 +4,8 @@ sction#pg3(boxes)
     li tree
     li boxes
 
-  list(
-    v-for=        "tax in $lodger.taxonomies"
+  list.list(
+    v-for=        "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
     v-if=         "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
     :key=         "tax"
     :taxonomy=    "$lodger[tax]"
@@ -26,12 +26,12 @@ sction#pg3(boxes)
         v-if=     "subscriber && subscriber.ids.length > 1"
         type=     "radios"
         label=    "sort.label"
-        v-model=  "subscriber.criteria.sort"
+        :value=  "subscriber.criteria.sort"
         :id=       "`sort-${ subscriber.name }-${tax}`"
         :options=  "Object.assign({}, ...taxonomy.form.schema.indexes.map(n => ({ [n] : 0 })) )"
         required= true
-        :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort.direction < 1 }"
-        @click=    "subscriber.criteria.sort = $event.checked ? { [$event.index]: -1 } : subscriber.criteria.sort"
+        :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort < 1 }"
+        @click=    "subscriber.criteria.sort = $event.checked ? { [$event.index]: -1 } : { [$event.index]: 1 }; debug($event)"
       )
 
       //- p(v-if="subscriber.refsIds") {{ subscriber.refsIds }}
@@ -178,83 +178,7 @@ typeColors = config.typography.palette
       background-color: rgba(black, .05)
 
 
-    li
-      display flex
-      flex-flow row nowrap
-      justify-content space-between
-      align-items center
-      position relative
-      overflow hidden
-      padding 8px
-      width 100%
 
-      .ap__nr
-        width 30px
-        margin-right 8px
-        text-align right
-
-      .avatar
-        margin-right 12px
-        img
-          size 32px
-
-      strong
-        font-weight 400
-        font-size 14px
-        display inline
-        white-space nowrap
-        color: typeColors.headings
-        margin-right auto
-        max-width: 170px;
-        text-overflow: ellipsis;
-        overflow: hidden
-
-        &:first-of-type
-          &:hover
-            text-decoration underline
-
-      &.last
-        > strong:first-of-type
-          &:after
-            content ''
-            display inline-block
-            vertical-align middle
-            bubble()
-
-      &:not(:last-child)
-        border-bottom: 1px solid colors.borders
-
-      &.selected
-        > strong:first-of-type
-          color: colors.primary !important
-
-      &:hover
-      &:active
-        .item
-          &__controls
-            right 0
-
-
-    ul
-      margin 0 -8px
-      width calc(100% + 16px)
-      position relative
-      background: colors.bgs.ui
-      padding 0
-      max-height 300px
-      overflow auto
-      position relative
-
-
-
-      &.fetching
-        &:before
-          z-index 5
-          transform translateY(0)
-
-    .sort
-      margin 0 -8px
-      flex 1 1 100%
 
   h3
     margin-bottom 0

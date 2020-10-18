@@ -172,7 +172,7 @@ drkr = rgba(black, .05)
   // margin: -(config.spacings.inBoxes)
 
   +above(l)
-    margin-bottom 32px
+    margin-top 32px
 
   &__container
     display flex

@@ -55,6 +55,7 @@ ValidationProvider(
   )
   date-time(
     v-else-if=  "type === 'dateTime'"
+    v-show=     "value"
     :unixTime=  "value"
     liveUpdate
   )
@@ -603,6 +604,7 @@ textarea
   &:not(:disabled)
     // border-radius 2px
     border-radius: 46px;
+    // border-radius 6px
     background: #f5f7fb;
     box-shadow inset 2px 2px 3px rgba(black, .1), inset -3px -3px 6px white
     // box-shadow: inset 6px 6px 12px #d0d2d5,

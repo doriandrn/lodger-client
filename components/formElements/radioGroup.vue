@@ -20,10 +20,11 @@ div(
         :value=     "index",
         :name=      "id",
         :disabled=  "option.disabled"
-        :checked=   "String(index) === String(value)"
+
+        :checked=   "Object.keys(value).indexOf(index) > -1 && value[index] > 0"
         :id=        "`${id}-${index}`",
         @change=    "$emit('change', index)"
-        @click=     "$emit('click', { index, checked: String(index) === String(value) })"
+        @click=     "$emit('click', { index, checked: Object.keys(value).indexOf(index) > -1 })"
       )
       label.label(
         :for=       "`${id}-${index}`"

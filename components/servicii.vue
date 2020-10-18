@@ -118,7 +118,7 @@ butSize = 40px
         &[data-icon=\"{serCulori[i]}\"]
           &[data-sel]
             &:before
-              background-color: rgba(serCulori[i+1], .75)
+              background-color: rgba(serCulori[i+1], 1)
 
     &[data-sel]
       // border-color: config.palette.tertiary
@@ -140,7 +140,6 @@ butSize = 40px
     &:active
       box-shadow: 0px 2px 3px 1px rgba(config.palette.secondary, .15)
       // background-color: rgba(config.palette.primary, .05)
-      border-color: config.palette.secondary
       outline: none
 
       .nume

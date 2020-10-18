@@ -28,7 +28,7 @@ ValidationObserver(v-slot="{ passes }")
           :rules=         "field.v || null"
           :disabled=      "!editing"
           :avatarSeed=    "value['name']"
-          :hideLabel=     "!isNew && !editing || form.schema.properties[id]._type === 'userAvatar'"
+          :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime'"
 
           v-model=   "value[id]"
           @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"
@@ -289,13 +289,13 @@ export default Observer ({
 
   .lock
     position absolute
-    right 16px
-    top 12px
+    right -18px
+    top -18px
 
     &:hover
     &:focus
     &:active
-      top 9px
+      top -17px
 
 
 fieldset

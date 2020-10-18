@@ -4,7 +4,7 @@
 //-   :class="{ negativ: suma < 0 }"
 //- ) {{ numeral(suma).format('0,0[.]00') }} {{ moneda }}
 
-div(v-if="parsed")
+div
   span(v-if="showBoth")
     input(
       type=   "text"
@@ -14,7 +14,7 @@ div(v-if="parsed")
     )
     .select {{ moneda || base }}
   span.bani.conv(
-    v-if="moneda && base && moneda !== base"
+    v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
   ) ~ {{ numeral(convert(suma, { from: moneda, to: base, rates: $lodger.rates, base })).format(isCrypto ? '0,0[.]00000000' : '0,0[.]00') }} {{ $Lodger.displayCurrency }}
 
 </template>

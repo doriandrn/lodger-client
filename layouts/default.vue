@@ -22,6 +22,7 @@
             v-for="item, url in $lodger.i18n.nav"
           )
             nuxt-link(:to="url") {{ item }}
+
         ul(v-else)
           li
             nuxt-link(to="/dashboard") {{ navInitializare }}
@@ -36,7 +37,9 @@
       //-     data-icon="shield"
       //-   )
 
-      .right
+      .right(
+        v-if= "$lodger.utilizatori.subscribers.prince && $lodger.utilizatori.subscribers.prince.ids.length"
+      )
         field(
           type=     "search"
           size=     "small"
@@ -77,6 +80,27 @@
                   v-tooltip=  "lang.nativeName"
                   @click=     "$Lodger.locale = lang.code"
                 ) {{ lang.code }}
+
+        dropdown.u(
+          v-if= "$lodger.utilizatori.subscribers.prince.selectedId"
+          toggleText= ""
+          icon-only
+        )
+          //- :toggleText= "$lodger.i18n.taxonomies.utilizatori.switch"
+          viw(
+            v-for=  "t, i in ['avatar', 'name']"
+            :type=  "t"
+            :key=   "i"
+            :value= "$lodger.utilizatori.subscribers.prince.items[$lodger.utilizatori.subscribers.prince.selectedId][t]"
+            :avatarSeed=  "$lodger.utilizatori.subscribers.prince.items[$lodger.utilizatori.subscribers.prince.selectedId].name"
+            slot=   "beforeText"
+          )
+
+          tax(
+            :taxonomy=        "$lodger.utilizatori"
+            :subscriberName=  "$lodger.mainSubName"
+            hideSelectedItem
+          )
 
 
   main
@@ -134,6 +158,8 @@ import buton from 'form/button'
 import toasts from 'c/toasts'
 import dropdown from 'c/dropdown'
 import results from 'c/searchResults'
+import tax from 'c/tax'
+import viw from 'c/viewElement'
 
 import Package from '../package.json'
 
@@ -159,7 +185,7 @@ export default Observer ({
   },
 
   beforeCreate () {
-    // this.$lodger.utilizatori.subscribe(subName)
+    this.$lodger.utilizatori.subscribe(this.$lodger.mainSubName, { autoSelectOnCRUD: true })
   },
 
   methods: {
@@ -203,7 +229,9 @@ export default Observer ({
     bani,
     toasts,
     dropdown,
-    results
+    results,
+    tax,
+    viw
   }
 })
 </script>
@@ -214,6 +242,16 @@ footerHeight = 40px
 
 .right
   margin-left auto
+
+.dropdown.u
+  > button
+    padding-left 0
+
+  .avatar
+    margin-right 8px
+
+    img
+      size 40px
 
 .inner
   max-width: config.sizes.maxContainerWidth

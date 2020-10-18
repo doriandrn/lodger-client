@@ -14,7 +14,7 @@
     slot(name="buton")
 
   div
-    header(v-if="$slots.header || iconOnly")
+    header(v-if="$slots.header || (iconOnly && toggleText)")
       h6(v-if=  "iconOnly") {{ toggleText }}
       slot(name="header")
 
@@ -77,6 +77,9 @@ shadow = -1px 2px rgba(black, .05)
   height 100%
   user-select none
 
+  &+.dropdown
+    z-index 106
+
   footer
     border-top: 1px solid colors.borders
     background: colors.bgs.body
@@ -90,6 +93,11 @@ shadow = -1px 2px rgba(black, .05)
       color rgba(black, .55)
       margin 0
 
+  .list
+    li
+      padding-top 0
+      padding-bottom 0
+
   h6
     margin-bottom 0
 
@@ -102,6 +110,7 @@ shadow = -1px 2px rgba(black, .05)
     height 100%
     position relative
     padding 0 12px
+    min-height 40px
 
     &:hover
       background: colors.bgs.body
@@ -116,7 +125,7 @@ shadow = -1px 2px rgba(black, .05)
     border 2px solid white
     display flex
     flex-flow row wrap
-    padding 8px 0
+    padding 8px
 
     > button
     > a

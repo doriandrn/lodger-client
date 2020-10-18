@@ -10,12 +10,12 @@ frm#single(
 )
   slot(slot="beforeHeader" :isNew="doc._isTemporary")
 
-  dateTime(
-    v-if=       "!doc._isTemporary"
-    :unixTime=  "createdAt"
-    slot=       "headerEnd"
-    liveUpdate
-  ) {{ $lodger.i18n.registered }}
+  //- dateTime(
+  //-   v-if=       "!doc._isTemporary"
+  //-   :unixTime=  "createdAt"
+  //-   slot=       "headerEnd"
+  //-   liveUpdate
+  //- ) {{ $lodger.i18n.registered }}
 
   blocuri.struct(
     v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"
@@ -66,24 +66,6 @@ export default Observer ({
         this.extraSubs.push['blocuri']
       }
     }
-
-    // const o = {
-    //   asociatii: async () => {
-
-
-
-    //   }
-    // }
-
-    // if (o[plural]) await o[plural]()
-
-    // const fields = Object.keys(docdata)
-
-    // await Promise.all(fields.map(async f => {
-    //   if (this.$lodger.taxonomies.indexOf(f) > 1) {
-    //     this.docdata[f] = await this.doc[`${f}_`]
-    //   }
-    // }))
 
     this.fetched = true
     return true
@@ -166,13 +148,20 @@ export default Observer ({
 </script>
 
 <style lang="styl">
+[data-type="dateTime"]
+  grid-area metaL
+
+  & + [data-type="dateTime"]
+    grid-area metaR
+
 [data-tax="utilizator"]
   fieldset.header
     .fields
       grid-template-areas:
         "avatar avatar name name name name"\
         "avatar avatar rol rol . ."\
-        "contact contact . . . ."
+        "contact contact . . . ."\
+        "metaL metaL . . metaR metaR"
 
     [data-type="userAvatar"]
       grid-area avatar
@@ -195,7 +184,8 @@ export default Observer ({
     .fields
       grid-template-areas:
         "nr proprietar proprietar . balanta balanta"\
-        "servicii servicii servicii contoare contoare contoare"
+        "servicii servicii servicii contoare contoare contoare"\
+        "metaL metaL . . metaR metaR"
 
     [data-type="number"]
       grid-area nr
@@ -209,6 +199,25 @@ export default Observer ({
     [data-type="fullName"]
       grid-area proprietar
 
+[data-tax="asociatie"]
+  fieldset.header
+    .fields
+      grid-template-areas:
+        "nume nume nume . balanta balanta"\
+        "servicii servicii servicii users users users"\
+        "metaL metaL . . metaR metaR"
+
+    [data-type="string"]
+      grid-area nume
+
+    [data-type="$"]
+      grid-area balanta
+
+    [data-type="taxonomy"]
+      grid-area users
+
+      &+[data-type="taxonomy"]
+        grid-area servicii
 
 .breadcrumbs
   position absolute
@@ -237,9 +246,6 @@ export default Observer ({
     +above(l)
       font-size 28px
       line-height 36px
-
-      &:disabled
-        margin-top 32px
 
   > header
     border-bottom 1px solid

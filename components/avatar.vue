@@ -55,6 +55,8 @@ export default {
   img
     max-width 160px
     height auto
+    min-width 32px
+    min-height 32px
 
   input[type="file"]
     position absolute

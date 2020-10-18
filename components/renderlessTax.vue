@@ -39,7 +39,7 @@ div
 import empty from 'c/empty'
 import buton from 'form/button'
 import bani from 'c/bani'
-import viw from 'c/viewElement'
+// import viw from 'c/viewElement'
 import split from 'c/split'
 
 import { SubscribableTaxonomy } from 'lodger'
@@ -68,7 +68,11 @@ export default Observer({
       return
     }
     if (subscriber.name === 'unsubscribed') return
-    await taxonomy.subscribe(subscriberName)
+    await taxonomy.subscribe(subscriberName, {
+      sort: {
+        createdAt: -1
+      }
+    })
     this.subscriber = taxonomy.subscribers[subscriberName]
   },
   name: 'Tax',
@@ -94,7 +98,7 @@ export default Observer({
     // field,
     buton,
     bani,
-    viw,
+    // viw,
     split
   },
   computed: {

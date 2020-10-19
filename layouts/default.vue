@@ -59,16 +59,18 @@
         dropdown(
           icon=   "settings"
           :arrow= "false"
+          :toggleText=  "$lodger.i18n.forms.preferences.title"
           iconOnly
         )
           form.form
 
             fieldset
-              legend Afisaj
+              legend {{ $lodger.i18n.forms.preferences.fieldsets[0] }}
 
               field(
                 type=       "altselect"
                 id=         "displayCurrency"
+                :label=     "$lodger.i18n.forms.preferences.fields.currency"
                 :options=   "$Lodger.currencies"
                 :value=     "$Lodger.currencies.indexOf($Lodger.displayCurrency)"
                 @input=     "$Lodger.displayCurrency = $event"
@@ -184,8 +186,13 @@ export default Observer ({
     }
   },
 
-  beforeCreate () {
-    this.$lodger.utilizatori.subscribe(this.$lodger.mainSubName, { autoSelectOnCRUD: true })
+  async beforeCreate () {
+    const { $lodger: { utilizatori, mainSubName, modal } } = this
+    await utilizatori.subscribe(mainSubName, { autoSelectOnCRUD: true })
+    const sub = utilizatori.subscribers[mainSubName]
+    if (!sub.ids.length) {
+      modal.activeDoc = utilizatori.collection.newDocument({})
+    }
   },
 
   methods: {

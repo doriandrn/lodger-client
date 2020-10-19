@@ -44,8 +44,12 @@ export default {
   components: { buton },
   methods: {
     toggleServiciu (e) {
+      if (this.disabled)
+        return
+
       const value = this.value || []
       const i = value.indexOf(e)
+
       if (i > -1) {
         value.splice(i, 1)
       } else {
@@ -91,6 +95,17 @@ butSize = 40px
   flex-flow row wrap
   // justify-content center
 
+  &:not(.disabled)
+    > li
+      cursor pointer
+      background: config.palette.bgs.body
+      box-shadow inset 0px 2px 3px 1px rgba(black, .025)
+
+  &.disabled
+    > li
+      &:not([data-sel])
+        display none
+
   > li
     display flex
     flex-flow column nowrap
@@ -106,11 +121,7 @@ butSize = 40px
     margin 2px
     position relative
     transition all .15s ease-in-out
-    cursor pointer
-    // font-size 12px
-    // line-height 16px
-    background: config.palette.bgs.body
-    box-shadow inset 0px 2px 3px 1px rgba(black, .025)
+
     user-select none
 
     for culoare, i in serCulori

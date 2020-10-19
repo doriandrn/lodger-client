@@ -10,7 +10,7 @@ function resolve(dir) {
 }
 
 const stylusPlugins = [
-  require('rupture')()
+  'rupture'
 ]
 
 module.exports = {
@@ -104,16 +104,64 @@ module.exports = {
       // ]
     },
 
+    postcss: {
+      plugins: {
+        'lost': {},
+        // 'postcss-font-magician': {
+        //   // protocol: 'https:',
+        //   display: 'swap',
+        //   hosted: ['~assets/fonts'],
+        //   variants: {
+        //     'Cormorant Garamond': {
+        //       '100': ['woff, eot, woff2'],
+        //       '300': ['woff, eot, woff2'],
+        //       '400': ['woff, eot, woff2'],
+        //       '500': ['woff, eot, woff2'],
+        //       '600': ['woff, eot, woff2'],
+        //       '700': ['woff, eot, woff2'],
+        //     },
+        //     foundries: ['google']
+        //     // 'Futura': {
+        //     //   '400': ['woff, eot, woff2'],
+        //     //   '500': ['woff, eot, woff2'],
+        //     //   '600': ['woff, eot, woff2'],
+        //     //   '700': ['woff, eot, woff2'],
+        //     // },
+        //     // 'Roboto Condensed': {
+        //     //   '400': ['woff, eot, woff2'],
+        //     //   '500': ['woff, eot, woff2'],
+        //     //   '600': ['woff, eot, woff2'],
+        //     //   '700': ['woff, eot, woff2'],
+        //     // }
+        //   }
+        // },
+        'postcss-short': {},
+        'postcss-pxtorem': {},
+      },
+      preset: {
+        autoprefixer: {
+          grid: true
+        }
+      }
+    },
+
     extend (config) {
       const stylLoader = config.module.rules.filter(module => String(module.test).indexOf('styl') > -1)[0]
 
       stylLoader.oneOf.forEach(one => {
         const module = one.use.filter(o => o.loader === 'stylus-loader')[0]
         if (!module) return
-        module.options.context = __dirname
+        // module.options.context = __dirname
         Object.assign(module.options, {
-          use: stylusPlugins,
-          preferPathResolver: 'webpack'
+          webpackImporter: true,
+          stylusOptions: {
+            use: ['rupture'],
+            import: ['rupture', path.join(__dirname, 'node_modules/rupture')],
+            include: [path.join(__dirname, 'node_modules/rupture/')],
+            resolveURL: true,
+            includeCSS: true,
+            // preferPathResolver: 'webpack'
+          },
         })
       })
 

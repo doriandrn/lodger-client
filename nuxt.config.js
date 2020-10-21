@@ -140,7 +140,7 @@ module.exports = {
       },
       preset: {
         autoprefixer: {
-          grid: true
+          grid: false
         }
       }
     },

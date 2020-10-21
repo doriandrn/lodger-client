@@ -38,7 +38,7 @@
       //-   )
 
       .right(
-        v-if= "$lodger.utilizatori.subscribers.prince && $lodger.utilizatori.subscribers.prince.ids.length"
+        v-show= "$lodger.utilizatori.subscribers.prince && $lodger.utilizatori.subscribers.prince.ids.length"
       )
         field(
           type=     "search"
@@ -197,6 +197,7 @@ export default Observer ({
 
   methods: {
     Search (input) {
+      this.debug('searching', input)
       this.search.input = input
       this.search.fetching = true
       this.$lodger.taxonomies.map(tax => {

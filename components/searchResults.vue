@@ -102,6 +102,10 @@ spacings = 16px
       right 12px
       top 8px
 
+    strong
+      text-align left
+      color #222
+
     > ul
       list-style-type none
       padding 0
@@ -113,12 +117,12 @@ spacings = 16px
       > li
         flex 1 1 100%
         display flex
-        flex-flow row nowrap
+        flex-flow row wrap
         position relative
         cursor pointer
 
         > *
-          flex 1 0 100%
+          flex 1 1 auto
           padding: (spacings/2) (spacings*1.5)
           text-transform capitalize
           text-decoration none

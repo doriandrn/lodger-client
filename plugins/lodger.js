@@ -1,8 +1,11 @@
+import { date } from 'faker'
 import { Lodger } from 'lodger'
 import { observable } from 'mobx'
 
 
 export default async ({ app, store }, inject) => {
+  const date = new Date()
+  const name = 'test' + date.getTime()
   const lodger = await Lodger.build()
   if (window.navigator.language) {
     Lodger.locale = window.navigator.language

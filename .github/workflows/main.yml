@@ -20,7 +20,8 @@ jobs:
           node-version: 12
 
       - run: |
-          sed -i 's/rupture/./' ./node_modules/rupture/index.styl
+          cwd
+          sed -i 's/rupture/./' /node_modules/rupture/index.styl
           more ./node_modules/rupture/index.styl
 
       - name: Build/release Electron app

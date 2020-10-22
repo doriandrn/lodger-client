@@ -20,7 +20,7 @@ jobs:
           node-version: 12
 
       - run: |
-          cwd
+          pwd
           sed -i 's/rupture/./' /node_modules/rupture/index.styl
           more ./node_modules/rupture/index.styl
 

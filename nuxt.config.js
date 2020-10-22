@@ -9,9 +9,9 @@ function resolve(dir) {
   return path.join(__dirname, '.', dir)
 }
 
-const stylusPlugins = [
-  'rupture'
-]
+// const stylusPlugins = [
+//   'rupture'
+// ]
 
 module.exports = {
   /*
@@ -104,6 +104,10 @@ module.exports = {
       // ]
     },
 
+    css: [
+      'assets/styles/rupture.styl'
+    ],
+
     postcss: {
       plugins: {
         'lost': {},
@@ -146,24 +150,24 @@ module.exports = {
     },
 
     extend (config) {
-      const stylLoader = config.module.rules.filter(module => String(module.test).indexOf('styl') > -1)[0]
+      // const stylLoader = config.module.rules.filter(module => String(module.test).indexOf('styl') > -1)[0]
 
-      stylLoader.oneOf.forEach(one => {
-        const module = one.use.filter(o => o.loader === 'stylus-loader')[0]
-        if (!module) return
-        // module.options.context = __dirname
-        Object.assign(module.options, {
-          webpackImporter: true,
-          stylusOptions: {
-            use: ['rupture'],
-            import: ['rupture', path.join(__dirname, 'node_modules/rupture')],
-            include: [path.join(__dirname, 'node_modules/rupture/')],
-            resolveURL: true,
-            includeCSS: true,
-            // preferPathResolver: 'webpack'
-          },
-        })
-      })
+      // stylLoader.oneOf.forEach(one => {
+      //   const module = one.use.filter(o => o.loader === 'stylus-loader')[0]
+      //   if (!module) return
+      //   // module.options.context = __dirname
+      //   Object.assign(module.options, {
+      //     webpackImporter: true,
+      //     stylusOptions: {
+      //       use: ['rupture'],
+      //       import: ['rupture', path.join(__dirname, 'node_modules/rupture')],
+      //       include: [path.join(__dirname, 'node_modules/rupture/')],
+      //       resolveURL: true,
+      //       includeCSS: true,
+      //       // preferPathResolver: 'webpack'
+      //     },
+      //   })
+      // })
 
       config.node = { fs: 'empty' }
       // Extend aliases

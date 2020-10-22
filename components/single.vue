@@ -148,6 +148,9 @@ export default Observer ({
 </script>
 
 <style lang="styl">
+@require '~styles/config'
+
+
 [data-type="dateTime"]
   grid-area metaL
 

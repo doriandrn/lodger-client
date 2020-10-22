@@ -11,7 +11,6 @@ let config = require('./nuxt.config')
 config.dev = !(process.env.NODE_ENV === 'production')
 
 // Init Nuxt.js
-console.log('n'. Nuxt)
 const nuxt = new Nuxt(config)
 server.use(nuxt.render)
 

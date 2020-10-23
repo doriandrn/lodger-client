@@ -22,12 +22,14 @@ module.exports = {
     ]
   },
   ssr: false,
-  target: 'static',
-  server: {
-    port: 8000, // default: 3000
-    host: '0.0.0.0', // default: localhost,
-    timing: false
-  },
+  target: process.env.NODE_ENV === 'production' ?
+    'electron-renderer' :
+    'static',
+  // server: {
+  //   port: 8000, // default: 3000
+  //   host: '0.0.0.0', // default: localhost,
+  //   timing: false
+  // },
   debug,
   env: process.env.NODE_ENV || 'dev',
   manifest: {
@@ -58,7 +60,8 @@ module.exports = {
     { src: '~plugins/tooltips', ssr: false }
   ],
   router: {
-    base: '/',
+    // base: './',
+    // mode: 'hash',
     fallback: true,
     linkActiveClass: 'active',
     linkExactActiveClass: 'active-exact'

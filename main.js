@@ -28,7 +28,7 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   const pollServer = () => {
     http.get('http://localhost:' + port, (res) => {
       const SERVER_DOWN = res.statusCode !== 200
-      SERVER_DOWN ? setTimeout(pollServer, POLL_INTERVAL) : win.loadURL('http://localhost:3000')
+      SERVER_DOWN ? setTimeout(pollServer, POLL_INTERVAL) : win.loadURL('http://localhost:' + port)
     })
       .on('error', pollServer)
   }

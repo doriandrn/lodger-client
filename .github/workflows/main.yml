@@ -24,8 +24,7 @@ jobs:
       #     more **/node_modules/rupture/index.styl
 
       - name: Build/release Electron app
-        # uses: samuelmeuli/action-electron-builder@v1
-        uses: michalzaq12/action-electron-nuxt@v1
+        uses: samuelmeuli/action-electron-builder@v1
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
@@ -34,3 +33,4 @@ jobs:
           # If the commit is tagged with a version (e.g. "v1.0.0"),
           # release the app after building
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          build_script_name: generate

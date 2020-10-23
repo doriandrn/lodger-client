@@ -13,6 +13,12 @@ const isDev = process.env.NODE_ENV !== 'production'
 const port = 31337
 let win = null
 
+const servurl = 'http://localhost:' + port
+const genurl = url.format({
+  pathname: path.join(__dirname, 'index.html'),
+  protocol: 'file:',
+  slashes: true
+})
 
 // Get a ready to use Nuxt instance
 loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
@@ -22,13 +28,15 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   }
   server.use(nuxt.render)
   server.listen(port, '127.0.0.1')
-  console.log('Server listening on localhost:' + port)
+  console.log('Server listening on ' + servurl)
 
   const POLL_INTERVAL = 300
   const pollServer = () => {
-    http.get('http://localhost:' + port, (res) => {
+    http.get(servurl, (res) => {
       const SERVER_DOWN = res.statusCode !== 200
-      SERVER_DOWN ? setTimeout(pollServer, POLL_INTERVAL) : win.loadURL('http://localhost:' + port)
+      SERVER_DOWN ?
+        setTimeout(pollServer, POLL_INTERVAL) :
+        win.loadURL(isDev ? servurl : genurl)
     })
       .on('error', pollServer)
   }
@@ -47,13 +55,9 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
       }
     })
     if (isDev) {
-      return win.loadURL('http://localhost:' + port)
+      return win.loadURL(url)
     }
-    win.loadURL(url.format({
-      pathname: path.join(__dirname, 'index.html'),
-      protocol: 'file:',
-      slashes: true
-    }))
+    win.loadURL(genurl)
     win.on('closed', () => win = null)
     pollServer()
   }

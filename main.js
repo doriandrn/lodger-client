@@ -37,7 +37,6 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   const bw = electron.BrowserWindow
 
   const newWin = () => {
-    nuxt.server.
     win = new bw({
       frame: false,
       titleBarStyle: 'hiddenInset',
@@ -47,7 +46,7 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
         webSecurity: false
       }
     })
-    if (!config.dev) {
+    if (isDev) {
       return win.loadURL('http://localhost:' + port)
     }
     win.loadURL(url.format({

@@ -1,6 +1,6 @@
 var path = require('path')
-
-const debug = !(process && process.env.NODE_ENV === 'production')
+const dev = process && process.env.NODE_ENV !== 'production'
+const debug = dev
 
 function resolve(dir) {
   return path.join(__dirname, '.', dir)
@@ -23,6 +23,12 @@ module.exports = {
   },
   ssr: false,
   target: 'static',
+  server: {
+    port: 8000, // default: 3000
+    host: '0.0.0.0', // default: localhost,
+    timing: false
+  },
+  dev,
   debug,
   manifest: {
     name: 'Lodger',

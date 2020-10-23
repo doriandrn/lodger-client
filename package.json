@@ -10,11 +10,11 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "build:app": "node ./electron.build.js",
+    "build:app": "export ELECTRON_RUN_AS_NODE=1 && node ./electron.build.js",
     "precommit": "npm run lint",
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
-  "main": "dist/",
+  "main": ".",
   "dependencies": {
     "@dicebear/avatars": "^4.2.5",
     "@dicebear/avatars-avataaars-sprites": "^4.2.5",

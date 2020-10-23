@@ -1,4 +1,3 @@
-
 const { loadNuxt, build } = require('nuxt')
 const server = require('express')()
 const electron = require('electron')
@@ -13,6 +12,8 @@ let config = require('./nuxt.config')
 config.dev = !(process.env.NODE_ENV === 'production')
 
 const isDev = process.env.NODE_ENV !== 'production'
+
+console.log('xx', typeof electron)
 
 // Get a ready to use Nuxt instance
 loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
@@ -52,5 +53,4 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   app.on('ready', newWin)
   app.on('window-all-closed', () => app.quit())
   app.on('activate', () => win === null && newWin())
-
 })

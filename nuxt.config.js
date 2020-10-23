@@ -29,6 +29,7 @@ module.exports = {
     ]
   },
   ssr: false,
+  target: 'static',
   debug,
   manifest: {
     name: 'Lodger',

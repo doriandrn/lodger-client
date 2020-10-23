@@ -6,23 +6,23 @@ const url = require('url')
 
 const http = require('http')
 
-let win = null
 // Import and Set Nuxt.js options
-let config = require('./nuxt.config')
-config.dev = !(process.env.NODE_ENV === 'production')
-
+const config = require('./nuxt.config')
 const isDev = process.env.NODE_ENV !== 'production'
 
-console.log('xx', typeof electron)
+const port = 31337
+let win = null
+
 
 // Get a ready to use Nuxt instance
 loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   if (isDev) {
+    config.dev = true
     build(nuxt)
   }
   server.use(nuxt.render)
-  server.listen(3000, '127.0.0.1')
-  console.log('Server listening on localhost:3000')
+  server.listen(port, '127.0.0.1')
+  console.log('Server listening on localhost:' + port)
 
   const POLL_INTERVAL = 300
   const pollServer = () => {
@@ -37,9 +37,9 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   const bw = electron.BrowserWindow
 
   const newWin = () => {
-    win = new bw({ width: 1024, height: 768 })
+    win = new bw({ width: 1024, height: 768, webPreferences: { webSecurity: false } })
     if (!config.dev) {
-      return win.loadURL('http://localhost:3000')
+      return win.loadURL('http://localhost:' + port)
     }
     win.loadURL(url.format({
       pathname: path.join(__dirname, 'index.html'),

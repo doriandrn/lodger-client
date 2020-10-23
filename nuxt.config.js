@@ -58,7 +58,7 @@ module.exports = {
     { src: '~plugins/tooltips', ssr: false }
   ],
   router: {
-    base: '/',
+    base: './',
     fallback: true,
     linkActiveClass: 'active',
     linkExactActiveClass: 'active-exact'

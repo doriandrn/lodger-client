@@ -14,7 +14,7 @@
     "precommit": "npm run lint",
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
-  "main": "electron.build",
+  "main": "main.js",
   "dependencies": {
     "@dicebear/avatars": "^4.2.5",
     "@dicebear/avatars-avataaars-sprites": "^4.2.5",

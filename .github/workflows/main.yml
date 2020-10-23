@@ -19,15 +19,9 @@ jobs:
         with:
           node-version: 12
 
-      # - run: |
-      #     sed -i 's/rupture/./' **/node_modules/rupture/index.styl
-      #     more **/node_modules/rupture/index.styl
-
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
 
           # If the commit is tagged with a version (e.g. "v1.0.0"),

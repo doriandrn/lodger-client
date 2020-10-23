@@ -28,8 +28,8 @@ module.exports = {
     host: '0.0.0.0', // default: localhost,
     timing: false
   },
-  dev,
   debug,
+  env: process.env.NODE_ENV || 'dev',
   manifest: {
     name: 'Lodger',
     short_name: 'Lodger',
@@ -58,7 +58,7 @@ module.exports = {
     { src: '~plugins/tooltips', ssr: false }
   ],
   router: {
-    base: './',
+    base: '/',
     fallback: true,
     linkActiveClass: 'active',
     linkExactActiveClass: 'active-exact'

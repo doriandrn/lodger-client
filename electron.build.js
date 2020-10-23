@@ -3,25 +3,22 @@
 */
 let win = null
 
-const Nuxt = require('nuxt')
+const { loadNuxt, build } = require('nuxt')
 const server = require('express')()
 
 // Import and Set Nuxt.js options
 let config = require('./nuxt.config')
 config.dev = !(process.env.NODE_ENV === 'production')
 
-// Init Nuxt.js
-const nuxt = new Nuxt(config)
-server.use(nuxt.render)
+const isDev = process.env.NODE_ENV !== 'production'
 
-// Build only in dev mode
-if (config.dev) {
-  nuxt.build()
-    .catch((error) => {
-      console.error(error) // eslint-disable-line no-console
-      process.exit(1)
-    })
-}
+// Get a ready to use Nuxt instance
+loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
+  if (isDev) {
+    build(nuxt)
+  }
+  server.use(nuxt.render)
+})
 
 // Listen the server
 server.listen(3000, '127.0.0.1')
@@ -30,7 +27,7 @@ console.log('Server listening on localhost:3000')
 /*
 ** Electron app
 */
-const electron = require('./electron.build')
+const electron = require('electron')
 const path = require('path')
 const url = require('url')
 

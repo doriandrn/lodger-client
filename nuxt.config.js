@@ -170,7 +170,7 @@ module.exports = {
       //   })
       // })
 
-      config.node = { fs: 'empty', __dirname: false }
+      config.node = { fs: 'empty' }
       // Extend aliases
       Object.assign(config.resolve.alias, {
         stream: 'stream-browserify',

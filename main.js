@@ -54,12 +54,13 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
         webSecurity: false
       }
     })
-    if (isDev) {
-      return win.loadURL(servurl)
-    }
-    win.loadURL(genurl)
-    win.on('closed', () => win = null)
-    pollServer()
+    // if (isDev) {
+    //   return win.loadURL(servurl)
+    // }
+    // win.loadURL(genurl)
+    // win.on('closed', () => win = null)
+    // pollServer()
+    win.loadFile('index.html')
   }
 
   app.on('ready', newWin)

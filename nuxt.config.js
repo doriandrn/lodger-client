@@ -60,8 +60,8 @@ module.exports = {
     { src: '~plugins/tooltips', ssr: false }
   ],
   router: {
-    // base: './',
-    // mode: 'hash',
+    base: './',
+    mode: 'hash',
     fallback: true,
     linkActiveClass: 'active',
     linkExactActiveClass: 'active-exact'

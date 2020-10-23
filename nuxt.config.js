@@ -1,7 +1,4 @@
 var path = require('path')
-var webpack = require('webpack')
-// const tsconfig = require('./tsconfig.json')
-// const tslint = require('./tslint.json')
 
 const debug = !(process && process.env.NODE_ENV === 'production')
 
@@ -9,16 +6,12 @@ function resolve(dir) {
   return path.join(__dirname, '.', dir)
 }
 
-// const stylusPlugins = [
-//   'rupture'
-// ]
-
 module.exports = {
   /*
   ** Headers of the page
   */
   head: {
-    title: 'ui',
+    title: 'Lodger',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -55,7 +48,6 @@ module.exports = {
     // { src: '~plugins/tabs' },
     { src: '~plugins/portal' },
     { src: '~plugins/range' },
-    // { src: '~plugins/i18n' },
     { src: '~plugins/swiper', ssr: false },
     { src: '~plugins/tooltips', ssr: false }
   ],
@@ -68,16 +60,7 @@ module.exports = {
   axios: {
     credentials: true,
     baseURL: 'https://api.graph.cool/simple/v1/lodger-v2',
-    debug,
-    // requestInterceptor: (config, { store }) => {
-    //   const token = store ? store.getters['user/autentificat'] : ''
-    //   // daca nu e autentificat
-    //   if (token) {
-    //     config.headers.common['Authorization'] = `Bearer ${token}`
-    //   }
-
-    //   return config
-    // }
+    debug
   },
   modules: [
     '@nuxtjs/axios'
@@ -93,16 +76,6 @@ module.exports = {
 
     babel: {
       babelrc: true
-      // presets: [
-      //   '@babel/env',
-      //   '@babel/typescript'
-      // ],
-      // plugins: [
-      //   ["@babel/proposal-class-properties", { "loose": true }],
-      //   "@babel/proposal-object-rest-spread",
-      //   ["@babel/proposal-decorators", { legacy: false, decoratorsBeforeExport: true }],
-      //   '@babel/syntax-dynamic-import'
-      // ]
     },
 
     css: [
@@ -151,25 +124,6 @@ module.exports = {
     },
 
     extend (config) {
-      // const stylLoader = config.module.rules.filter(module => String(module.test).indexOf('styl') > -1)[0]
-
-      // stylLoader.oneOf.forEach(one => {
-      //   const module = one.use.filter(o => o.loader === 'stylus-loader')[0]
-      //   if (!module) return
-      //   // module.options.context = __dirname
-      //   Object.assign(module.options, {
-      //     webpackImporter: true,
-      //     stylusOptions: {
-      //       use: ['rupture'],
-      //       import: ['rupture', path.join(__dirname, 'node_modules/rupture')],
-      //       include: [path.join(__dirname, 'node_modules/rupture/')],
-      //       resolveURL: true,
-      //       includeCSS: true,
-      //       // preferPathResolver: 'webpack'
-      //     },
-      //   })
-      // })
-
       config.node = { fs: 'empty' }
       // Extend aliases
       Object.assign(config.resolve.alias, {

@@ -295,6 +295,7 @@ footerHeight = 40px
     justify-content: center;
     align-items center
     background-color transparent
+    -webkit-app-region: drag
 
     .inner
       align-items center

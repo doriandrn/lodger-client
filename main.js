@@ -26,7 +26,7 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
 
   const POLL_INTERVAL = 300
   const pollServer = () => {
-    http.get('http://localhost:3000', (res) => {
+    http.get('http://localhost:' + port, (res) => {
       const SERVER_DOWN = res.statusCode !== 200
       SERVER_DOWN ? setTimeout(pollServer, POLL_INTERVAL) : win.loadURL('http://localhost:3000')
     })
@@ -37,7 +37,16 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   const bw = electron.BrowserWindow
 
   const newWin = () => {
-    win = new bw({ width: 1024, height: 768, webPreferences: { webSecurity: false } })
+    nuxt.server.
+    win = new bw({
+      frame: false,
+      titleBarStyle: 'hiddenInset',
+      width: 1024,
+      height: 768,
+      webPreferences: {
+        webSecurity: false
+      }
+    })
     if (!config.dev) {
       return win.loadURL('http://localhost:' + port)
     }

@@ -60,7 +60,7 @@ module.exports = {
     { src: '~plugins/tooltips', ssr: false }
   ],
   router: {
-    base: '/ui/',
+    base: '/',
     fallback: true,
     linkActiveClass: 'active',
     linkExactActiveClass: 'active-exact'

@@ -20,6 +20,9 @@ const genurl = url.format({
   slashes: true
 })
 
+const app = electron.app
+const bw = electron.BrowserWindow
+
 // Get a ready to use Nuxt instance
 loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
   if (isDev) {
@@ -36,13 +39,10 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
       const SERVER_DOWN = res.statusCode !== 200
       SERVER_DOWN ?
         setTimeout(pollServer, POLL_INTERVAL) :
-        win.loadURL(isDev ? servurl : genurl)
+        win.loadURL(genurl)
     })
       .on('error', pollServer)
   }
-
-  const app = electron.app
-  const bw = electron.BrowserWindow
 
   const newWin = () => {
     win = new bw({
@@ -55,7 +55,7 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
       }
     })
     if (isDev) {
-      return win.loadURL(url)
+      return win.loadURL(servurl)
     }
     win.loadURL(genurl)
     win.on('closed', () => win = null)

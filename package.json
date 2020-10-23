@@ -1,6 +1,6 @@
 {
   "name": "lodger-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Administrare imobile",
   "author": "Dorian Tudorache",
   "private": true,
@@ -15,6 +15,20 @@
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
   "main": "main.js",
+  "build": {
+		"appId": "org.numina.lodger",
+		"productName": "Lodger",
+		"mac": {
+			"category": "public.app-category.finance"
+		},
+		"dmg": {
+			"icon": false
+		},
+		"linux": {
+			"target": ["AppImage"],
+			"category": "Office"
+		}
+	},
   "dependencies": {
     "@dicebear/avatars": "^4.2.5",
     "@dicebear/avatars-avataaars-sprites": "^4.2.5",

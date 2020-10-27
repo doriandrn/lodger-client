@@ -1,6 +1,6 @@
 {
   "name": "lodger-client",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Administrare imobile",
   "author": "Dorian Tudorache",
   "private": true,
@@ -17,25 +17,27 @@
   },
   "main": "main.js",
   "build": {
-		"appId": "org.numina.lodger",
-		"productName": "Lodger",
-		"mac": {
-			"category": "public.app-category.finance"
-		},
-		"dmg": {
-			"icon": false
-		},
-		"linux": {
-			"target": ["AppImage"],
-			"category": "Office"
-		}
-	},
+    "appId": "org.numina.lodger",
+    "productName": "Lodger",
+    "mac": {
+      "category": "public.app-category.finance"
+    },
+    "dmg": {
+      "icon": false
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Office"
+    }
+  },
   "dependencies": {
     "@dicebear/avatars": "^4.2.5",
     "@dicebear/avatars-avataaars-sprites": "^4.2.5",
     "@nuxtjs/axios": "^5.12.2",
     "@popperjs/core": "^2.5.3",
-    "dayjs": "^1.9.3",
+    "dayjs": "^1.9.4",
     "lodger": "^0.0.4",
     "mobx": "^5.9.4",
     "mobx-vue": "^2.0.11",
@@ -66,9 +68,9 @@
     "autoprefixer": "^10.0.1",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.0.5",
-    "electron": "^10.1.4",
+    "electron": "^10.1.5",
     "electron-builder": "^22.9.1",
-    "eslint": "^7.11.0",
+    "eslint": "^7.12.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^7.1.0",
@@ -89,10 +91,10 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^4.1.1",
     "swiper": "^6.3.4",
-    "ts-loader": "^8.0.6",
+    "ts-loader": "^8.0.7",
     "typescript": "^4.0.3",
     "v-tooltip": "^2.0.0-rc.33",
-    "vee-validate": "^3.4.2",
+    "vee-validate": "^3.4.3",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.6",
     "vue-for-range": "^1.0.2",

@@ -21,7 +21,7 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  ssr: false,
+  ssr: !dev,
   target: 'static',
   // server: {
   //   port: 8000, // default: 3000
@@ -58,8 +58,8 @@ module.exports = {
     { src: '~plugins/tooltips', ssr: false }
   ],
   router: {
-    base: './',
-    mode: 'hash',
+    // base: './',
+    // mode: 'hash',
     fallback: true,
     linkActiveClass: 'active',
     linkExactActiveClass: 'active-exact'

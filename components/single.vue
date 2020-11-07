@@ -6,7 +6,7 @@ frm#single(
   :doc=     "doc"
   :i18n=    "$lodger.i18n.taxonomies[plural]"
   :isNew=   "doc._isTemporary"
-  @submit=  "doc.save($event); $lodger.modal.close()"
+  @submit=  "submit"
 )
   slot(slot="beforeHeader" :isNew="doc._isTemporary")
 
@@ -31,11 +31,15 @@ import frm from 'c/form'
 import blocuri from 'c/blocuri'
 
 import { Observer } from 'mobx-vue'
+import { reaction, when } from 'mobx'
+
+let disposer
 
 export default Observer ({
   data () {
     return {
       fetched: false,
+      _sub: null,
       extraSubs: []
     }
   },
@@ -48,6 +52,50 @@ export default Observer ({
     editing: {
       type: Boolean,
       default: false
+    }
+  },
+  methods: {
+    async submit (e) {
+      const { $lodger, doc, taxonomy, debug, _sub } = this
+      const { modal, mainSubName } = $lodger
+
+      await doc.save(e);
+      modal.closeable = true
+      await modal.close()
+
+
+      // if (modal.firstTime) {
+      //   try {
+      //     reaction(() => sub.ids, (ids) => {
+      //       sub.select(ids[0])
+      //     debug(`Selected ${ids[0]}, firstTime = off`)
+      //     })
+
+      //     debug(sub.ids[0])
+      //   } catch (e) {
+      //     debug('Could not select first time item', e)
+      //   }
+      //   modal.firstTime = false
+      // }
+    }
+  },
+  // beforeCreate () {
+  //   const { $lodger, taxonomy } = this
+  //   const { modal, mainSubName } = $lodger
+  //   this._sub = $lodger[taxonomy].subscribers[mainSubName]
+  // },
+  created () {
+    const { $lodger, taxonomy, debug } = this
+    const { modal, mainSubName } = $lodger
+    const _sub = this._sub = $lodger[taxonomy].subscribers[mainSubName]
+    const { firstTime } = modal
+
+    if (firstTime) {
+      disposer = when(() => _sub.ids.length === 1, () => {
+        debug('fired')
+        _sub.select(_sub.ids[0])
+        modal.firstTime = false
+      }, { fireImmediately: true })
     }
   },
   async fetch () {
@@ -72,10 +120,16 @@ export default Observer ({
   },
 
   beforeDestroy () {
-    const { extraSubs } = this
+    const { extraSubs, debug } = this
     this.fetched = false
     if (extraSubs.length) {
       extraSubs.map(sub => { this.$lodger[sub].subscribers.single.kill(); delete this.$lodger[sub].subscribers.single })
+    }
+    if (disposer) {
+      setTimeout(() => {
+        debug('cancelleed disposeer')
+        disposer()
+      }, 2500);
     }
   },
   // async fetch () {

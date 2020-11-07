@@ -48,6 +48,7 @@
           :placeholder=  "$lodger.i18n.search.do"
           @input=   "Search($event)"
           :value=   "search.input"
+          :focusShortkeys= "['ctrl', 'k']"
           hide-label
         )
           results(
@@ -60,6 +61,7 @@
           icon=   "settings"
           :arrow= "false"
           :toggleText=  "$lodger.i18n.forms.preferences.title"
+          :toggleKeys=  "['ctrl', '/']"
           iconOnly
         )
           form.form
@@ -68,7 +70,7 @@
               legend {{ $lodger.i18n.forms.preferences.fieldsets[0] }}
 
               field(
-                type=       "altselect"
+                type=       "select"
                 id=         "displayCurrency"
                 :label=     "$lodger.i18n.forms.preferences.fields.currency"
                 :options=   "$Lodger.currencies"
@@ -76,12 +78,25 @@
                 @input=     "$Lodger.displayCurrency = $event"
               )
 
-              .lang-switch
-                a(
-                  v-for=      "lang in $lodger.supportedLangs"
-                  v-tooltip=  "lang.nativeName"
-                  @click=     "$Lodger.locale = lang.code"
-                ) {{ lang.code }}
+              field(
+                type=       "select"
+                id=         "lang"
+                :label=     "$lodger.i18n.forms.preferences.fields.lang"
+                :options=   "Object.keys($lodger.supportedLangs).map(k => $lodger.supportedLangs[k].name)"
+                :value=     "$Lodger.locale"
+                @input=     "$Lodger.locale = $event"
+              )
+
+              field(
+                type=       "checkbox"
+                :label=     "$lodger.i18n.forms.preferences.fields.shortKeys"
+              )
+              //- .lang-switch
+              //-   a(
+              //-     v-for=      "lang in $lodger.supportedLangs"
+              //-     v-tooltip=  "lang.nativeName"
+              //-     @click=     "$Lodger.locale = lang.code"
+              //-   ) {{ lang.code }}
 
         dropdown.u(
           v-if= "$lodger.utilizatori.subscribers.prince.selectedId"
@@ -129,6 +144,7 @@
   //- toasts
 
   modal
+    p(v-if="$lodger.modal.firstTime") FIRST TIME EVER OMFGs {{  }}
 
       //- frm#main(
       //-   v-if=       "modalContent && modalContent !== 'prompt'",
@@ -192,6 +208,8 @@ export default Observer ({
     const sub = utilizatori.subscribers[mainSubName]
     if (!sub.ids.length) {
       modal.activeDoc = utilizatori.collection.newDocument({})
+      modal.closeable = false
+      modal.firstTime = true
     }
   },
 
@@ -286,6 +304,9 @@ footerHeight = 40px
 
     > *
       margin 10px
+
+  > footer
+    user-select none
 
   > header
     position fixed 0 0 auto 0

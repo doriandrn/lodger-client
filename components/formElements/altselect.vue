@@ -21,7 +21,7 @@
 
 <script>
 import progres from 'c/progres'
-import { createPopper } from '@popperjs/core'
+// import { createPopper } from '@popperjs/core'
 
 export default {
   // mounted () {

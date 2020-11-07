@@ -28,6 +28,8 @@ button(
   @keyup.up=        "$emit('keyUp', $event)"
   tabIndex=         0
   v-tooltip=        "_tooltip"
+  v-shortkey =      "shortkeys ? {windows: shortkeys, mac: shortkeys.map(i => i.replace('ctrl', 'meta'))} : undefined"
+  @shortkey=        "$emit('shortkey', $event)"
 )
   slot
   span.badge(v-if="$slots.badge")
@@ -122,6 +124,10 @@ export default {
           // message: this.$t('defaults.prompt.message')
         }
       }
+    },
+    shortkeys: {
+      type: Array,
+      default: null
     },
     dangerous: {
       type: Boolean,
@@ -243,10 +249,12 @@ button
                 -6px -6px 12px #ffffff;
 
     &:hover
+      top 1px
+
     &:focus
     &:active
-      border-color: config.palette.secondary
       top 1px
+      pressed()
 
   &:disabled
     cursor default

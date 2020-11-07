@@ -42,7 +42,7 @@ export default Observer({
       componentUpdated: (el, binding) => {
         const firstInput = el.querySelector('input:not(.av):not([type="file"]):not(:disabled)')
         console.log('FIRST INPUT', firstInput)
-        if (firstInput) setTimeout(() => { firstInput.focus() }, 150)
+        if (firstInput) setTimeout(() => { firstInput.focus() }, 450)
       }
     }
   },

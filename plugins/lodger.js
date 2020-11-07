@@ -16,10 +16,17 @@ export default async ({ app, store }, inject) => {
   Object.assign(lodger, {
     modal: observable({
       activeDoc: null,
+      closeable: true,
+      firstTime: false,
       sub: { edit: () => {} },
       close: function () {
+        if (!this.closeable)
+          return
+
         this.activeDoc = null
-        if (this.sub) this.sub.edit()
+
+        if (this.sub)
+          this.sub.edit()
       }
     }),
 

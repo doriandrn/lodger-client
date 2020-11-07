@@ -8,6 +8,7 @@ ValidationProvider(
   :data-type=   "isRel ? 'rel' : type"
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-req=    "required"
+
   :class=       "{ error, value, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
@@ -31,6 +32,7 @@ ValidationProvider(
     @input=       "handleInput",
     @change=      "handleChange"
     :aria-label=  "hideLabel ? label : undefined"
+    v-shortkey.focus=   "focusShortkeys ? {windows: focusShortkeys, mac: focusShortkeys.map(i => i.replace('ctrl', 'meta'))} : undefined"
 
     @keydown.enter= "selecteaza"
     @keyup.tab=     "selecteaza"
@@ -173,6 +175,8 @@ ValidationProvider(
     v-if= "type === 'text' && textLengthLimit > 0 && val"
   ) {{ val.length }} / {{ textLengthLimit }}
 
+  skey(v-if=  "focusShortkeys" :keys="focusShortkeys")
+
   slot
 </template>
 
@@ -199,6 +203,7 @@ import rel from 'c/rel'
 import bani from 'c/bani'
 import avatar from 'c/avatar'
 import dateTime from 'c/dateTime'
+import skey from 'c/shortkeys'
 
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -319,6 +324,10 @@ export default {
       type: Boolean,
       default: null
     },
+    focusShortkeys: {
+      type: Array,
+      default: null
+    },
     required: {
       type: Boolean,
       default: false
@@ -426,6 +435,7 @@ export default {
     scari,
     servicii,
     selApartamente,
+    skey,
     slect,
     tax,
     txtarea,
@@ -601,6 +611,12 @@ textarea
     &::placeholder
       opacity 1
 
+  &:focus
+  &:active
+    &+label+.focuskeys
+      opacity 0
+      visibility hidden
+
   &:not(:disabled)
     // border-radius 2px
     border-radius: 46px;
@@ -703,17 +719,22 @@ input[type="checkbox"]
   appearance none
   position absolute
   opacity 0
+  size 20px
 
   &:not(:checked)
     &+label
       cursor pointer
 
   &+label
-    height 24px
+    line-height 18px
     cursor pointer
     position relative
-    margin-bottom 0
-    padding 4px // sa fie mai pushy
+    margin 0 !important
+    width 100%
+    display flex
+    flex-flow row nowrap
+    justify-content center
+    padding 12px // sa fie mai pushy
     color: typeColors.meta
 
     &:before
@@ -834,6 +855,9 @@ span[data-type="$"]
 span[data-type="taxonomy"]
   flex-basis 47%
 
+// span[data-type="checkbox"]
+
+
 input[name="nr"]
   font-family: config.typography.fams.headings
   color: config.palette.tertiary
@@ -918,4 +942,6 @@ input[name="nr"]
         width 0
         padding-left 0
         padding-right 0
+
+
 </style>

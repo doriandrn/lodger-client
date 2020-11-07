@@ -1,21 +1,24 @@
 <template lang="pug">
 .dropdown(
-  :class=   "{ open }",
-  v-on-clickaway=   "inchide"
+  :class= "{ open }"
+  v-on-clickaway=   "destroy"
   data-box-arrow
 )
   buton(
-    :icon=    "icon",
-    :icon-only= "iconOnly"
-    @click=   "open = !open"
-    :arrow=   "arrow"
-    :tabIndex= "0"
+    :icon=        "icon",
+    :icon-only=   "iconOnly"
+    @click=       "toggle"
+    :arrow=       "arrow"
+    :tabIndex=    "0"
+    :shortkeys =  "toggleKeys"
+    @shortkey=    "toggle"
   ) #[slot(name="beforeText")] {{ toggleText }}
     slot(name="buton")
 
   div
     header(v-if="$slots.header || (iconOnly && toggleText)")
       h6(v-if=  "iconOnly") {{ toggleText }}
+      shortkeys(:keys="toggleKeys" v-if="toggleKeys")
       slot(name="header")
 
     main(v-if="$slots.default")
@@ -28,6 +31,11 @@
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
 import buton from 'form/button'
+import shortkeys from 'c/shortkeys'
+
+import { createPopper } from '@popperjs/core'
+import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow.js'
+import flip from '@popperjs/core/lib/modifiers/flip.js'
 
 export default {
   data () {
@@ -36,13 +44,49 @@ export default {
     }
   },
   components: {
-    buton
+    buton,
+    shortkeys
+  },
+  methods: {
+    toggle () {
+      this.open ? this.destroy() : this.create()
+    },
+    create () {
+      const { children } = this.$el
+      const but = children[0]
+      const drop = children[1]
+      this.open = true
+      this._popperInstance = createPopper(but, drop, {
+        modifiers: [
+          preventOverflow,
+          flip,
+          {
+            name: 'offset',
+            options: {
+              offset: [0, 5]
+            }
+          }
+        ],
+      })
+    },
+    destroy () {
+      if (this._popperInstance) {
+        this.open = false
+        this._popperInstance.destroy()
+        this._popperInstance = null
+        delete this._popperInstance
+      }
+    }
   },
   mixins: [clickaway],
   props: {
     toggleText: {
       type: String,
       default: 'Drop'
+    },
+    toggleKeys: {
+      type: Array,
+      default: null
     },
     icon: {
       type: String,
@@ -56,12 +100,7 @@ export default {
       type: Boolean,
       default: true
     }
-  },
-  methods: {
-    inchide () {
-      this.open = false
-    }
-  },
+  }
 }
 </script>
 
@@ -76,6 +115,7 @@ shadow = -1px 2px rgba(black, .05)
   z-index 101
   height 100%
   user-select none
+  text-align center
 
   &+.dropdown
     z-index 106
@@ -83,12 +123,17 @@ shadow = -1px 2px rgba(black, .05)
   footer
     border-top: 1px solid colors.borders
     background: colors.bgs.body
+    border-bottom-radius 3px
 
   header
     border-top 3px solid white
+    border-top-radius 12px
     border-bottom: 1px solid colors.borders
-    background rgba(black, .05)
+    background linear-gradient(180deg, white, #fafafa)
     padding 6px 12px
+    position relative
+    max-width 100%
+
     p
       color rgba(black, .55)
       margin 0
@@ -121,11 +166,27 @@ shadow = -1px 2px rgba(black, .05)
         mask-image embedurl('~static/icons/ui/chevron-down.svg')
         transition transform .15s ease-in-out
 
+    //- &:focus
+    //-   &+div
+    //-     opacity 1
+    //-     visibility visible
+
+
   main
     border 2px solid white
     display flex
     flex-flow row wrap
     padding 8px
+    background: colors.bgs.body
+
+    +above(m)
+      padding 12px
+
+    +above(l)
+      padding 16px
+
+    +above(xl)
+      padding 20px
 
     > button
     > a
@@ -135,16 +196,29 @@ shadow = -1px 2px rgba(black, .05)
         justify-content flex-start
         border-radius 0
 
+    span[data-type]
+      flex-flow row-reverse nowrap
+      align-items center
+
+      &:not(:last-child)
+        margin-bottom 8px
+
+      label
+        margin-bottom 0
+        margin-right 12px
+
   > div
     opacity 0
     visibility hidden
-    max-height 0
+    // max-height 0
     min-width 190px
-    position absolute 105% 0 auto auto
-    background white
-    box-shadow: shadow
-    border-radius 2px 3px 5px 8px
-    transition all .15s ease-in-out
+    position absolute
+    top calc(100% + 15px)
+    // right 0
+    overflow hidden
+    // box-shadow: shadow
+    // border-radius 2px 3px 5px 8px
+    transition top .15s ease-in-out, opacity .15s ease
 
   &[data-box-arrow]
     &:before
@@ -152,17 +226,18 @@ shadow = -1px 2px rgba(black, .05)
       opacity 0
 
   &.open
-    &[data-box-arrow]
-      &:before
-      &:after
-        bottom 0
-        opacity 1
+    //- &[data-box-arrow]
+    //-   &:before
+    //-   &:after
+    //-     bottom -5px
+    //-     opacity 1
 
     > div
       opacity 1
       visibility visible
       max-height 50vh
-      top 100%
+      overflow visible
+      //- top calc(100% + 5px)
 
     main
       > button
@@ -171,7 +246,7 @@ shadow = -1px 2px rgba(black, .05)
           background-color: colors.selectedItem
 
     > button
-      background: colors.bgs.body
+      pressed()
 
       &:after
         transform rotate(180deg)

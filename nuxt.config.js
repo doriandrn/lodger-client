@@ -47,6 +47,19 @@ module.exports = {
     src: '~assets/styles/index.styl',
     lang: 'stylus'
   }],
+  hooks: {
+    'render:done': [() => {console.info('shhit works')}],
+    'render:errorMiddleware': [(app) => {
+      console.log('a', app)
+      app.use((error, _req, _res, next) => {
+        if (error) {
+          console.info("Logged in errorMiddleware", error);
+        }
+        next(error);
+      })
+    }
+  ]
+  },
   plugins: [
     { src: '~plugins/debug' },
     { src: '~plugins/lodger' },
@@ -54,6 +67,7 @@ module.exports = {
     // { src: '~plugins/tabs' },
     { src: '~plugins/portal' },
     { src: '~plugins/range' },
+    { src: '~plugins/shortkeys' },
     { src: '~plugins/swiper', ssr: false },
     { src: '~plugins/tooltips', ssr: false }
   ],

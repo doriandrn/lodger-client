@@ -42,14 +42,14 @@ config = {
         body: baseSpacingUnit*3.25
         headings: {
           h1: {
-            size: baseSpacingUnit*5,
+            size: baseSpacingUnit*6.5,
             lh: baseSpacingUnit*8
           },
           h2: baseSpacingUnit*5
-          h3: baseSpacingUnit*4
-          h4: baseSpacingUnit*3.5
-          h5: baseSpacingUnit*3.25
-          h6: baseSpacingUnit*3
+          h3: baseSpacingUnit*5.15
+          h4: baseSpacingUnit*5
+          h5: baseSpacingUnit*4.25
+          h6: baseSpacingUnit*3.75
         }
       }
     },
@@ -114,3 +114,9 @@ icon(icon = null)
 
   if icon
     mask-image embedurl('~static/icons/ui/'+icon+'.svg')
+
+pressed()
+  border-radius: 150px;
+  background: #f5f7fb;
+  box-shadow: inset 3px 3px 6px #d0d2d5,
+              inset -3px -3px 6px #ffffff;

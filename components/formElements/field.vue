@@ -225,7 +225,7 @@ export default {
       return this.id.indexOf('Id') === this.id.length - 2
     },
     val () {
-      const { type, searchTaxonomy, selected, debug } = this
+      const { type, searchTaxonomy, selected, debug, id } = this
       let { value } = this
 
       // a weird reset
@@ -236,6 +236,10 @@ export default {
       if (type === 'checkbox') {
         value = Boolean(value)
       }
+
+      // if (type === 'select' && id.indexOf('currency') > -1) {
+      //   value = Number(value)
+      // }
 
       if (value && selected && selected._id) {
         if (searchTaxonomy === 'apartamente') return selected.proprietar

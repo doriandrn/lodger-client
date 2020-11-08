@@ -1,9 +1,4 @@
 <template lang="pug">
-//- span.bani(
-//-   v-if= "valoare"
-//-   :class="{ negativ: suma < 0 }"
-//- ) {{ numeral(suma).format('0,0[.]00') }} {{ moneda }}
-
 div
   span(v-if="showBoth")
     input(
@@ -12,7 +7,10 @@ div
       :disabled=  "disabled"
       @change="$emit('input', `${$event.target.value} ${moneda}`)"
     )
-    .select {{ moneda || base }}
+    currency-select(
+      hide-label
+      :value= "moneda"
+    )
   span.bani.conv(
     v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
   ) ~ {{ numeral(convert(suma, { from: moneda, to: base, rates: $lodger.rates, base })).format(isCrypto ? '0,0[.]00000000' : '0,0[.]00') }} {{ $Lodger.displayCurrency }}
@@ -23,9 +21,11 @@ div
 import numeral from 'numeral'
 import { Observer } from 'mobx-vue'
 import { parse, convert } from 'cashify'
+import currencySelect from 'form/presets/selects/currencies'
 
 export default Observer ({
   methods: { numeral, convert },
+  components: { currencySelect },
   props: {
     valoare: {
       type: [String, Object, Number],
@@ -47,7 +47,7 @@ export default Observer ({
     }
   },
   mounted () {
-    console.log(this.base, this.moneda, this.$lodger.rates)
+    this.debug('$$', this.base, this.moneda, this.$lodger.rates)
   },
   computed: {
     parsed () {
@@ -56,16 +56,22 @@ export default Observer ({
       return parse(typeof valoare === 'string' ? valoare : Object.values(valoare).join(' '))
     },
     suma () {
-      if (this.parsed) return this.parsed.amount
+      if (this.parsed && this.parsed.from)
+        return this.parsed.amount
+      else if (this.valoare)
+        return String(this.valoare).split(' ')[1]
       //  return typeof this.valoare === Number ?
       //   this.valoare :
       //   this.valoare.suma
     },
     isCrypto () {
-      return ['BTC', 'NANO', 'LTC', 'ETH', 'DASH', 'BCH', 'XRP', 'CLP', 'TEL', 'DAI', 'USDT', 'AVA'].indexOf(this.base) > -1
+      return Object.keys(this.$Lodger.currencyList.cryptocurrency).indexOf(this.moneda) > -1
     },
     moneda () {
-      if (this.parsed) return this.parsed.from
+      if (this.parsed && this.parsed.from)
+        return this.parsed.from
+      else if (this.valoare)
+        return Number(String(this.valoare).split(' ')[0])
     },
     convertedSum () {
       const { suma, moneda, base, $lodger: { rates }} = this

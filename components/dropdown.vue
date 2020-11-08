@@ -126,13 +126,16 @@ shadow = -1px 2px rgba(black, .05)
     border-bottom-radius 3px
 
   header
-    border-top 3px solid white
+    // border-top 3px solid white
     border-top-radius 12px
     border-bottom: 1px solid colors.borders
     background linear-gradient(180deg, white, #fafafa)
     padding 6px 12px
     position relative
     max-width 100%
+    height: 40px;
+    display: flex;
+    align-items: center;
 
     p
       color rgba(black, .55)

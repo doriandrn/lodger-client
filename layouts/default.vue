@@ -69,13 +69,9 @@
             fieldset
               legend {{ $lodger.i18n.forms.preferences.fieldsets[0] }}
 
-              field(
-                type=       "select"
+              currencies(
                 id=         "displayCurrency"
-                :label=     "$lodger.i18n.forms.preferences.fields.currency"
-                :options=   "$Lodger.currencies"
-                :value=     "$Lodger.currencies.indexOf($Lodger.displayCurrency)"
-                @input=     "$Lodger.displayCurrency = $event"
+                :value=     "$Lodger.displayCurrency"
               )
 
               field(
@@ -122,6 +118,9 @@
 
   main
     nuxt(:nuxt-child-key="activePage")
+
+    .devTools(v-if="env === 'development'")
+      p lola
 
   footr
     nav
@@ -172,6 +171,7 @@ import cale from 'c/cale'
 import bani from 'c/bani'
 import field from 'form/field'
 import buton from 'form/button'
+import currencies from 'form/presets/selects/currencies'
 
 import toasts from 'c/toasts'
 import dropdown from 'c/dropdown'
@@ -237,6 +237,9 @@ export default Observer ({
     curYear () {
       const d = new Date()
       return d.getFullYear()
+    },
+    env () {
+      return process.env.NODE_ENV
     }
   },
   beforeDestroy () {
@@ -249,6 +252,7 @@ export default Observer ({
     buton,
     footr,
     cale,
+    currencies,
     frm,
     prompt,
     field,
@@ -317,6 +321,9 @@ footerHeight = 40px
     align-items center
     background-color transparent
     -webkit-app-region: drag
+
+    .edd-root
+      width 180px
 
     .inner
       align-items center

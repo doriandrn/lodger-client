@@ -1,21 +1,51 @@
 <template lang="pug">
 select(
   :id=        "id",
+  v-if=       "options.length"
+  :value= "value"
   @change=    "$emit('input', $event.target.value); debug($event.target.value)"
 )
   option(
     v-for=      "option, key in options",
-    :value=     "typeof options === 'object' ? option : key",
-    :selected=  "value === option"
-  ) {{ option }}
+    :value=     "option.id || key",
+    :selected=  "value === option.id || value === key"
+  ) {{ typeof option === 'string' ? option : typeof option === 'object' ? option.name : undefined }}
+
+select(
+  v-else
+  :id=  "id"
+  :value= "value"
+  @change=    "$emit('input', $event.target.value); debug($event.target.value)"
+)
+  optgroup(
+    v-for=  "groupOpts, name in options"
+    :label= "name"
+  )
+    option(
+      v-for=  "option, key in groupOpts"
+      :value=     "option.id || key",
+      :selected=  "value === option.id || value === key"
+    ) {{ typeof option === 'string' ? option : typeof option === 'object' ? `${option.symbol || ''} ${option.name}` : undefined }}
+
+
 </template>
 
 <script>
-import edd from 'easydropdown';
+import edd from 'easydropdown'
 
 export default {
   mounted () {
     this.edd = edd(this.$el)
+    if (this.id.indexOf('urrency') > -1) {
+      const { parentNode } = this.$el.parentNode
+      const optGrps = parentNode.querySelectorAll('.edd-group')
+      Array.from(optGrps).forEach(optGrp => {
+        Array.from(optGrp.children).forEach(child => {
+          if (!child.title) return
+          child.setAttribute('data-sym', child.title.split(' ')[0])
+        })
+      })
+    }
   },
   beforeDestroy () {
     if (this.edd)
@@ -130,7 +160,6 @@ select
   &-root
     display: inline-block;
     position: relative;
-    width: 180px;
     user-select: none;
     line-height 20px
     height 40px

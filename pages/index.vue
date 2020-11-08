@@ -12,7 +12,7 @@ sction#pg3(boxes)
     :subscriberName=  "subscriberName"
     :data-tax=  "tax"
   )
-    header(slot-scope="{ taxonomy, subscriber }")
+    header(slot-scope=  "{ taxonomy, subscriber }")
       h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
         small(v-if="taxonomy.totals") {{ subscriber.ids.length }} / {{ taxonomy.totals }}
 

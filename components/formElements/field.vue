@@ -84,6 +84,7 @@ ValidationProvider(
     :id=          "id"
     :arrow=       "arrow"
     :disabled=    "disabled"
+    :labels=      "labels"
   )
   altslect(
     v-else-if=    "type === 'altselect' || name === 'rol'"
@@ -310,6 +311,10 @@ export default {
     label: {
       type: String,
       default: 'Field Label'
+    },
+    labels: {
+      type: Array,
+      default: null
     },
     click: {
       type: String,
@@ -610,7 +615,7 @@ textarea
   &:focus
     color: palette.primary
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-    border-color: #66afe9
+    border-color: palette.primary
 
     &::placeholder
       opacity 1

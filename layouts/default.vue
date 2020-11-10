@@ -323,7 +323,7 @@ footerHeight = 40px
     -webkit-app-region: drag
 
     .edd-root
-      width 180px
+      width 160px
 
     .inner
       align-items center
@@ -359,58 +359,58 @@ footerHeight = 40px
       padding-top 48px
       flex-direction column
 
-    .switch
-      position relative
-      padding-left 0
-      margin-left 0
-      height 100%
-      max-width 250px
+    // .switch
+    //   position relative
+    //   padding-left 0
+    //   margin-left 0
+    //   height 100%
+    //   max-width 250px
 
-      .altselect
-        max-height 48px
-        > ul
-          border-color transparent
+    //   .altselect
+    //     max-height 48px
+    //     > ul
+    //       border-color transparent
 
-          > li
-            &:before
-              background-color #aaa
-              position absolute
-              left 12px
+    //       > li
+    //         &:before
+    //           background-color #aaa
+    //           position absolute
+    //           left 12px
 
-            > span
-              display block
-              position relative
-              font-size 13px
-              line-height 16px
-              white-space nowrap
+    //         > span
+    //           display block
+    //           position relative
+    //           font-size 13px
+    //           line-height 16px
+    //           white-space nowrap
 
-      label
-        font-size 9px
-        text-transform uppercase
-        font-weight 100
-        line-height 12px
-        letter-spacing 1px
-        white-space nowrap
-        position relative
-        pointer-events none
-        color: config.typography.palette.meta
-        z-index 21
+    //   label
+    //     font-size 9px
+    //     text-transform uppercase
+    //     font-weight 100
+    //     line-height 12px
+    //     letter-spacing 1px
+    //     white-space nowrap
+    //     position relative
+    //     pointer-events none
+    //     color: config.typography.palette.meta
+    //     z-index 21
 
-        position absolute
-        top 4px
-        left 24px
+    //     position absolute
+    //     top 4px
+    //     left 24px
 
-      select
-        position absolute 0
-        width 100%
-        box-shadow none
-        margin 0
-        text-transform capitalize
-        padding 4px 8px
-        text-indent 8px
-        max-width 100%
-        font-weight 500
-        appearance none
+    //   select
+    //     position absolute 0
+    //     width 100%
+    //     box-shadow none
+    //     margin 0
+    //     text-transform capitalize
+    //     padding 4px 8px
+    //     text-indent 8px
+    //     max-width 100%
+    //     font-weight 500
+    //     appearance none
 
   > main
     fullflex()
@@ -444,6 +444,4 @@ footerHeight = 40px
       margin 0 16px
 
 
-.lang-switch a
-  margin 0 8px
 </style>

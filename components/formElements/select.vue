@@ -2,8 +2,8 @@
 select(
   :id=        "id",
   v-if=       "options.length"
-  :value= "value"
-  @change=    "$emit('input', $event.target.value); debug($event.target.value)"
+  :value=     "value"
+  @change=    "$emit('input', $event.target.value)"
 )
   option(
     v-for=      "option, key in options",
@@ -13,21 +13,19 @@ select(
 
 select(
   v-else
-  :id=  "id"
-  :value= "value"
-  @change=    "$emit('input', $event.target.value); debug($event.target.value)"
+  :id=        "id"
+  :value=     "value"
+  @change=    "$emit('input', $event.target.value)"
 )
   optgroup(
     v-for=  "groupOpts, name in options"
-    :label= "name"
+    :label= "labels && labels[name] ? labels[name] : name"
   )
     option(
-      v-for=  "option, key in groupOpts"
+      v-for=      "option, key in groupOpts"
       :value=     "option.id || key",
       :selected=  "value === option.id || value === key"
-    ) {{ typeof option === 'string' ? option : typeof option === 'object' ? `${option.symbol || ''} ${option.name}` : undefined }}
-
-
+    ) {{ typeof option === 'string' ? option : typeof option === 'object' ? `${option.symbol || option.name}` : undefined }}
 </template>
 
 <script>
@@ -35,17 +33,15 @@ import edd from 'easydropdown'
 
 export default {
   mounted () {
-    this.edd = edd(this.$el)
-    if (this.id.indexOf('urrency') > -1) {
-      const { parentNode } = this.$el.parentNode
-      const optGrps = parentNode.querySelectorAll('.edd-group')
-      Array.from(optGrps).forEach(optGrp => {
-        Array.from(optGrp.children).forEach(child => {
-          if (!child.title) return
-          child.setAttribute('data-sym', child.title.split(' ')[0])
-        })
-      })
-    }
+    const { parentNode } = this.$el.parentNode
+    this.edd = edd(this.$el, {
+      classNames: {
+        option: '',
+        optionDisabled: 'disabled',
+        optionFocused:  'focused',
+        optionSelected: 'selected'
+      }
+    })
   },
   beforeDestroy () {
     if (this.edd)
@@ -97,6 +93,10 @@ export default {
     label: {
       type: String,
       default: null
+    },
+    labels: {
+      type: Array,
+      default: null
     }
   }
 }
@@ -104,6 +104,8 @@ export default {
 
 <style lang="stylus">
 @require '~styles/config'
+
+hlColor = config.palette.primary
 
 select
   display block
@@ -121,7 +123,7 @@ select
 
   &:not(:disabled)
     cursor pointer
-    color: config.typography.palette.ui
+    color: hlColor
     background-color: white
     background-image embedurl('~static/icons/ui/dropdown.svg', 'utf8')
     background-repeat no-repeat
@@ -171,13 +173,41 @@ select
       padding: 0;
       box-sizing: border-box;
 
+    div[role="option"]
+      padding: 6px 10px;
+      cursor poiner
+      // transition: background-color 250ms, color 250ms, border-color 250ms;
+
+      &:not(:last-child)
+        border-bottom: 1px solid #eee;
+
+      &.selected
+        color: hlColor
+
+        &:after
+          color: hlColor !important
+
+      &.focused
+      &:hover
+      &:focus
+        &:not(.disabled)
+          background: hlColor
+          border-bottom-color: hlColor
+          color: white
+
+          &:after
+            color white !important
+
+    &:after
+      color white !important
+
     &-disabled
       color: #ccc;
       cursor: not-allowed
 
     &-focused
       .edd-head
-        border-color: blue;
+        border-color: hlColor;
 
     &-invalid
       border-color: #ff6969;
@@ -240,21 +270,23 @@ select
     left: -100%;
     top: 0;
 
-  &-option
-    padding: 6px 10px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 250ms, color 250ms, border-color 250ms;
-
   &-value
     width: 100%;
     display: inline-block;
     vertical-align: middle;
     padding: 10px 35px 10px 16px;
 
+  &-group
+    &-label
+      font-size 12px;
+      font-weight 400;
+      padding 6px 12px;
+      margin-top 12px
+      color #aaa
+
   &-arrow
     position: absolute;
-    width: 18px;
-    height: 10px;
+    size 10px
     top: calc(50% - 5px);
     right: calc(25px - 9px);
     transition: transform 150ms;
@@ -299,24 +331,11 @@ select
 }
 
 .edd-group-label {
-    font-size: 12px;
-    font-weight: 400;
-    padding: 12px 10px 4px;
+
 }
 
 .edd-group-has-label .edd-option {
     padding-left: 14px;
-}
-
-.edd-option-selected {
-    font-weight: 400;
-    color: blue;
-}
-
-.edd-option-focused:not(.edd-option-disabled) {
-    background: blue;
-    border-bottom-color: blue;
-    color: white;
 }
 
 .edd-option-disabled,

@@ -1,4 +1,6 @@
 var path = require('path')
+var webpack = require('webpack')
+
 const dev = process && process.env.NODE_ENV !== 'production'
 const debug = dev
 
@@ -144,8 +146,24 @@ module.exports = {
       }
     },
 
+    plugins: [
+      new webpack.LoaderOptionsPlugin({
+        options: {
+          context: __dirname,
+          stylus: {
+            include: [
+              path.join(__dirname, 'node_modules', 'lodger')
+            ],
+            preferPathResolver: 'webpack',
+            options: ['resolve url']
+          }
+        }
+      })
+    ],
+
     extend (config) {
       config.node = { fs: 'empty' }
+      console.info(config.module.rules.filter(m => m.test && String(m.test).indexOf('styl') > -1))
       // Extend aliases
       Object.assign(config.resolve.alias, {
         stream: 'stream-browserify',

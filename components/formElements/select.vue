@@ -19,7 +19,7 @@ select(
 )
   optgroup(
     v-for=  "groupOpts, name in options"
-    :label= "labels && labels[name] ? labels[name] : name"
+    :label= "optGrpLabels && optGrpLabels[name] ? optGrpLabels[name] : name"
   )
     option(
       v-for=      "option, key in groupOpts"
@@ -94,8 +94,8 @@ export default {
       type: String,
       default: null
     },
-    labels: {
-      type: Array,
+    optGrpLabels: {
+      type: Object,
       default: null
     }
   }

@@ -65,13 +65,14 @@
           iconOnly
         )
           form.form
-
             fieldset
               legend {{ $lodger.i18n.forms.preferences.fieldsets[0] }}
 
               currencies(
                 id=         "displayCurrency"
                 :value=     "$Lodger.displayCurrency"
+                @input=     "$Lodger.displayCurrency = $event"
+                :data-sym=  "$Lodger.displayCurrency"
               )
 
               field(
@@ -79,7 +80,7 @@
                 id=         "lang"
                 :label=     "$lodger.i18n.forms.preferences.fields.lang"
                 :options=   "Object.keys($lodger.supportedLangs).map(k => $lodger.supportedLangs[k].name)"
-                :value=     "$Lodger.locale"
+                :value=     "$lodger.supportedLangs.map(l => l.code).indexOf($Lodger.locale)"
                 @input=     "$Lodger.locale = $event"
               )
 
@@ -87,12 +88,7 @@
                 type=       "checkbox"
                 :label=     "$lodger.i18n.forms.preferences.fields.shortKeys"
               )
-              //- .lang-switch
-              //-   a(
-              //-     v-for=      "lang in $lodger.supportedLangs"
-              //-     v-tooltip=  "lang.nativeName"
-              //-     @click=     "$Lodger.locale = lang.code"
-              //-   ) {{ lang.code }}
+
 
         dropdown.u(
           v-if= "$lodger.utilizatori.subscribers.prince.selectedId"
@@ -143,7 +139,7 @@
   //- toasts
 
   modal
-    p(v-if="$lodger.modal.firstTime") FIRST TIME EVER OMFGs {{  }}
+    h2(v-if="$lodger.modal.activeDoc && $lodger.modal.firstTime") {{ $lodger.i18n.taxonomies[$lodger.modal.activeDoc.collection.name.plural].new.title || 'hilol' }}
 
       //- frm#main(
       //-   v-if=       "modalContent && modalContent !== 'prompt'",

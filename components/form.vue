@@ -317,7 +317,7 @@ fieldset
     line-height 10px
     font-weight: 400;
     letter-spacing: 2px;
-    margin-bottom 12px
+    margin-bottom 20px
     user-select none
 
   &:not(.header)

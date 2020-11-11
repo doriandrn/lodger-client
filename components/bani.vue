@@ -2,18 +2,26 @@
 div
   span(v-if="showBoth")
     input(
-      type=   "text"
-      :value= "suma"
+      type=       "number"
+      :value=     "suma"
       :disabled=  "disabled"
-      @change="$emit('input', `${$event.target.value} ${moneda}`)"
+      @change=    "change($event, true)"
     )
+
     currency-select(
-      hide-label
+      v-if=  "schimbaMoneda"
       :value= "moneda"
+      @input= "change($event, false)"
+      hide-label
     )
+    currency-sign(v-else :moneda="moneda")
+
+  div(v-if="!disabled")
+    a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
+
   span.bani.conv(
     v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
-  ) ~ {{ numeral(convert(suma, { from: moneda, to: base, rates: $lodger.rates, base })).format(isCrypto ? '0,0[.]00000000' : '0,0[.]00') }} {{ $Lodger.displayCurrency }}
+  ) ~ {{ numeral(convert(suma, { from: moneda, to: base, rates: $lodger.rates, base })).format(isCrypto ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($Lodger.displayCurrency)")]
 
 </template>
 
@@ -21,11 +29,41 @@ div
 import numeral from 'numeral'
 import { Observer } from 'mobx-vue'
 import { parse, convert } from 'cashify'
+
 import currencySelect from 'form/presets/selects/currencies'
+import currencySign from 'c/currencySign'
 
 export default Observer ({
-  methods: { numeral, convert },
-  components: { currencySelect },
+  data () {
+    return {
+      schimbaMoneda: false,
+      monedaCustom: -1
+    }
+  },
+  methods: {
+    numeral,
+    convert,
+    change (e, inputChanged) {
+      this.debug('shitt')
+      this.schimbaMoneda = false
+      let value, moneda
+      if (inputChanged) {
+        this.debug('wff')
+        value = Number(e.target.value)
+        moneda = this.moneda
+      } else {
+        if (this.valoare) {
+          value = Number(this.valoare.value)
+        }
+        this.monedaCustom = moneda = Number(e)
+      }
+      this.$emit('input', { value, moneda })
+    }
+  },
+  components: {
+    currencySelect,
+    currencySign
+  },
   props: {
     valoare: {
       type: [String, Object, Number],
@@ -50,28 +88,16 @@ export default Observer ({
     this.debug('$$', this.base, this.moneda, this.$lodger.rates)
   },
   computed: {
-    parsed () {
-      const { valoare } = this
-      if (!valoare) return
-      return parse(typeof valoare === 'string' ? valoare : Object.values(valoare).join(' '))
+    isCrypto () {
+
     },
     suma () {
-      if (this.parsed && this.parsed.from)
-        return this.parsed.amount
-      else if (this.valoare)
-        return String(this.valoare).split(' ')[1]
-      //  return typeof this.valoare === Number ?
-      //   this.valoare :
-      //   this.valoare.suma
-    },
-    isCrypto () {
-      return Object.keys(this.$Lodger.currencyList.cryptocurrency).indexOf(this.moneda) > -1
+      if (this.valoare)
+        return Number(this.valoare.value)
     },
     moneda () {
-      if (this.parsed && this.parsed.from)
-        return this.parsed.from
-      else if (this.valoare)
-        return Number(String(this.valoare).split(' ')[0])
+      const { monedaCustom } = this
+      return monedaCustom && monedaCustom > 0 ? monedaCustom : Number(this.valoare ? this.valoare.moneda : this.$Lodger.displayCurrency)
     },
     convertedSum () {
       const { suma, moneda, base, $lodger: { rates }} = this

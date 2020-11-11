@@ -76,19 +76,19 @@ ValidationProvider(
     :id=          "id",
   )
   slect(
-    v-else-if=    "type === 'select'"
-    :options=     "options"
+    v-else-if=    "type === 'select' || name === 'rol'"
+    :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
     :value=       "value",
     :required=    "required",
-    @input=       "$emit('input', $event)"
+    @input=       "$emit('input', name === 'rol' ? Number($event) : $event)"
     :id=          "id"
     :arrow=       "arrow"
     :disabled=    "disabled"
-    :labels=      "labels"
+    :optGrpLabels=      "optGrpLabels"
   )
   altslect(
-    v-else-if=    "type === 'altselect' || name === 'rol'"
-    :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
+    v-else-if=    "type === 'altselect'"
+    :options=     "options"
     :value=       "value",
     :required=    "required",
     @input=       "$emit('input', $event)"
@@ -312,8 +312,8 @@ export default {
       type: String,
       default: 'Field Label'
     },
-    labels: {
-      type: Array,
+    optGrpLabels: {
+      type: Object,
       default: null
     },
     click: {
@@ -603,7 +603,7 @@ textarea
   padding 4px 12px
 
   &::placeholder
-    color: config.typography.palette.meta
+    color: typeColors.meta
     font-size 12px
     font-weight 100
     opacity 0
@@ -674,6 +674,11 @@ textarea
 
 input[type="number"]
   width 80px
+
+  &:disabled
+    &::-webkit-outer-spin-button
+    &::-webkit-inner-spin-button
+      appearance none
 
 input[type="radio"]
   &+label
@@ -856,10 +861,17 @@ span[data-type="$"]
     flex-flow row nowrap
     align-items baseline
 
-    &:first-child
-      *
-        color black
-        font-weight bold
+  input[type="number"]
+    width 150px
+
+    &+.sign
+      margin-left 4px
+
+  input[type="number"]
+  input[type="number"]+.sign
+    font-size 20px
+    color black
+    font-weight bold
 
 span[data-type="taxonomy"]
   flex-basis 47%

@@ -40,7 +40,13 @@ module.exports = {
     theme_color: '#3B8070',
     background_color: '#fff'
   },
-
+  // Loading page, can also be replaced wih a html,
+  // https://github.com/nuxt/nuxt.js/blob/dev/packages/vue-app/template/views/loading/
+  loadingIndicator: {
+    name: 'cube-grid',
+    color: '#3B8070',
+    background: 'white'
+  },
   /*
   ** Customize the progress bar color
   */

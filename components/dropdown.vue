@@ -123,7 +123,7 @@ shadow = -1px 2px rgba(black, .05)
   footer
     border-top: 1px solid colors.borders
     background: colors.bgs.body
-    border-bottom-radius 3px
+    border-bottom-radius 30px
 
   header
     // border-top 3px solid white
@@ -176,11 +176,12 @@ shadow = -1px 2px rgba(black, .05)
 
 
   main
-    border 2px solid white
+    // border 2px solid white
     display flex
     flex-flow row wrap
     padding 8px
-    background: colors.bgs.body
+    background white
+    // background: colors.bgs.body
 
     +above(m)
       padding 12px
@@ -190,6 +191,10 @@ shadow = -1px 2px rgba(black, .05)
 
     +above(xl)
       padding 20px
+
+    &:last-child
+      border-bottom-radius 10px
+      box-shadow 0px 10px 100px -40px rgba(black, .2)
 
     > button
     > a

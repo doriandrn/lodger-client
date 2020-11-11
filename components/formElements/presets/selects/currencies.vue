@@ -8,9 +8,8 @@ field.currency(
   :options=   "$Lodger.currencyList"
   :value=     "value"
   :style=     "symbolsNames"
-  :labels=    "$lodger.i18n.forms.preferences.currencies"
-  @input=     "$Lodger.displayCurrency = $event; updateHead($event)"
-  :data-sym=  "$Lodger.displayCurrency"
+  :optGrpLabels=    "$lodger.i18n.forms.preferences.currencies"
+  @input=     "$emit('input', $event)"
 )
 </template>
 
@@ -34,13 +33,6 @@ export default {
     },
     symbols () {
       return Object.keys(this.symbolsNames)
-    }
-  },
-  methods: {
-    updateHead (val) {
-      this.debug(this.$el, val)
-      const edval = this.$el.querySelector('.edd-value')
-      edval.dataset.val = val
     }
   },
   props: {
@@ -102,12 +94,14 @@ cryptos = BTC LTC NANO ETH XRP DGB DASH XMR XLM XEM WAVES ZEC SNT
       &:after
         content '???'
         flex 0 1 calc(100% - 70px)
-        margin-right 12px
+        margin-right auto
         overflow hidden
         white-space nowrap
         text-overflow ellipsis
         order -1
         color #333
+        font-weight 500
+        text-align left
 
       &:hover
       &:focus

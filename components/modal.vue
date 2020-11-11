@@ -184,7 +184,7 @@ lrPad = 32px
       padding-bottom: config.spacings.inBoxes
 
   h2
-    margin-bottom 0
+    max-width 100%
 
   footer
     lost-utility clearfix

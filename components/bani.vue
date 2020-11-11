@@ -16,13 +16,12 @@ div
     )
     currency-sign(v-else :moneda="moneda")
 
-  div(v-if="!disabled")
-    a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
-
   span.bani.conv(
     v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
-  ) ~ {{ numeral(convert(suma, { from: moneda, to: base, rates: $lodger.rates, base })).format(isCrypto ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($Lodger.displayCurrency)")]
+  ) ~ {{ numeral(convertedSum).format(isCrypto($Lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($Lodger.displayCurrency)")]
 
+  div(v-if="!disabled")
+    a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
 </template>
 
 <script>
@@ -43,12 +42,13 @@ export default Observer ({
   methods: {
     numeral,
     convert,
+    isCrypto (moneda) {
+      return this.$Lodger.currencyList.cryptocurrency.map(c => c.id).indexOf(Number(moneda)) > -1
+    },
     change (e, inputChanged) {
-      this.debug('shitt')
       this.schimbaMoneda = false
       let value, moneda
       if (inputChanged) {
-        this.debug('wff')
         value = Number(e.target.value)
         moneda = this.moneda
       } else {
@@ -78,30 +78,31 @@ export default Observer ({
       default: true
     },
     base: {
-      type: String,
+      type: Number,
       default () {
-        return this.$Lodger.displayCurrency
+        return Number(this.$Lodger.displayCurrency)
       }
     }
   },
-  mounted () {
-    this.debug('$$', this.base, this.moneda, this.$lodger.rates)
-  },
   computed: {
-    isCrypto () {
-
+    apiBase () {
+      return 2781
     },
     suma () {
       if (this.valoare)
         return Number(this.valoare.value)
+    },
+    toApiBase () {
+      const { suma, moneda, base, apiBase, $lodger: { rates }} = this
+      return convert(suma, { from: moneda, to: apiBase, rates, base: apiBase })
     },
     moneda () {
       const { monedaCustom } = this
       return monedaCustom && monedaCustom > 0 ? monedaCustom : Number(this.valoare ? this.valoare.moneda : this.$Lodger.displayCurrency)
     },
     convertedSum () {
-      const { suma, moneda, base, $lodger: { rates }} = this
-      return convert(suma, { from: moneda, to: base, rates, base })
+      const { suma, moneda, base, apiBase, $lodger: { rates }} = this
+      return convert(suma, { from: base, to: moneda, rates, base: apiBase })
     }
   }
 })
@@ -120,10 +121,12 @@ export default Observer ({
   white-space nowrap
   text-transform uppercase
   align-items center
-  font-size 11px
+  font-size 13px
+  line-height 16px
   letter-spacing 1px
   justify-content flex-end
   text-align right
+  margin 8px 0
 
   &:before
     background-color: config.palette.tertiary

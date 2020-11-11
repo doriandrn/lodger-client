@@ -50,7 +50,7 @@ ValidationProvider(
   bani(
     v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
     :valoare=   "value"
-    :base=      "$Lodger.displayCurrency"
+    :base=      "Number($Lodger.displayCurrency)"
     @input=       "$emit('input', $event)"
     :disabled=    "disabled"
     showBoth

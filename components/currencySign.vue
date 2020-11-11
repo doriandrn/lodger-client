@@ -24,3 +24,8 @@ export default Observer({
   }
 })
 </script>
+
+<style lang="stylus">
+.sign
+  margin-left 4px
+</style>

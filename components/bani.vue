@@ -18,7 +18,7 @@ div
 
   span.bani.conv(
     v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
-  ) ~ {{ numeral(convertedSum).format(isCrypto($Lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($Lodger.displayCurrency)")]
+  ) {{ Number(this.$Lodger.displayCurrency) !== this.moneda ? '~ ' : '' }}{{ numeral(convert(suma, { from: Number(this.$Lodger.displayCurrency), to: moneda, rates, base: apiBase })).format(isCrypto($Lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($Lodger.displayCurrency)")]
 
   div(v-if="!disabled")
     a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
@@ -88,22 +88,21 @@ export default Observer ({
     apiBase () {
       return 2781
     },
+    rates () {
+      return this.$lodger.rates
+    },
     suma () {
       if (this.valoare)
         return Number(this.valoare.value)
     },
-    toApiBase () {
-      const { suma, moneda, base, apiBase, $lodger: { rates }} = this
-      return convert(suma, { from: moneda, to: apiBase, rates, base: apiBase })
-    },
     moneda () {
-      const { monedaCustom } = this
-      return monedaCustom && monedaCustom > 0 ? monedaCustom : Number(this.valoare ? this.valoare.moneda : this.$Lodger.displayCurrency)
+      return this.monedaCustom && this.monedaCustom > 0 ?
+        this.monedaCustom :
+        Number(this.valoare ?
+          this.valoare.moneda :
+          this.$Lodger.displayCurrency
+        )
     },
-    convertedSum () {
-      const { suma, moneda, base, apiBase, $lodger: { rates }} = this
-      return convert(suma, { from: base, to: moneda, rates, base: apiBase })
-    }
   }
 })
 </script>
@@ -119,14 +118,12 @@ export default Observer ({
   display flex
   flex-flow row nowrap
   white-space nowrap
-  text-transform uppercase
   align-items center
   font-size 13px
   line-height 16px
   letter-spacing 1px
   justify-content flex-end
   text-align right
-  margin 8px 0
 
   &:before
     background-color: config.palette.tertiary

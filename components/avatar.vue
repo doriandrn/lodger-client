@@ -12,7 +12,7 @@ import file from 'c/formElements/file'
 
 const avatars = new Avatars(sprites, {
   base64: true,
-  style: 'circle'
+  style: 'transparent'
 });
 
 export default {

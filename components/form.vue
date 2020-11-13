@@ -17,6 +17,7 @@ ValidationObserver(v-slot="{ passes }")
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
           :required =     "form.schema.required.indexOf(id) > -1"
+          :default=       "field.default"
           :min=           "field.min"
           :max=           "field.max",
           :step=          "field._type === 'bani' ? 0.01 : field.step",
@@ -55,6 +56,7 @@ ValidationObserver(v-slot="{ passes }")
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
           :required =     "form.schema.required.indexOf(id) > -1"
+          :default=       "field.default"
           :min=           "field.min"
           :max=           "field.max",
           :step=          "field._type === 'bani' ? 0.01 : field.step",

@@ -78,8 +78,9 @@ ValidationProvider(
   slect(
     v-else-if=    "type === 'select' || name === 'rol'"
     :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
-    :value=       "value",
+    :value=       "value || $props.default",
     :required=    "required",
+    :placeholder= "placeholder"
     @input=       "$emit('input', name === 'rol' ? Number($event) : $event)"
     :id=          "id"
     :arrow=       "arrow"
@@ -135,6 +136,7 @@ ValidationProvider(
     :value=         "value"
     @input=         "$emit('input', $event)"
   )
+
   //- sel-apartamente(
   //-   v-else-if=      "type === 'selApartamente'"
   //-   :optiuni=       "options"
@@ -194,17 +196,19 @@ import scari from 'form/scari'
 import multi from 'form/presets/multi'
 import contact from 'form/contact'
 
-import servicii from 'c/servicii'
 import contoare from 'form/contoare'
 import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
+
+import servicii from 'c/servicii'
 import tax from  'c/renderlessTax'
 import rel from 'c/rel'
 import bani from 'c/bani'
 import avatar from 'c/avatar'
 import dateTime from 'c/dateTime'
 import skey from 'c/shortkeys'
+import dropdown from 'c/dropdown'
 
 import transformOnInput from 'helpers/transformOnInput'
 import { mixin as clickaway } from 'vue-clickaway'
@@ -289,6 +293,10 @@ export default {
     id: {
       type: String,
       default: 'NOID!'
+    },
+    default: {
+      type: [Object, Number, String, Array, Boolean],
+      default: null
     },
     name: {
       type: String,
@@ -436,6 +444,7 @@ export default {
     contoare,
     dateTime,
     distribuire,
+    dropdown,
     file,
     labl,
     multi,
@@ -849,11 +858,14 @@ span[data-type="userAvatar"]
   margin 0 auto
 
 span[data-type="$"]
-  margin-left auto
+  // margin-left auto // strica asoc single
 
   *
     text-align right
     justify-content flex-end
+
+  .bani
+    margin 8px 0
 
   span
     white-space nowrap
@@ -886,62 +898,38 @@ input[name="nr"]
   font-size 14px
 
 .sort
-  &.field
-    margin-bottom auto
+  .root
+    .value
+      &:before
+        content ''
+        display inline-block
+        vertical-align middle
+        position relative
+        size 16px
+        background-image embedurl('~static/icons/ui/grid.svg', 'utf8')
+        background-repeat no-repeat
+        background-size 16px
+        // background-position calc(100% - 16px) 50%
+  [role="group"]
+    display flex
+    flex-flow row nowrap
+    position relative
+    margin 0
 
-  > label
-    display none
+    [role="option"]
+      flex 1 1 100%
+      text-align right
 
-  > div[role="radiogroup"]
-    width 100%
+      &+[role="option"]
+        position absolute
+        right 0
+        width 40px
+        background red
 
-    > .radios
-      justify-content space-around
-
-  input[type="radio"]
-    &:checked
-      &+label
-        &:after
-          content ''
-          size 20px
-          background embedurl('~static/icons/ui/chevron-down.svg', 'utf8')
-          background-size 11px
-          position absolute
-          display block
-          right -9px
-          top 50%
-          transform translateY(-50%)
-          background-repeat no-repeat
-          background-position 50% 50%
-
-        > span
-          background-color: lighten(palette.tertiary, 90%)
-
-    &+label[data-id="sort.la"]
-      > span:before
-        border 0
-        background-image embedurl('~static/icons/ui/clock.svg', 'utf8')
-
-    &+label[data-id="sort.az"]
-      > span:before
-        content 'AZ'
-        border 0
-        background none
-        font-size 16px
-        line-height 22px
-        font-weight 500
-        font-family: config.typography.fams.headings
-
-
-  &.reverseActive
-    input[type="radio"]
-      &:checked
-        &+label
-          > span
-            background-color: lighten(palette.secondary, 90%)
-
-          &:after
-            transform rotate(180deg)
+    .label
+      position absolute
+      margin 0
+      pointer-events none
 
 .vue-tel-input
   &+.vue-tel-input

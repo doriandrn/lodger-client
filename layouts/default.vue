@@ -318,7 +318,7 @@ footerHeight = 40px
     background-color transparent
     -webkit-app-region: drag
 
-    .edd-root
+    .root
       width 160px
 
     .inner

@@ -1,9 +1,5 @@
 <template lang="pug">
-sction#pg3(boxes)
-  nav.view
-    li tree
-    li boxes
-
+sction#idx(boxes)
   list.list(
     v-for=        "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
     v-if=         "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
@@ -14,7 +10,7 @@ sction#pg3(boxes)
   )
     header(slot-scope=  "{ taxonomy, subscriber }")
       h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
-        small(v-if="taxonomy.totals") {{ subscriber.ids.length }} / {{ taxonomy.totals }}
+        small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
 
       button.new(
         :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
@@ -23,15 +19,19 @@ sction#pg3(boxes)
       ) +
 
       field.sort(
-        v-if=     "subscriber && subscriber.ids.length > 1"
-        type=     "radios"
-        label=    "sort.label"
-        :value=  "subscriber.criteria.sort"
-        :id=       "`sort-${ subscriber.name }-${tax}`"
-        :options=  "Object.assign({}, ...taxonomy.form.schema.indexes.map(n => ({ [n] : 0 })) )"
-        required= true
-        :class=     "{ reverseActive: subscriber.criteria && subscriber.criteria.sort && subscriber.criteria.sort < 1 }"
-        @click=    "subscriber.criteria.sort = $event.checked ? { [$event.index]: -1 } : { [$event.index]: 1 }; debug($event)"
+        v-if=           "subscriber && subscriber.criteria && subscriber.criteria.sort && taxonomy.form.schema.indexes.length"
+        type=           "select"
+        label=          "sort.label"
+
+        :placeholder=   "$lodger.i18n.sort.placeholder"
+        :id=            "`sort-${ subscriber.name }-${tax}`"
+        :options=       "Object.assign({}, ...taxonomy.form.schema.indexes.map(n => ({ [n.replace('.[].', '_')]: { [`${n}-desc`] : 'desc', [`${n}-asc`] :  'asc' } })) )"
+
+        @input=         "subscriber.criteria.sort = { [$event.split('-')[0]] : $event.split('-')[1] }"
+        :value=         "Object.keys(subscriber.criteria.sort).length > 0 ? `${Object.keys(subscriber.criteria.sort)[0]}-${subscriber.criteria.sort[Object.keys(subscriber.criteria.sort)[0]]}` : null"
+
+        required=       true
+        hide-label
       )
 
       //- p(v-if="subscriber.refsIds") {{ subscriber.refsIds }}
@@ -53,13 +53,13 @@ sction#pg3(boxes)
         @click= "subscriber.edit(item[subscriber.primaryPath])"
       )
 
-  .stats(slot="sidebar")
-    h3 stats
+  //- .stats(slot="sidebar")
+  //-   h3 stats
 
-    h4 Ultimele 30 de zile
+  //-   h4 Ultimele 30 de zile
 
-  .widget(slot="sidebar")
-    h3 latest actions
+  //- .widget(slot="sidebar")
+  //-   h3 latest actions
 
 
 </template>
@@ -118,12 +118,15 @@ typeColors = config.typography.palette
     button
       background transparent
 
-#pg3
+#idx
   .inner
-    display grid
-    grid-template-columns 12px 12px 12px
-    grid-template-rows 12px 12px 12px
-    // flex-flow row nowrap
+    > div
+      // size 100%
+      // display grid
+      // grid-template-columns 12px 12px 12px
+      // grid-template-rows 12px 12px 12px
+      display flex
+      flex-flow row wrap
 
   *
     user-select none
@@ -173,12 +176,6 @@ typeColors = config.typography.palette
 
     [data-tax="apartamente"]
       order 3
-
-    .sort
-      background-color: rgba(black, .05)
-
-
-
 
   h3
     margin-bottom 0

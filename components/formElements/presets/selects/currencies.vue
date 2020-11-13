@@ -60,15 +60,15 @@ currencies = RON EUR USD AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN
 cryptos = BTC LTC NANO ETH XRP DGB DASH XMR XLM XEM WAVES ZEC SNT
 
 .currency
-  .edd-body
+  .body
     width 230px
     left auto
 
-  .edd-value
+  .value
     &:before
       content attr(textContent)
 
-  .edd-group
+  [role="group"]
     > div[title]
       position relative
       display flex

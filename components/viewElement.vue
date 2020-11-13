@@ -11,7 +11,7 @@ timp(
 )
 bani(
   v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
-  :valoare="value"
+  :valoare="value.suma"
 )
 suprafata(
   v-else-if=  "type === 'suprafata'"

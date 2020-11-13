@@ -260,7 +260,7 @@ export default Observer ({
   fieldset.header
     .fields
       grid-template-areas:
-        "nume nume nume . balanta balanta"\
+        "nume nume nume nume balanta balanta"\
         "servicii servicii servicii users users users"\
         "metaL metaL . . metaR metaR"
 

@@ -5,6 +5,7 @@ select(
   :value=     "value"
   @change=    "$emit('input', $event.target.value)"
 )
+  option(v-if="placeholder" value="" data-placeholder) {{ placeholder }}
   option(
     v-for=      "option, key in options",
     :value=     "option.id || key",
@@ -17,6 +18,7 @@ select(
   :value=     "value"
   @change=    "$emit('input', $event.target.value)"
 )
+  option(v-if="placeholder" value="" data-placeholder) {{ placeholder }}
   optgroup(
     v-for=  "groupOpts, name in options"
     :label= "optGrpLabels && optGrpLabels[name] ? optGrpLabels[name] : name"
@@ -25,7 +27,7 @@ select(
       v-for=      "option, key in groupOpts"
       :value=     "option.id || key",
       :selected=  "value === option.id || value === key"
-    ) {{ typeof option === 'string' ? option : typeof option === 'object' ? `${option.symbol || option.name}` : undefined }}
+    ) {{ typeof option === 'string' ? option : typeof option === 'object' ? `${option.symbol || option.name}` : option }}
 </template>
 
 <script>
@@ -36,10 +38,43 @@ export default {
     const { parentNode } = this.$el.parentNode
     this.edd = edd(this.$el, {
       classNames: {
+        head: 'head',
+        value: 'value',
+        arrow: 'arrow',
+        select: 'select',
+        itemsList: 'list',
+
+        body: 'body',
+        bodyScrollable: 'scrollable',
+        bodyAtTop: 'top',
+        bodyAtBottom: 'bottom',
+
+        root:           'root',
+        rootOpen:       'open',
+        rootOpenAbove:  'above',
+        rootOpenBelow:  'below',
+        rootDisabled:   'disabled',
+        rootInvalid:    'invalid',
+        rootFocused:    'focused',
+        rootHasValue:   'has-value',
+        rootNative:     'native',
+
+        gradientTop:    'top',
+        gradientBottom: 'bottom',
+
         option: '',
         optionDisabled: 'disabled',
         optionFocused:  'focused',
-        optionSelected: 'selected'
+        optionSelected: 'selected',
+
+        group: '',
+        groupLabel: 'label',
+        groupHasLabel:  '',
+        groupDisabled: 'disabled'
+      },
+      behavior: {
+        showPlaceholderWhenOpen: false
+        // openOnFocus: true
       }
     })
   },
@@ -69,6 +104,10 @@ export default {
       default () {
         return false
       }
+    },
+    placeholder: {
+      type: String,
+      default: null
     },
     message: {
       type: String,
@@ -114,7 +153,6 @@ select
   padding 8px 24px 8px 4px
   min-height 32px
   flex 1 1 auto
-  // max-width 180px
   width 100%
   border 0
   position relative
@@ -141,7 +179,6 @@ select
     border-radius 0
 
   option
-    // display block
     border 0
     padding 8px 24px
     background white
@@ -158,133 +195,145 @@ select
     background white
     border 0
 
-.edd
-  &-root
-    display: inline-block;
-    position: relative;
-    user-select: none;
-    line-height 20px
-    height 40px
+.root
+  display: inline-block;
+  position: relative;
+  user-select: none;
+  line-height 20px
+  height 40px
 
-    *
-    *::before
-    *::after
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+  *
+  *::before
+  *::after
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 
-    div[role="option"]
-      padding: 6px 10px;
-      cursor poiner
-      // transition: background-color 250ms, color 250ms, border-color 250ms;
+  .list
+    overflow: auto;
+    max-height: 0;
+    transition: max-height 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    -webkit-overflow-scrolling: touch;
 
-      &:not(:last-child)
-        border-bottom: 1px solid #eee;
-
-      &.selected
-        color: hlColor
-
-        &:after
-          color: hlColor !important
-
-      &.focused
-      &:hover
-      &:focus
-        &:not(.disabled)
-          background: hlColor
-          border-bottom-color: hlColor
-          color: white
-
-          &:after
-            color white !important
-
-    &:after
-      color white !important
-
-    &-disabled
-      color: #ccc;
-      cursor: not-allowed
-
-    &-focused
-      .edd-head
-        border-color: hlColor;
-
-    &-invalid
-      border-color: #ff6969;
-
-    &-open
-      .edd
-        &-arrow
-          transform: rotate(180deg);
-
-        &-body
-          opacity: 1;
-          pointer-events: all;
-          transform: scale(1);
-          transition: opacity 200ms, transform 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-      &-above
-        .edd-body
-          bottom: 100%;
-
-      &-below
-        .edd-body
-          top 100%
-
-    &-native
-      .edd-select
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-
-  &-head
+  .head
     position: relative;
     overflow: hidden;
     border: 1px solid #eee;
     transition: box-shadow 200ms;
     background: white;
 
-  &-head
-  &-body
+  .head
+  .body
     border-radius: 20px;
 
-  &-body
+  .body
     opacity: 0;
     position: absolute;
     left: 0;
     right: 0;
-    border: 1px solid #eee;
+    border: 1px solid transparent;
     pointer-events: none;
     overflow: hidden;
     margin 0
     z-index: 999;
-    box-shadow: 0 0 20px rgba(black, .1);
-    // transform: scale(0.95);
     background: white;
 
-  &-select
+  .select
     position: absolute;
     opacity: 0;
     width: 100%;
     left: -100%;
     top: 0;
 
-  &-value
+  .value
     width: 100%;
     display: inline-block;
     vertical-align: middle;
     padding: 10px 35px 10px 16px;
 
-  &-group
-    &-label
+  .label
+  .value
+  div[role="option"]
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+  div[role="option"]
+    padding: 6px 10px;
+    cursor poiner
+    // transition: background-color 250ms, color 250ms, border-color 250ms;
+
+    &:not(:last-child)
+      border-bottom: 1px solid #eee;
+
+    &.selected
+      color: hlColor
+
+      &:after
+        color: hlColor !important
+
+    &.focused
+    &:hover
+    &:focus
+      &:not(.disabled)
+        background: hlColor
+        border-bottom-color: hlColor
+        color: white
+
+        &:after
+          color white !important
+
+  &:after
+    color white !important
+
+  &.disabled
+    color: #ccc;
+    cursor: not-allowed
+
+  &.focused
+    .head
+      border-color: hlColor;
+
+  &.invalid
+    border-color: #ff6969;
+
+  &.open
+    .arrow
+      transform: rotate(180deg);
+      color: hlColor
+
+    .body
+      opacity: 1;
+      pointer-events: all;
+      transform: scale(1);
+      border-color: #eeeeee
+      box-shadow: 0 0 20px rgba(black, .1)
+      transition: opacity 200ms, transform 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    &.above
+      .body
+        bottom 100%
+
+    &.below
+      .body
+        top 100%
+
+  &.native
+    .select
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+
+  [role="group"]
+    .label
       font-size 12px;
       font-weight 400;
       padding 6px 12px;
       margin-top 12px
       color #aaa
 
-  &-arrow
+  .arrow
     position: absolute;
     size 10px
     top: calc(50% - 5px);
@@ -305,42 +354,23 @@ select
       transform-origin: 50% 25%;
 
 
-.edd-root-open .edd-arrow,
-.edd-root:not(.edd-root-disabled):not(.edd-root-open) .edd-head:hover .edd-arrow {
-    color: blue;
-}
+// .edd-root:not(.edd-root-disabled):not(.edd-root-open) .edd-head:hover .edd-arrow {
+//     color: blue;
+// }
 
-.edd-value,
-.edd-option,
-.edd-group-label {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
 
-.edd-root:not(.edd-root-disabled) .edd-value,
-.edd-option {
-    cursor: pointer;
-}
+// .edd-root:not(.edd-root-disabled) .edd-value,
+// .edd-option {
+//     cursor: pointer;
+// }
 
-.edd-items-list {
-    overflow: auto;
-    max-height: 0;
-    transition: max-height 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    -webkit-overflow-scrolling: touch;
-}
+// .edd-group-has-label .edd-option {
+//     padding-left: 14px;
+// }
 
-.edd-group-label {
-
-}
-
-.edd-group-has-label .edd-option {
-    padding-left: 14px;
-}
-
-.edd-option-disabled,
-.edd-group-disabled .edd-option {
-    cursor: default;
-    color: #ccc;
-}
+// .edd-option-disabled,
+// .edd-group-disabled .edd-option {
+//     cursor: default;
+//     color: #ccc;
+// }
 </style>

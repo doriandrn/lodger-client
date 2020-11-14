@@ -114,9 +114,7 @@
 
   main
     nuxt(:nuxt-child-key="activePage")
-
-    .devTools(v-if="env === 'development'")
-      p lola
+    dev-tools(v-if="env === 'development'")
 
   footr
     nav
@@ -174,6 +172,7 @@ import dropdown from 'c/dropdown'
 import results from 'c/searchResults'
 import tax from 'c/tax'
 import viw from 'c/viewElement'
+import devTools from 'c/dev/toolsWindow'
 
 import Package from '../package.json'
 
@@ -249,6 +248,7 @@ export default Observer ({
     footr,
     cale,
     currencies,
+    devTools,
     frm,
     prompt,
     field,

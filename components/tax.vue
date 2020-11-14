@@ -131,9 +131,4 @@ typeColors = config.typography.palette
       &:before
         z-index 5
         transform translateY(0)
-
-  .sort
-    margin 0 -8px
-    flex 1 1 100%
-
 </style>

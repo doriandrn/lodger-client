@@ -39,7 +39,7 @@
     "@popperjs/core": "^2.5.4",
     "dayjs": "^1.9.6",
     "easydropdown": "^4.2.0",
-    "lodger": "^0.0.25",
+    "lodger": "^0.0.31",
     "mobx": "^5.9.4",
     "mobx-vue": "^2.0.11",
     "money": "^0.2.0",

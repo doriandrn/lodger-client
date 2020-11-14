@@ -8,8 +8,9 @@ ValidationProvider(
   :data-type=   "isRel ? 'rel' : type"
   :data-icon=   "type === 'search' ? 'search' : icon"
   :data-req=    "required"
+  :skip-if-empty= "false"
 
-  :class=       "{ error, value, zebra: type === 'scari' }"
+  :class=       "{ error, value, away: type === 'search' && !focusing, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
@@ -40,7 +41,8 @@ ValidationProvider(
     @keyup.up=      "indexSelectat(0)"
     @keydown.esc=   "inchideModale"
     :class=         "{ av: !!value }"
-    @clickAway=     "$emit('clickedAway')"
+    v-on-clickaway=   "clickAway"
+    @focus=       "$emit('focusing'); if (type === 'search') focusing = true"
   )
   rel(
     v-else-if= "isRel"
@@ -180,7 +182,10 @@ ValidationProvider(
 
   skey(v-if=  "focusShortkeys" :keys="focusShortkeys")
 
-  slot
+  .errors
+    .err(v-for="e in errors") {{ e }}
+
+  slot(:value="value")
 </template>
 
 <script>
@@ -276,11 +281,7 @@ export default {
     // CUSTOM  only for search
     if (this.type !== 'search') return {}
     return {
-      results: {
-        apartamente: [],
-        furnizori: [],
-        utilizatori: []
-      },
+      focusing: false,
       indexRezultatSelectat: 0
     }
   },
@@ -459,6 +460,7 @@ export default {
     txtarea,
     ValidationProvider
   },
+
   methods: {
     ...mapActions({
       sterge: 'asociatie/sterge'
@@ -491,8 +493,6 @@ export default {
       this.$emit('input', rezultat.id)
       this.clearResults()
     },
-
-
 
 
     // handleClick (e) {
@@ -555,13 +555,14 @@ export default {
 
     clickAway () {
       if (this.type !== 'search') return
+      this.focusing = false
       this.$emit('clickAway')
     },
 
-    inchideModale () {
-      const { modalOpen, closeModal } = this
-      if (modalOpen) closeModal()
-    },
+    // inchideModale () {
+    //   const { modalOpen, closeModal } = this
+    //   if (modalOpen) closeModal()
+    // },
 
     indexSelectat (incDec) {
       const { type } = this
@@ -613,7 +614,6 @@ textarea
 
   &::placeholder
     color: typeColors.meta
-    font-size 12px
     font-weight 100
     opacity 0
     transition opacity .1s ease
@@ -671,6 +671,9 @@ textarea
   width 100%
   height 100%
   max-width 100%
+
+  &:disabled
+    text-overflow: ellipsis
 
 
 [data-type="rel"]
@@ -854,6 +857,16 @@ span[data-type]
   display flex
   flex-flow row nowrap
 
+  input[type="search"]
+    &::placeholder
+      font-size 12px
+
+  &.away
+    .results
+      opacity 0
+      visibility hidden
+
+
 span[data-type="userAvatar"]
   margin 0 auto
 
@@ -898,37 +911,94 @@ input[name="nr"]
   font-size 14px
 
 .sort
+  display flex
+  flex-flow row nowrap !important
+  margin-right 12px
+  position relative
+  height 40px
+
+  button[data-icon="x"]
+    position absolute
+    right 0
+    size 24px
+    top 8px
+
+    &:before
+      margin-right 0
+
+  .extra
+    display inline-block
+    margin-left 8px
+    line-height 24px
+    padding 8px
+    border-left 1px solid rgba(black, .05)
+
+    span
+      pointer-events none
+
+  .body
+    width 230px
+
+  .arrow
+    display none
+
+  .head
+  .value
+    border 0
+    border-radius 0
+    background transparent
+    padding 0
+
+  &.value
+    padding-right 32px
+
   .root
+    height 100%
+    display flex
+    align-items center
+
     .value
       &:before
         content ''
         display inline-block
         vertical-align middle
-        position relative
+        position relaive
         size 16px
         background-image embedurl('~static/icons/ui/grid.svg', 'utf8')
         background-repeat no-repeat
-        background-size 16px
-        // background-position calc(100% - 16px) 50%
+        background-size 11px
+        background-position 50% 1px
+
   [role="group"]
     display flex
     flex-flow row nowrap
     position relative
     margin 0
+    rSize = 50px
 
     [role="option"]
       flex 1 1 100%
       text-align right
+      padding-right: rSize + 20px
+      border 0
 
       &+[role="option"]
         position absolute
         right 0
-        width 40px
-        background red
+        height 100%
+        padding-right 0
+        flex-basis: rSize
+        width: rSize
+        max-width: rSize
+        border-left 1px solid rgba(black, .05)
+        border-bottom 1px solid rgba(black, .05)
+        text-align left
+        background-color white
 
     .label
       position absolute
       margin 0
+      text-transform capitalize
       pointer-events none
 
 .vue-tel-input

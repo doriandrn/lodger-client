@@ -9,7 +9,6 @@
 
 <template lang="pug">
 div
-  //- p ss: {{ shouldShow }} {{ subscriber.name }}
   slot(:taxonomy="taxonomy" :subscriber="subscriber" :disabled="disabled")
 
   ul(
@@ -70,7 +69,7 @@ export default Observer({
     if (subscriber.name === 'unsubscribed') return
     await taxonomy.subscribe(subscriberName, {
       sort: {
-        createdAt: -1
+        createdAt: 'asc'
       }
     })
     this.subscriber = taxonomy.subscribers[subscriberName]

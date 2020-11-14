@@ -5,6 +5,7 @@ div
       type=       "number"
       :value=     "suma"
       :disabled=  "disabled"
+      :placeholder= "isCrypto ? '0,00000000' : '0,00'"
       @change=    "change($event, true)"
     )
 

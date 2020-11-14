@@ -10,17 +10,10 @@ frm#single(
 )
   slot(slot="beforeHeader" :isNew="doc._isTemporary")
 
-  //- dateTime(
-  //-   v-if=       "!doc._isTemporary"
-  //-   :unixTime=  "createdAt"
-  //-   slot=       "headerEnd"
-  //-   liveUpdate
-  //- ) {{ $lodger.i18n.registered }}
-
   blocuri.struct(
     v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"
     layout=     "interactiv"
-    :blocuri=   "$lodger.blocuri.subscribers.single.items"
+    :blocuri=   "doc._isTemporary ? null : $lodger.blocuri.subscribers.single.items"
   )
 </template>
 
@@ -307,9 +300,9 @@ export default Observer ({
   > header
     border-bottom 1px solid
 
-  .list
+  /* .list - comentat, futte dropdownurile
     display flex
-    flex-flow row-reverse nowrap
+    flex-flow row-reverse nowrap */
 
   button.new
     size 40px

@@ -251,6 +251,9 @@ select
     vertical-align: middle;
     padding: 10px 35px 10px 16px;
 
+  &:not(.disabled)
+    cursor pointer
+
   .label
   .value
   div[role="option"]

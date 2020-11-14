@@ -13,7 +13,7 @@ sction#idx(boxes)
         small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
 
       field.sort(
-        v-if=           "subscriber && subscriber.criteria && subscriber.criteria.sort && taxonomy.form.schema.indexes.length"
+        v-if=           "subscriber && subscriber.criteria && subscriber.criteria.sort && taxonomy.form.schema.indexes.length && subscriber.ids.length > 1"
         type=           "select"
         :label=         "$lodger.i18n.sort.placeholder"
 
@@ -29,7 +29,7 @@ sction#idx(boxes)
       )
         .extra(v-if="value" slot-scope= "{ value }")
           span {{ value.split('-')[0] }}
-          button(data-icon="x" v-tooltip="`clear`" @click="delete subscriber.criteria.sort[value.split('-')[0]]")
+          button(data-icon="x" v-tooltip="`clear`" @click="subscriber.criteria.sort[value.split('-')[0]] = undefined; delete subscriber.criteria.sort[value.split('-')[0]]")
 
       button.new(
         :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
@@ -157,6 +157,15 @@ typeColors = config.typography.palette
     .inner > div > *
       margin 8px
 
+      +above(l)
+        margin 16px
+
+      +above(xl)
+        margin 20px
+
+      +desktop()
+        margin 24px
+
     [data-tax]
       display flex
       flex-flow column nowrap
@@ -166,7 +175,7 @@ typeColors = config.typography.palette
       flex 1 1 100%
 
       +above(l)
-        flex 0 1 266px
+        flex 1 1 266px
 
     [data-tax="utilizatori"]
       order 0

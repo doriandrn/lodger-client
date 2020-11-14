@@ -240,6 +240,9 @@ export default Observer ({
     [data-type="number"]
       grid-area nr
 
+      input#nr
+        font-size 20px
+
     [data-type="$"]
       grid-area balanta
 

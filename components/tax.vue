@@ -68,7 +68,7 @@ typeColors = config.typography.palette
     align-items center
     position relative
     overflow hidden
-    padding 8px
+    padding 11px 12px
     width 100%
 
     .ap__nr

@@ -17,7 +17,7 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Nuxt.js project' }
+      { hid: 'description', name: 'description', content: 'Lodger' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -113,7 +113,7 @@ module.exports = {
 
     postcss: {
       plugins: {
-        'lost': {},
+        // 'lost': {},
         // 'postcss-font-magician': {
         //   // protocol: 'https:',
         //   display: 'swap',
@@ -169,7 +169,7 @@ module.exports = {
 
     extend (config) {
       config.node = { fs: 'empty' }
-      console.info(config.module.rules.filter(m => m.test && String(m.test).indexOf('styl') > -1))
+      // console.info(config.module.rules.filter(m => m.test && String(m.test).indexOf('styl') > -1))
       // Extend aliases
       Object.assign(config.resolve.alias, {
         stream: 'stream-browserify',

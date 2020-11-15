@@ -13,7 +13,7 @@ div
 
   ul(
     v-if=   "documents.length || taxonomy && subscriber.ids.length"
-    :class= "{ fetching: subscriber.feetching }"
+    :class= "{ fetching: subscriber.fetching }"
   )
     slot(
       name=   "item"

@@ -157,10 +157,12 @@ ValidationProvider(
   )
   tax(
     v-else-if=  "type === 'taxonomy'"
-    :populated= "value || []"
+    :taxonomy=  "$lodger[id]"
+    subscriberName= "single"
   )
-    div(slot="item" slot-scope="{ item }") {{ item.name }}
-    button.new(@click="") +
+    //- :populated= "value || []"
+    //- div(slot="item" slot-scope="{ item }") {{ item.name }}
+    //- button.new(@click="") +
 
   multi(
     v-else-if= "type === 'contactFields'"
@@ -207,7 +209,7 @@ import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 
 import servicii from 'c/servicii'
-import tax from  'c/renderlessTax'
+import tax from  'c/tax'
 import rel from 'c/rel'
 import bani from 'c/bani'
 import avatar from 'c/avatar'
@@ -230,6 +232,9 @@ import { ValidationProvider, extend } from 'vee-validate';
 
 export default {
   mixins: [ clickaway ],
+  // beforeCreate () {
+  //   this.$options.components.tax = require('c/tax').default
+  // },
   computed: {
     isRel () {
       return this.id.indexOf('Id') === this.id.length - 2
@@ -570,9 +575,9 @@ export default {
 
       const { taxes, indexRezultatSelectat, results } = this
 
-      taxes.forEach(tax => {
+      // taxes.forEach(tax => {
 
-      })
+      // })
       //+
       // type === 'search' ? (indexRezultatSelectat < results[searchTaxonomy].length - 1 ? indexRezultatSelectat++ : indexRezultatSelectat = 0) : null
       // -
@@ -938,6 +943,7 @@ input[name="nr"]
 
   .body
     width 230px
+    left auto
 
   .arrow
     display none

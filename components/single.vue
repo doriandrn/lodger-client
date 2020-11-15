@@ -52,6 +52,9 @@ export default Observer ({
       const { $lodger, doc, taxonomy, debug, _sub } = this
       const { modal, mainSubName } = $lodger
 
+      if (!doc._isTemporary)
+        return
+
       await doc.save(e);
       modal.closeable = true
       await modal.close()
@@ -173,9 +176,10 @@ export default Observer ({
     },
     breadcrumbs () {
       const $tax = this.$lodger[this.taxonomy]
-      const { parents } = $tax
+      const { parents, form: { fields } } = $tax
+
       if (!parents || !parents.length) return
-      return parents.filter(parent => this.fields.indexOf(parent + 'Id') > - 1).push('current')
+      return parents.filter(parent => Object.keys(fields).indexOf(parent + 'Id') > - 1)
     },
     previewFields () {
       return this.form.previewFields

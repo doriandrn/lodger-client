@@ -2,13 +2,16 @@
 renderlessTax.list(
   :taxonomy=  "taxonomy"
   :subscriberName=  "subscriberName"
+  v-if= "taxonomy"
 )
   button.new(
-    slot-scope="{ subscriber }"
-    :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
-    @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
-    @click=       "$lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
-  ) +
+    slot-scope=   "{ subscriber }"
+    type=         "button"
+    :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < taxonomy.parents.length)"
+    @click.shift= "debug('omfg', Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds })); taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
+    @click=       "debug('wtt'); $lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
+  ) ++
+    span(v-if="subscriber.refsIds") {{ Object.keys(subscriber.refsIds) }} {{ Object.values(subscriber.refsIds) }}
   li(
     slot= "item"
     slot-scope="{ item, subscriber, taxonomy }"
@@ -25,6 +28,7 @@ renderlessTax.list(
       :avatarSeed= "item['name']"
       @click= "subscriber.edit(item[subscriber.primaryPath])"
     )
+p(v-else)  invalid tax
 </template>
 
 <script>

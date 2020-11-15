@@ -55,6 +55,7 @@ export default {
 <style lang="stylus">
 // symbolsNames = json('symbols-names.json')
 // currencies = keys(symbolsNames)
+
 currencies = RON EUR USD AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BRL BSD BTN BWP BYN BZD CAD CDF CHF CLP CNY COP CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HRK HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LTL LYD MAD MDL MGA MKD MMK MNT MOP MRO MUR MVR MWK MXN MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RSD RUB RWF SAR SBD SCR SEK SGD SHP SLL SOS SRD STD SVC SSP SYP SZL THB TJS TND TOP TRY TTD TWD TZS UAH UGX UYU UZS VEF VES VND VUV WST XAF XCD XOF XPF YER ZAR ZMW
 
 cryptos = BTC LTC NANO ETH XRP DGB DASH XMR XLM XEM WAVES ZEC SNT
@@ -108,22 +109,24 @@ cryptos = BTC LTC NANO ETH XRP DGB DASH XMR XLM XEM WAVES ZEC SNT
         &:after
           color white
 
-    for c in currencies
-      div[title={c}]
-        &:before
-          height 16px
-          background-color rgba(black, .1)
-          background-image: url('~static/icons/flags/' + c + '.png')
-          box-shadow 0px 2px rgba(black, .15)
+    // for c in currencies
+    //   lc = lowerCase(c)
+    //   div[title={c}]
+    //     &:before
+    //       height 16px
+    //       background-color rgba(black, .1)
+    //       background-image: url('~static/icons/flags/' + lc + '.png')
+    //       box-shadow 0px 2px rgba(black, .15)
 
-        &:after
-          content var(s('--' + c))
+    //     &:after
+    //       content var(s('--' + c))
 
-    for c in cryptos
-      div[title={c}]
-        &:before
-          background-image: url('~static/icons/cryptos/' + c + '@2x.png')
+    // for c in cryptos
+    //   lc = lowerCase(c)
+    //   div[title={c}]
+    //     &:before
+    //       background-image: url('~static/icons/cryptos/' + lc + '@2x.png')
 
-        &:after
-          content var(s('--' + c))
+    //     &:after
+    //       content var(s('--' + c))
 </style>

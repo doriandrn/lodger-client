@@ -152,24 +152,33 @@ module.exports = {
       }
     },
 
-    plugins: [
-      new webpack.LoaderOptionsPlugin({
-        options: {
-          context: __dirname,
-          stylus: {
-            include: [
-              path.join(__dirname, 'node_modules', 'lodger')
-            ],
-            preferPathResolver: 'webpack',
-            options: ['resolve url']
-          }
-        }
-      })
-    ],
+    // plugins: [
+    //   new webpack.LoaderOptionsPlugin({
+    //     options: {
+    //       context: __dirname,
+    //       stylus: {
+
+    //       }
+    //     }
+    //   })
+    // ],
 
     extend (config) {
       config.node = { fs: 'empty' }
-      // console.info(config.module.rules.filter(m => m.test && String(m.test).indexOf('styl') > -1))
+      const stylLoader = config.module.rules.filter(m => m.test && String(m.test).indexOf('styl') > -1)
+      stylLoader.options = {}
+      Object.assign(stylLoader.options, {
+        use: [
+          function () { return function (style) {
+            style.define('lowerCase', str => str.toLowerCase())
+          }}
+        ],
+        include: [
+          path.join(__dirname, 'node_modules', 'lodger')
+        ],
+        preferPathResolver: 'webpack',
+        options: ['resolve url']
+      })
       // Extend aliases
       Object.assign(config.resolve.alias, {
         stream: 'stream-browserify',

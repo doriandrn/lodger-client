@@ -12,7 +12,7 @@ const path = require('path')
 const config = require('./nuxt.config')
 const isDev = process.env.NODE_ENV !== 'production'
 
-const loadURL = serve({ directory: '.' })
+const loadURL = serve({ directory: 'dist' })
 
 // const port = 31337
 let win

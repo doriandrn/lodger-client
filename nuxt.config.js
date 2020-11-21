@@ -23,7 +23,7 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  ssr: !dev,
+  ssr: false,
   target: 'static',
   // server: {
   //   port: 8000, // default: 3000

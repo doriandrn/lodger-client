@@ -31,57 +31,57 @@ select(
 </template>
 
 <script>
-// import edd from 'easydropdown'
+import edd from 'easydropdown'
 
 export default {
-  // mounted () {
-  //   const { parentNode } = this.$el.parentNode
-  //   this.edd = edd(this.$el, {
-  //     classNames: {
-  //       head: 'head',
-  //       value: 'value',
-  //       arrow: 'arrow',
-  //       select: 'select',
-  //       itemsList: 'list',
+  mounted () {
+    const { parentNode } = this.$el.parentNode
+    this.edd = edd(this.$el, {
+      classNames: {
+        head: 'head',
+        value: 'value',
+        arrow: 'arrow',
+        select: 'select',
+        itemsList: 'list',
 
-  //       body: 'body',
-  //       bodyScrollable: 'scrollable',
-  //       bodyAtTop: 'top',
-  //       bodyAtBottom: 'bottom',
+        body: 'body',
+        bodyScrollable: 'scrollable',
+        bodyAtTop: 'top',
+        bodyAtBottom: 'bottom',
 
-  //       root:           'root',
-  //       rootOpen:       'open',
-  //       rootOpenAbove:  'above',
-  //       rootOpenBelow:  'below',
-  //       rootDisabled:   'disabled',
-  //       rootInvalid:    'invalid',
-  //       rootFocused:    'focused',
-  //       rootHasValue:   'has-value',
-  //       rootNative:     'native',
+        root:           'root',
+        rootOpen:       'open',
+        rootOpenAbove:  'above',
+        rootOpenBelow:  'below',
+        rootDisabled:   'disabled',
+        rootInvalid:    'invalid',
+        rootFocused:    'focused',
+        rootHasValue:   'has-value',
+        rootNative:     'native',
 
-  //       gradientTop:    'top',
-  //       gradientBottom: 'bottom',
+        gradientTop:    'top',
+        gradientBottom: 'bottom',
 
-  //       option: '',
-  //       optionDisabled: 'disabled',
-  //       optionFocused:  'focused',
-  //       optionSelected: 'selected',
+        option: '',
+        optionDisabled: 'disabled',
+        optionFocused:  'focused',
+        optionSelected: 'selected',
 
-  //       group: '',
-  //       groupLabel: 'label',
-  //       groupHasLabel:  '',
-  //       groupDisabled: 'disabled'
-  //     },
-  //     behavior: {
-  //       showPlaceholderWhenOpen: false
-  //       // openOnFocus: true
-  //     }
-  //   })
-  // },
-  // beforeDestroy () {
-  //   if (this.edd)
-  //     this.edd.destroy()
-  // },
+        group: '',
+        groupLabel: 'label',
+        groupHasLabel:  '',
+        groupDisabled: 'disabled'
+      },
+      behavior: {
+        showPlaceholderWhenOpen: false
+        // openOnFocus: true
+      }
+    })
+  },
+  beforeDestroy () {
+    if (this.edd)
+      this.edd.destroy()
+  },
   props: {
     id: {
       type: String,

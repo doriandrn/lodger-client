@@ -1,6 +1,6 @@
 {
   "name": "lodger-client",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "Administrare imobile",
   "author": "Dorian Tudorache",
   "repository": "https://github.com/doriandrn/lodger-client.git",
@@ -42,6 +42,7 @@
     "cashify": "^2.4.4",
     "dayjs": "^1.9.6",
     "easydropdown": "^4.2.0",
+    "electron-serve": "^1.0.0",
     "lodger": "^0.0.49",
     "mobx": "^5.9.4",
     "mobx-vue": "^2.0.11",

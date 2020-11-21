@@ -1,18 +1,16 @@
 {
   "name": "lodger-client",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "Administrare imobile",
   "author": "Dorian Tudorache",
   "repository": "https://github.com/doriandrn/lodger-client.git",
   "private": false,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build && nuxt generate",
+    "build": "nuxt build && yarn generate",
     "start": "nuxt start",
     "generate": "nuxt generate --fail-on-error",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "build:app": "export ELECTRON_RUN_AS_NODE=1 && node ./electron.build.js",
-    "electest": "node electron dist/index.html",
     "precommit": "npm run lint",
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
@@ -21,6 +19,10 @@
   "build": {
     "appId": "org.numina.lodger",
     "productName": "Lodger",
+    "directories": {
+      "buildResources": "."
+    },
+    "files": ["dist/**/*", "main.js", "nuxt.config.js"],
     "mac": {
       "category": "public.app-category.finance"
     },

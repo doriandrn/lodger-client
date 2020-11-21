@@ -35,7 +35,7 @@ import shortkeys from 'c/shortkeys'
 
 import { createPopper } from '@popperjs/core'
 // import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow.js'
-import flip from '@popperjs/core/lib/modifiers/flip.js'
+// import flip from '@popperjs/core/lib/modifiers/flip.js'
 
 export default {
   data () {
@@ -59,7 +59,7 @@ export default {
       this._popperInstance = createPopper(but, drop, {
         modifiers: [
           // preventOverflow,
-          flip,
+          // flip,
           {
             name: 'offset',
             options: {

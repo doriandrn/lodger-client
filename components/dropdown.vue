@@ -34,7 +34,7 @@ import buton from 'form/button'
 import shortkeys from 'c/shortkeys'
 
 import { createPopper } from '@popperjs/core'
-import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow.js'
+// import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow.js'
 import flip from '@popperjs/core/lib/modifiers/flip.js'
 
 export default {
@@ -58,7 +58,7 @@ export default {
       this.open = true
       this._popperInstance = createPopper(but, drop, {
         modifiers: [
-          preventOverflow,
+          // preventOverflow,
           flip,
           {
             name: 'offset',

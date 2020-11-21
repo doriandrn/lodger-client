@@ -3,7 +3,8 @@
   "version": "0.0.24",
   "description": "Administrare imobile",
   "author": "Dorian Tudorache",
-  "private": true,
+  "repository": "https://github.com/doriandrn/lodger-client.git",
+  "private": false,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
@@ -16,6 +17,7 @@
     "server": "pouchdb-server --host 0.0.0.0 -p 10101 -m -d /tmp/pouchdb-server/ -n true"
   },
   "main": "main.js",
+  "homepage": "lodger.ro",
   "build": {
     "appId": "org.numina.lodger",
     "productName": "Lodger",

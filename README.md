@@ -1,5 +1,7 @@
 # Lodger
 
+![Build & Release](https://github.com/doriandrn/lodger-client/workflows/Build%20&%20Release/badge.svg)
+
 __O aplicație simplă și ușor de utilizat pentru administrarea imobilelor, menită să vină în ajutorul oricui dorește a deveni / este administrator de asociații de locatari / proprietari;__
 
 - complet transparentă din punct de vedere financiar tuturor utilizatorilor;

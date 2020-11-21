@@ -15,7 +15,7 @@ let win = null
 
 const servurl = 'http://localhost:' + port
 const genurl = url.format({
-  pathname: path.join(__dirname, 'index.html'),
+  pathname: path.join(__dirname, 'dist/index.html'),
   protocol: 'file:',
   slashes: true
 })
@@ -60,7 +60,7 @@ loadNuxt(isDev ? 'dev' : 'start').then(nuxt => {
     // win.loadURL(genurl)
     // win.on('closed', () => win = null)
     // pollServer()
-    win.loadFile('index.html')
+    win.loadFile('dist/index.html')
   }
 
   app.on('ready', newWin)

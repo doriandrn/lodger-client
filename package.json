@@ -1,13 +1,13 @@
 {
   "name": "lodger-client",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "Administrare imobile",
   "author": "Dorian Tudorache",
   "repository": "https://github.com/doriandrn/lodger-client.git",
   "private": false,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build",
+    "build": "nuxt build && nuxt generate",
     "start": "nuxt start",
     "generate": "nuxt generate --fail-on-error",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",

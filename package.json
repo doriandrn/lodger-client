@@ -1,6 +1,6 @@
 {
   "name": "lodger-client",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "Administrare imobile",
   "author": "Dorian Tudorache",
   "repository": "https://github.com/doriandrn/lodger-client.git",
@@ -24,6 +24,7 @@
     },
     "files": [
       "dist/**/*",
+      "static/**/*",
       "main.js",
       "nuxt.config.js"
     ],

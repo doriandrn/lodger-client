@@ -70,9 +70,9 @@
 
               currencies(
                 id=         "displayCurrency"
-                :value=     "$Lodger.displayCurrency"
-                @input=     "$Lodger.displayCurrency = $event"
-                :data-sym=  "$Lodger.displayCurrency"
+                :value=     "$lodger.displayCurrency"
+                @input=     "$lodger.displayCurrency = $event"
+                :data-sym=  "$lodger.displayCurrency"
               )
 
               field(
@@ -80,8 +80,8 @@
                 id=         "lang"
                 :label=     "$lodger.i18n.forms.preferences.fields.lang"
                 :options=   "Object.keys($lodger.supportedLangs).map(k => $lodger.supportedLangs[k].name)"
-                :value=     "$lodger.supportedLangs.map(l => l.code).indexOf($Lodger.locale)"
-                @input=     "$Lodger.locale = $event"
+                :value=     "$lodger.supportedLangs.map(l => l.code).indexOf($lodger.locale)"
+                @input=     "$lodger.locale = $event"
               )
 
               field(
@@ -201,10 +201,15 @@ export default Observer ({
     const { $lodger: { utilizatori, mainSubName, modal } } = this
     await utilizatori.subscribe(mainSubName, { autoSelectOnCRUD: true })
     const sub = utilizatori.subscribers[mainSubName]
+    await sub.updates
     if (!sub.ids.length) {
       modal.activeDoc = utilizatori.collection.newDocument({})
       modal.closeable = false
       modal.firstTime = true
+    } else {
+      if (!sub.selectedId) {
+
+      }
     }
   },
 

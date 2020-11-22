@@ -27,7 +27,7 @@ export default {
   	// moment.locale(this.$store.state.locale)
   },
   mounted () {
-    dayjs.locale(this.$Lodger.locale)
+    dayjs.locale(this.$lodger.locale)
     if (!this.liveUpdate) return
 
     if (this.ago) this.liveTime = this.timeFromNow()

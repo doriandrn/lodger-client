@@ -19,7 +19,7 @@ div
 
   span.bani.conv(
     v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
-  ) {{ Number(this.$Lodger.displayCurrency) !== this.moneda ? '~ ' : '' }}{{ numeral(convert(suma, { from: Number(this.$Lodger.displayCurrency), to: moneda, rates, base: apiBase })).format(isCrypto($Lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($Lodger.displayCurrency)")]
+  ) {{ Number($lodger.displayCurrency) !== this.moneda ? '~ ' : '' }}{{ numeral(convert(suma, { from: Number($lodger.displayCurrency), to: moneda, rates, base: apiBase })).format(isCrypto($lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($lodger.displayCurrency)")]
 
   div(v-if="!disabled")
     a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
@@ -81,7 +81,7 @@ export default Observer ({
     base: {
       type: Number,
       default () {
-        return Number(this.$Lodger.displayCurrency)
+        return Number(this.$lodger.displayCurrency)
       }
     }
   },
@@ -101,7 +101,7 @@ export default Observer ({
         this.monedaCustom :
         Number(this.valoare ?
           this.valoare.moneda :
-          this.$Lodger.displayCurrency
+          this.$lodger.displayCurrency
         )
     },
   }

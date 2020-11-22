@@ -22,7 +22,11 @@
     "directories": {
       "buildResources": "."
     },
-    "files": ["dist/**/*", "main.js", "nuxt.config.js"],
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "nuxt.config.js"
+    ],
     "mac": {
       "category": "public.app-category.finance"
     },
@@ -37,20 +41,23 @@
     }
   },
   "dependencies": {
-    "@dicebear/avatars": "^4.4.0",
-    "@dicebear/avatars-avataaars-sprites": "^4.4.0",
+    "@dicebear/avatars": "^4.4.1",
+    "@dicebear/avatars-avataaars-sprites": "^4.4.1",
     "@nuxtjs/axios": "^5.12.2",
     "@popperjs/core": "^2.5.4",
     "cashify": "^2.4.4",
     "dayjs": "^1.9.6",
+    "deepmerge": "^4.2.2",
     "easydropdown": "^4.2.0",
     "electron-serve": "^1.0.0",
-    "lodger": "^0.0.49",
+    "lodger": "^0.0.62",
     "mobx": "^5.9.4",
+    "mobx-utils": "^5.6.1",
     "mobx-vue": "^2.0.11",
     "money": "^0.2.0",
     "numeral": "^2.0.6",
     "nuxt": "^2.14.7",
+    "object-path": "^0.11.5",
     "postcss-styl": "^0.7.2",
     "rxcollection-subscriber": "^1.0.16",
     "rxdb": "^9.9.0",
@@ -86,7 +93,7 @@
     "os-browserify": "^0.3.0",
     "path": "^0.12.7",
     "portal-vue": "^2.1.7",
-    "postcss": "^8.1.8",
+    "postcss": "^8.1.9",
     "postcss-font-magician": "^3.0.0",
     "postcss-loader": "^4.1.0",
     "postcss-pxtorem": "^5.1.1",

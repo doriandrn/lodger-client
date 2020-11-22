@@ -4,7 +4,7 @@ transition(name="modal")
     v-show=     "$lodger.modal.activeDoc"
     :data-tax=  "$lodger.modal.activeDoc ? $lodger.modal.activeDoc.collection.name : undefined"
     :class=     "{ 'hasFooter': $slots.footer, overflow, editing: editing || $lodger.modal.activeDoc && $lodger.modal.activeDoc._isTemporary }"
-    v-focus=    "editing || $lodger.modal.activeDoc && $lodger.modal.activeDoc._isTemporary"
+    v-focus=    "editing && $lodger.modal.activeDoc"
   )
     .backdrop(@click="inchide")
 
@@ -40,6 +40,9 @@ export default Observer({
   directives: {
     focus: {
       componentUpdated: (el, binding) => {
+        // if (!this.editing) // this nu e aici
+        //   return
+
         const firstInput = el.querySelector('input:not(.av):not([type="file"]):not(:disabled)')
         console.log('FIRST INPUT', firstInput)
         if (firstInput) setTimeout(() => { firstInput.focus() }, 450)

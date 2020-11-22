@@ -1,66 +1,51 @@
 import { date } from 'faker'
 import { Lodger } from 'lodger'
-import { observable } from 'mobx'
-
+import { deepObserve } from 'mobx-utils'
+import objectPath from 'object-path'
 
 export default async ({ app, store }, inject) => {
-  const date = new Date()
-  const name = 'test' + date.getTime()
-  const lodger = await Lodger.build()
-  if (window.navigator.language) {
-    Lodger.locale = window.navigator.language
+  let savedState
+  try {
+    const _savedState = JSON.parse(localStorage.getItem('state'))
+
+    if (_savedState) {
+      savedState = {}
+      Object.keys(_savedState).forEach(p => {
+        objectPath.set(savedState, p.replace(/\//g, '.'), _savedState[p])
+      })
+      console.log('savedState', savedState)
+    }
+  } catch (e) {
+    console.info('No previous saved state found', e)
   }
 
-  const { $axios } = app
-
-  Object.assign(lodger, {
-    modal: observable({
-      activeDoc: null,
-      closeable: true,
-      firstTime: false,
-      sub: { edit: () => {} },
-      close: function () {
-        if (!this.closeable)
-          return
-
-        this.activeDoc = null
-
-        if (this.sub)
-          this.sub.edit()
-      }
-    }),
-
-    mainSubName: 'prince'
-    // cursValutar: async (displayCurrency) => {
-    //   if (!displayCurrency) return
-    //   const { localStorage } = window
-
-    //   const id = `cursValutar-${displayCurrency}`
-    //   let prevTimestamp
-
-    //   try {
-    //     prevTimestamp = JSON.parse(localStorage.getItem(id))
-    //     prevTimestamp = prevTimestamp.timestamp
-    //   } catch (e) {
-
-    //   }
-
-    //   if (prevTimestamp && Date.now() / 1000 - prevTimestamp < 100000) {
-    //     console.error('cannot fetch exchange rates too often')
-    //     return
-    //   }
-
-    //   const { data } = await $axios.get(`https://openexchangerates.org/api/latest.json?app_id=1c424442229347b3b922a2daa809ff1c&base=${displayCurrency}`)
-    //   const { base, rates, timestamp } = data
-
-    //   if (base !== displayCurrency)
-    //     throw new Error('diferrent currencies supplied')
-
-    //   localStorage.setItem(id, JSON.stringify({ rates, timestamp }) )
-    // }
+  const date = new Date()
+  // const name = 'test' + date.getTime()
+  const lodger = await Lodger.init({
+    state: savedState
   })
+  // if (window.navigator.language) {
+  //   Lodger.locale = window.navigator.language
+  // }
+
+  // const { $axios } = app
+
+  Object.assign(lodger, { mainSubName: 'prince' })
+
   inject('lodger', lodger)
   inject('Lodger', Lodger)
+
+  deepObserve(lodger.appState, (change, path) => {
+    // console.log('jit changed', change, path)
+    const prevState = JSON.parse(localStorage.getItem('state')) || {}
+    localStorage.setItem('state',
+      JSON.stringify(Object.assign(prevState, {
+        [ `${path}/${change.name}` ]: change.newValue
+      }))
+    )
+  }, {
+    fireImmediately: true
+  })
+
   // inject('t', lodger.translate.bind(lodger))
-  app.store = lodger.store
 }

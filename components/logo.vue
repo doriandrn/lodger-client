@@ -1,7 +1,18 @@
 <template lang="pug">
 h3.logo
-  nuxt-link(to="/") #[symbol] Lodger
+  nuxt-link(to="/" v-tooltip="tooltip") #[symbol] Lodger
 </template>
+
+<script>
+export default {
+  props: {
+    tooltip: {
+      type: String,
+      default: undefined
+    }
+  }
+}
+</script>
 
 <style lang="stylus">
 @require '~styles/config'

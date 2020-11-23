@@ -152,33 +152,28 @@ module.exports = {
       }
     },
 
-    // plugins: [
-    //   new webpack.LoaderOptionsPlugin({
-    //     options: {
-    //       context: __dirname,
-    //       stylus: {
-
-    //       }
-    //     }
-    //   })
-    // ],
-
     extend (config) {
       config.node = { fs: 'empty' }
-      const stylLoader = config.module.rules.filter(m => m.test && String(m.test).indexOf('styl') > -1)
-      stylLoader.options = {}
+      const stylLoader = config.module.rules.filter(m => m.test && String(m.test).indexOf('styl') > -1)[0].oneOf[1].use.filter(loader => loader.loader.indexOf('stylus') > -1)[0]
+      // console.log(stylLoader, stylLoader.options)
+
+      if (!stylLoader.options)
+        stylLoader.options = {}
       Object.assign(stylLoader.options, {
-        use: [
-          function () { return function (style) {
-            style.define('lowerCase', str => str.toLowerCase())
-          }}
-        ],
-        include: [
-          path.join(__dirname, 'node_modules', 'lodger')
-        ],
-        preferPathResolver: 'webpack',
-        options: ['resolve url']
+        stylusOptions: {
+          define: [
+            ["lowerCase", str => String(str).toLowerCase()],
+            ["rawVar", 42, true],
+          ],
+          include: [
+            path.join(__dirname, 'node_modules', 'lodger')
+          ],
+        },
+        // preferPathResolver: 'webpack',
+        // options: ['resolve url']
       })
+
+      console.log(stylLoader.options)
       // Extend aliases
       Object.assign(config.resolve.alias, {
         stream: 'stream-browserify',

@@ -74,6 +74,14 @@ typeColors = config.typography.palette
     overflow hidden
     padding 11px 12px
     width 100%
+    background: colors.bgs.ui
+    border-radius 4px
+    margin 2px 0
+
+    +above(l)
+      padding 16px 20px
+      border-radius 6px
+      margin 4px 0
 
     .ap__nr
       width 30px
@@ -125,7 +133,6 @@ typeColors = config.typography.palette
     margin 0 -8px
     width calc(100% + 16px)
     position relative
-    background: colors.bgs.ui
     padding 0
     max-height 300px
     overflow auto

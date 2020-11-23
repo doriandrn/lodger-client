@@ -28,23 +28,33 @@ export default async ({ app, store }, inject) => {
   //   Lodger.locale = window.navigator.language
   // }
 
-  // const { $axios } = app
-
   Object.assign(lodger, { mainSubName: 'prince' })
 
   inject('lodger', lodger)
   inject('Lodger', Lodger)
 
   deepObserve(lodger.appState, (change, path) => {
-    // console.log('jit changed', change, path)
     const prevState = JSON.parse(localStorage.getItem('state')) || {}
-    localStorage.setItem('state',
-      JSON.stringify(Object.assign(prevState, {
-        [ `${path}/${change.name}` ]: change.newValue
-      }))
-    )
+    const { newValue, name } = change
+    if (name == 'sub')
+      return
+    console.log(change, path)
+    const state =
+      newValue ?
+        Object.assign({}, { ...prevState }, {
+          [ `${path}/${change.name}` ]: change.newValue
+        }) :
+        (delete prevState[`${path}/${change.name}`]) && ({ ...prevState })
+
+
+    try {
+      localStorage.setItem('state', JSON.stringify(state))
+      console.log('updated state', state)
+    } catch (e) {
+      console.log('wttf', e)
+    }
   }, {
-    fireImmediately: true
+    // fireImmediately: true
   })
 
   // inject('t', lodger.translate.bind(lodger))

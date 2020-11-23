@@ -355,7 +355,7 @@ button
   &.rounded
     border-radius 50%
 
-  &.iconOnly
+  &.iconOnly:not([data-styl="unstyled"])
     background: linear-gradient(145deg, #ffffff, #dddee2);
 
 </style>

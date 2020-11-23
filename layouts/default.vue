@@ -2,8 +2,6 @@
 #layout
   headr
     .inner
-      logo
-
       //- field.switch(
       //-   v-model=    "idAsociatieActiva",
       //-   id=         "asociatieSwitch"
@@ -70,8 +68,8 @@
 
               currencies(
                 id=         "displayCurrency"
-                :value=     "$lodger.displayCurrency"
-                @input=     "$lodger.displayCurrency = $event"
+                :value=     "Number($lodger.displayCurrency)"
+                @input=     "$lodger.displayCurrency = Number($event)"
                 :data-sym=  "$lodger.displayCurrency"
               )
 
@@ -114,25 +112,33 @@
 
   main
     nuxt(:nuxt-child-key="activePage")
-    dev-tools(v-if="env === 'development'")
+    dev-tools(v-if="env === 'development'" style="display:none")
 
   footr
+    logo(:tooltip=  "`${ app.name } ${ app.version } - &copy; 2017 - ${ curYear } ${ app.author }`")
+    span.update O noua actualizare este disponibila
+      a.go Descarca si reporneste
     nav
       buton(
-        icon= "life-buoy"
+        v-for=  "v, k in extraLinks"
+        :key=   "k"
+        :icon=  "v"
         styl= "unstyled"
-      ) {{ $lodger.i18n.footer.links.help }}
-      buton(
-        icon= "message-circle"
-        styl= "unstyled"
-      ) {{ $lodger.i18n.footer.links.feedback }}
-      buton(
-        icon= "award"
-        styl= "unstyled"
-      ) {{ $lodger.i18n.footer.links.thanks }}
+        icon-only
+      ) {{ $lodger.i18n.footer.links[k] }}
+      //- buton(
+      //-   icon= "message-circle"
+      //-   styl= "unstyled"
+      //-   icon-only
+      //- ) {{ $lodger.i18n.footer.links.feedback }}
+      //- buton(
+      //-   icon= "award"
+      //-   styl= "unstyled"
+      //-   icon-only
+      //- ) {{ $lodger.i18n.footer.links.thanks }}
 
-    .copyright
-      p(v-if="app") #[strong {{ app.name }} v{{ app.version }}] - &copy; 2017 - {{ curYear }} {{ app.author }}
+    //- .copyright
+    //-   p(v-if="app") #[strong {{ app.name }} v{{ app.version }}] - &copy; 2017 - {{ curYear }} {{ app.author }}
 
   //- toasts
 
@@ -194,6 +200,11 @@ export default Observer ({
         results,
         fetching: true
       },
+      extraLinks: {
+        help: 'life-buoy',
+        feedback: 'message-circle',
+        thanks: 'award'
+      }
     }
   },
 
@@ -269,7 +280,7 @@ export default Observer ({
 
 <style lang="stylus">
 @require '~styles/config'
-footerHeight = 40px
+footerHeight = 36px
 
 .right
   margin-left auto
@@ -312,6 +323,47 @@ footerHeight = 40px
 
   > footer
     user-select none
+    position absolute
+    bottom 0
+    left 0
+    right 0
+    line-height: footerHeight
+    z-index 2
+    display flex
+    flex-flow row nowrap
+    background darken(config.palette.bgs.body, 3%)
+    overflow hidden
+
+    button[data-icon]
+      font-size 0
+
+    .logo
+      font-size 0
+      flex 0 1 auto
+      opacity .5
+      transition opacity 1s ease-in-out
+
+      &:hover
+        opacity 1
+
+    p
+    h3
+      margin-bottom 0
+
+    p
+      font-size 10px
+      color rgba(black, .25)
+
+    .inner
+      flex-flow row nowrap
+      align-items center
+      justify-content space-between
+
+    nav
+      margin-left auto
+
+      > *
+        margin 0 4px
 
   > header
     position fixed 0 0 auto 0
@@ -425,24 +477,6 @@ footerHeight = 40px
       fullflex()
       > .inner
         fullflex(1)
-
-  > footer
-    position absolute
-    bottom 0
-    left 0
-    right 0
-    line-height: footerHeight
-    z-index 2
-    display flex
-    flex-flow row nowrap
-
-    .inner
-      justify-content center
-      flex-flow column nowrap
-      align-items center
-
-    nav > *
-      margin 0 16px
 
 
 </style>

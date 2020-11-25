@@ -1,5 +1,5 @@
 <template lang="pug">
-renderlessTax.list(
+renderlessTax(
   :taxonomy=  "taxonomy"
   :subscriberName=  "subscriberName"
   v-if= "taxonomy"
@@ -62,7 +62,7 @@ export default {
 colors = config.palette
 typeColors = config.typography.palette
 
-.list
+[data-tax]
   width 100%
 
   li

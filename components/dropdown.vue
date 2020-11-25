@@ -219,14 +219,14 @@ shadow = -1px 2px rgba(black, .05)
     opacity 0
     visibility hidden
     // max-height 0
-    min-width 190px
+    min-width 200px
     position absolute
-    top calc(100% + 15px)
+    // top calc(100% + 15px)
     // right 0
     overflow hidden
     // box-shadow: shadow
     // border-radius 2px 3px 5px 8px
-    transition top .15s ease-in-out, opacity .15s ease
+    // transition top .15s ease-in-out, opacity .15s ease
 
   &[data-box-arrow]
     &:before

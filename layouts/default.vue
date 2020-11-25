@@ -77,13 +77,13 @@
                 type=       "select"
                 id=         "lang"
                 :label=     "$lodger.i18n.forms.preferences.fields.lang"
-                :options=   "Object.keys($lodger.supportedLangs).map(k => $lodger.supportedLangs[k].name)"
-                :value=     "$lodger.supportedLangs.map(l => l.code).indexOf($lodger.locale)"
-                @input=     "$lodger.locale = $event"
+                :options=   "$lodger.supportedLangs"
+                v-model=    "$lodger.locale"
               )
 
               field(
                 type=       "checkbox"
+                v-model=    "$lodger.state.appPreferences.display.hotkeys"
                 :label=     "$lodger.i18n.forms.preferences.fields.shortKeys"
               )
 
@@ -143,7 +143,7 @@
   //- toasts
 
   modal
-    h2(v-if="$lodger.modal.activeDoc && $lodger.modal.firstTime") {{ $lodger.i18n.taxonomies[$lodger.modal.activeDoc.collection.name.plural].new.title || 'hilol' }}
+    h2(v-if="$lodger.modal.activeDoc && $lodger.modal.firstTime && $lodger.modal.activeDoc.collection") {{ $lodger.i18n.taxonomies[$lodger.modal.activeDoc.collection.name.plural].new.title || 'hilol' }}
 
       //- frm#main(
       //-   v-if=       "modalContent && modalContent !== 'prompt'",

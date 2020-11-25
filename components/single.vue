@@ -1,5 +1,6 @@
 <template lang="pug">
 frm#single(
+  v-if=     "doc.collection"
   :form=    "$lodger[plural].form"
   :value =  "docdata"
   :editing= "editing"
@@ -83,11 +84,12 @@ export default Observer ({
   created () {
     const { $lodger, taxonomy, debug } = this
     const { modal, mainSubName } = $lodger
+    console.log('t', taxonomy, $lodger[taxonomy])
     const _sub = this._sub = $lodger[taxonomy].subscribers[mainSubName]
     const { firstTime } = modal
 
     if (firstTime) {
-      disposer = when(() => _sub.ids.length === 1, () => {
+      disposer = when(() => _sub.ids.length > 0, () => {
         debug('fired')
         _sub.select(_sub.ids[0])
         modal.firstTime = false

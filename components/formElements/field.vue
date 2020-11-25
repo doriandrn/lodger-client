@@ -29,7 +29,7 @@ ValidationProvider(
     :max=         "type === 'number' ? max : null"
     :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
     :value=       "type.asRxDBType === 'string' && typeof value === 'boolean' ? '' : value",
-    :checked=     "checked"
+    :checked=     "checked || value"
     @input=       "handleInput",
     @change=      "handleChange"
     :aria-label=  "hideLabel ? label : undefined"
@@ -541,9 +541,9 @@ export default {
     },
 
     handleChange (e) {
-      let { value, type, debug, valid } = this
-
-      if (!valid) return
+      let { value, type, debug, valid, required } = this
+      if ( required && !valid) return
+      console.log('hc2')
 
       if (type === 'checkbox') {
         value = Boolean(value)
@@ -892,7 +892,7 @@ span[data-type="$"]
     align-items baseline
 
   input[type="number"]
-    width 150px
+    min-width 160px
 
     &+.sign
       margin-left 4px
@@ -964,6 +964,7 @@ input[name="nr"]
     align-items center
 
     .value
+      font-size 0
       &:before
         content ''
         display inline-block
@@ -972,7 +973,7 @@ input[name="nr"]
         size 16px
         background-image embedurl('~static/icons/ui/grid.svg', 'utf8')
         background-repeat no-repeat
-        background-size 11px
+        background-size 16px
         background-position 50% 1px
 
   [role="group"]

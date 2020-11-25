@@ -1,3 +1,5 @@
+// wtf is tthis
+
 <template lang="pug">
 span.checkbox
   input(

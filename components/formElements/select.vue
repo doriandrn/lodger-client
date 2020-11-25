@@ -8,7 +8,7 @@ select(
   option(v-if="placeholder" value="" data-placeholder) {{ placeholder }}
   option(
     v-for=      "option, key in options",
-    :value=     "option.id || key",
+    :value=     "option.id || option.code || key",
     :selected=  "value === option.id || value === key"
   ) {{ typeof option === 'string' ? option : typeof option === 'object' ? option.name : undefined }}
 

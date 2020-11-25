@@ -2,7 +2,7 @@
 transition(name="modal")
   .modal(
     v-show=     "$lodger.modal.activeDoc"
-    :data-tax=  "$lodger.modal.activeDoc ? $lodger.modal.activeDoc.collection.name : undefined"
+    :data-tax=  "$lodger.modal.activeDoc && $lodger.modal.activeDoc.collection ? $lodger.modal.activeDoc.collection.schema.jsonSchema.name : undefined"
     :class=     "{ 'hasFooter': $slots.footer, overflow, editing: editing || $lodger.modal.activeDoc && $lodger.modal.activeDoc._isTemporary }"
     v-focus=    "editing && $lodger.modal.activeDoc"
   )
@@ -13,7 +13,7 @@ transition(name="modal")
       main.content
         slot
         single(
-          v-if= "$lodger.modal.activeDoc"
+          v-if= "$lodger.modal.activeDoc && $lodger.modal.activeDoc.collection"
           :doc= "$lodger.modal.activeDoc"
           :editing= "editing || $lodger.modal.activeDoc._isTemporary"
         )

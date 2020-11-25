@@ -1,5 +1,5 @@
 <template lang="pug">
-span.focuskeys(v-if="keys")
+span.focuskeys(v-if="keys" v-show="$lodger.state.appPreferences.display.hotkeys")
   span(v-for="key in keys"  :data-key="key")
 </template>
 

@@ -27,7 +27,7 @@ ValidationObserver(v-slot="{ passes }")
           :dangerous=     "field.dangerous"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
-          :disabled=      "!editing"
+          :disabled=      "(field.final && !$lodger.modal.activeDoc._isTemporary) || !editing"
           :avatarSeed=    "value['name']"
           :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime'"
 
@@ -66,7 +66,7 @@ ValidationObserver(v-slot="{ passes }")
           :dangerous=     "field.dangerous"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
-          :disabled=      "!editing || id.indexOf('Id') === id.length - 2"
+          :disabled=      "field.final || !editing || id.indexOf('Id') === id.length - 2"
 
           v-model=   "value[id]"
           @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"

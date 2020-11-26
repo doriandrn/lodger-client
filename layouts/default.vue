@@ -11,6 +11,8 @@
       //-   :arrow=     "true"
       //-   :required=  "true"
       //- )
+      crumbs
+
 
       nav(
         data-orientation="horizontal"
@@ -118,6 +120,10 @@
     logo(:tooltip=  "`${ app.name } ${ app.version } - &copy; 2017 - ${ curYear } ${ app.author }`")
     span.update O noua actualizare este disponibila
       a.go Descarca si reporneste
+
+    span Curs valutar actualizat
+      date-time(:date-time-i-s-o= "$lodger.state.rates.timestamp" live-update ago)
+      button(icon="" @click="$lodger.updateRates()") Actualizeaza
     nav
       buton(
         v-for=  "v, k in extraLinks"
@@ -169,6 +175,8 @@ import frm from 'c/form.vue'
 import prompt from 'c/prompt'
 import cale from 'c/cale'
 import bani from 'c/bani'
+import dateTime from 'c/dateTime'
+import crumbs from 'c/crumbs'
 import field from 'form/field'
 import buton from 'form/button'
 import currencies from 'form/presets/selects/currencies'
@@ -263,7 +271,9 @@ export default Observer ({
     buton,
     footr,
     cale,
+    crumbs,
     currencies,
+    dateTime,
     devTools,
     frm,
     prompt,
@@ -310,6 +320,12 @@ footerHeight = 36px
   max-height 100vh
   overflow hidden
   position relative
+
+  .crumbs
+      position fixed
+      left 0
+      top 0
+      width auto
 
   .actions
     width 100%
@@ -359,6 +375,11 @@ footerHeight = 36px
       align-items center
       justify-content space-between
 
+      > span
+        display flex
+        flex-flow row nowrap
+        margin 0 6px
+
     nav
       margin-left auto
 
@@ -397,6 +418,7 @@ footerHeight = 36px
       position fixed
       display none
       margin-left 0
+      top 60px
 
       +above(xl)
         position relative

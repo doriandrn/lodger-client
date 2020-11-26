@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     datetime () {
-      return new Date(this.unixTime * 1000).toISOString()
+      return this.unixTime ? new Date(this.unixTime * 1000).toISOString() : new Date(this.dateTimeISO)
     },
   },
   created () {
@@ -42,13 +42,17 @@ export default {
   },
   methods: {
     timeFromNow () {
-      return dayjs(this.unixTime).fromNow()
+      return dayjs(this.dateTimeISO || this.datetime).fromNow()
     }
   },
   props: {
+    dateTimeISO: {
+      type: String,
+      default: null
+    },
     unixTime: {
       type: Number,
-      default: 1
+      default: null
     },
     ago: {
       type: Boolean,

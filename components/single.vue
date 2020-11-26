@@ -117,14 +117,14 @@ export default Observer ({
   },
 
   beforeDestroy () {
-    const { extraSubs, debug } = this
+    const { extraSubs, debug, taxonomy } = this
     this.fetched = false
     if (extraSubs.length) {
       extraSubs.map(sub => { this.$lodger[sub].subscribers.single.kill(); delete this.$lodger[sub].subscribers.single })
     }
     if (disposer) {
       setTimeout(() => {
-        debug('Cancelled -single- disposer', sub)
+        debug('Cancelled -single- disposer', taxonomy )
         disposer()
       }, 2500);
     }

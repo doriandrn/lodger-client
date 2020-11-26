@@ -30,8 +30,6 @@ export default async ({ app, store }, inject) => {
   //   Lodger.locale = window.navigator.language
   // }
 
-  Object.assign(lodger, { mainSubName: 'prince' })
-
   inject('lodger', lodger)
   inject('Lodger', Lodger)
 

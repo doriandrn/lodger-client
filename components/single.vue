@@ -84,7 +84,6 @@ export default Observer ({
   created () {
     const { $lodger, taxonomy, debug } = this
     const { modal, mainSubName } = $lodger
-    console.log('t', taxonomy, $lodger[taxonomy])
     const _sub = this._sub = $lodger[taxonomy].subscribers[mainSubName]
     const { firstTime } = modal
 
@@ -125,7 +124,7 @@ export default Observer ({
     }
     if (disposer) {
       setTimeout(() => {
-        debug('cancelleed disposeer')
+        debug('Cancelled -single- disposer', sub)
         disposer()
       }, 2500);
     }

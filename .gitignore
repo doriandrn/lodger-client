@@ -14,3 +14,6 @@ dist
 
 # yarn stff
 yarn.lock
+
+# deprecated
+_oldstore

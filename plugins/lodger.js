@@ -40,18 +40,14 @@ export default async ({ app, store }, inject) => {
     const { newValue, name } = change
     if (name == 'sub')
       return
-    console.log(change, path)
-    const state =
-      // newValue ?
-        Object.assign({}, { ...prevState }, {
-          [ `${path}/${change.name}` ]: change.newValue
-        })
-        // (delete prevState[`${path}/${change.name}`]) && ({ ...prevState })
 
+    const state =
+      Object.assign({}, { ...prevState }, {
+        [ `${path}/${change.name}` ]: change.newValue
+      })
 
     try {
       localStorage.setItem('state', JSON.stringify(state))
-      console.log('updated state', state)
     } catch (e) {
       console.log('wttf', e)
     }

@@ -3,7 +3,7 @@ select(
   :id=        "id",
   v-if=       "options.length"
   :value=     "value"
-  @change=    "$emit('input', $event.target.value)"
+  @change=    "$emit('input', $event)"
 )
   option(v-if="placeholder" value="" data-placeholder) {{ placeholder }}
   option(
@@ -16,7 +16,7 @@ select(
   v-else
   :id=        "id"
   :value=     "value"
-  @change=    "$emit('input', $event.target.value)"
+  @change=    "$emit('input', $event)"
 )
   option(v-if="placeholder" value="" data-placeholder) {{ placeholder }}
   optgroup(

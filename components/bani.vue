@@ -2,24 +2,29 @@
 div
   span(v-if="showBoth")
     input(
-      type=       "number"
-      :value=     "suma"
-      :disabled=  "disabled"
-      :placeholder= "isCrypto ? '0,00000000' : '0,00'"
-      @change=    "change($event, true)"
+      type=         "number"
+      :value=       "suma"
+      :step=        "isCrypto ? 0.000000001 : 0.01"
+      :disabled=    "disabled"
+      :placeholder= "isCrypto ? '0.00000000' : '0.00,00'"
+      @change=      "change($event, true)"
     )
 
     currency-select(
-      v-if=  "schimbaMoneda"
-      :value= "moneda"
-      @input= "change($event, false)"
+      v-if=     "schimbaMoneda"
+      :value=   "moneda"
+      @input=   "change($event, false)"
       hide-label
     )
-    currency-sign(v-else :moneda="moneda")
+    currency-sign(
+      v-else
+      :moneda=    "moneda"
+      :isCrypto=  "isCrypto(moneda)"
+    )
 
   span.bani.conv(
     v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
-  ) {{ Number($lodger.displayCurrency) !== this.moneda ? '~ ' : '' }}{{ numeral(convert(suma, { from: Number($lodger.displayCurrency), to: moneda, rates, base: apiBase })).format(isCrypto($lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "Number($lodger.displayCurrency)")]
+  ) {{ $lodger.displayCurrency !== this.moneda ? '~ ' : '' }}{{ numeral($lodger.convert(suma, moneda)).format(isCrypto($lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "$lodger.displayCurrency" :isCrypto="isCrypto($lodger.displayCurrency)")]
 
   div(v-if="!disabled")
     a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
@@ -44,7 +49,8 @@ export default Observer ({
     numeral,
     convert,
     isCrypto (moneda) {
-      return this.$Lodger.currencyList.cryptocurrency.map(c => c.id).indexOf(Number(moneda)) > -1
+      const { cryptocurrency } = this.$Lodger.currencyList
+      return Object.keys(cryptocurrency).map(n => Number(n)).indexOf(moneda) > -1
     },
     change (e, inputChanged) {
       this.schimbaMoneda = false

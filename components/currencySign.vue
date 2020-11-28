@@ -1,7 +1,7 @@
 <template lang="pug">
 span.sign(
-  v-if= "moneda > 0 && $Lodger.currencies.indexOf(moneda) > -1"
-) {{ isCrypto ? monedaData.symbol : monedaData.sign }}
+  v-if= "moneda > 0 && $Lodger.currencies.indexOf(moneda) > -1 && monedaData"
+) {{ isCrypto ? monedaData.symbol : monedaData.sign || 'pula' }}
 </template>
 
 <script>
@@ -9,18 +9,22 @@ import { Observer } from 'mobx-vue'
 
 export default Observer({
   computed: {
-    isCrypto () {
-      return this.$Lodger.currencyList.cryptocurrency.map(c => c.id).indexOf(this.moneda) > -1
-    },
     monedaData () {
-      return this.$Lodger.currencyList[this.isCrypto ? 'cryptocurrency' : 'fiat'].filter(c => c.id === this.moneda)[0]
+      return this.$Lodger.currencyList[this.isCrypto ? 'cryptocurrency' : 'fiat'][this.moneda]
+    },
+    isCrypto () {
+      return Object.keys(this.$Lodger.currencyList.cryptocurrency).map(n => Number(n)).indexOf(this.moneda) > -1
     }
   },
   props: {
     moneda: {
       type: Number,
       default: -1
-    }
+    },
+    // isCrypto: {
+    //   type: Boolean,
+    //   default: false
+    // }
   }
 })
 </script>

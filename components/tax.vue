@@ -78,6 +78,9 @@ typeColors = config.typography.palette
     border-radius 4px
     margin 2px 0
 
+    > :last-child
+      margin-left 20px
+
     +above(l)
       padding 16px 20px
       border-radius 6px

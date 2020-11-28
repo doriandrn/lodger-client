@@ -9,10 +9,11 @@ time(
 import dayjs from 'dayjs'
 import 'dayjs/locale/ro'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { Observer } from 'mobx-vue'
 
 dayjs.extend(relativeTime)
 
-export default {
+export default Observer({
   data () {
     return {
       liveTime: null
@@ -20,17 +21,19 @@ export default {
   },
   computed: {
     datetime () {
-      return this.unixTime ? new Date(this.unixTime * 1000).toISOString() : new Date(this.dateTimeISO)
+      return this.unixTime ? new Date(this.unixTime).toISOString() : new Date(this.dateTimeISO)
     },
   },
+  // created () {
+  // 	// moment.locale(this.$store.state.locale)
+  // },
   created () {
-  	// moment.locale(this.$store.state.locale)
-  },
-  mounted () {
     dayjs.locale(this.$lodger.locale)
     if (!this.liveUpdate) return
 
-    if (this.ago) this.liveTime = this.timeFromNow()
+    if (this.ago)
+      this.liveTime = this.timeFromNow()
+
     this.updater = () => {
       this.liveTime = this.timeFromNow()
     }
@@ -71,7 +74,7 @@ export default {
       default: false
     }
   }
-}
+})
 </script>
 
 <style lang="stylus">

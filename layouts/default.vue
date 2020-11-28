@@ -84,6 +84,7 @@
               )
 
               field(
+                id=         "hokeys"
                 type=       "checkbox"
                 v-model=    "$lodger.state.appPreferences.display.hotkeys"
                 :label=     "$lodger.i18n.forms.preferences.fields.shortKeys"
@@ -118,12 +119,12 @@
 
   footr
     logo(:tooltip=  "`${ app.name } ${ app.version } - &copy; 2017 - ${ curYear } ${ app.author }`")
-    span.update O noua actualizare este disponibila
+    span.update(v-if="$lodger.state.hasUpdate") O noua actualizare este disponibila
       a.go Descarca si reporneste
 
     span Curs valutar actualizat
       date-time(:date-time-i-s-o= "$lodger.state.rates.timestamp" live-update ago)
-      button(icon="" @click="$lodger.updateRates()") Actualizeaza
+      button(icon="" @click="$lodger.updateRates()" data-styl="unstyled") Actualizeaza
     nav
       buton(
         v-for=  "v, k in extraLinks"
@@ -379,6 +380,10 @@ footerHeight = 36px
         display flex
         flex-flow row nowrap
         margin 0 6px
+        color #aaa
+
+        > *
+          margin-left 4px
 
     nav
       margin-left auto

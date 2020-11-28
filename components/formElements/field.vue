@@ -83,7 +83,7 @@ ValidationProvider(
     :value=       "value || $props.default",
     :required=    "required",
     :placeholder= "placeholder"
-    @input=       "$emit('input', name === 'rol' ? Number($event) : $event)"
+    @input=       "$emit('input', $event.target.value)"
     :id=          "id"
     :arrow=       "arrow"
     :disabled=    "disabled"

@@ -23,8 +23,9 @@ div
     )
 
   span.bani.conv(
-    v-if="moneda && base && moneda !== base && $lodger.rates[base] && $lodger.rates[moneda]"
-  ) {{ $lodger.displayCurrency !== this.moneda ? '~ ' : '' }}{{ numeral($lodger.convert(suma, moneda)).format(isCrypto($lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }} #[currency-sign(:moneda= "$lodger.displayCurrency" :isCrypto="isCrypto($lodger.displayCurrency)")]
+    v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]"
+  ) {{ base !== moneda ? '~ ' : '' }}{{ numeral($lodger.convert(suma, moneda)).format(isCrypto($lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }}
+    currency-sign(:moneda= "$lodger.displayCurrency" :isCrypto="isCrypto($lodger.displayCurrency)")
 
   div(v-if="!disabled")
     a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}

@@ -27,9 +27,9 @@ sction#idx(boxes)
         required=       true
         hide-label
       )
-        .extra(v-if="value" slot-scope= "{ value }")
-          span {{ value.split('-')[0] }}
-          button(data-icon="x" v-tooltip="`clear`" @click="subscriber.criteria.sort[value.split('-')[0]] = undefined; delete subscriber.criteria.sort[value.split('-')[0]]")
+        //- .extra(v-if="value" slot-scope= "{ value }")
+        //-   span {{ value.split('-')[0] }}
+        //-   button(data-icon="x" v-tooltip="`clear`" @click="subscriber.criteria.sort[value.split('-')[0]] = undefined; delete subscriber.criteria.sort[value.split('-')[0]]")
 
       button.new(
         :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"

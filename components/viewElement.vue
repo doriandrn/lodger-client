@@ -1,6 +1,6 @@
 <template lang="pug">
 strong(
-  v-if="['name', 'proprietar', 'denumire'].indexOf(type) > -1"
+  v-if="['name', 'proprietar', 'denumire', 'nrChitanta'].indexOf(type) > -1"
   @click="$emit('click')"
 ) {{ value }}
 timp(

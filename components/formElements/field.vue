@@ -955,8 +955,8 @@ input[name="nr"]
     background transparent
     padding 0
 
-  &.value
-    padding-right 32px
+  // &.value
+  //   padding-right 32px
 
   .root
     height 100%

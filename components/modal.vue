@@ -44,8 +44,11 @@ export default Observer({
         //   return
 
         const firstInput = el.querySelector('input:not(.av):not([type="file"]):not(:disabled)')
+        if (!firstInput)
+          return
+
+        setTimeout(() => { firstInput.focus() }, 450)
         console.log('FIRST INPUT', firstInput)
-        if (firstInput) setTimeout(() => { firstInput.focus() }, 450)
       }
     }
   },

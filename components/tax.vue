@@ -74,7 +74,6 @@ typeColors = config.typography.palette
     overflow hidden
     padding 11px 12px
     width 100%
-    background: colors.bgs.ui
     border-radius 4px
     margin 2px 0
 
@@ -119,10 +118,11 @@ typeColors = config.typography.palette
           vertical-align middle
           bubble()
 
-    &:not(:last-child)
-      border-bottom: 1px solid colors.borders
+    // &:not(:last-child)
+    //   border-bottom: 1px solid colors.borders
 
     &.selected
+      background: colors.bgs.ui
       > strong:first-of-type
         color: colors.primary !important
 

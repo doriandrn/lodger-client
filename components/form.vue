@@ -28,11 +28,11 @@ ValidationObserver(v-slot="{ passes }")
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
           :disabled=      "(field.freezed && !$lodger.modal.activeDoc._isTemporary) || !editing"
-          :avatarSeed=    "value['name']"
+          :avatarSeed=    "value['name'] || $data['name']"
           :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime'"
 
-          v-model=   "value[id]"
-          @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"
+          :value=     "value && value[id] ? value[id] : $data[id]"
+          @input=     "isNew ? $data[id] = $event : doc.atomicSet(id, $event)"
 
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
@@ -68,8 +68,8 @@ ValidationObserver(v-slot="{ passes }")
           :rules=         "field.v || null"
           :disabled=      "field.freezed || !editing || id.indexOf('Id') === id.length - 2"
 
-          v-model=   "value[id]"
-          @input=     "isNew ? debug(id, $event) : doc.atomicSet(id, $event)"
+          :value=     "value && value[id] ? value[id] : $data[id]"
+          @input=     "isNew ? $data[id] = $event : doc.atomicSet(id, $event)"
 
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
@@ -166,12 +166,12 @@ extend("length", {
 export default Observer ({
   name: 'F0rm',
   data () {
-    const { form: { fields }, isNew } = this
+    const { form: { fields }, isNew, value } = this
     if (!fields) throw new Error('No form supplied')
     const data = {
       fetched: false
     }
-    Object.keys(fields).map(field => { data[field] = null })
+    Object.keys(fields).map(field => { data[field] = value[field] || null })
     return { ...data }
   },
   computed: {
@@ -245,6 +245,7 @@ export default Observer ({
     async validation () {
       // if (!this.doc._isTemporary) return
       this.$children[0].validate().then(ok => {
+        this.debug(this.filteredData, 'o')
         if (ok) this.$emit('submit', this.filteredData)
       })
     },
@@ -288,6 +289,18 @@ export default Observer ({
 
   .actions
     margin-top 20px
+
+  .trash
+    position absolute
+    bottom -18px
+    left -18px
+    top auto
+
+    &:hover
+    &:focus
+    &:active
+      top auto
+      bottom -17px
 
   .lock
     position absolute

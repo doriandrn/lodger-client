@@ -17,11 +17,17 @@ transition(name="modal")
           :doc= "$lodger.modal.activeDoc"
           :editing= "editing || $lodger.modal.activeDoc._isTemporary"
         )
+          buton.trash(
+            v-if=     "!$lodger.modal.activeDoc._isTemporary && editing"
+            icon=    "trash"
+            @click=   "$lodger[$lodger.modal.activeDoc.collection.name.plural].trash($lodger.modal.activeDoc._id); inchide()"
+            icon-only
+          ) {{ $lodger.i18n.trash }}
           buton.lock(
             v-if=     "!$lodger.modal.activeDoc._isTemporary"
             :icon=    "editing ? 'lock' : 'unlock'"
             @click=   "editing = !editing"
-            iconOnly
+            icon-only
           ) {{ $lodger.i18n.edit }}
     slot(name="afterContainer")
 </template>

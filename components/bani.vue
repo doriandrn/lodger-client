@@ -1,13 +1,13 @@
 <template lang="pug">
-div
+div(v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]")
   span(v-if="showBoth")
     input(
       type=         "number"
-      :value=       "suma"
-      :step=        "isCrypto ? 0.000000001 : 0.01"
+      :value=       "disabled ? null : suma"
+      :step=        "$lodger.isCrypto(moneda) ? 0.000000001 : 0.01"
       :disabled=    "disabled"
-      :placeholder= "isCrypto ? '0.00000000' : '0.00,00'"
-      @change=      "change($event, true)"
+      :placeholder= "disabled ? this.$lodger.format(suma, moneda) : $lodger.isCrypto(moneda) ? '0.00000000' : '0.00,00'"
+      @input=      "change($event, true)"
     )
 
     currency-select(
@@ -19,22 +19,23 @@ div
     currency-sign(
       v-else
       :moneda=    "moneda"
-      :isCrypto=  "isCrypto(moneda)"
+      :isCrypto=  "$lodger.isCrypto(moneda)"
     )
 
   span.bani.conv(
-    v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]"
-  ) {{ base !== moneda ? '~ ' : '' }}{{ numeral($lodger.convert(suma, moneda)).format(isCrypto($lodger.displayCurrency) ? '0,0[.]00000000' : '0,0[.]00') }}
-    currency-sign(:moneda= "$lodger.displayCurrency" :isCrypto="isCrypto($lodger.displayCurrency)")
+    v-if="moneda === base && !showBoth || moneda !== base"
+  ) {{ base !== moneda ? '~ ' : '' }}{{ $lodger.format($lodger.convert(suma, moneda)) }}
+    currency-sign(
+      :moneda= "$lodger.displayCurrency"
+      :isCrypto="$lodger.isCrypto()"
+    )
 
   div(v-if="!disabled")
     a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
 </template>
 
 <script>
-import numeral from 'numeral'
 import { Observer } from 'mobx-vue'
-import { parse, convert } from 'cashify'
 
 import currencySelect from 'form/presets/selects/currencies'
 import currencySign from 'c/currencySign'
@@ -47,12 +48,6 @@ export default Observer ({
     }
   },
   methods: {
-    numeral,
-    convert,
-    isCrypto (moneda) {
-      const { cryptocurrency } = this.$Lodger.currencyList
-      return Object.keys(cryptocurrency).map(n => Number(n)).indexOf(moneda) > -1
-    },
     change (e, inputChanged) {
       this.schimbaMoneda = false
       let value, moneda
@@ -101,7 +96,7 @@ export default Observer ({
     },
     suma () {
       if (this.valoare)
-        return Number(this.valoare.value)
+        return Number(this.valoare.value) || 0
     },
     moneda () {
       return this.monedaCustom && this.monedaCustom > 0 ?
@@ -121,6 +116,13 @@ export default Observer ({
 [data-type="$"]
   input
     padding-right 4px !important
+
+    &:disabled
+      &::placeholder
+        opacity 1 !important
+        visibility visible !important
+        color black
+        font-weight 600
 
 .bani
   display flex

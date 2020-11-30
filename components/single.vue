@@ -56,6 +56,8 @@ export default Observer ({
       if (!doc._isTemporary)
         return
 
+      Object.assign(doc, e)
+
       await doc.save(e);
       modal.closeable = true
       await modal.close()
@@ -233,6 +235,22 @@ export default Observer ({
 
     [data-type="number"]
       grid-area rol
+
+[data-tax="incasare"]
+  fieldset.header
+    .fields
+      grid-template-areas:
+        "nr proiect proiect proiect plata plata"\
+        ". altele altele . plata plata"
+
+    [data-type]
+      grid-area altele
+
+    [data-type="number"]
+      grid-area nr
+
+    [data-type="$"]
+      grid-area plata
 
 [data-tax="apartament"]
   fieldset.header

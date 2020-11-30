@@ -145,4 +145,10 @@ typeColors = config.typography.palette
       &:before
         z-index 5
         transform translateY(0)
+
+  header
+    &+ul
+      margin-top 8px
+      padding-top 8px
+      border-top 1px solid rgba(black, .05)
 </style>

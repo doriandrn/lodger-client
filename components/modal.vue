@@ -20,7 +20,7 @@ transition(name="modal")
           buton.trash(
             v-if=     "!$lodger.modal.activeDoc._isTemporary && editing"
             icon=    "trash"
-            @click=   "$lodger[$lodger.modal.activeDoc.collection.name.plural].trash($lodger.modal.activeDoc._id); inchide()"
+            @click=   "trash"
             icon-only
           ) {{ $lodger.i18n.trash }}
           buton.lock(
@@ -59,6 +59,28 @@ export default Observer({
     }
   },
   methods: {
+    async trash () {
+      const { activeDoc } = this.$lodger.modal
+      const { _id, collection: { name } } = activeDoc
+
+      const tax = name.plural
+      const $tax = this.$lodger[tax]
+
+      let string = ``
+
+      if ($tax.children) {
+        const taxesWithDocs = await Promise.all($tax.children.map(async childTax => await this.$lodger[childTax].collection.findOne().exec() ))
+
+        string += `${taxesWithDocs.join('\n')}`
+
+        const result = await window.prompt(string)
+        if (result !== 'pula')
+          return
+      }
+      $tax.trash(_id);
+
+      this.inchide()
+    },
     inchide () {
       this.editing = false
       this.$lodger.modal.close()

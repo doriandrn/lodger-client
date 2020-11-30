@@ -323,10 +323,10 @@ footerHeight = 36px
   position relative
 
   .crumbs
-      position fixed
-      left 0
-      top 0
-      width auto
+    position fixed
+    left 0
+    top 0
+    width auto
 
   .actions
     width 100%

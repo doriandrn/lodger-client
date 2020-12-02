@@ -14,8 +14,8 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['$', 'dateTime', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
-    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : type",
+    v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
@@ -58,7 +58,7 @@ ValidationProvider(
     showBoth
   )
   date-time(
-    v-else-if=  "type === 'dateTime'"
+    v-else-if=  "type === 'dateTime' && disabled"
     v-show=     "value"
     :unixTime=  "value"
     liveUpdate

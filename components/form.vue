@@ -11,6 +11,7 @@ ValidationObserver(v-slot="{ passes }")
           v-for=  "field, id in Object.keys(fields).filter(field => typeof fields[field].fieldset === 'undefined' && (isNew ? field.indexOf('At') !== field.length - 2 : true)).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
           :key=           "`${field._type}-${id}`"
           :id=            "id"
+          :class=       "id"
 
           :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
@@ -50,6 +51,7 @@ ValidationObserver(v-slot="{ passes }")
           v-for=  "field, id in Object.keys(fields).filter(field => Number(fields[field].fieldset) === i).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
           :key=           "`${field._type}-${id}`"
           :id=            "id"
+          :class=       "id"
 
           :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"

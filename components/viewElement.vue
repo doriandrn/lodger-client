@@ -34,6 +34,11 @@ avatar(
   :value=   "value"
   disabled
 )
+.counters(
+  v-else-if=  "type === 'counters'"
+  v-show= "value && Object.keys(value).map(k => value[k]).filter(v => v > 0).length"
+)
+  span(v-for="counter, rel in value" v-if="counter > 0" :data-w="rel") {{ counter }}
 span(v-else) {{ value }}
 </template>
 

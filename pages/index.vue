@@ -1,6 +1,6 @@
 <template lang="pug">
 sction#idx(boxes)
-  list.list(
+  list(
     v-for=        "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
     v-if=         "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
     :key=         "tax"
@@ -48,7 +48,7 @@ sction#idx(boxes)
       @click= "subscriber.select(item[subscriber.primaryPath])"
     )
       viw(
-        v-for=  "key, i in taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2)"
+        v-for=  "key, i in [ ...taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2), 'counters' ]"
         :type=  "key",
         :key=   "key",
         :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
@@ -103,23 +103,23 @@ export default {
 colors = config.palette
 typeColors = config.typography.palette
 
-.item
-  &__controls
-    margin-left auto
-    display flex
-    flex-flow row nowrap
-    position absolute
-    right -120px
-    transition right .1s ease
+// .item
+//   &__controls
+//     margin-left auto
+//     display flex
+//     flex-flow row nowrap
+//     position absolute
+//     right -120px
+//     transition right .1s ease
 
-    *
-      line-height 14px
+//     *
+//       line-height 14px
 
-    > button:first-child
-      margin-left 64px
+//     > button:first-child
+//       margin-left 64px
 
-    button
-      background transparent
+//     button
+//       background transparent
 
 #idx
   .inner
@@ -227,4 +227,7 @@ typeColors = config.typography.palette
   &.prefs
     margin-left auto
     min-width 200px
+
+  .counters
+    flex 1 1 100%
 </style>

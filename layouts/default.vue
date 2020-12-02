@@ -92,7 +92,7 @@
 
 
         dropdown.u(
-          v-if= "$lodger.utilizatori.subscribers.prince.selectedId"
+          v-if= "$lodger.utilizatori.subscribers.prince && $lodger.utilizatori.subscribers.prince.selectedId"
           toggleText= ""
           icon-only
         )

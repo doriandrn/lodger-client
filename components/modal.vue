@@ -152,7 +152,10 @@ lrPad = 32px
       width 85%
 
     +above(l)
-      max-width 640px
+      max-width 90%
+
+    +above(xl)
+      max-width 900px
 
   &.editing
     #single

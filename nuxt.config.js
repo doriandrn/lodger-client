@@ -32,6 +32,7 @@ module.exports = {
   // },
   debug,
   env: process.env.NODE_ENV || 'dev',
+  globalName: 'Ldg',
   manifest: {
     name: 'Lodger',
     short_name: 'Lodger',
@@ -173,7 +174,7 @@ module.exports = {
         // options: ['resolve url']
       })
 
-      console.log(stylLoader.options)
+      // console.log(stylLoader.options)
       // Extend aliases
       Object.assign(config.resolve.alias, {
         stream: 'stream-browserify',

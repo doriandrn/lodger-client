@@ -67,7 +67,7 @@ typeColors = config.typography.palette
 
   li
     display flex
-    flex-flow row nowrap
+    flex-flow row wrap
     justify-content space-between
     align-items center
     position relative
@@ -75,7 +75,10 @@ typeColors = config.typography.palette
     padding 11px 12px
     width 100%
     border-radius 4px
-    margin 2px 0
+    margin -4px
+
+    *
+      margin 4px
 
     > :last-child
       margin-left 20px

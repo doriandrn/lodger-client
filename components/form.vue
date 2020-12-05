@@ -140,6 +140,7 @@ ValidationObserver(v-slot="{ passes }")
 </template>
 
 <script>
+// import Vue from 'vue'
 import buton from 'form/button'
 import field from 'form/field'
 import split from 'c/split'
@@ -257,7 +258,6 @@ export default Observer ({
       if (this.form.plural !== 'cheltuieli' || !this.isNew || !newData.suma)
         return
 
-      this.debug('got new shit', newData)
       const { distribuire, suma: { value, moneda }, apartamenteEligibile, asociatieId } = newData
       const sub = this.$lodger.apartamente.subscribers.single
       const { items, ids } = sub
@@ -269,16 +269,17 @@ export default Observer ({
         return
 
       const distribuireType = this.fields.distribuire.options[distribuire]
+      this.$el.dataset.type = distribuireType
       const allUnits = apartamenteEligibile.reduce((a, b) => a + items[b][distribuireType], 0)
       const cpu = value / allUnits
 
       apartamenteEligibile.forEach(apId => {
         const impartire = items[apId][distribuireType] * cpu
-        items[apId].impartire = this.$lodger.format(impartire, moneda)
-        // Object.assign(items[apId], { impartire })
+        items[apId].impartire = impartire
+        // Vue.set(items[apId], 'impartire', impartire)
       })
 
-      this.debug(allUnits, 'AUAU', value / allUnits)
+      sub.criteria.limit = (sub.criteria.limit || 1000) + 1
     }
   },
   methods: {

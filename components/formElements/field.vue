@@ -161,7 +161,7 @@ ValidationProvider(
     :previewFields=   "type === 'taxonomy' ? $lodger[id].form.previewFields : [ ...$lodger.apartamente.form.previewFields].concat(['locatari', 'suprafata', 'impartire'])"
     :criteria=        "{ filter: refs }"
     :selectedId=       "value ? value.selectedId : undefined"
-    subscriberName=   "single"
+    :subscriberName=   "`single${ refs && Object.keys(refs) === 1 ? `${ refs[Object.keys(refs)[0]] }` : '' }`"
     @input=           "$emit('input', $event)"
   )
     //- :populated= "value || []"

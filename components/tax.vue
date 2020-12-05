@@ -90,7 +90,7 @@ typeColors = config.typography.palette
     border-radius 4px
     margin -4px
 
-    *
+    > *
       margin 4px
 
     > :last-child
@@ -141,8 +141,8 @@ typeColors = config.typography.palette
 
     &.selected
       background: colors.bgs.ui
-      > strong:first-of-type
-        color: colors.primary !important
+      // > strong:first-of-type
+      //   color: colors.primary !important
 
     &:hover
     &:active

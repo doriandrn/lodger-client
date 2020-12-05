@@ -29,8 +29,8 @@ span.scari(
   v-else-if=  "type === 'scari' && value"
 ) {{ value.length }} scari
 impartire(
-  v-else-if=  "id === 'impartire'"
-  :value = "value"
+  v-else-if=  "type === 'impartire'"
+  :value =    "Number(value)"
 )
 avatar(
   v-else-if=  "type === 'avatar'"
@@ -56,10 +56,6 @@ import impartire from 'c/impartire'
 
 export default {
   props: {
-    id: {
-      type: String,
-      default: null
-    },
     type: {
       type: String,
       default: null

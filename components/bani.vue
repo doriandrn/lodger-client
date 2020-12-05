@@ -23,6 +23,7 @@
     )
 
   span.conv(
+    :class= "{ neg }"
     v-if="moneda === base && !showBoth || moneda !== base"
   ) {{ base !== moneda ? '~ ' : '' }}{{ $lodger.format($lodger.convert(suma, moneda)) }}
     currency-sign(
@@ -95,17 +96,22 @@ export default Observer ({
       return this.$lodger.rates
     },
     suma () {
-      if (this.valoare)
-        return Number(this.valoare.value) || 0
+      if (!this.valoare)
+        return 0
+
+      return this.valoare.value ? Number(this.valoare.value) || 0 : this.valoare
     },
     moneda () {
       return this.monedaCustom && this.monedaCustom > 0 ?
         this.monedaCustom :
-        Number(this.valoare ?
+        Number(this.valoare && this.valoare.moneda ?
           this.valoare.moneda :
           this.$lodger.displayCurrency
         )
     },
+    neg () {
+      return this.valoare < 0
+    }
   }
 })
 </script>

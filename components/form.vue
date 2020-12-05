@@ -255,11 +255,35 @@ export default Observer ({
   },
   watch: {
     filteredData: function (newData, prev) {
-      if (this.form.plural !== 'cheltuieli' || !this.isNew || !newData.suma)
+      if (
+        this.form.plural !== 'cheltuieli' ||
+        ! this.isNew ||
+        ! newData.suma
+      )
         return
 
-      const { distribuire, suma: { value, moneda }, apartamenteEligibile, asociatieId } = newData
-      const sub = this.$lodger.apartamente.subscribers.single
+      const {
+        distribuire,
+        suma: {
+          value,
+          moneda
+        },
+        apartamenteEligibile,
+        asociatieId
+      } = newData
+
+      const {
+        $lodger: {
+          convert,
+          displayCurrency,
+          apartamente: {
+            subscribers
+          }
+        },
+        fields,
+        $el
+      } = this
+      const sub = subscribers.single
       const { items, ids } = sub
 
       if (ids.length < apartamenteEligibile.length)
@@ -268,17 +292,20 @@ export default Observer ({
       if (!value)
         return
 
-      const distribuireType = this.fields.distribuire.options[distribuire]
-      this.$el.dataset.type = distribuireType
-      const allUnits = apartamenteEligibile.reduce((a, b) => a + items[b][distribuireType], 0)
-      const cpu = value / allUnits
+      // this.debug('p', this)
 
+      const distribuireType = fields.distribuire.options[distribuire]
+      const allUnits = apartamenteEligibile.reduce((a, b) => a + items[b][distribuireType], 0)
+      const cpu = displayCurrency === moneda ?
+        value / allUnits :
+        convert.call(this.$lodger, value, moneda) / allUnits
+
+      $el.dataset.type = distribuireType
       apartamenteEligibile.forEach(apId => {
-        const impartire = items[apId][distribuireType] * cpu
-        items[apId].impartire = impartire
-        // Vue.set(items[apId], 'impartire', impartire)
+        items[apId].impartire = items[apId][distribuireType] * cpu
       })
 
+      // hacky attempt to refresh values as impartire is not reactive at all
       sub.criteria.limit = (sub.criteria.limit || 1000) + 1
     }
   },

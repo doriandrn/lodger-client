@@ -158,9 +158,12 @@ lrPad = 32px
     +above(xl)
       max-width 900px
 
+    +desktop()
+      max-width 990px
+
   &.editing
-    #single
-      padding-top 12px
+    //- #single
+    //-   padding-top 12px
 
     .container
       background-color #f5f7fb

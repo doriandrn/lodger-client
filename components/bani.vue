@@ -142,6 +142,9 @@ export default Observer ({
     justify-content flex-end
     text-align right
 
+    &+span.conv
+      margin-top 4px
+
     &:before
       background-color: config.palette.tertiary
 

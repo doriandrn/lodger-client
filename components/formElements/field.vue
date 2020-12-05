@@ -883,6 +883,9 @@ span[data-type]
 span[data-type="userAvatar"]
   margin 0 auto
 
+span[data-type="select"]
+  letter-spacing 0
+
 span[data-type="$"]
   // margin-left auto // strica asoc single
 
@@ -898,6 +901,10 @@ span[data-type="$"]
     display flex
     flex-flow row nowrap
     align-items baseline
+
+  a
+    font-weight 400
+    margin-top 4px
 
   input[type="number"]
     min-width 160px

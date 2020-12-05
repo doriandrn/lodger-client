@@ -217,8 +217,49 @@ export default Observer ({
       grid-area rol
 
 [data-tax=  "cheltuiala"]
+  #single
+    .apartamenteEligibile
+      position relative
+
+      &:before
+        content ''
+        position absolute -32px
+        z-index -1
+        background rgba(black, .025)
+
+    ul.ms
+      li
+        &.selected
+          .bani:not(.impartire)
+            .conv
+              color black
+
+        &:not(.selected)
+          > *
+            color rgba(black, .6)
+
+        .locatari
+          width 40px
+          margin-left 48px
+
+    &[data-type="suprafata"]
+      .apartamenteEligibile
+        ul.ms
+          li.selected
+            .suprafata
+              color black
+
+    &[data-type="locatari"]
+      .apartamenteEligibile
+        ul.ms
+          li.selected
+            .locatari
+              color black
+
   fieldset.header
     .fields
+      +desktop()
+        grid-column-gap 60px
       grid-template-areas:
         "aps aps aps denumire denumire suma"\
         "aps aps aps distribuire scadenta scadenta"\
@@ -356,4 +397,5 @@ export default Observer ({
 
       > span
         flex 1 1 100%
+
 </style>

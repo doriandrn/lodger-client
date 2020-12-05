@@ -118,7 +118,7 @@ typeColors = config.typography.palette
       font-size 14px
       display inline
       white-space nowrap
-      color: typeColors.headings
+
       margin-right auto
       max-width: 170px;
       text-overflow: ellipsis;
@@ -169,9 +169,6 @@ typeColors = config.typography.palette
           margin-top 1px
           margin-bottom 1px
 
-          &:nth-child(4)
-            margin-left 44px
-
         strong
           flex 1 1 33%
 
@@ -181,6 +178,11 @@ typeColors = config.typography.palette
         &:not(.selected)
           .impartire
             display none
+
+    &:not(.ms)
+      li
+        strong
+          color: typeColors.headings
 
     &.fetching
       &:before

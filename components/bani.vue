@@ -1,5 +1,5 @@
 <template lang="pug">
-div(v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]")
+.bani(v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]")
   span(v-if="showBoth")
     input(
       type=         "number"
@@ -22,7 +22,7 @@ div(v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]")
       :isCrypto=  "$lodger.isCrypto(moneda)"
     )
 
-  span.bani.conv(
+  span.conv(
     v-if="moneda === base && !showBoth || moneda !== base"
   ) {{ base !== moneda ? '~ ' : '' }}{{ $lodger.format($lodger.convert(suma, moneda)) }}
     currency-sign(
@@ -125,22 +125,23 @@ export default Observer ({
         font-weight 600
 
 .bani
-  display flex
-  flex-flow row nowrap
-  white-space nowrap
-  align-items center
-  font-size 13px
-  line-height 16px
-  letter-spacing 1px
-  justify-content flex-end
-  text-align right
+  > span
+    display flex
+    flex-flow row nowrap
+    white-space nowrap
+    align-items center
+    font-size 13px
+    line-height 16px
+    letter-spacing 1px
+    justify-content flex-end
+    text-align right
 
-  &:before
-    background-color: config.palette.tertiary
+    &:before
+      background-color: config.palette.tertiary
 
-  *.poz
-    color: config.palette.tertiary
+    *.poz
+      color: config.palette.tertiary
 
-  &.neg
-    color: config.palette.error
+    &.neg
+      color: config.palette.error
 </style>

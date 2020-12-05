@@ -7,9 +7,13 @@ frm#single(
   :doc=     "doc"
   :i18n=    "$lodger.i18n.taxonomies[plural]"
   :isNew=   "doc._isTemporary"
+  :refs=    "refs"
   @submit=  "submit"
 )
-  slot(slot="beforeHeader" :isNew="doc._isTemporary")
+  slot(
+    slot=     "beforeHeader"
+    :isNew=   "doc._isTemporary"
+  )
 
   blocuri.struct(
     v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"
@@ -30,6 +34,7 @@ import { reaction, when } from 'mobx'
 let disposer
 
 export default Observer ({
+  name: 'Single',
   data () {
     return {
       fetched: false,
@@ -78,11 +83,7 @@ export default Observer ({
       // }
     }
   },
-  // beforeCreate () {
-  //   const { $lodger, taxonomy } = this
-  //   const { modal, mainSubName } = $lodger
-  //   this._sub = $lodger[taxonomy].subscribers[mainSubName]
-  // },
+
   created () {
     const { $lodger, taxonomy, debug } = this
     const { modal, mainSubName } = $lodger
@@ -131,21 +132,6 @@ export default Observer ({
       }, 2500);
     }
   },
-  // async fetch () {
-  //   // populate fields
-  //   if (this.fetched) return
-  //   const fields = Object.keys(this.docdata)
-
-  //   await Promise.all(fields.map(async f => {
-  //     if (this.$lodger.taxonomies.indexOf(f) > 1) {
-  //       this.docdata[f] = await this.doc[`${f}_`]
-  //     }
-  //   }))
-
-  //   this.fetched = true
-
-  //   return true
-  // },
 
   computed: {
     docdata () {
@@ -154,15 +140,9 @@ export default Observer ({
     plural () {
       return this.doc.collection.name.plural
     },
-    // fields () {
-    //   return Object.keys(this.docdata)
-    //     .filter(k => {
-    //       console.log(k.indexOf('At'), k.length)
-    //       return k.indexOf('_') !== 0 &&
-    //         this.previewFields.indexOf(k) === -1 &&
-    //         k.indexOf('At') !== k.length - 2
-    //     })
-    // },
+    refs () {
+      return this.breadcrumbs.reduce((a, b) => ({ ...a, [`${b}Id`]: this.docdata[`${b}Id`] }), {})
+    },
     createdAt () {
       const { _id }  = this.docdata
       if (!_id) return // temp docs
@@ -181,7 +161,7 @@ export default Observer ({
       const $tax = this.$lodger[this.taxonomy]
       const { parents, form: { fields } } = $tax
 
-      if (!parents || !parents.length) return
+      if (!parents || !parents.length) return []
       return parents.filter(parent => Object.keys(fields).indexOf(parent + 'Id') > - 1)
     },
     previewFields () {
@@ -235,6 +215,32 @@ export default Observer ({
 
     [data-type="number"]
       grid-area rol
+
+[data-tax=  "cheltuiala"]
+  fieldset.header
+    .fields
+      grid-template-areas:
+        "aps aps aps denumire denumire suma"\
+        "aps aps aps distribuire scadenta scadenta"\
+        "aps aps aps data3 data3 data3"
+
+      .distribuire
+        grid-area distribuire
+
+      .denumire
+        grid-area denumire
+
+      .apartamenteEligibile
+        grid-area aps
+
+      .suma
+        grid-area suma
+
+      .dataScadenta
+        grid-area scadenta
+
+      .rel
+        grid-area data
 
 [data-tax="incasare"]
   fieldset.header

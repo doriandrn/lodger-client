@@ -38,6 +38,7 @@ import single from 'c/single'
 import buton from 'form/button'
 
 export default Observer({
+  name: 'Modal',
   data () {
     return {
       editing: false

@@ -11,7 +11,8 @@ ValidationObserver(v-slot="{ passes }")
           v-for=  "field, id in Object.keys(fields).filter(field => typeof fields[field].fieldset === 'undefined' && (isNew ? field.indexOf('At') !== field.length - 2 : true)).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
           :key=           "`${field._type}-${id}`"
           :id=            "id"
-          :class=       "id"
+          :class=         "id"
+          :refs=          "$lodger.taxonomies.indexOf(id) > -1 || field._type === 'selApartamente' ? refs : undefined"
 
           :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
@@ -19,6 +20,7 @@ ValidationObserver(v-slot="{ passes }")
           :focus=         "field.focus"
           :required =     "form.schema.required.indexOf(id) > -1"
           :default=       "field.default"
+          :options=       "field.options"
           :min=           "field.min"
           :max=           "field.max",
           :step=          "field._type === 'bani' ? 0.01 : field.step",
@@ -51,7 +53,8 @@ ValidationObserver(v-slot="{ passes }")
           v-for=  "field, id in Object.keys(fields).filter(field => Number(fields[field].fieldset) === i).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
           :key=           "`${field._type}-${id}`"
           :id=            "id"
-          :class=       "id"
+          :class=         "id"
+          :refs=          "$lodger.taxonomies.indexOf(id) > -1 || field._type === 'selApartamente' ? refs : undefined"
 
           :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
@@ -59,6 +62,7 @@ ValidationObserver(v-slot="{ passes }")
           :focus=         "field.focus"
           :required =     "form.schema.required.indexOf(id) > -1"
           :default=       "field.default"
+          :options=       "field.options"
           :min=           "field.min"
           :max=           "field.max",
           :step=          "field._type === 'bani' ? 0.01 : field.step",
@@ -241,6 +245,40 @@ export default Observer ({
       // default () {
       //   return this.isNew ? ''
       // }
+    },
+
+    refs: {
+      type: Object,
+      default: null
+    }
+  },
+  watch: {
+    filteredData: function (newData, prev) {
+      if (this.form.plural !== 'cheltuieli' || !this.isNew || !newData.suma)
+        return
+
+      this.debug('got new shit', newData)
+      const { distribuire, suma: { value, moneda }, apartamenteEligibile, asociatieId } = newData
+      const sub = this.$lodger.apartamente.subscribers.single
+      const { items, ids } = sub
+
+      if (ids.length < apartamenteEligibile.length)
+        throw new Error('Something went wrong')
+
+      if (!value)
+        return
+
+      const distribuireType = this.fields.distribuire.options[distribuire]
+      const allUnits = apartamenteEligibile.reduce((a, b) => a + items[b][distribuireType], 0)
+      const cpu = value / allUnits
+
+      apartamenteEligibile.forEach(apId => {
+        const impartire = items[apId][distribuireType] * cpu
+        items[apId].impartire = this.$lodger.format(impartire, moneda)
+        // Object.assign(items[apId], { impartire })
+      })
+
+      this.debug(allUnits, 'AUAU', value / allUnits)
     }
   },
   methods: {
@@ -355,6 +393,22 @@ fieldset
       grid-template-columns repeat(6, 1fr)
       grid-row-gap 20px
       grid-column-gap 20px
+
+      +above(m)
+        grid-row-gap 28px
+        grid-column-gap 28px
+
+      +above(l)
+        grid-row-gap 32px
+        grid-column-gap 32px
+
+      +above(xl)
+        grid-row-gap 36px
+        grid-column-gap 36px
+
+      +desktop()
+        grid-row-gap 40px
+        grid-column-gap 40px
 
 
 

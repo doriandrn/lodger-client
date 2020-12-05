@@ -14,7 +14,7 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    v-if=         "['$', 'distribuire', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
     :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
@@ -45,9 +45,9 @@ ValidationProvider(
     @focus=       "$emit('focusing'); if (type === 'search') focusing = true"
   )
   rel(
-    v-else-if= "isRel"
-    :id=      "value"
-    :taxonomy ="id.replace('Id', '').plural"
+    v-else-if=  "isRel"
+    :id=        "value"
+    :taxonomy = "id.replace('Id', '').plural"
   )
   bani(
     v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
@@ -78,7 +78,7 @@ ValidationProvider(
     :id=          "id",
   )
   slect(
-    v-else-if=    "type === 'select' || name === 'rol'"
+    v-else-if=    "type === 'select' || type === 'distribuire' || name === 'rol'"
     :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
     :value=       "value || $props.default",
     :required=    "required",
@@ -145,9 +145,9 @@ ValidationProvider(
   //-   @input=         "$emit('input', $event)"
   //-   :value=         "value || []"
   //- )
-  distribuire(
-    v-else-if=      "type === 'distribuire'"
-  )
+  //- distribuire(
+  //-   v-else-if=      "type === 'distribuire'"
+  //- )
   servicii(
     v-else-if=        "type === 'taxonomy' && id === 'servicii'"
     @input=           "$emit('input', $event)"
@@ -156,9 +156,13 @@ ValidationProvider(
     :disabled=        "disabled"
   )
   tax(
-    v-else-if=  "type === 'taxonomy'"
-    :taxonomy=  "$lodger[id]"
-    subscriberName= "single"
+    v-else-if=        "['taxonomy', 'selApartamente'].indexOf(type) > -1"
+    :taxonomy=        "type === 'taxonomy' ? $lodger[id] : $lodger.apartamente"
+    :previewFields=   "type === 'taxonomy' ? $lodger[id].form.previewFields : [ ...$lodger.apartamente.form.previewFields].concat(['locatari', 'suprafata', 'impartire'])"
+    :criteria=        "{ filter: refs }"
+    :selectedId=       "value ? value.selectedId : undefined"
+    subscriberName=   "single"
+    @input=           "$emit('input', $event)"
   )
     //- :populated= "value || []"
     //- div(slot="item" slot-scope="{ item }") {{ item.name }}
@@ -204,7 +208,7 @@ import multi from 'form/presets/multi'
 import contact from 'form/contact'
 
 import contoare from 'form/contoare'
-import distribuire from 'form/distribuire'
+// import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 
@@ -437,6 +441,10 @@ export default {
     avatarSeed: {
       type: String,
       default: 'drn'
+    },
+    refs: {
+      type: Object,
+      default: null
     }
   },
   components: {
@@ -449,7 +457,7 @@ export default {
     contact,
     contoare,
     dateTime,
-    distribuire,
+    // distribuire,
     dropdown,
     file,
     labl,
@@ -883,7 +891,7 @@ span[data-type="$"]
     justify-content flex-end
 
   .bani
-    margin 8px 0
+    margin-bottom auto
 
   span
     white-space nowrap

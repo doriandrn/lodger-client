@@ -54,7 +54,7 @@
 // import { mapGetters } from 'vuex'
 
 export default {
-  name: 'selApartamente',
+  name: 'SelApartamente',
   data () {
     return {
       numeCriteriu: '...'

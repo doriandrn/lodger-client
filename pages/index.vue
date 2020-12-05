@@ -1,5 +1,8 @@
 <template lang="pug">
-sction#idx(boxes)
+sction#idx(
+  boxes
+)
+  //- v-if=           "$lodger.activeUserId"
   list(
     v-for=        "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
     v-if=         "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
@@ -63,7 +66,8 @@ sction#idx(boxes)
 
   //- .widget(slot="sidebar")
   //-   h3 latest actions
-
+//- sction#idx(v-else)
+//-   p start!
 
 </template>
 

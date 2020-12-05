@@ -28,6 +28,10 @@ span.ap__nr(
 span.scari(
   v-else-if=  "type === 'scari' && value"
 ) {{ value.length }} scari
+impartire(
+  v-else-if=  "id === 'impartire'"
+  :value = "value"
+)
 avatar(
   v-else-if=  "type === 'avatar'"
   :seed=    "avatarSeed"
@@ -48,9 +52,14 @@ import bani from 'c/bani'
 import avatar from 'c/avatar'
 import suprafata from 'c/suprafata'
 import servicii from 'c/servicii'
+import impartire from 'c/impartire'
 
 export default {
   props: {
+    id: {
+      type: String,
+      default: null
+    },
     type: {
       type: String,
       default: null
@@ -67,6 +76,7 @@ export default {
   components: {
     avatar,
     bani,
+    impartire,
     timp,
     suprafata,
     servicii

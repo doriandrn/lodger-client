@@ -13,7 +13,7 @@ div
 
   ul(
     v-if=   "documents.length || taxonomy && subscriber.ids.length"
-    :class= "{ fetching: subscriber.fetching }"
+    :class= "{ fetching: subscriber.fetching, ms: subscriber.options.multipleSelect }"
   )
     slot(
       name=   "item"
@@ -46,6 +46,26 @@ import { reaction } from 'mobx'
 import { Observer } from 'mobx-vue'
 
 export default Observer({
+  async fetch () {
+    const { subscriberName, debug, criteria, taxonomy } = this
+    if (subscriberName === 'unsubscribed')
+      return
+
+    let multipleSelect = false
+
+    if (taxonomy.plural === 'apartamente' && subscriberName === 'single') {
+      multipleSelect = true
+    }
+
+    await taxonomy.subscribe(subscriberName, { criteria: JSON.parse(JSON.stringify(criteria)), multipleSelect })
+
+    if (!taxonomy.subscribers[subscriberName])
+      throw new Error(`Subscriber "${ subscriberName }" does not exist`)
+
+    this.subscriber = taxonomy.subscribers[subscriberName]
+    this.subscriber.criteria = JSON.parse(JSON.stringify(criteria))
+  },
+
   data () {
     return {
       subscriber: {
@@ -54,27 +74,27 @@ export default Observer({
         selectedId: '',
         activeId: '',
         items: {},
+        criteria: this.criteria,
+        options: {},
         fetching: true,
         kill: () => {}
       },
       documents: []
     }
   },
-  async fetch () {
-    const { taxonomy, subscriberName, populated, subscriber } = this
-    if (populated) {
-      this.documents = populated
-      return
-    }
-    if (subscriber.name === 'unsubscribed') return
-    await taxonomy.subscribe(subscriberName, {
-      sort: {
-        createdAt: 'asc'
-      }
-    })
-    this.subscriber = taxonomy.subscribers[subscriberName]
-  },
-  name: 'Tax',
+  // async fetch () {
+  //   const { taxonomy, subscriberName, populated, subscriber } = this
+  //   if (populated) {
+  //     this.documents = populated
+  //     return
+  //   }
+  //   if (subscriber.name === 'unsubscribed') return
+  //   await taxonomy.subscribe(subscriberName, {
+
+  //   })
+  //   this.subscriber = taxonomy.subscribers[subscriberName]
+  // },
+  name: 'R-Tax',
   props: {
     taxonomy: {
       type: SubscribableTaxonomy,
@@ -90,6 +110,16 @@ export default Observer({
     disabled: {
       type: Boolean,
       default: false
+    },
+    criteria: {
+      type: Object,
+      default () {
+        return {
+          sort: {
+            // createdAt: 'asc'
+          }
+        }
+      }
     }
   },
   components: {
@@ -132,6 +162,14 @@ export default Observer({
     //   if (!this.taxonomy) return
     //   return this.taxonomy.subscribers[this.subscriberName]
     // }
+  },
+  watch: {
+    selectedId: function  (ids, prevIds) {
+      if (!ids || this.subscriberName !== 'single')
+        return
+
+      this.$emit('input', ids)
+    }
   },
   // watch: {
   //   selectedId: function (ids, prevIds) {

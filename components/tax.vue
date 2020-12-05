@@ -1,17 +1,20 @@
 <template lang="pug">
 renderlessTax(
-  :taxonomy=  "taxonomy"
+  v-if=             "taxonomy"
+  :taxonomy=        "taxonomy"
   :subscriberName=  "subscriberName"
-  v-if= "taxonomy"
+  :criteria=        "criteria"
+  @input=           "$emit('input', $event)"
 )
-  button.new(
-    slot-scope=   "{ subscriber }"
-    type=         "button"
-    :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < taxonomy.parents.length)"
-    @click.shift= "debug('omfg', Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds })); taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
-    @click=       "debug('wtt'); $lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
-  ) ++
-    span(v-if="subscriber.refsIds") {{ Object.keys(subscriber.refsIds) }} {{ Object.values(subscriber.refsIds) }}
+  //- button.new(
+  //-   v-if=         "subscriber"
+  //-   slot-scope=   "{ subscriber }"
+  //-   type=         "button"
+  //-   :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < taxonomy.parents.length)"
+  //-   @click.shift= "debug('omfg', Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds })); taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
+  //-   @click=       "debug('wtt'); $lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
+  //- ) ++
+  //-   span(v-if="subscriber.refsIds") {{ Object.keys(subscriber.refsIds) }} {{ Object.values(subscriber.refsIds) }}
   li(
     slot= "item"
     slot-scope="{ item, subscriber, taxonomy }"
@@ -21,7 +24,7 @@ renderlessTax(
     @click= "subscriber.select(item[subscriber.primaryPath])"
   )
     viw(
-      v-for=  "key, i in taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2)"
+      v-for=  "key, i in previewFields.filter(f => f.indexOf('Id') !== f.length - 2)"
       :type=  "key",
       :key=   "key",
       :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
@@ -41,9 +44,19 @@ export default {
     viw
   },
   props: {
+    criteria: {
+      type: Object,
+      default: null
+    },
     taxonomy: {
       type: Object,
       required: true
+    },
+    previewFields: {
+      type: Array,
+      default () {
+        return this.taxonomy.form.previewFields || []
+      }
     },
     subscriberName: {
       type: String,
@@ -92,6 +105,7 @@ typeColors = config.typography.palette
       width 30px
       margin-right 8px
       text-align right
+      order -1
 
     .avatar
       margin-right 12px
@@ -99,6 +113,7 @@ typeColors = config.typography.palette
         size 32px
 
     strong
+      order 0
       font-weight 400
       font-size 14px
       display inline
@@ -143,6 +158,29 @@ typeColors = config.typography.palette
     max-height 300px
     overflow auto
     position relative
+
+    &.ms
+      li
+        padding 8px
+        justify-content: flex-start;
+        align-items: baseline;
+
+        *
+          margin-top 1px
+          margin-bottom 1px
+
+          &:nth-child(4)
+            margin-left 44px
+
+        strong
+          flex 1 1 33%
+
+        .bani
+          flex 1 0 50%
+
+        &:not(.selected)
+          .impartire
+            display none
 
     &.fetching
       &:before

@@ -59,16 +59,16 @@ export default {
     }
   },
   async fetch () {
-    const { id } = this
-    const criteria = { filter: { blocId: id }, limit: 0 }
+    // const { id } = this
+    // const criteria = { filter: { blocId: id }, limit: 0 }
 
-    const sub = this.$lodger.apartamente.subscribers.single
+    // const sub = this.$lodger.apartamente.subscribers.single
 
-    if (sub) {
-      sub.criteria = criteria
-    } else {
-      this.$lodger.apartamente.subscribe('single', { criteria })
-    }
+    // if (sub) {
+    //   sub.criteria = criteria
+    // } else {
+    //   this.$lodger.apartamente.subscribe('single', { criteria })
+    // }
   },
   props: {
     bloc: {

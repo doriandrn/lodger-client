@@ -221,6 +221,11 @@ export default Observer ({
     .apartamenteEligibile
       position relative
 
+      header
+        padding 0 !important
+        display flex
+        flex-flow row wrap
+
       &:before
         content ''
         position absolute -32px
@@ -228,6 +233,9 @@ export default Observer ({
         background rgba(black, .025)
 
     ul.ms
+      +above(l)
+        min-width 380px
+
       li
         &.selected
           .bani:not(.impartire)
@@ -239,8 +247,15 @@ export default Observer ({
             color rgba(black, .6)
 
         .locatari
-          width 40px
+          width 48px
           margin-left 48px
+          order 3
+
+        .suprafata
+          order 4
+
+        .impartire
+          order 9
 
     &[data-type="suprafata"]
       .apartamenteEligibile
@@ -256,17 +271,27 @@ export default Observer ({
             .locatari
               color black
 
+              &:before
+                background-color black
+
   fieldset.header
     .fields
-      +desktop()
+      +above(l)
         grid-column-gap 60px
       grid-template-areas:
         "aps aps aps denumire denumire suma"\
         "aps aps aps distribuire scadenta scadenta"\
-        "aps aps aps data3 data3 data3"
+        "aps aps aps catre catre data3"\
+        "aps aps aps metaL . metaR"
 
       .distribuire
         grid-area distribuire
+
+      .catre
+        grid-area catre
+      .asociatieId
+        grid-area data3
+
 
       .denumire
         grid-area denumire

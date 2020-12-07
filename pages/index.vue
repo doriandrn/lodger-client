@@ -2,62 +2,64 @@
 sction#idx(
   boxes
 )
+  div AUI {{ $lodger.activeUserId }}
   //- v-if=           "$lodger.activeUserId"
   list(
-    v-for=        "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
-    v-if=         "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
-    :key=         "tax"
-    :taxonomy=    "$lodger[tax]"
+    v-for=            "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
+    v-if=             "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
+    :key=             "tax"
+    :taxonomy=        "$lodger[tax]"
     :subscriberName=  "subscriberName"
-    :data-tax=  "tax"
+    :data-tax=        "tax"
+    :extra-fields=    "['counters']"
   )
-    header(slot-scope=  "{ taxonomy, subscriber }")
-      h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
-        small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
+    //- header(slot-scope=  "{ taxonomy, subscriber }")
+    //-   h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
+    //-     small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
 
-      field.sort(
-        v-if=           "subscriber && subscriber.criteria && subscriber.criteria.sort && taxonomy.form.schema.indexes.length && subscriber.ids.length > 1"
-        type=           "select"
-        :label=         "$lodger.i18n.sort.placeholder"
+    //-   //- field.sort(
+    //-   //-   v-if=           "subscriber && subscriber.criteria && subscriber.criteria.sort && taxonomy.form.schema.indexes.length && subscriber.ids.length > 1"
+    //-   //-   type=           "select"
+    //-   //-   :label=         "$lodger.i18n.sort.placeholder"
 
-        :placeholder=   "$lodger.i18n.sort.placeholder"
-        :id=            "`sort-${ subscriber.name }-${ tax }`"
-        :options=       "taxonomy.sortOptions"
+    //-   //-   :placeholder=   "$lodger.i18n.sort.placeholder"
+    //-   //-   :id=            "`sort-${ subscriber.name }-${ tax }`"
+    //-   //-   :options=       "taxonomy.sortOptions"
 
-        @input=         "subscriber.criteria.sort = { [$event.split('-')[0]] : $event.split('-')[1] }"
-        :value=         "Object.keys(subscriber.criteria.sort).length > 0 ? `${Object.keys(subscriber.criteria.sort)[0]}-${subscriber.criteria.sort[Object.keys(subscriber.criteria.sort)[0]]}` : null"
+    //-   //-   @input=         "subscriber.criteria.sort = { [$event.split('-')[0]] : $event.split('-')[1] }"
+    //-   //-   :value=         "Object.keys(subscriber.criteria.sort).length > 0 ? `${Object.keys(subscriber.criteria.sort)[0]}-${subscriber.criteria.sort[Object.keys(subscriber.criteria.sort)[0]]}` : null"
 
-        required=       true
-        hide-label
-      )
-        //- .extra(v-if="value" slot-scope= "{ value }")
-        //-   span {{ value.split('-')[0] }}
-        //-   button(data-icon="x" v-tooltip="`clear`" @click="subscriber.criteria.sort[value.split('-')[0]] = undefined; delete subscriber.criteria.sort[value.split('-')[0]]")
+    //-   //-   required=       true
+    //-   //-   hide-label
+    //-   //- )
+    //-     //- .extra(v-if="value" slot-scope= "{ value }")
+    //-     //-   span {{ value.split('-')[0] }}
+    //-     //-   button(data-icon="x" v-tooltip="`clear`" @click="subscriber.criteria.sort[value.split('-')[0]] = undefined; delete subscriber.criteria.sort[value.split('-')[0]]")
 
-      button.new(
-        :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
-        @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
-        @click=       "$lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
-      ) +
+      //- button.new(
+      //-   :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
+      //-   @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
+      //-   @click=       "$lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
+      //- ) +
 
-      //- p(v-if="subscriber.refsIds") {{ subscriber.refsIds }}
-      //- p(v-if="subscriber.criteria") {{ subscriber.criteria.filter || 'no filters' }}
+    //-   //- p(v-if="subscriber.refsIds") {{ subscriber.refsIds }}
+    //-   //- p(v-if="subscriber.criteria") {{ subscriber.criteria.filter || 'no filters' }}
 
-    li(
-      slot= "item"
-      slot-scope="{ item, subscriber, taxonomy }"
+    //- li(
+    //-   slot= "item"
+    //-   slot-scope="{ item, subscriber, taxonomy }"
 
-      :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
-      @click= "subscriber.select(item[subscriber.primaryPath])"
-    )
-      viw(
-        v-for=  "key, i in [ ...taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2), 'counters' ]"
-        :type=  "key",
-        :key=   "key",
-        :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
-        :avatarSeed= "item['name']"
-        @click= "subscriber.edit(item[subscriber.primaryPath])"
-      )
+    //-   :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
+    //-   @click= "subscriber.select(item[subscriber.primaryPath])"
+    //- )
+    //-   viw(
+    //-     v-for=  "key, i in [ ...taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2), 'counters' ]"
+    //-     :type=  "key",
+    //-     :key=   "key",
+    //-     :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
+    //-     :avatarSeed= "item['name']"
+    //-     @click= "subscriber.edit(item[subscriber.primaryPath])"
+    //-   )
 
   //- .stats(slot="sidebar")
   //-   h3 stats
@@ -74,7 +76,7 @@ sction#idx(
 <script>
 import sction from 'c/section'
 import frm from 'c/form'
-import list from 'c/renderlessTax'
+import list from 'c/tax'
 import registru from 'c/registru'
 import servicii from 'c/servicii'
 import modal from 'c/modal'

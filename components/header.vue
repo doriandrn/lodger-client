@@ -41,6 +41,10 @@ header
   a
     text-decoration none
 
+  h3
+    margin-bottom 0
+    flex 1 1 80%
+
   .logo
     margin-bottom 0
     white-space nowrap

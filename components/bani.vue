@@ -3,10 +3,10 @@
   span(v-if="showBoth")
     input(
       type=         "number"
-      :value=       "disabled ? null : suma"
+      :value=       "disabled ? null : suma || 0"
       :step=        "$lodger.isCrypto(moneda) ? 0.000000001 : 0.01"
       :disabled=    "disabled"
-      :placeholder= "disabled ? this.$lodger.format(suma, moneda) : $lodger.isCrypto(moneda) ? '0.00000000' : '0.00,00'"
+      :placeholder= "disabled ? this.$lodger.format(suma, moneda) : $lodger.isCrypto(moneda) ? '0,00000000' : '0,00'"
       @input=      "change($event, true)"
     )
 
@@ -57,7 +57,7 @@ export default Observer ({
         moneda = this.moneda
       } else {
         if (this.valoare) {
-          value = Number(this.valoare.value)
+          value = Number(this.valoare.value) || 0
         }
         this.monedaCustom = moneda = Number(e)
       }
@@ -75,7 +75,9 @@ export default Observer ({
     },
     showBoth: {
       type: Boolean,
-      default: false
+      default: function () {
+        this.base !== this.moneda
+      }
     },
     disabled: {
       type: Boolean,
@@ -110,7 +112,7 @@ export default Observer ({
         )
     },
     neg () {
-      return this.valoare < 0
+      return this.suma < 0
     }
   }
 })
@@ -141,6 +143,7 @@ export default Observer ({
     letter-spacing 1px
     justify-content flex-end
     text-align right
+    margin-left auto
 
     &+span.conv
       margin-top 4px

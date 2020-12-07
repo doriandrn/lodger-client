@@ -10,8 +10,10 @@ timp(
   liveUpdate= true
 )
 bani(
-  v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
-  :valoare="value.suma"
+  v-else-if=    "['suma', 'bani', 'balanta', '$', 'impartire'].indexOf(type) > -1"
+  :class=       "{ impartire: type === 'impartire', zero: !value }"
+  :valoare=     "type === 'impartire' ? { value: -(value), moneda: formData.suma.moneda } : value.suma"
+  :showBoth=    "type=== 'impartire' && formData.suma && formData.suma.moneda !== $lodger.displayCurrency"
 )
 suprafata(
   v-else-if=  "type === 'suprafata'"
@@ -28,10 +30,10 @@ span.ap__nr(
 span.scari(
   v-else-if=  "type === 'scari' && value"
 ) {{ value.length }} scari
-impartire(
-  v-else-if=  "type === 'impartire'"
-  :value =    "Number(value)"
-)
+//- impartire(
+//-   v-else-if=  "type === 'impartire'"
+//-   :value =    "Number(value)"
+//- )
 avatar(
   v-else-if=  "type === 'avatar'"
   :seed=    "avatarSeed"
@@ -43,7 +45,11 @@ avatar(
   v-show= "value && Object.keys(value).map(k => value[k]).filter(v => v > 0).length"
 )
   span(v-for="counter, rel in value" v-if="counter > 0" :data-w="rel") {{ counter }}
-span(v-else :class="type") {{ value }}
+span(
+  v-else
+  :class="type"
+  :data-icon="type === 'locatari' ? 'users' : undefined"
+) {{ value }}
 </template>
 
 <script>
@@ -67,6 +73,10 @@ export default {
     avatarSeed: {
       type: String,
       default: 'drn'
+    },
+    formData: {
+      type: Object,
+      default: null
     }
   },
   components: {
@@ -79,3 +89,10 @@ export default {
   }
 }
 </script>
+
+<style lang="styl">
+.locatari[data-icon="users"]
+  &:before
+    background-color #666
+</style>
+

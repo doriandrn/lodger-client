@@ -3,33 +3,60 @@ renderlessTax(
   v-if=             "taxonomy"
   :taxonomy=        "taxonomy"
   :subscriberName=  "subscriberName"
-  :criteria=        "criteria"
-  @input=           "$emit('input', $event)"
+  :criteria=        "criteria ? criteria : undefined"
+  :itemsExtraData=  "taxonomy.plural === 'apartamente' && value ? { impartire: value } : undefined"
+  @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
 )
-  //- button.new(
-  //-   v-if=         "subscriber"
-  //-   slot-scope=   "{ subscriber }"
-  //-   type=         "button"
-  //-   :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < taxonomy.parents.length)"
-  //-   @click.shift= "debug('omfg', Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds })); taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
-  //-   @click=       "debug('wtt'); $lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
-  //- ) ++
-  //-   span(v-if="subscriber.refsIds") {{ Object.keys(subscriber.refsIds) }} {{ Object.values(subscriber.refsIds) }}
+  header(slot-scope=  "{ taxonomy, subscriber }")
+    h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
+      small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
+
+
+    field.sort(
+      v-if=           "sortable && subscriber && subscriber.criteria && taxonomy.form.schema.indexes.length && subscriber.ids.length > 1"
+      type=           "select"
+      :label=         "$lodger.i18n.sort.placeholder"
+
+      :placeholder=   "$lodger.i18n.sort.placeholder"
+      :id=            "`sort-${ subscriber.name }-${ taxonomy.plural }`"
+      :options=       "taxonomy.sortOptions"
+
+      @input=         "subscriber.criteria.sort = { [$event.split('-')[0]] : $event.split('-')[1] }"
+      :value=         "Object.keys(subscriber.criteria.sort || {}).length > 0 ? `${Object.keys(subscriber.criteria.sort)[0]}-${subscriber.criteria.sort[Object.keys(subscriber.criteria.sort)[0]]}` : null"
+
+      required=       true
+      hide-label
+    )
+
+    button.new(
+      v-if=         "!disabled && subscriberName !== 'single'"
+      type=         "button"
+      :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < taxonomy.parents.length)"
+      @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
+      @click=       "!disabled ? $lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds }) : undefined"
+    ) +
+
+    p.selControls(v-if=  "!disabled && subscriber.options.multipleSelect")
+      span {{ subscriber.selectedId.length || 0 }} selectate
+      a(@click= "subscriber.selectedId.length < subscriber.ids.length ? subscriber.select(subscriber.ids.filter(id => subscriber.selectedId.indexOf(id) < 0)) : subscriber.select(subscriber.ids)") Selectteaza toate
+
   li(
     slot= "item"
     slot-scope="{ item, subscriber, taxonomy }"
 
     v-if= "!(hideSelectedItem && item[subscriber.primaryPath] === subscriber.selectedId)"
     :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
-    @click= "subscriber.select(item[subscriber.primaryPath])"
+
+    @click= "!disabled ? subscriber.select(item[subscriber.primaryPath]) : undefined"
   )
     viw(
-      v-for=  "key, i in previewFields.filter(f => f.indexOf('Id') !== f.length - 2)"
+      v-for=  "key, i in displayFields"
       :type=  "key",
       :key=   "key",
       :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
       :avatarSeed= "item['name']"
-      @click= "subscriber.edit(item[subscriber.primaryPath])"
+      :formData=  "formData"
+      @click= "subscriberName !== 'single' ? subscriber.edit(item[subscriber.primaryPath]) : undefined"
     )
 p(v-else)  invalid tax
 </template>
@@ -37,13 +64,43 @@ p(v-else)  invalid tax
 <script>
 import renderlessTax from 'c/renderlessTax'
 import viw from 'c/viewElement'
+import { Observer } from 'mobx-vue'
 
-export default {
+export default Observer({
+  beforeCreate () {
+    this.$options.components.field = require('form/field').default
+  },
+  computed: {
+    displayFields () {
+      return this.previewFields
+        .concat(this.extraFields)
+        .filter(f => f && f.indexOf('Id') !== f.length - 2)
+    }
+  },
+  fetch () {
+    const { value } = this
+    if (!value)
+      return
+
+    this.criteria.filter = { '_id': { $in: Object.keys(value) } }
+  },
   components: {
     renderlessTax,
     viw
   },
   props: {
+    value: {
+      type: Object,
+      default: null
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    sortable: {
+      type: Boolean,
+      default: true
+    },
     criteria: {
       type: Object,
       default: null
@@ -58,6 +115,10 @@ export default {
         return this.taxonomy.form.previewFields || []
       }
     },
+    extraFields: {
+      type: Array,
+      default: null
+    },
     subscriberName: {
       type: String,
       default: 'TaxWithNoSubName'
@@ -65,9 +126,13 @@ export default {
     hideSelectedItem: {
       type: Boolean,
       default: false
+    },
+    formData: {
+      type: Object,
+      default: null
     }
   }
-}
+})
 </script>
 
 <style lang="stylus">
@@ -77,6 +142,13 @@ typeColors = config.typography.palette
 
 [data-tax]
   width 100%
+
+  .selControls
+    flex 1 1 100%
+
+    p > *
+      &:not(:first-child)
+        margin-left 8px
 
   li
     display flex
@@ -118,7 +190,6 @@ typeColors = config.typography.palette
       font-size 14px
       display inline
       white-space nowrap
-
       margin-right auto
       max-width: 170px;
       text-overflow: ellipsis;
@@ -140,15 +211,14 @@ typeColors = config.typography.palette
     //   border-bottom: 1px solid colors.borders
 
     &.selected
-      background: colors.bgs.ui
+      background: rgba(colors.bgs.ui, .85)
       // > strong:first-of-type
       //   color: colors.primary !important
 
-    &:hover
-    &:active
-      .item
-        &__controls
-          right 0
+    &:not(.selected)
+      &:hover
+      &:active
+        background: rgba(colors.bgs.ui, .65)
 
   ul
     margin 0 -8px
@@ -164,16 +234,24 @@ typeColors = config.typography.palette
         padding 8px
         justify-content: flex-start;
         align-items: baseline;
+        cursor pointer
 
         *
           margin-top 1px
           margin-bottom 1px
 
         strong
-          flex 1 1 33%
+          flex 0 1 40%
+          max-width 100%
+          text-decoration none !important
 
         .bani
-          flex 1 0 50%
+          flex: 0 0 160px;
+          width: auto;
+          align-self: flex-end;
+          display: inline-flex;
+          margin-left: auto;
+          text-align: right;
 
         &:not(.selected)
           .impartire

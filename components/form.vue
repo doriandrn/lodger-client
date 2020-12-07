@@ -1,6 +1,6 @@
 <template lang="pug">
 ValidationObserver(v-slot="{ passes }")
-  form.form(@submit.prevent="passes(validation)")
+  form.form(@submit.prevent="passes(validation)" :class="{ isNew }")
     slot(name="beforeHeader")
 
     fieldset.header
@@ -35,8 +35,10 @@ ValidationObserver(v-slot="{ passes }")
           :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime'"
 
           :value=     "value && value[id] ? value[id] : $data[id]"
-          @input=     "isNew ? $data[id] = $event : doc.atomicSet(id, $event)"
+          @input=     "updField(id, $event)"
 
+          :isNew=       "isNew"
+          :formData=  "filteredData"
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
 
@@ -75,8 +77,10 @@ ValidationObserver(v-slot="{ passes }")
           :disabled=      "field.freezed || !editing || id.indexOf('Id') === id.length - 2"
 
           :value=     "value && value[id] ? value[id] : $data[id]"
-          @input=     "isNew ? $data[id] = $event : doc.atomicSet(id, $event)"
+          @input=     "updField(id, $event)"
 
+          :isNew=       "isNew"
+          :formData=  "filteredData"
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
 
@@ -173,12 +177,18 @@ extend("length", {
 export default Observer ({
   name: 'F0rm',
   data () {
-    const { form: { fields }, isNew, value } = this
+    const { form: { fields, plural }, isNew, value } = this
     if (!fields) throw new Error('No form supplied')
     const data = {
       fetched: false
     }
-    Object.keys(fields).map(field => { data[field] = value[field] || null })
+
+    Object.keys(fields).forEach(k => data[k] = value[k] || fields[k] && fields[k].default)
+    if (data.suma === undefined)
+      data.suma = {
+        value: 0,
+        moneda: this.$lodger.displayCurrency
+      }
     return { ...data }
   },
   computed: {
@@ -189,10 +199,62 @@ export default Observer ({
       return this.form.fields
     },
     filteredData () {
-      const { $data, value } = this
+      const { $data, value, fields } = this
       const data = {}
-      Object.keys(this.$data).filter(k => value[k] || $data[k]).map(k => data[k] = $data[k])
+      Object
+        .keys(this.$data)
+        .filter(k => value[k] !== undefined || $data[k] !== undefined)
+        .map(k => data[k] = $data[k] || fields[k] && fields[k].default)
+
       return data
+    },
+
+    distrChelt () {
+      if (
+        this.form.plural !== 'cheltuieli' ||
+        ! this.suma
+      )
+        return
+
+      const {
+        $lodger: {
+          convert,
+          displayCurrency,
+          apartamente: {
+            subscribers
+          }
+        },
+        fields,
+        debug,
+
+        distribuire,
+        suma: {
+          value,
+          moneda
+        },
+        apartamenteEligibile,
+        asociatieId
+      } = this
+
+      const sub = subscribers.single
+      const { items, ids } = sub
+      const idsApsSel = Object.keys(apartamenteEligibile)
+
+      // if (ids.length < idsApsSel.length)
+      //   throw new Error('Something went wrong')
+
+      if (!value)
+        return
+
+      const distribuireType = fields.distribuire.options[distribuire]
+      const allUnits = idsApsSel.reduce((a, b) => a + items[b][distribuireType], 0)
+      const cpu = displayCurrency === moneda ?
+        value / allUnits :
+        convert.call(this.$lodger, value, moneda) / allUnits
+
+      // const percentage = 100 / allUnits
+      // $el.dataset.type = distribuireType
+      return idsApsSel.reduce((a, b) => ({ ...a, [b]: items[b][distribuireType] * cpu }), {})
     }
   },
   components: {
@@ -262,54 +324,77 @@ export default Observer ({
       )
         return
 
-      const {
-        distribuire,
-        suma: {
-          value,
-          moneda
-        },
-        apartamenteEligibile,
-        asociatieId
-      } = newData
-
-      const {
-        $lodger: {
-          convert,
-          displayCurrency,
-          apartamente: {
-            subscribers
-          }
-        },
-        fields,
-        $el
-      } = this
-      const sub = subscribers.single
-      const { items, ids } = sub
-
-      if (ids.length < apartamenteEligibile.length)
-        throw new Error('Something went wrong')
-
-      if (!value)
+      if (Object.keys(newData.apartamenteEligibile).length < 1)
         return
 
-      // this.debug('p', this)
+      Object.assign(this.$data.apartamenteEligibile, this.distrChelt)
 
-      const distribuireType = fields.distribuire.options[distribuire]
-      const allUnits = apartamenteEligibile.reduce((a, b) => a + items[b][distribuireType], 0)
-      const cpu = displayCurrency === moneda ?
-        value / allUnits :
-        convert.call(this.$lodger, value, moneda) / allUnits
+  //     const {
+  //       distribuire,
+  //       suma: {
+  //         value,
+  //         moneda
+  //       },
+  //       apartamenteEligibile,
+  //       asociatieId
+  //     } = newData
 
-      $el.dataset.type = distribuireType
-      apartamenteEligibile.forEach(apId => {
-        items[apId].impartire = items[apId][distribuireType] * cpu
-      })
+  //     const {
+  //       $lodger: {
+  //         convert,
+  //         displayCurrency,
+  //         apartamente: {
+  //           subscribers
+  //         }
+  //       },
+  //       fields,
+  //       debug,
+  //       $el
+  //     } = this
 
-      // hacky attempt to refresh values as impartire is not reactive at all
-      sub.criteria.limit = (sub.criteria.limit || 1000) + 1
+  //     const sub = subscribers.single
+  //     const { items, ids } = sub
+  //     const idsApsSel = apartamenteEligibile.length !== undefined ?
+  //       apartamenteEligibile :
+  //       Object.keys(apartamenteEligibile)
+
+  //     if (ids.length < idsApsSel.length)
+  //       throw new Error('Something went wrong')
+
+  //     if (!value)
+  //       return
+
+  //     debug(newData)
+
+  //     const distribuireType = fields.distribuire.options[distribuire]
+  //     const allUnits = idsApsSel.reduce((a, b) => a + items[b][distribuireType], 0)
+  //     const cpu = displayCurrency === moneda ?
+  //       value / allUnits :
+  //       convert.call(this.$lodger, value, moneda) / allUnits
+  //     const percentage = 100 / allUnits
+
+  //     // $el.dataset.type = distribuireType
+  //     this.apartamenteEligibile = idsApsSel.reduce((a, b) => ({ ...a, [b]: items[b][distribuireType] * cpu }), {})
+  //     // idsApsSel.forEach(apId => {
+  //     //   items[apId].impartire = items[apId][distribuireType] * cpu
+  //     //   items[apId].percentage = items[apId][distribuireType] * percentage
+  //     // })
+
+  //     // hacky attempt to refresh values as impartire is not reactive at all
+  //     sub.criteria.limit = (sub.criteria.limit || 1000) + 1
     }
   },
   methods: {
+    updField (id, e) {
+      const { isNew, $data, doc, debug } = this
+      if (isNew)
+        if (e !== undefined) $data[id] = e
+      else try {
+        doc.atomicSet(id, e)
+      } catch (err) {
+        debug('Did not update field ', id, err)
+      }
+    },
     async validation () {
       // if (!this.doc._isTemporary) return
       this.$children[0].validate().then(ok => {

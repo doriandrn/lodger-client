@@ -28,7 +28,7 @@ ValidationProvider(
     :min=         "type === 'number' ? min : null"
     :max=         "type === 'number' ? max : null"
     :step=        "['bani', 'number'].indexOf(type) > -1 ? step : null"
-    :value=       "type.asRxDBType === 'string' && typeof value === 'boolean' ? '' : value",
+    :value=       "val",
     :checked=     "checked || value"
     @input=       "handleInput",
     @change=      "handleChange"
@@ -83,7 +83,7 @@ ValidationProvider(
     :value=       "value || $props.default",
     :required=    "required",
     :placeholder= "placeholder"
-    @input=       "$emit('input', $event.target.value)"
+    @input=       "$emit('input', String(Number($event.target.value)) === $event.target.value ? Number($event.target.value) : $event.target.value)"
     :id=          "id"
     :arrow=       "arrow"
     :disabled=    "disabled"
@@ -158,11 +158,14 @@ ValidationProvider(
   tax(
     v-else-if=        "['taxonomy', 'selApartamente'].indexOf(type) > -1"
     :taxonomy=        "type === 'taxonomy' ? $lodger[id] : $lodger.apartamente"
-    :previewFields=   "type === 'taxonomy' ? $lodger[id].form.previewFields : [ ...$lodger.apartamente.form.previewFields].concat(['locatari', 'suprafata', 'impartire'])"
+    :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $lodger[id] : $lodger.apartamente)"
     :criteria=        "{ filter: refs }"
     :selectedId=       "value ? value.selectedId : undefined"
     :subscriberName=   "`single${ refs && Object.keys(refs) === 1 ? `${ refs[Object.keys(refs)[0]] }` : '' }`"
     @input=           "$emit('input', $event)"
+    :value=           "value"
+    :disabled=        "disabled"
+    :formData=        "formData"
   )
     //- :populated= "value || []"
     //- div(slot="item" slot-scope="{ item }") {{ item.name }}
@@ -254,6 +257,13 @@ export default {
 
       if (type === 'checkbox') {
         value = Boolean(value)
+      }
+
+      if (type.asRxDBType === 'string' && typeof value === 'boolean')
+        return ''
+
+      if (type === 'dateTime') {
+        return new Date(new Date(value).getTime()).toISOString().substring(0, (new Date(new Date(value).getTime()).toISOString().indexOf("T")|0) + 6|0)
       }
 
       // if (type === 'select' && id.indexOf('currency') > -1) {
@@ -379,6 +389,10 @@ export default {
       type: String,
       default: null
     },
+    isNew: {
+      type: Boolean,
+      default: false
+    },
 
     value: {
       type: [Boolean, String, Array, Object, Number],
@@ -445,6 +459,10 @@ export default {
     refs: {
       type: Object,
       default: null
+    },
+    formData: {
+      type: Object,
+      default: null
     }
   },
   components: {
@@ -475,9 +493,18 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      sterge: 'asociatie/sterge'
-    }),
+    taxPreviewFields ($tax) {
+      switch (this.type) {
+        case 'taxonomy':
+          return $tax.form.previewFields
+
+        case 'selApartamente':
+          if (this.isNew)
+            return $tax.form.previewFields.concat(['suprafata', 'locatari', 'impartire'])
+          else
+            return $tax.form.previewFields.filter(k => k !== 'balanta').concat(['impartire'])
+      }
+    },
     /**
      * Metode doar pentru search
      */
@@ -528,7 +555,6 @@ export default {
     handleInput (e) {
       let { value, type } = e.target
       const { search, transform, debug, $options: { filters } } = this
-
       switch (type) {
         case 'checkbox':
           return
@@ -538,6 +564,11 @@ export default {
 
         case 'number':
           value = Number(value)
+          break
+
+        case 'datetime-local':
+          const d = new Date(value)
+          value = d.getTime()
           break
 
         case 'text':

@@ -37,8 +37,12 @@ export default {
 </script>
 
 <style lang="stylus">
-.impartire
-  .sign
-    opacity 0
-    visibility hidden
+form.isNew
+  .impartire
+    &.zero
+      display none !important
+
+    .sign
+      opacity 0
+      visibility hidden
 </style>

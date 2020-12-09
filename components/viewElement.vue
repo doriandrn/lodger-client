@@ -30,10 +30,7 @@ span.ap__nr(
 span.scari(
   v-else-if=  "type === 'scari' && value"
 ) {{ value.length }} scari
-//- impartire(
-//-   v-else-if=  "type === 'impartire'"
-//-   :value =    "Number(value)"
-//- )
+
 avatar(
   v-else-if=  "type === 'avatar'"
   :seed=    "avatarSeed"
@@ -58,7 +55,6 @@ import bani from 'c/bani'
 import avatar from 'c/avatar'
 import suprafata from 'c/suprafata'
 import servicii from 'c/servicii'
-import impartire from 'c/impartire'
 
 export default {
   props: {
@@ -82,7 +78,6 @@ export default {
   components: {
     avatar,
     bani,
-    impartire,
     timp,
     suprafata,
     servicii
@@ -90,9 +85,13 @@ export default {
 }
 </script>
 
-<style lang="styl">
+<style lang="stylus">
 .locatari[data-icon="users"]
   &:before
     background-color #666
+    position relative
+    top 2px
+    margin-right 4px
+    mask-size 12px
 </style>
 

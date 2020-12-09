@@ -37,8 +37,12 @@ renderlessTax(
     ) +
 
     p.selControls(v-if=  "!disabled && subscriber.options.multipleSelect")
-      span {{ subscriber.selectedId.length || 0 }} selectate
-      a(@click= "subscriber.selectedId.length < subscriber.ids.length ? subscriber.select(subscriber.ids.filter(id => subscriber.selectedId.indexOf(id) < 0)) : subscriber.select(subscriber.ids)") Selectteaza toate
+      span {{ subscriber.selectedId.length || 0 }} {{ $lodger.i18n.sel[`selected${subscriber.selectedId.length > 1 ? 's' : ''}`] }}
+      a.all(
+        :data-icon= "subscriber.ids.length === subscriber.selectedId.length ? 'deselAll' : 'selAll'"
+        :class=     "subscriber.ids.length !== subscriber.selectedId.length ? 'sel' : 'desel'"
+        v-tooltip=  "$lodger.i18n.sel[`${subscriber.ids.length === subscriber.selectedId.length ? 'de' : ''}selectAll`]"
+        @click=     "subscriber.selectedId.length < subscriber.ids.length ? subscriber.select(subscriber.ids.filter(id => subscriber.selectedId.indexOf(id) < 0)) : subscriber.select(subscriber.ids)")
 
   li(
     slot= "item"
@@ -140,15 +144,29 @@ export default Observer({
 colors = config.palette
 typeColors = config.typography.palette
 
+.selControls
+  flex 1 1 100%
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+
+  a
+    &.all
+      &.desel
+        &:before
+          background-color red
+
+      &.sel
+        &:before
+          background-color green
+
+  > *
+    &:not(:first-child)
+      margin-left 8px
+
 [data-tax]
   width 100%
-
-  .selControls
-    flex 1 1 100%
-
-    p > *
-      &:not(:first-child)
-        margin-left 8px
 
   li
     display flex
@@ -160,7 +178,8 @@ typeColors = config.typography.palette
     padding 11px 12px
     width 100%
     border-radius 4px
-    margin -4px
+    // margin -4px
+    margin 4px 0
 
     > *
       margin 4px
@@ -171,7 +190,6 @@ typeColors = config.typography.palette
     +above(l)
       padding 16px 20px
       border-radius 6px
-      margin 4px 0
 
     .ap__nr
       width 30px
@@ -221,8 +239,8 @@ typeColors = config.typography.palette
         background: rgba(colors.bgs.ui, .65)
 
   ul
-    margin 0 -8px
-    width calc(100% + 16px)
+    // margin 0 -8px
+    // width calc(100% + 16px)
     position relative
     padding 0
     max-height 300px
@@ -233,8 +251,9 @@ typeColors = config.typography.palette
       li
         padding 8px
         justify-content: flex-start;
-        align-items: baseline;
+        align-items: center;
         cursor pointer
+        line-height 14px
 
         *
           margin-top 1px

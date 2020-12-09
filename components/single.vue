@@ -181,7 +181,7 @@ export default Observer ({
 })
 </script>
 
-<style lang="styl">
+<style lang="stylus">
 @require '~styles/config'
 
 
@@ -217,8 +217,11 @@ export default Observer ({
       grid-area rol
 
 [data-tax=  "cheltuiala"]
+  .snapshotsApartamente
+    display none
+
   #single
-    .apartamenteEligibile
+    .distribuire
       position relative
 
       header
@@ -228,13 +231,14 @@ export default Observer ({
 
       &:before
         content ''
-        position absolute -32px
+        position absolute 0
         z-index -1
         background rgba(black, .025)
 
     ul.ms
       +above(l)
-        min-width 380px
+        min-width 366px
+        max-height 480px
 
       li
         &.selected
@@ -254,18 +258,31 @@ export default Observer ({
         .suprafata
           order 4
 
+          em
+            margin-left 2px
+            font-style normal
+
         .impartire
           order 9
 
-    &[data-type="suprafata"]
-      .apartamenteEligibile
+        .suprafata
+        .locatari
+          display inline-flex
+          flex-flow row nowrap
+          align-items baseline
+
+          *:not(sup)
+            vertical-align baseline
+
+    [data-type="suprafata"]
+      .distribuire
         ul.ms
           li.selected
             .suprafata
               color black
 
-    &[data-type="locatari"]
-      .apartamenteEligibile
+    [data-type="locatari"]
+      .distribuire
         ul.ms
           li.selected
             .locatari
@@ -274,36 +291,99 @@ export default Observer ({
               &:before
                 background-color black
 
+  form.form
+    &.isNew
+      .progres
+        display none
+
+      fieldset.header
+        .fields
+          grid-template-areas:
+            "aps aps"\
+            "catre suma"\
+            "distribuire scadenta"\
+            "denumire denumire"\
+            "atasamente atasamente"
+
+          +above(m)
+            grid-template-areas:
+              "aps aps aps aps catre catre"\
+              "aps aps aps aps suma suma"\
+              "aps aps aps aps distribuire distribuire"\
+              "aps aps aps aps scadenta scadenta"\
+              "aps aps aps aps denumire denumire"\
+              "atasamente atasamente atasamente atasamente atasamente atasamente"
+
+          +above(l)
+            grid-template-areas:
+              "aps aps aps catre suma suma"\
+              "aps aps aps distribuire distribuire distribuire"\
+              "aps aps aps scadenta scadenta scadenta"\
+              "aps aps aps denumire denumire denumire"\
+              "atasamente atasamente atasamente atasamente atasamente atasamente"
+
+
+          +above(xl)
+            grid-template-areas:
+              "aps aps aps catre catre suma"\
+              "aps aps aps distribuire distribuire scadenta"\
+              "aps aps aps denumire denumire denumire"\
+              "aps aps aps atasamente atasamente atasamente"
+
+    &:not(.isNew)
+       fieldset.header
+        .fields
+          +above(l)
+            grid-template-areas:
+              "aps aps aps denumire denumire suma"\
+              "aps aps aps catre catre progres"\
+              "aps aps aps distribuire distribuire scadenta"\
+              "aps aps aps metaL . metaR"\
+              "aps aps aps atasamente atasamente atasamente"
+
+
   fieldset.header
     .fields
-      +above(l)
-        grid-column-gap 60px
-      grid-template-areas:
-        "aps aps aps denumire denumire suma"\
-        "aps aps aps distribuire scadenta scadenta"\
-        "aps aps aps catre catre data3"\
-        "aps aps aps metaL . metaR"
+      // +above(l)
+      //   grid-column-gap 60px
 
-      .distribuire
+      .asociatieId
+        display none
+
+      .modDistribuire
         grid-area distribuire
+
+      .attachments
+        grid-area atasamente
+
+      .progres
+        grid-area progres
 
       .catre
         grid-area catre
       .asociatieId
-        grid-area data3
+        grid-area denumire
 
 
       .denumire
         grid-area denumire
 
-      .apartamenteEligibile
+      .distribuire
         grid-area aps
+        height 100%
 
       .suma
         grid-area suma
 
       .dataScadenta
         grid-area scadenta
+
+        &.value
+          time
+            text-align right
+
+            &::before
+              content 'zz'
 
       .rel
         grid-area data

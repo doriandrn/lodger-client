@@ -109,31 +109,9 @@ export default {
 colors = config.palette
 typeColors = config.typography.palette
 
-// .item
-//   &__controls
-//     margin-left auto
-//     display flex
-//     flex-flow row nowrap
-//     position absolute
-//     right -120px
-//     transition right .1s ease
-
-//     *
-//       line-height 14px
-
-//     > button:first-child
-//       margin-left 64px
-
-//     button
-//       background transparent
-
 #idx
   .inner
     > div
-      // size 100%
-      // display grid
-      // grid-template-columns 12px 12px 12px
-      // grid-template-rows 12px 12px 12px
       display flex
       flex-flow row wrap
 

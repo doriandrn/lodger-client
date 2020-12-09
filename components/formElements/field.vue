@@ -14,8 +14,8 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['$', 'distribuire', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
-    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
+    v-if=         "id !== 'modDistribuire' && ['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    :type=        "id === 'attachments' ? 'file' : type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
@@ -59,9 +59,16 @@ ValidationProvider(
   )
   date-time(
     v-else-if=  "type === 'dateTime' && disabled"
-    v-show=     "value"
+    v-show=     "value && (name !== 'updatedAt' || (name === 'updatedAt' && formData.createdAt !== formData.updatedAt))"
     :unixTime=  "value"
     liveUpdate
+  )
+  meter(
+    :id=        "id"
+    v-else-if=  "type === 'meter'"
+    :value=     "value"
+    :min=       "0"
+    :max=       "100"
   )
   buton(
     v-else-if=    "type === 'button'"
@@ -73,12 +80,12 @@ ValidationProvider(
     v-else-if=    "['textarea'].indexOf(type) > -1"
     :placeholder= "placeholder",
     :value=       "value",
-    @input=       "$emit('input', $event)"
+    @input=       "$emit('input', $event.target.value)"
     :required=    "required",
     :id=          "id",
   )
   slect(
-    v-else-if=    "type === 'select' || type === 'distribuire' || name === 'rol'"
+    v-else-if=    "type === 'select' || id === 'modDistribuire' || name === 'rol'"
     :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
     :value=       "value || $props.default",
     :required=    "required",
@@ -89,16 +96,16 @@ ValidationProvider(
     :disabled=    "disabled"
     :optGrpLabels=      "optGrpLabels"
   )
-  altslect(
-    v-else-if=    "type === 'altselect'"
-    :options=     "options"
-    :value=       "value",
-    :required=    "required",
-    @input=       "$emit('input', $event)"
-    :id=          "id"
-    :arrow=       "arrow"
-    :disabled=    "disabled"
-  )
+  //- altslect(
+  //-   v-else-if=    "type === 'altselect'"
+  //-   :options=     "options"
+  //-   :value=       "value",
+  //-   :required=    "required",
+  //-   @input=       "$emit('input', $event)"
+  //-   :id=          "id"
+  //-   :arrow=       "arrow"
+  //-   :disabled=    "disabled"
+  //- )
   avatar(
     v-else-if=    "['avatar', 'userAvatar'].indexOf(type) > -1"
     :id=          "id"
@@ -139,15 +146,6 @@ ValidationProvider(
     @input=         "$emit('input', $event)"
   )
 
-  //- sel-apartamente(
-  //-   v-else-if=      "type === 'selApartamente'"
-  //-   :optiuni=       "options"
-  //-   @input=         "$emit('input', $event)"
-  //-   :value=         "value || []"
-  //- )
-  //- distribuire(
-  //-   v-else-if=      "type === 'distribuire'"
-  //- )
   servicii(
     v-else-if=        "type === 'taxonomy' && id === 'servicii'"
     @input=           "$emit('input', $event)"
@@ -211,7 +209,6 @@ import multi from 'form/presets/multi'
 import contact from 'form/contact'
 
 import contoare from 'form/contoare'
-// import distribuire from 'form/distribuire'
 import selApartamente from 'form/selApartamente'
 import apartament from 'struct/apartament'
 
@@ -475,7 +472,6 @@ export default {
     contact,
     contoare,
     dateTime,
-    // distribuire,
     dropdown,
     file,
     labl,
@@ -892,9 +888,18 @@ input[type="checkbox"]
 
 span[data-type]
   text-align left
-  padding 0
   display flex
   flex-flow column-reverse nowrap
+  justify-content flex-end
+
+.attachments
+  position relative
+
+  &:before
+    content ''
+    position absolute 0
+    z-index -1
+    background rgba(black, .05)
 
 [data-type="search"]
   max-height 40px
@@ -917,6 +922,11 @@ span[data-type="userAvatar"]
 span[data-type="select"]
   letter-spacing 0
 
+bigBalanta()
+  font-size 20px
+  color black
+  font-weight bold
+
 span[data-type="$"]
   // margin-left auto // strica asoc single
 
@@ -926,6 +936,10 @@ span[data-type="$"]
 
   .bani
     margin-bottom auto
+
+  &.value
+    .bani > span:first-child
+      bigBalanta()
 
   span
     white-space nowrap
@@ -945,9 +959,7 @@ span[data-type="$"]
 
   input[type="number"]
   input[type="number"]+.sign
-    font-size 20px
-    color black
-    font-weight bold
+    bigBalanta()
 
 span[data-type="taxonomy"]
   flex-basis 47%
@@ -956,9 +968,12 @@ span[data-type="taxonomy"]
 
 
 input[name="nr"]
+.ap__nr
   font-family: config.typography.fams.headings
   color: config.palette.tertiary
   letter-spacing 1.2px
+
+input[name="nr"]
   font-size 14px
 
 .sort

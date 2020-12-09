@@ -135,7 +135,6 @@ lrPad = 32px
     border: 1px solid config.palette.borders
     background white
     width 95%
-    max-width 540px
     max-height 75vh
     transition all .15s ease-in-out
     border-radius 5px
@@ -150,7 +149,7 @@ lrPad = 32px
     transition all .3s cubic-bezier(.165,.84,.44,1)
 
     +above(m)
-      width 85%
+      width 95%
 
     +above(l)
       max-width 90%
@@ -174,14 +173,8 @@ lrPad = 32px
   .content
     position relative
     flex 1 1 100%
-    padding 20px
-
-    +above(xl)
-      padding: lrPad
 
     .form
-
-
       .actions
         flex-wrap nowrap
         position fixed

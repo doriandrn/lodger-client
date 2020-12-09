@@ -82,9 +82,9 @@ export default Observer({
 tcolor = config.typography.palette.meta
 
 time
-  display flex
-  flex-flow row nowrap
-  align-items center
+  // display flex
+  // flex-flow row nowrap
+  // align-items center
   color: tcolor
   font-size 12px
   padding-left 0 !important

@@ -2,6 +2,7 @@
 .bani(v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]")
   span(v-if="showBoth")
     input(
+      v-if=         "!disabled"
       type=         "number"
       :value=       "disabled ? null : suma || 0"
       :step=        "$lodger.isCrypto(moneda) ? 0.000000001 : 0.01"
@@ -9,15 +10,16 @@
       :placeholder= "disabled ? this.$lodger.format(suma, moneda) : $lodger.isCrypto(moneda) ? '0,00000000' : '0,00'"
       @input=      "change($event, true)"
     )
+    span(v-else) {{ $lodger.format(suma, moneda) }}
 
     currency-select(
-      v-if=     "schimbaMoneda"
+      v-if=     "schimbaMoneda && !disabled"
       :value=   "moneda"
       @input=   "change($event, false)"
       hide-label
     )
     currency-sign(
-      v-else
+      v-if=       "!schimbaMoneda"
       :moneda=    "moneda"
       :isCrypto=  "$lodger.isCrypto(moneda)"
     )
@@ -121,6 +123,7 @@ export default Observer ({
 <style lang="stylus">
 @require '~styles/config'
 
+.bani
 [data-type="$"]
   input
     padding-right 4px !important

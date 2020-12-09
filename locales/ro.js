@@ -142,7 +142,7 @@ export default {
       title: 'Cheltuială nouă',
       catre: 'Către',
       modDistribuire: 'Mod de distribuire',
-      apartamenteEligibile: 'Apartamente eligibile',
+      distribuire: 'Apartamente eligibile',
       suma: 'Suma',
       dataScadenta: 'Scadentă la'
     }

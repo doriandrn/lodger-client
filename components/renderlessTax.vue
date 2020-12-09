@@ -26,10 +26,10 @@ div
   //- empty state
   //- p(v-else-if="taxonomy && taxonomy.parents && taxonomy.parents.length") acest/aceasta {{ taxonomy.parents[0] }} nu detine nicio {{ taxonomy.form.name }} - adauga
 
-  //- buton.more(
-  //-   v-if="ids && ids.length < itemsCount"
-  //-   @click="criteriu.limit = criteriu.limit + criteriu.limit"
-  //- ) ...
+  buton.more(
+    v-if="subscriber.ids && subscriber.ids.length < taxonomy.totals"
+    @click= "subscriber.criteria.limit = (subscriber.criteria.limit || 25) + subscriber.criteria.limit"
+  ) ...
 </template>
 
 <script>

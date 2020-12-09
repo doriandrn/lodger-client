@@ -1,14 +1,14 @@
 <template lang="pug">
 ValidationObserver(v-slot="{ passes }")
-  form.form(@submit.prevent="passes(validation)" :class="{ isNew }")
+  form.form(@submit.prevent="passes(validation)" :class="{ isNew }" :data-type="form.name === 'cheltuiala' ? form.fields.modDistribuire.options[value['modDistribuire'] || $data['modDistribuire']] : undefined")
     slot(name="beforeHeader")
 
-    fieldset.header
-      legend Cap
+    fieldset(v-for=  "fset, i in fieldsets" :class=" { header: i === 'main' }")
+      legend {{ i18n.fieldsets && i18n.fieldsets[fset] ? i18n.fieldsets[fset] : 'Cap' }}
 
       .fields
         field(
-          v-for=  "field, id in Object.keys(fields).filter(field => typeof fields[field].fieldset === 'undefined' && (isNew ? field.indexOf('At') !== field.length - 2 : true)).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
+          v-for=          "field, id in Object.keys(fields).filter(field => i === 'main' ? typeof fields[field].fieldset === 'undefined' && field.indexOf('At') !== field.length - 2 : Number(fields[field].fieldset) === Object.keys(fieldsets).indexOf(i)).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
           :key=           "`${field._type}-${id}`"
           :id=            "id"
           :class=         "id"
@@ -30,11 +30,11 @@ ValidationObserver(v-slot="{ passes }")
           :dangerous=     "field.dangerous"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
-          :disabled=      "(field.freezed && !$lodger.modal.activeDoc._isTemporary) || !editing"
+          :disabled=      "((field.freezed || field.final) && !$lodger.modal.activeDoc._isTemporary) || !editing"
           :avatarSeed=    "value['name'] || $data['name']"
-          :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime'"
+          :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime' && !editing"
 
-          :value=     "value && value[id] ? value[id] : $data[id]"
+          :value=     "$data[id] !== undefined ? $data[id] : value && value[id] !== undefined ? value[id] : form.fields[id].default"
           @input=     "updField(id, $event)"
 
           :isNew=       "isNew"
@@ -44,97 +44,9 @@ ValidationObserver(v-slot="{ passes }")
 
       slot(name="headerEnd")
 
-    fieldset(
-      v-if=   "fieldsets"
-      v-for=  "fset, i in fieldsets"
-    )
-      legend {{ i18n.fieldsets[fset] }}
-
-      .fields
-        field(
-          v-for=  "field, id in Object.keys(fields).filter(field => Number(fields[field].fieldset) === i).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
-          :key=           "`${field._type}-${id}`"
-          :id=            "id"
-          :class=         "id"
-          :refs=          "$lodger.taxonomies.indexOf(id) > -1 || field._type === 'selApartamente' ? refs : undefined"
-
-          :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
-          :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
-          :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
-          :focus=         "field.focus"
-          :required =     "form.schema.required.indexOf(id) > -1"
-          :default=       "field.default"
-          :options=       "field.options"
-          :min=           "field.min"
-          :max=           "field.max",
-          :step=          "field._type === 'bani' ? 0.01 : field.step",
-          :data-slot=     "field.slot"
-          :searchTaxonomy="field.taxonomy"
-          :click=         "field['@click']"
-          :dangerous=     "field.dangerous"
-          :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
-          :rules=         "field.v || null"
-          :disabled=      "field.freezed || !editing || id.indexOf('Id') === id.length - 2"
-
-          :value=     "value && value[id] ? value[id] : $data[id]"
-          @input=     "updField(id, $event)"
-
-          :isNew=       "isNew"
-          :formData=  "filteredData"
-          :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
-        )
-
     slot
 
-    //- fieldset(v-else-if="fields && Object.keys(fields).length")
-    //-   legend bla
-
-    //-   .content
-    //-     slot(name=        "beforeFields")
-
-    //-     field(
-    //-       v-for=          "field, id in fields"
-    //-       v-if=           "field.fieldset === undefined"
-    //-       :key=           "`${field._type}-${id}`"
-    //-       :id=            "id"
-    //-       :type=          "field._type || 'text'"
-    //-       :label=         "typeof field.label === 'function' ? field.label(i18n) : ''"
-    //-       :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
-    //-       :focus=         "field.focus"
-    //-       :required=      "field.v && field.v.indexOf('required') > -1"
-    //-       :min=           "field.min"
-    //-       :max=           "field.max",
-    //-       :step=          "field._type === 'bani' ? 0.01 : field.step",
-    //-       :data-slot=     "field.slot"
-    //-       :searchTaxonomy="field.taxonomy"
-    //-       :click=         "field['@click']"
-    //-       :dangerous=     "field.dangerous"
-    //-       :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
-    //-       :rules=         "field.v || null"
-
-    //-       v-model=   "$data[id]"
-
-    //-       :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
-    //-     )
-    //-       //- :data-vv-scope= "title",
-    //-       //- :data-vv-as=    "field.id"
-    //-       //- :data-vv-name=  "field.id"
-    //-       //- @change=        "handleChange(field['@change'], field.id, field.type, $event, form.name)"
-    //-       //- :value=         "field.value()"
-    //-       //- :error=         "errors.has(field.id, form.name)"
-    //-       //- :valid=         "!errors.has(field.id, form.name)"
-    //-       //- :message=       "errors.first(field.id, form.name)"
-
-    //-     slot(name=        "afterFields")
-
     .actions(v-if="isNew")
-      //- buton(
-      //-   v-if="!isNew"
-      //-   size= "small"
-      //-   styl= "unstyled"
-      //-   icon= "trash"
-      //-   dangerous
-      //- ) delete
       buton(
         type= "submit",
         icon= "plus-circle"
@@ -144,7 +56,6 @@ ValidationObserver(v-slot="{ passes }")
 </template>
 
 <script>
-// import Vue from 'vue'
 import buton from 'form/button'
 import field from 'form/field'
 import split from 'c/split'
@@ -176,37 +87,62 @@ extend("length", {
 
 export default Observer ({
   name: 'F0rm',
+
   data () {
-    const { form: { fields, plural }, isNew, value } = this
+    const { form: { fields, fieldsIds, plural }, isNew, value } = this
     if (!fields) throw new Error('No form supplied')
     const data = {
       fetched: false
     }
+    fieldsIds.forEach(k => data[k] = value[k] || fields[k] && fields[k].default)
 
-    Object.keys(fields).forEach(k => data[k] = value[k] || fields[k] && fields[k].default)
-    if (data.suma === undefined)
+    // default for sume
+    if (fieldsIds.indexOf('suma') > -1 && data.suma === undefined)
       data.suma = {
         value: 0,
         moneda: this.$lodger.displayCurrency
       }
+
+    if (fieldsIds.indexOf('snapshotsApartamente') > -1 && data.snapshotsApartamente === undefined)
+      data.snapshotsApartamente = {}
+
     return { ...data }
   },
+
   computed: {
     fieldsets () {
-      return this.form.fieldsets
+      return Object.assign({}, { main: 'Cap', ...this.form.fieldsets })
     },
     fields () {
       return this.form.fields
     },
     filteredData () {
-      const { $data, value, fields } = this
+      const { $data, value, fields, form: { fieldsIds } } = this
       const data = {}
       Object
         .keys(this.$data)
-        .filter(k => value[k] !== undefined || $data[k] !== undefined)
+        .filter(k => fieldsIds.indexOf(k) > -1 && (value[k] !== undefined || $data[k] !== undefined))
         .map(k => data[k] = $data[k] || fields[k] && fields[k].default)
 
       return data
+    },
+
+    snapshotsAps () {
+      if (this.form.plural !== 'cheltuieli')
+        return {}
+
+      const { apartamente } = this.$lodger
+      const { items } = apartamente.subscribers.single
+
+      return Object.keys(this.distribuire)
+        .reduce((a, b) => ({
+          ...a,
+          [b]: apartamente.form.fieldsIds
+            .reduce((x, y) => ({
+              ...x,
+              [y]: items[b]._doc._data[y]
+            }), {})
+        }), {})
     },
 
     distrChelt () {
@@ -227,18 +163,18 @@ export default Observer ({
         fields,
         debug,
 
-        distribuire,
+        modDistribuire,
         suma: {
           value,
           moneda
         },
-        apartamenteEligibile,
+        distribuire,
         asociatieId
       } = this
 
       const sub = subscribers.single
       const { items, ids } = sub
-      const idsApsSel = Object.keys(apartamenteEligibile)
+      const idsApsSel = Object.keys(distribuire)
 
       // if (ids.length < idsApsSel.length)
       //   throw new Error('Something went wrong')
@@ -246,15 +182,15 @@ export default Observer ({
       if (!value)
         return
 
-      const distribuireType = fields.distribuire.options[distribuire]
-      const allUnits = idsApsSel.reduce((a, b) => a + items[b][distribuireType], 0)
-      const cpu = displayCurrency === moneda ?
-        value / allUnits :
-        convert.call(this.$lodger, value, moneda) / allUnits
+      const modDistribuireType = fields.modDistribuire.options[modDistribuire]
+      const allUnits = idsApsSel.reduce((a, b) => a + items[b][modDistribuireType], 0)
+      // const cpu = displayCurrency === moneda ?
+      //   value / allUnits :
+      //   convert.call(this.$lodger, value, moneda) / allUnits
+      const cpu = value / allUnits
 
       // const percentage = 100 / allUnits
-      // $el.dataset.type = distribuireType
-      return idsApsSel.reduce((a, b) => ({ ...a, [b]: items[b][distribuireType] * cpu }), {})
+      return idsApsSel.reduce((a, b) => ({ ...a, [b]: items[b][modDistribuireType] * cpu }), {})
     }
   },
   components: {
@@ -324,105 +260,29 @@ export default Observer ({
       )
         return
 
-      if (Object.keys(newData.apartamenteEligibile).length < 1)
+      if (Object.keys(newData.distribuire).length < 1)
         return
 
-      Object.assign(this.$data.apartamenteEligibile, this.distrChelt)
-
-  //     const {
-  //       distribuire,
-  //       suma: {
-  //         value,
-  //         moneda
-  //       },
-  //       apartamenteEligibile,
-  //       asociatieId
-  //     } = newData
-
-  //     const {
-  //       $lodger: {
-  //         convert,
-  //         displayCurrency,
-  //         apartamente: {
-  //           subscribers
-  //         }
-  //       },
-  //       fields,
-  //       debug,
-  //       $el
-  //     } = this
-
-  //     const sub = subscribers.single
-  //     const { items, ids } = sub
-  //     const idsApsSel = apartamenteEligibile.length !== undefined ?
-  //       apartamenteEligibile :
-  //       Object.keys(apartamenteEligibile)
-
-  //     if (ids.length < idsApsSel.length)
-  //       throw new Error('Something went wrong')
-
-  //     if (!value)
-  //       return
-
-  //     debug(newData)
-
-  //     const distribuireType = fields.distribuire.options[distribuire]
-  //     const allUnits = idsApsSel.reduce((a, b) => a + items[b][distribuireType], 0)
-  //     const cpu = displayCurrency === moneda ?
-  //       value / allUnits :
-  //       convert.call(this.$lodger, value, moneda) / allUnits
-  //     const percentage = 100 / allUnits
-
-  //     // $el.dataset.type = distribuireType
-  //     this.apartamenteEligibile = idsApsSel.reduce((a, b) => ({ ...a, [b]: items[b][distribuireType] * cpu }), {})
-  //     // idsApsSel.forEach(apId => {
-  //     //   items[apId].impartire = items[apId][distribuireType] * cpu
-  //     //   items[apId].percentage = items[apId][distribuireType] * percentage
-  //     // })
-
-  //     // hacky attempt to refresh values as impartire is not reactive at all
-  //     sub.criteria.limit = (sub.criteria.limit || 1000) + 1
+      Object.assign(this.$data.distribuire, this.distrChelt)
+      Object.assign(this.$data.snapshotsApartamente, this.snapshotsAps)
     }
   },
   methods: {
     updField (id, e) {
       const { isNew, $data, doc, debug } = this
-      if (isNew)
-        if (e !== undefined) $data[id] = e
-      else try {
-        doc.atomicSet(id, e)
-      } catch (err) {
-        debug('Did not update field ', id, err)
+      if (e !== undefined) $data[id] = e
+      if (id === 'distribuire') return
+      if (!isNew) {
+        doc.atomicPatch({ [id]: e, updatedAt: new Date().getTime() })
+        debug('patchuit', id, e)
       }
     },
     async validation () {
-      // if (!this.doc._isTemporary) return
       this.$children[0].validate().then(ok => {
         this.debug(this.filteredData, 'o')
         if (ok) this.$emit('submit', this.filteredData)
       })
-    },
-    /**
-    *
-    */
-    // async handleChange (actionName, id, type, e, scope) {
-    //   const { validate, debug, $store: { dispatch } } = this
-    //   if (!actionName) {
-    //     debug('handleChange: invalid action name supplied, dats ok!', ... arguments)
-    //     return
-    //   }
-    //   const { value } = e.target
-
-    //   if (value === 'undefined' || value === null) return
-    //   const valid = await validate(scope)
-    //   if (!valid) {
-    //     debug(`camp invalid ${id}`)
-    //     return
-    //   }
-    //   dispatch(actionName, {
-    //     [id]: ['number', 'bani'].indexOf(type) > -1 ? Number(value) : value
-    //   })
-    // }
+    }
   }
 })
 </script>
@@ -494,6 +354,7 @@ fieldset
         margin-top 8px
 
   &.header
+    order -1
     > legend
       display none
 
@@ -503,27 +364,35 @@ fieldset
 
     .fields
       display grid
-      grid-template-columns repeat(6, 1fr)
-      grid-row-gap 20px
-      grid-column-gap 20px
+      grid-template-columns repeat(2, 1fr)
+      grid-template-rows auto
+      // grid-row-gap 40px
+      // grid-column-gap 20px
 
       +above(m)
-        grid-row-gap 28px
-        grid-column-gap 28px
+        grid-template-columns repeat(6, 1fr)
+      //   grid-row-gap 32px
+      //   grid-column-gap 32px
 
-      +above(l)
-        grid-row-gap 32px
-        grid-column-gap 32px
+      // +above(xl)
+      //   grid-row-gap 36px
+      //   grid-column-gap 36px
 
-      +above(xl)
-        grid-row-gap 36px
-        grid-column-gap 36px
+      // +desktop()
+      //   grid-row-gap 40px
+      //   grid-column-gap 40px
 
-      +desktop()
-        grid-row-gap 40px
-        grid-column-gap 40px
+  span[data-type]
+    padding 10px
 
+    +above(m)
+      padding 16px
 
+    +above(l)
+      padding 20px
+
+    +above(xl)
+      padding 24px
 
   .fields
     display flex

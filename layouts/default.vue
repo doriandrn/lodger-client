@@ -403,6 +403,7 @@ footerHeight = 36px
 
     .root
       width 160px
+      margin-left auto
 
     .inner
       align-items center

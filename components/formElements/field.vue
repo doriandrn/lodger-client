@@ -1032,7 +1032,7 @@ input[name="nr"]
         vertical-align middle
         position relaive
         size 16px
-        background-image embedurl('~static/icons/ui/grid.svg', 'utf8')
+        background-image embedurl('~static/icons/ui/sort-down.svg', 'utf8')
         background-repeat no-repeat
         background-size 16px
         background-position 50% 1px

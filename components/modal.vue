@@ -135,6 +135,7 @@ lrPad = 32px
     border: 1px solid config.palette.borders
     background white
     width 95%
+
     max-height 75vh
     transition all .15s ease-in-out
     border-radius 5px
@@ -169,6 +170,13 @@ lrPad = 32px
 
   header
     background transparent
+
+  &:not([data-tax="cheltuiala"])
+    .content
+      padding 20px
+
+      +above(xl)
+        padding: lrPad
 
   .content
     position relative

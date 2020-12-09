@@ -334,8 +334,10 @@ fieldset
   margin -1px
   user-select none
 
-  &+fieldset
-    margin-top 40px
+  &:not(.header)
+    &:not(:first-child)
+      margin-top 40px
+      border-top 1px solid rgba(black, .05)
 
   legend
     display block
@@ -358,41 +360,25 @@ fieldset
     > legend
       display none
 
-    &+fieldset
-      border-top 1px solid rgba(black, .05)
-
-
     .fields
       display grid
       grid-template-columns repeat(2, 1fr)
       grid-template-rows auto
-      // grid-row-gap 40px
-      // grid-column-gap 20px
+      grid-row-gap 40px
+      grid-column-gap 20px
 
       +above(m)
         grid-template-columns repeat(6, 1fr)
-      //   grid-row-gap 32px
-      //   grid-column-gap 32px
+        grid-row-gap 32px
+        grid-column-gap 32px
 
-      // +above(xl)
-      //   grid-row-gap 36px
-      //   grid-column-gap 36px
+      +above(xl)
+        grid-row-gap 36px
+        grid-column-gap 36px
 
-      // +desktop()
-      //   grid-row-gap 40px
-      //   grid-column-gap 40px
-
-  span[data-type]
-    padding 10px
-
-    +above(m)
-      padding 16px
-
-    +above(l)
-      padding 20px
-
-    +above(xl)
-      padding 24px
+      +desktop()
+        grid-row-gap 40px
+        grid-column-gap 40px
 
   .fields
     display flex

@@ -37,7 +37,7 @@ renderlessTax(
     ) +
 
     p.selControls(v-if=  "!disabled && subscriber.options.multipleSelect")
-      span {{ subscriber.selectedId.length || 0 }} {{ $lodger.i18n.sel[`selected${subscriber.selectedId.length > 1 ? 's' : ''}`] }}
+      span {{ subscriber.selectedId.length || $lodger.i18n.sel.zeroM }} {{ $lodger.i18n.sel[`selected${subscriber.selectedId.length > 1 ? 's' : ''}`] }}
       a.all(
         :data-icon= "subscriber.ids.length === subscriber.selectedId.length ? 'deselAll' : 'selAll'"
         :class=     "subscriber.ids.length !== subscriber.selectedId.length ? 'sel' : 'desel'"
@@ -94,7 +94,7 @@ export default Observer({
   },
   props: {
     value: {
-      type: Object,
+      type: [Object, Array],
       default: null
     },
     disabled: {

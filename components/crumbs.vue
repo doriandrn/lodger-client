@@ -2,7 +2,7 @@
 p.crumbs(v-if="$lodger.crumbs.length")
   a(
     v-for=      "crumb in $lodger.crumbs.filter(c => c.tax !== 'utilizatori')"
-    v-if=       "$lodger[crumb.tax].subscribers[$lodger.mainSubName] && $lodger[crumb.tax].subscribers[$lodger.mainSubName].items[crumb.id]"
+    v-if=       "$lodger[crumb.tax] && $lodger[crumb.tax].subscribers[$lodger.mainSubName] && $lodger[crumb.tax].subscribers[$lodger.mainSubName].items[crumb.id]"
     :data-tax=  "crumb.tax"
   ) {{ $lodger[crumb.tax].subscribers[$lodger.mainSubName].items[crumb.id]['name' || 'id' || 'denumire' || 'proprietar'] }}
 </template>

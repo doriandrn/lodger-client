@@ -343,7 +343,21 @@ export default Observer ({
 
 
   fieldset.header
+    span[data-type]
+      padding 10px
+
+      +above(m)
+        padding 16px
+
+      +above(l)
+        padding 20px
+
+      +above(xl)
+        padding 24px
+
     .fields
+      grid-column-gap 0 !important
+      grid-row-gap 0 !important
       // +above(l)
       //   grid-column-gap 60px
 

@@ -11,6 +11,8 @@ renderlessTax(
     h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
       small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
 
+    .vm(v-if= "viewModes.length > 1")
+      p {{ viewModes[1] }}
 
     field.sort(
       v-if=           "sortable && subscriber && subscriber.criteria && taxonomy.form.schema.indexes.length && subscriber.ids.length > 1"
@@ -118,6 +120,10 @@ export default Observer({
       default () {
         return this.taxonomy.form.previewFields || []
       }
+    },
+    viewModes: {
+      type: Array,
+      default: () => ['default']
     },
     extraFields: {
       type: Array,

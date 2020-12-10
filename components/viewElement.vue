@@ -12,8 +12,8 @@ timp(
 bani(
   v-else-if=    "['suma', 'bani', 'balanta', '$', 'impartire'].indexOf(type) > -1"
   :class=       "{ impartire: type === 'impartire', zero: !value }"
-  :valoare=     "type === 'impartire' ? { value: -(value), moneda: formData.suma.moneda } : value.suma"
-  :showBoth=    "type=== 'impartire' && formData.suma && formData.suma.moneda !== $lodger.displayCurrency"
+  :valoare=     "type === 'impartire' && formData && formData.suma ? { value: -(value), moneda: formData.suma.moneda } : value && value.suma ? value.suma : undefined"
+  :showBoth=    "type=== 'impartire' && formData && formData.suma && formData.suma.moneda !== $lodger.displayCurrency"
 )
 suprafata(
   v-else-if=  "type === 'suprafata'"

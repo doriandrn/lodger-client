@@ -12,7 +12,6 @@ ValidationObserver(v-slot="{ passes }")
           :key=           "`${field._type}-${id}`"
           :id=            "id"
           :class=         "id"
-          :refs=          "$lodger.taxonomies.indexOf(id) > -1 || field._type === 'selApartamente' ? refs : undefined"
 
           :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
@@ -38,9 +37,16 @@ ValidationObserver(v-slot="{ passes }")
           :value=     "$data[id] !== undefined ? $data[id] : value && value[id] !== undefined ? value[id] : form.fields[id].default"
           @input=     "updField(id, $event)"
 
+          :refs=        "$lodger.taxonomies.indexOf(id) > -1 || field._type === 'selApartamente' ? refs : undefined"
           :isNew=       "isNew"
-          :formData=  "filteredData"
+          :formData=    "filteredData"
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
+        )
+
+        attachments.attachments(
+          v-if=         "doc && withAttachments"
+          :value=       "doc.allAttachments()"
+          @input=       "debug($event); doc.putAttachment({ id: $event.name, data: $event.buffer, type: $event.type })"
         )
 
       slot(name="headerEnd")
@@ -59,6 +65,8 @@ ValidationObserver(v-slot="{ passes }")
 <script>
 import buton from 'form/button'
 import field from 'form/field'
+import attachments from 'form/attachments'
+
 import split from 'c/split'
 import drop from 'c/dropdown'
 
@@ -90,12 +98,12 @@ export default Observer ({
   name: 'F0rm',
 
   data () {
-    const { form: { fields, fieldsIds, plural }, isNew, value } = this
+    const { debug, doc, form: { fields, fieldsIds, plural, schema: { attachments } }, isNew, value } = this
     if (!fields) throw new Error('No form supplied')
     const data = {
       fetched: false
     }
-    fieldsIds.forEach(k => data[k] = value[k] || fields[k] && fields[k].default)
+    fieldsIds.concat(['_id', '_rev']).forEach(k => data[k] = value[k] || fields[k] && fields[k].default)
 
     // default for sume
     if (fieldsIds.indexOf('suma') > -1 && data.suma === undefined)
@@ -106,6 +114,10 @@ export default Observer ({
 
     if (fieldsIds.indexOf('snapshotsApartamente') > -1 && data.snapshotsApartamente === undefined)
       data.snapshotsApartamente = {}
+
+    if (attachments !== undefined && doc && !data.attachments && !isNew) {
+      data.attachments = doc.allAttachments()
+    }
 
     return { ...data }
   },
@@ -122,10 +134,14 @@ export default Observer ({
       const data = {}
       Object
         .keys(this.$data)
-        .filter(k => fieldsIds.indexOf(k) > -1 && (value[k] !== undefined || $data[k] !== undefined))
+        .filter(k => fieldsIds.concat(['_id', '_rev']).indexOf(k) > -1 && (value[k] !== undefined || $data[k] !== undefined))
         .map(k => data[k] = $data[k] || fields[k] && fields[k].default)
 
       return data
+    },
+
+    withAttachments () {
+      return !!this.form.schema.attachments
     },
 
     snapshotsAps () {
@@ -195,6 +211,7 @@ export default Observer ({
     }
   },
   components: {
+    attachments,
     buton,
     drop,
     split,
@@ -271,17 +288,25 @@ export default Observer ({
   methods: {
     updField (id, e) {
       const { isNew, $data, doc, debug } = this
-      if (e !== undefined) $data[id] = e
-      if (id === 'distribuire') return
+
+      /** !!! */
+      if (e !== undefined)
+        $data[id] = e
+
+      if (id === 'distribuire')
+        return
+
       if (!isNew) {
         doc.atomicPatch({ [id]: e, updatedAt: new Date().getTime() })
         debug('patchuit', id, e)
+        return
       }
     },
     async validation () {
       this.$children[0].validate().then(ok => {
         this.debug(this.filteredData, 'o')
-        if (ok) this.$emit('submit', this.filteredData)
+        if (ok)
+          this.$emit('submit', this.filteredData)
       })
     }
   }

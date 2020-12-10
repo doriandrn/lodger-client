@@ -2,44 +2,19 @@
 #layout
   headr
     .inner
-      //- field.switch(
-      //-   v-model=    "idAsociatieActiva",
-      //-   id=         "asociatieSwitch"
-      //-   label=      "defaults.asociatia"
-      //-   type=       "altselect",
-      //-   :options=   "switchOptions"
-      //-   :arrow=     "true"
-      //-   :required=  "true"
-      //- )
       crumbs
+      //- nav(data-orientation="horizontal")
+      //-   ul(v-if=   "administreazaCelPutinOAsociatie")
+      //-     li(
+      //-       v-for="item, url in $lodger.i18n.nav"
+      //-     )
+      //-       nuxt-link(:to="url") {{ item }}
 
+      //-   ul(v-else)
+      //-     li
+      //-       nuxt-link(to="/dashboard") {{ navInitializare }}
 
-      nav(
-        data-orientation="horizontal"
-      )
-        ul(v-if=   "administreazaCelPutinOAsociatie")
-          li(
-            v-for="item, url in $lodger.i18n.nav"
-          )
-            nuxt-link(:to="url") {{ item }}
-
-        ul(v-else)
-          li
-            nuxt-link(to="/dashboard") {{ navInitializare }}
-
-      //- nuxt-link(
-      //-   v-if=     "balanta"
-      //-   to=       "/registru"
-      //-   slot=     "right"
-      //- )
-      //-   bani(
-      //-     :valoare= "balanta",
-      //-     data-icon="shield"
-      //-   )
-
-      .right(
-        v-if= "$lodger.activeUserId"
-      )
+      .right
         field(
           type=     "search"
           size=     "small"
@@ -84,6 +59,13 @@
               )
 
               field(
+                type=       "select"
+                id=         "tema"
+                :options =  "$lodger.teme"
+                v-model=    "$lodger.state.appPreferences.display.tema"
+              )
+
+              field(
                 id=         "hokeys"
                 type=       "checkbox"
                 v-model=    "$lodger.state.appPreferences.display.hotkeys"
@@ -92,18 +74,18 @@
 
 
         dropdown.u(
-          v-if= "$lodger.utilizatori.subscribers.prince && $lodger.utilizatori.subscribers.prince.selectedId"
+          v-if= "$lodger.activeUserId"
           toggleText= ""
           icon-only
         )
           //- :toggleText= "$lodger.i18n.taxonomies.utilizatori.switch"
           viw(
-            v-for=  "t, i in ['avatar', 'name']"
-            :type=  "t"
-            :key=   "i"
-            :value= "$lodger.utilizatori.subscribers.prince.items[$lodger.utilizatori.subscribers.prince.selectedId][t]"
-            :avatarSeed=  "$lodger.utilizatori.subscribers.prince.items[$lodger.utilizatori.subscribers.prince.selectedId].name"
-            slot=   "beforeText"
+            v-for=        "t, i in ['avatar', 'name']"
+            :type=        "t"
+            :key=         "i"
+            :value=       "$lodger.utilizatori.subscribers.prince.items[$lodger.activeUserId][t]"
+            :avatarSeed=  "$lodger.utilizatori.subscribers.prince.items[$lodger.activeUserId].name"
+            slot=          "beforeText"
           )
 
           tax(
@@ -114,6 +96,7 @@
 
 
   main
+
     nuxt(:nuxt-child-key="activePage")
     dev-tools(v-if="env === 'development'" style="display:none")
 
@@ -133,36 +116,16 @@
         styl= "unstyled"
         icon-only
       ) {{ $lodger.i18n.footer.links[k] }}
-      //- buton(
-      //-   icon= "message-circle"
-      //-   styl= "unstyled"
-      //-   icon-only
-      //- ) {{ $lodger.i18n.footer.links.feedback }}
-      //- buton(
-      //-   icon= "award"
-      //-   styl= "unstyled"
-      //-   icon-only
-      //- ) {{ $lodger.i18n.footer.links.thanks }}
 
     //- .copyright
     //-   p(v-if="app") #[strong {{ app.name }} v{{ app.version }}] - &copy; 2017 - {{ curYear }} {{ app.author }}
 
   //- toasts
 
+
+
   modal
     h2(v-if="$lodger.modal.activeDoc && $lodger.modal.firstTime && $lodger.modal.activeDoc.collection") {{ $lodger.i18n.taxonomies[$lodger.modal.activeDoc.collection.name.plural].new.title || 'hilol' }}
-
-      //- frm#main(
-      //-   v-if=       "modalContent && modalContent !== 'prompt'",
-      //-   :form=      "modalForm",
-      //-   :isNew=     "modalContent.split('.')[1] === 'new'"
-      //-   @submit=    "$lodger.put(modalContent.split('.')[0], $event)"
-      //- )
-
-      //- prompt(v-else-if= "modalContent === 'prompt'")
-
-      //- p(v-else) loading
-        //- cale(slot="footer")
 </template>
 
 <script>
@@ -199,6 +162,7 @@ export default Observer ({
     const results = {}
     this.$lodger.taxonomies.map(t => results[t] = [])
     return {
+      tema: 'a',
       app: {
         version,
         name,

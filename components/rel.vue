@@ -1,5 +1,12 @@
 <template lang="pug">
-a(v-if="doc" @click="$lodger.modal.activeDoc = doc") {{ doc.name }}
+.rel(v-if="doc")
+  a(
+    v-if=     "disabled"
+    @click=   "$lodger.modal.activeDoc = doc"
+  ) {{ doc.name }}
+
+  select(v-else)
+    option pl
 </template>
 
 <script>
@@ -10,16 +17,20 @@ export default {
     }
   },
   async fetch () {
-    this.doc = await this.$lodger[this.taxonomy].collection.findOne(this.id).exec()
+    this.doc = await this.$lodger[this.taxonomy].collection.findOne(this.value).exec()
   },
   props: {
-    id: {
+    value: {
       type: String,
       required: true
     },
     taxonomy: {
       type: String,
       required: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   }
 }

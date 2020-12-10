@@ -141,7 +141,15 @@ export default Observer ({
       return this.doc.collection.name.plural
     },
     refs () {
-      return this.breadcrumbs.reduce((a, b) => ({ ...a, [`${b}Id`]: this.docdata[`${b}Id`] }), {})
+      const { doc, docdata: { _id } } = this
+      if (!doc)
+        return
+
+      const { name } = doc.collection.schema.jsonSchema
+      return this.breadcrumbs.reduce((a, b) => ({
+        ...a,
+        [`${b}Id`]: this.docdata[`${b}Id`]
+      }), { [`${ name }Id`]: _id })
     },
     createdAt () {
       const { _id }  = this.docdata

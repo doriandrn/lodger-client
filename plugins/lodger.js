@@ -3,6 +3,8 @@ import { Lodger } from 'lodger'
 import { deepObserve } from 'mobx-utils'
 import objectPath from 'object-path'
 
+const teme = ['default', 'clean', 'neumorph']
+
 export default async ({ app, store, isDev }, inject) => {
   let savedState
   try {
@@ -26,6 +28,7 @@ export default async ({ app, store, isDev }, inject) => {
   if (window.navigator.language && !lodger.state.activeUserId ) {
     lodger.locale = window.navigator.language
   }
+  lodger.teme = teme
 
   inject('lodger', lodger)
   inject('Lodger', Lodger)

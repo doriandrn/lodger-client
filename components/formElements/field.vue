@@ -14,7 +14,7 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "id !== 'modDistribuire' && ['$', 'taxonomy', 'attachments','radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    v-if=         "['modDistribuire', 'attachments'].indexOf(id) < 0 && ['$', 'taxonomy','radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
     :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
@@ -45,9 +45,10 @@ ValidationProvider(
     @focus=       "$emit('focusing'); if (type === 'search') focusing = true"
   )
   rel(
-    v-else-if=  "isRel"
-    :id=        "value"
-    :taxonomy = "id.replace('Id', '').plural"
+    v-else-if=    "isRel"
+    :disabled=    "disabled"
+    :value=       "value"
+    :taxonomy =   "id.replace('Id', '').plural"
   )
   bani(
     v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
@@ -113,11 +114,7 @@ ValidationProvider(
     :seed=        "avatarSeed"
     :disabled=    "disabled"
   )
-  attachments(
-    v-else-if=    "type === 'attachments'"
-    :value=       "value"
-    @input=       "$emit('input', $event)"
-  )
+
 
   scari(
     v-else-if=    "type === 'scari'",
@@ -170,6 +167,7 @@ ValidationProvider(
     :disabled=        "disabled"
     :formData=        "formData"
   )
+    //- :criteria=        "{ filter: type === 'selApartamente' ? refs : { [`${ $lodger[id].name }Id`]: { '$eq': formData._id }}}"
     //- :populated= "value || []"
     //- div(slot="item" slot-scope="{ item }") {{ item.name }}
     //- button.new(@click="") +
@@ -212,7 +210,7 @@ import radios from 'form/radioGroup'
 import scari from 'form/scari'
 import multi from 'form/presets/multi'
 import contact from 'form/contact'
-import attachments from 'form/attachments'
+
 
 import contoare from 'form/contoare'
 import selApartamente from 'form/selApartamente'
@@ -475,7 +473,6 @@ export default {
   components: {
     altslect,
     apartament,
-    attachments,
     avatar,
     bani,
     buton,
@@ -501,16 +498,16 @@ export default {
 
   methods: {
     taxPreviewFields ($tax) {
+      const { form: { previewFields } } = $tax
       switch (this.type) {
         case 'taxonomy':
-          return $tax.form.previewFields
+          return previewFields
 
         case 'selApartamente':
-          if (this.isNew)
-            return $tax.form.previewFields.concat(['suprafata', 'locatari', 'impartire'])
-          else
-            return $tax.form.previewFields.filter(k => k !== 'balanta').concat(['impartire'])
-      }
+          return this.isNew ?
+            previewFields.concat(['suprafata', 'locatari', 'impartire']) :
+            previewFields.filter(k => k !== 'balanta').concat(['impartire'])
+    }
     },
     /**
      * Metode doar pentru search

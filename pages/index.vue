@@ -2,9 +2,6 @@
 sction#idx(
   boxes
 )
-  section.dev
-    div(v-if="$lodger.state.theme")  {{ $lodger.state.theme }}
-
   list(
     v-show=           "$lodger.activeUserId"
     v-for=            "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
@@ -73,6 +70,8 @@ sction#idx(
 
   section(v-if="!$lodger.activeUserId")
     buton(@click="newUser") start!
+    p(@click="tema = 1") lol
+
 </template>
 
 <script>
@@ -88,8 +87,34 @@ import field from 'form/field'
 import buton from 'form/button'
 
 import { Observer } from 'mobx-vue'
+import { reaction } from 'mobx'
 
 export default Observer({
+   head () {
+    return {
+      link: [
+        {
+          rel: "stylesheet",
+          href: `/${ this.$lodger.teme[this.tema] }.css`
+        }
+      ]
+    };
+  },
+
+  data () {
+    return {
+      tema: this.$lodger.state.appPreferences.display.tema
+    }
+  },
+
+  created () {
+    const { display } = this.$lodger.state.appPreferences
+    display.tema = display.tema || 0
+    reaction(() => display.tema, (t) => {
+      this.tema = t
+    })
+  },
+
   computed: {
     subscriberName () {
       return this.$lodger.mainSubName

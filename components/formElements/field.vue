@@ -10,12 +10,12 @@ ValidationProvider(
   :data-req=    "required"
   :skip-if-empty= "false"
 
-  :class=       "{ error, value, away: type === 'search' && !focusing, zebra: type === 'scari' }"
+  :class=       "{ final, error, value, away: type === 'search' && !focusing, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "id !== 'modDistribuire' && ['$', 'taxonomy', 'radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
-    :type=        "id === 'attachments' ? 'file' : type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
+    v-if=         "id !== 'modDistribuire' && ['$', 'taxonomy', 'attachments','radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
@@ -113,6 +113,11 @@ ValidationProvider(
     :seed=        "avatarSeed"
     :disabled=    "disabled"
   )
+  attachments(
+    v-else-if=    "type === 'attachments'"
+    :value=       "value"
+    @input=       "$emit('input', $event)"
+  )
 
   scari(
     v-else-if=    "type === 'scari'",
@@ -207,6 +212,7 @@ import radios from 'form/radioGroup'
 import scari from 'form/scari'
 import multi from 'form/presets/multi'
 import contact from 'form/contact'
+import attachments from 'form/attachments'
 
 import contoare from 'form/contoare'
 import selApartamente from 'form/selApartamente'
@@ -460,11 +466,16 @@ export default {
     formData: {
       type: Object,
       default: null
+    },
+    final: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
     altslect,
     apartament,
+    attachments,
     avatar,
     bani,
     buton,
@@ -981,7 +992,7 @@ input[name="nr"]
   flex-flow row nowrap !important
   margin-right 12px
   position relative
-  height 40px
+  size 40px
 
   button[data-icon="x"]
     position absolute
@@ -1020,9 +1031,10 @@ input[name="nr"]
   //   padding-right 32px
 
   .root
-    height 100%
+    size 100%
     display flex
     align-items center
+    justify-content center
 
     .value
       font-size 0

@@ -28,6 +28,7 @@ ValidationObserver(v-slot="{ passes }")
           :searchTaxonomy="field.taxonomy"
           :click=         "field['@click']"
           :dangerous=     "field.dangerous"
+          :final=         "field.final"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
           :disabled=      "((field.freezed || field.final) && !$lodger.modal.activeDoc._isTemporary) || !editing"

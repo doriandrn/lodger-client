@@ -44,6 +44,9 @@ header
   h3
     margin-bottom 0
     flex 1 1 80%
+    display flex
+    flex-flow row nowrap
+    align-items center
 
   .logo
     margin-bottom 0

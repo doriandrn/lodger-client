@@ -38,7 +38,7 @@
       //-   )
 
       .right(
-        v-show= "$lodger.utilizatori.subscribers.prince && $lodger.utilizatori.subscribers.prince.ids.length"
+        v-if= "$lodger.activeUserId"
       )
         field(
           type=     "search"
@@ -222,15 +222,6 @@ export default Observer ({
     await utilizatori.subscribe(mainSubName, { autoSelectOnCRUD: true })
     const sub = utilizatori.subscribers[mainSubName]
     await sub.updates
-    if (!sub.ids.length) {
-      modal.activeDoc = utilizatori.collection.newDocument({})
-      modal.closeable = false
-      modal.firstTime = true
-    } else {
-      if (!sub.selectedId) {
-
-      }
-    }
   },
 
   methods: {
@@ -297,6 +288,15 @@ footerHeight = 36px
   margin-left auto
 
 .dropdown.u
+  main
+    padding 0 !important
+
+    > div
+      width 100%
+
+  li
+    padding 4px 8px
+
   > button
     padding-left 0
 
@@ -401,9 +401,11 @@ footerHeight = 36px
     background-color transparent
     -webkit-app-region: drag
 
-    .root
-      width 160px
-      margin-left auto
+    .dropdown
+      form
+        .root
+          width 160px
+          margin-left auto
 
     .inner
       align-items center

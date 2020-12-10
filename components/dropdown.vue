@@ -204,7 +204,7 @@ shadow = -1px 2px rgba(black, .05)
         justify-content flex-start
         border-radius 0
 
-    span[data-type]
+    span[data-type]:not(.sort)
       flex-flow row-reverse nowrap
       align-items center
 

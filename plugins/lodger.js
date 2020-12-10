@@ -3,19 +3,16 @@ import { Lodger } from 'lodger'
 import { deepObserve } from 'mobx-utils'
 import objectPath from 'object-path'
 
-const { NODE_ENV } = process.env
-
-export default async ({ app, store }, inject) => {
+export default async ({ app, store, isDev }, inject) => {
   let savedState
   try {
-    const _savedState = JSON.parse(localStorage.getItem('state'))
+    const _savedState = isDev ? {} : JSON.parse(localStorage.getItem('state'))
 
     if (_savedState) {
       savedState = {}
       Object.keys(_savedState).forEach(p => {
         objectPath.set(savedState, p.replace(/\//g, '.'), _savedState[p])
       })
-      console.log('savedState', savedState)
     }
   } catch (e) {
     console.info('No previous saved state found', e)
@@ -24,11 +21,11 @@ export default async ({ app, store }, inject) => {
   const date = new Date()
   // const name = 'test' + date.getTime()
   const lodger = await Lodger.init({
-    state: NODE_ENV !== 'development' ? savedState : {}
+    state: isDev ? {} : savedState
   })
-  // if (window.navigator.language) {
-  //   Lodger.locale = window.navigator.language
-  // }
+  if (window.navigator.language && !lodger.state.activeUserId ) {
+    lodger.locale = window.navigator.language
+  }
 
   inject('lodger', lodger)
   inject('Lodger', Lodger)

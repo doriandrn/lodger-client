@@ -343,7 +343,7 @@ export default Observer ({
 
 
   fieldset.header
-    span[data-type]
+    span[data-type]:not(.sort)
       padding 10px
 
       +above(m)
@@ -368,6 +368,7 @@ export default Observer ({
         grid-area distribuire
 
       .attachments
+        margin-top auto
         grid-area atasamente
 
       .progres

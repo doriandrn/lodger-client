@@ -90,7 +90,7 @@ export default {
   &:before
     background-color #666
     position relative
-    top 2px
+    top 4px
     margin-right 4px
     mask-size 12px
 </style>

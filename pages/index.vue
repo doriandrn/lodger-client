@@ -2,9 +2,11 @@
 sction#idx(
   boxes
 )
-  div AUI {{ $lodger.activeUserId }}
-  //- v-if=           "$lodger.activeUserId"
+  section.dev
+    div(v-if="$lodger.state.theme")  {{ $lodger.state.theme }}
+
   list(
+    v-show=           "$lodger.activeUserId"
     v-for=            "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
     v-if=             "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
     :key=             "tax"
@@ -68,9 +70,9 @@ sction#idx(
 
   //- .widget(slot="sidebar")
   //-   h3 latest actions
-//- sction#idx(v-else)
-//-   p start!
 
+  section(v-if="!$lodger.activeUserId")
+    buton(@click="newUser") start!
 </template>
 
 <script>
@@ -85,13 +87,29 @@ import viw from 'c/viewElement'
 import field from 'form/field'
 import buton from 'form/button'
 
-export default {
+import { Observer } from 'mobx-vue'
+
+export default Observer({
   computed: {
     subscriberName () {
       return this.$lodger.mainSubName
     },
     taxAsPlural () {
       return p => p.indexOf('Id') === p.length - 2 ? p.replace('Id').plural : p
+    }
+  },
+  methods: {
+    newUser () {
+      const { $lodger: { utilizatori, mainSubName, modal } } = this
+      const sub = utilizatori.subscribers[mainSubName]
+      if (sub.ids.length)
+        return
+
+      modal.activeDoc = utilizatori.collection.newDocument({})
+      modal.closeable = false
+      modal.firstTime = true
+
+      return true
     }
   },
   components: {
@@ -101,13 +119,27 @@ export default {
     buton,
     viw
   },
-}
+})
 </script>
 
 <style lang="stylus">
 @require '~styles/config'
 colors = config.palette
 typeColors = config.typography.palette
+
+h3
+  small
+    display inline-block
+    vertical-align baseline
+    border 1px solid rgba(black, .125)
+    background: rgba(white, .5)
+    size 20px
+    line-height 20px
+    border-radius 50px
+    font-size 11px
+    margin-left 8px
+    color: typeColors.ui
+    text-align center
 
 #idx
   .inner
@@ -178,10 +210,6 @@ typeColors = config.typography.palette
     white-space nowrap
     flex 1 1 auto
     text-align left
-
-    small
-      margin-left 8px
-      opacity .6
 
   header
     display flex

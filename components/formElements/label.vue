@@ -35,4 +35,12 @@ label
     margin-left 4px
     color: typeColors.meta
     font-weight 100
+
+  &[data-icon="flag"]
+    flex-flow row nowrap
+    &:before
+      margin-left 4px
+      margin-right 0
+      mask-size 10px
+      order 3
 </style>

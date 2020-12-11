@@ -52,6 +52,7 @@
     "drag-drop": "^6.1.0",
     "easydropdown": "^4.2.0",
     "electron-serve": "^1.0.0",
+    "fuzzysort": "^1.1.4",
     "lodger": "^0.0.215",
     "mobx": "^5.9.4",
     "mobx-utils": "^5.6.1",

@@ -10,7 +10,7 @@ ValidationProvider(
   :data-req=    "required"
   :skip-if-empty= "false"
 
-  :class=       "{ final, error, value, away: type === 'search' && !focusing, zebra: type === 'scari' }"
+  :class=       "{ final: final || freezed, error, value, away: type === 'search' && !focusing, zebra: type === 'scari' }"
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
@@ -44,12 +44,7 @@ ValidationProvider(
     v-on-clickaway=   "clickAway"
     @focus=       "$emit('focusing'); if (type === 'search') focusing = true"
   )
-  rel(
-    v-else-if=    "isRel"
-    :disabled=    "disabled"
-    :value=       "value"
-    :taxonomy =   "id.replace('Id', '').plural"
-  )
+
   bani(
     v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
     :valoare=   "value"
@@ -156,17 +151,25 @@ ValidationProvider(
     :disabled=        "disabled"
   )
   tax(
-    v-else-if=        "['taxonomy', 'selApartamente'].indexOf(type) > -1"
-    :taxonomy=        "type === 'taxonomy' ? $lodger[id] : $lodger.apartamente"
+    v-else-if=        "id && (isRel || ['taxonomy', 'selApartamente'].indexOf(type) > -1)"
+    :taxonomy=        "isRel || type === 'taxonomy' ? id.indexOf('Id') < -1 && id.plural === id ? $lodger[id] : $lodger[id.replace('Id', '').plural] : $lodger.apartamente"
     :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $lodger[id] : $lodger.apartamente)"
     :criteria=        "{ filter: refs }"
-    :selectedId=       "value ? value.selectedId : undefined"
+    :selectedId=       "value && typeof value === 'object' ? value.selectedId : value ? value : undefined"
     :subscriberName=   "`single${ refs && Object.keys(refs) === 1 ? `${ refs[Object.keys(refs)[0]] }` : '' }`"
     @input=           "$emit('input', $event)"
-    :value=           "value"
+    :value=           "value && value.selected !== undefined ? value : undefined"
     :disabled=        "disabled"
     :formData=        "formData"
+    :fuzzy=           "isRel"
   )
+    //- rel(
+    //-   v-if=    "isRel"
+    //-   :disabled=    "disabled"
+    //-   :value=       "value"
+    //-   :taxonomy =   "id.replace('Id', '').plural"
+    //- )
+    //-   p lol
     //- :criteria=        "{ filter: type === 'selApartamente' ? refs : { [`${ $lodger[id].name }Id`]: { '$eq': formData._id }}}"
     //- :populated= "value || []"
     //- div(slot="item" slot-scope="{ item }") {{ item.name }}
@@ -183,6 +186,7 @@ ValidationProvider(
     v-show=         "!hideLabel && type !== 'button'"
     :required=      "required"
     :for=           "id"
+    :data-icon=     "isNew && (final || freezed) ? 'flag' : undefined"
   ) {{ label }}
 
   //- p.field__message(v-if="message") {{ message }}
@@ -468,6 +472,10 @@ export default {
     final: {
       type: Boolean,
       default: false
+    },
+    freezed: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -507,7 +515,7 @@ export default {
           return this.isNew ?
             previewFields.concat(['suprafata', 'locatari', 'impartire']) :
             previewFields.filter(k => k !== 'balanta').concat(['impartire'])
-    }
+      }
     },
     /**
      * Metode doar pentru search
@@ -900,6 +908,11 @@ span[data-type]
   flex-flow column-reverse nowrap
   justify-content flex-end
 
+  // &.final
+  //   label
+  //     &:after
+  //       content 'F'
+
 .attachments
   position relative
 
@@ -914,9 +927,17 @@ span[data-type]
   display flex
   flex-flow row nowrap
 
-  input[type="search"]
+  &:before
+    top calc(50% - 6px)
+    left 10px
+    position absolute
+    background-color rgba(black, .5)
+
+  > input[type="search"]
+    padding-left 32px !important
     &::placeholder
       font-size 12px
+      opacity 1
 
   &.away
     .results

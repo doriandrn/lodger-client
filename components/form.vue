@@ -28,6 +28,7 @@ ValidationObserver(v-slot="{ passes }")
           :click=         "field['@click']"
           :dangerous=     "field.dangerous"
           :final=         "field.final"
+          :freezed=       "field.freezed"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
           :disabled=      "((field.freezed || field.final) && !$lodger.modal.activeDoc._isTemporary) || !editing"

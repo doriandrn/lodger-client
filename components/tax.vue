@@ -2,12 +2,26 @@
 renderlessTax(
   v-if=             "taxonomy"
   :taxonomy=        "taxonomy"
+  :data-tax=        "taxonomy.plural"
   :subscriberName=  "subscriberName"
   :criteria=        "criteria ? criteria : undefined"
   :itemsExtraData=  "taxonomy.plural === 'apartamente' && value ? { impartire: value } : undefined"
   @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
 )
-  header(slot-scope=  "{ taxonomy, subscriber }")
+  field(
+    v-if= "fuzzy"
+    slot= "fuzzInput"
+    slot-scope=  "{ taxonomy, subscriber }"
+    :id=  "`search-${taxonomy.plural}`"
+    type= "search"
+    @input= "debug($event, go($event, Object.values(subscriber.items).map(v => ({ _id: v._id, [previewFields[0]]: v[previewFields[0]] })), { key: previewFields[0] }))"
+    hide-label
+  )
+  header(
+    v-if=       "!fuzzy"
+    slot-scope=  "{ taxonomy, subscriber }"
+  )
+
     h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
       small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
 
@@ -71,6 +85,7 @@ p(v-else)  invalid tax
 import renderlessTax from 'c/renderlessTax'
 import viw from 'c/viewElement'
 import { Observer } from 'mobx-vue'
+import { go } from 'fuzzysort'
 
 export default Observer({
   beforeCreate () {
@@ -84,12 +99,16 @@ export default Observer({
     }
   },
   fetch () {
-    const { value } = this
+    const { value, selectedId } = this
     if (!value)
       return
 
     this.criteria.filter = { '_id': { $in: Object.keys(value) } }
+    if (selectedId) {
+      this.taxonomy.subscribers[this.subscriberName].selectedId = selectedId
+    }
   },
+  methods: { go },
   components: {
     renderlessTax,
     viw
@@ -140,6 +159,14 @@ export default Observer({
     formData: {
       type: Object,
       default: null
+    },
+    selectedId: {
+      type: [String, Array],
+      default: null
+    },
+    fuzzy: {
+      type: Boolean,
+      default: false
     }
   }
 })
@@ -174,6 +201,38 @@ typeColors = config.typography.palette
 [data-tax]
   width 100%
 
+  .counters
+    flex 1 1 100%
+    text-align left
+
+    > span
+      font-style italic
+      opacity .5
+
+      &:after
+        content attr(data-w)
+        margin-left 2px
+
+      &:not(:last-child)
+        margin-right 8px
+
+  header
+    display flex
+    flex-flow row wrap
+    min-height 40px
+
+    &+p
+      padding 12px
+      font-style italic
+
+    .new
+      size 24px
+      line-height 24px
+      border-radius 50px
+      position: relative;
+      right: -8px;
+      top: 5px;
+
   li
     display flex
     flex-flow row wrap
@@ -186,12 +245,10 @@ typeColors = config.typography.palette
     border-radius 4px
     // margin -4px
     margin 4px 0
+    background-color rgba(white, .35)
 
     > *
       margin 4px
-
-    > :last-child
-      margin-left 20px
 
     +above(l)
       padding 16px 20px
@@ -212,6 +269,9 @@ typeColors = config.typography.palette
       order 0
       font-weight 400
       font-size 14px
+      flex-grow 0
+      flex-basis 120px
+      text-align left
       display inline
       white-space nowrap
       margin-right auto

@@ -87,7 +87,7 @@ export default {
 serCulori = electricitate #ff9600 'evacuare-gunoi-menajer' #009688 apa #00c7ff gaze #5300ff termoficare #ff5722 internet #9c27b0
 butSize = 40px
 
-.servicii
+[data-tax] .servicii
   list-style-type none
   padding 0
   width 100%

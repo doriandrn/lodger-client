@@ -9,7 +9,6 @@ sction#idx(
     :key=             "tax"
     :taxonomy=        "$lodger[tax]"
     :subscriberName=  "subscriberName"
-    :data-tax=        "tax"
     :extra-fields=    "['counters']"
   )
     //- header(slot-scope=  "{ taxonomy, subscriber }")
@@ -198,14 +197,14 @@ h3
     .inner > div > *
       margin 8px
 
-      +above(l)
-        margin 16px
+      // +above(l)
+      //   margin 16px
 
-      +above(xl)
-        margin 20px
+      // +above(xl)
+      //   margin 20px
 
-      +desktop()
-        margin 24px
+      // +desktop()
+      //   margin 24px
 
     [data-tax]
       display flex
@@ -236,23 +235,6 @@ h3
     flex 1 1 auto
     text-align left
 
-  header
-    display flex
-    flex-flow row wrap
-    min-height 40px
-
-    &+p
-      padding 12px
-      font-style italic
-
-    .new
-      size 24px
-      line-height 24px
-      border-radius 50px
-      position: relative;
-      right: -8px;
-      top: 5px;
-
   > button
     margin auto auto 0
 
@@ -265,6 +247,4 @@ h3
     margin-left auto
     min-width 200px
 
-  .counters
-    flex 1 1 100%
 </style>

@@ -4,9 +4,6 @@
     v-if=     "disabled"
     @click=   "$lodger.modal.activeDoc = doc"
   ) {{ doc.name }}
-
-  select(v-else)
-    option pl
 </template>
 
 <script>

@@ -205,25 +205,25 @@ lrPad = 32px
     .content
       overflow visible
 
-  footer
-  header
-    padding-left 10px
-    padding-right 10px
-    +above(m)
-      padding-left 16px
-      padding-right 16px
-    +above(xl)
-      padding-left: lrPad
-      padding-right: lrPad
+  //- footer
+  //- header
+  //-   padding-left 10px
+  //-   padding-right 10px
+  //-   +above(m)
+  //-     padding-left 16px
+  //-     padding-right 16px
+  //-   +above(xl)
+  //-     padding-left: lrPad
+  //-     padding-right: lrPad
 
-  footer
-  header
-    padding-top: (config.spacings.inBoxes/2)
-    padding-bottom: (config.spacings.inBoxes/2)
+  //- footer
+  //- header
+  //-   padding-top: (config.spacings.inBoxes/2)
+  //-   padding-bottom: (config.spacings.inBoxes/2)
 
-    +desktop()
-      padding-top: config.spacings.inBoxes
-      padding-bottom: config.spacings.inBoxes
+  //-   +desktop()
+  //-     padding-top: config.spacings.inBoxes
+  //-     padding-bottom: config.spacings.inBoxes
 
   h2
     max-width 100%

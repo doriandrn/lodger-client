@@ -158,7 +158,7 @@ ValidationProvider(
     :selectedId=       "value && typeof value === 'object' ? value.selectedId : value ? value : undefined"
     :subscriberName=   "`single${ refs && Object.keys(refs) === 1 ? `${ refs[Object.keys(refs)[0]] }` : '' }`"
     @input=           "$emit('input', $event)"
-    :value=           "value && value.selected !== undefined ? value : undefined"
+    :value=           "value"
     :disabled=        "disabled"
     :formData=        "formData"
     :fuzzy=           "isRel"
@@ -186,7 +186,7 @@ ValidationProvider(
     v-show=         "!hideLabel && type !== 'button'"
     :required=      "required"
     :for=           "id"
-    :data-icon=     "isNew && (final || freezed) ? 'flag' : undefined"
+    :data-icon=     "isNew && (final || freezed) ? 'flag' : id.indexOf('lang') === 0 ? 'globe' : undefined"
   ) {{ label }}
 
   //- p.field__message(v-if="message") {{ message }}

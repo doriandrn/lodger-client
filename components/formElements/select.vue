@@ -199,6 +199,7 @@ select
   display: inline-block;
   position: relative;
   user-select: none;
+  font-size 14px
   line-height 20px
   height 40px
 
@@ -218,13 +219,12 @@ select
   .head
     position: relative;
     overflow: hidden;
-    border: 1px solid #eee;
     transition: box-shadow 200ms;
-    background: white;
 
   .head
   .body
-    border-radius: 20px;
+    border-radius: 20px
+
 
   .body
     opacity: 0;
@@ -295,7 +295,7 @@ select
 
   &.focused
     .head
-      border-color: hlColor;
+      border-color: hlColor !important;
 
   &.invalid
     border-color: #ff6969;
@@ -348,13 +348,14 @@ select
     &:before
       content: '';
       position: absolute;
-      size 8px
+      size 5px
       border-right: 1px solid currentColor;
       border-bottom: 1px solid currentColor;
-      top: calc(50% - 6px);
+      top: calc(50% - 4px);
       right: 0;
       transform: rotate(45deg);
       transform-origin: 50% 25%;
+
 
 
 // .edd-root:not(.edd-root-disabled):not(.edd-root-open) .edd-head:hover .edd-arrow {
@@ -376,4 +377,15 @@ select
 //     cursor: default;
 //     color: #ccc;
 // }
+
+span[data-type="select"]:not(.sort)
+  &[data-styl="unstyled"]
+    .head
+      border 1px solid transparent
+
+  &:not([data-styl="unstyled"])
+    .head
+      border: 1px solid #eee;
+      background: white;
+
 </style>

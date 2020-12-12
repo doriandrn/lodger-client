@@ -160,6 +160,9 @@ shadow = -1px 2px rgba(black, .05)
     padding 0 12px
     min-height 40px
 
+    > .focuskeys
+      display none // they are displayed in the header
+
     &:hover
       background: colors.bgs.body
 

@@ -6,7 +6,7 @@ renderlessTax(
   :subscriberName=  "subscriberName"
   :criteria=        "criteria ? criteria : undefined"
   :itemsExtraData=  "taxonomy.plural === 'apartamente' && value ? { impartire: value } : undefined"
-  @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
+  @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' && typeof $event !== 'string' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
 )
   field(
     v-if= "fuzzy"
@@ -23,7 +23,9 @@ renderlessTax(
   )
 
     h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
-      small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
+      small(v-if="taxonomy.totals")
+        span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }}
+        span {{ taxonomy.totals }}
 
     .vm(v-if= "viewModes.length > 1")
       p {{ viewModes[1] }}
@@ -99,13 +101,19 @@ export default Observer({
     }
   },
   fetch () {
-    const { value, selectedId } = this
+    const { value, selectedId, debug } = this
     if (!value)
       return
 
-    this.criteria.filter = { '_id': { $in: Object.keys(value) } }
+    if (typeof value === 'object')
+      this.criteria.filter = { '_id': { $in: Object.keys(value) } }
+
     if (selectedId) {
-      this.taxonomy.subscribers[this.subscriberName].selectedId = selectedId
+      const sub = this.taxonomy.subscribers[this.subscriberName]
+      if (sub) {
+        sub.selectedId = selectedId
+      } else
+        debug('N-am gasit sub', this.subscriberName, selectedId)
     }
   },
   methods: { go },
@@ -115,7 +123,7 @@ export default Observer({
   },
   props: {
     value: {
-      type: [Object, Array],
+      type: [Object, Array, String],
       default: null
     },
     disabled: {

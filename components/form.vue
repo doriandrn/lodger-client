@@ -38,7 +38,7 @@ ValidationObserver(v-slot="{ passes }")
           :value=     "$data[id] !== undefined ? $data[id] : value && value[id] !== undefined ? value[id] : form.fields[id].default"
           @input=     "updField(id, $event)"
 
-          :refs=        "$lodger.taxonomies.indexOf(id) > -1 || field._type === 'selApartamente' ? refs : undefined"
+          :refs=        "$lodger.taxonomies.indexOf(id) > -1 || $lodger.taxonomies.indexOf(id.replace('Id', '').plural) > -1 || field._type === 'selApartamente' ? refs : undefined"
           :isNew=       "isNew"
           :formData=    "filteredData"
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
@@ -288,7 +288,10 @@ export default Observer ({
   },
   methods: {
     updField (id, e) {
-      const { isNew, $data, doc, debug } = this
+      const { isNew, editing, $data, doc, debug } = this
+
+      if (!editing)
+        return
 
       /** !!! */
       if (e !== undefined)

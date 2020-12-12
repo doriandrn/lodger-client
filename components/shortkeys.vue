@@ -49,4 +49,8 @@ export default {
     &[data-key="ctrl"]
       &:before
         content "⌘"
+
+    &[data-key="enter"]
+      &:before
+        content '↵'
 </style>

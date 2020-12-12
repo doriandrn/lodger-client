@@ -67,9 +67,22 @@ sction#idx(
   //- .widget(slot="sidebar")
   //-   h3 latest actions
 
-  section(v-if="!$lodger.activeUserId")
-    buton(@click="newUser") start!
-    p(@click="tema = 1") lol
+  section.welcome(v-if="!$lodger.activeUserId")
+    h1 {{ $lodger.i18n.welcome.title }}
+    p.intro {{ $lodger.i18n.welcome.intro }}
+
+    field.lang(
+      type=       "select"
+      id=         "lang-intro"
+      :label=     "$lodger.i18n.forms.preferences.fields.lang"
+      :options=   "$lodger.supportedLangs"
+      v-model=    "$lodger.locale"
+      data-styl=       "unstyled"
+    )
+
+    .actions
+      buton(size="large" icon="database" :shortkeys="['i']" @click="debug('import')") Importă bază de date
+      buton(size="large" arrow="right" @click="newUser" :shortkeys="['enter']") Începe fresh
 
 </template>
 
@@ -130,7 +143,7 @@ export default Observer({
         return
 
       modal.activeDoc = utilizatori.collection.newDocument({})
-      modal.closeable = false
+      // modal.closeable = false
       modal.firstTime = true
 
       return true
@@ -151,19 +164,78 @@ export default Observer({
 colors = config.palette
 typeColors = config.typography.palette
 
+.welcome
+  size 100%
+
+  label
+    margin-bottom 0
+
+  p.intro
+    text-align center
+
+  .actions
+    margin-top 48px
+
+  .lang
+    display inline-flex
+    flex-flow row-reverse nowrap
+    justify-content center
+    align-items center
+    position relative
+    min-width 140px
+    width auto
+    margin 0 auto
+
+    label
+      font-size 0
+      position absolute
+      left 10px
+      top calc(50% - 6px)
+
+      &:before
+        margin 0
+
+    .head
+      padding-left 16px
+
+    .root
+    .head
+      // width 100%
+      display inline-flex
+
+    .root
+      width 100%
+
+    .body
+      min-width 240px
+
 h3
   small
-    display inline-block
-    vertical-align baseline
-    border 1px solid rgba(black, .125)
-    background: rgba(white, .5)
-    size 20px
-    line-height 20px
-    border-radius 50px
-    font-size 11px
-    margin-left 8px
-    color: typeColors.ui
-    text-align center
+    span
+      display inline-block
+      vertical-align baseline
+      position relative
+      z-index 3
+      // border 1px solid rgba(black, .125)
+      background: white
+      size 20px
+      line-height 20px
+      border-radius 50px
+      font-size 11px
+      margin-left 8px
+      color: typeColors.ui
+      text-align center
+
+      &+span
+        z-index 2
+        margin-left 0
+        size 24px
+        line-height 24px
+        border 0
+        left -6px
+        text-align right
+        padding-right 6px
+        background: rgba(black, .075)
 
 #idx
   .inner
@@ -215,7 +287,10 @@ h3
       flex 1 1 100%
 
       +above(l)
-        flex 1 1 266px
+        flex-basis 266px
+
+      +above(xl)
+        flex-basis 300px
 
     [data-tax="utilizatori"]
       order 0

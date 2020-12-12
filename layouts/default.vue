@@ -16,6 +16,7 @@
 
       .right
         field(
+          v-if= "$lodger.activeUserId"
           type=     "search"
           size=     "small"
           id=       "search"
@@ -33,6 +34,7 @@
           )
 
         dropdown(
+          v-if= "$lodger.activeUserId"
           icon=   "settings"
           :arrow= "false"
           :toggleText=  "$lodger.i18n.forms.preferences.title"
@@ -101,14 +103,14 @@
     dev-tools(v-if="env === 'development'" style="display:none")
 
   footr
-    logo(:tooltip=  "`${ app.name } ${ app.version } - &copy; 2017 - ${ curYear } ${ app.author }`")
+    logo(:tooltip=  "`${ app.name } v${ app.version }<br/>api v${ app.lodgerApiV }<br/><br/> &copy; 2017 - ${ curYear } ${ app.author }`")
     span.update(v-if="$lodger.state.hasUpdate") O noua actualizare este disponibila
       a.go Descarca si reporneste
 
-    span Curs valutar actualizat
+    span(v-if= "$lodger.activeUserId") Curs valutar actualizat
       date-time(:date-time-i-s-o= "$lodger.state.rates.timestamp" live-update ago)
       button(icon="" @click="$lodger.updateRates()" data-styl="unstyled") Actualizeaza
-    nav
+    nav(v-if= "$lodger.activeUserId")
       buton(
         v-for=  "v, k in extraLinks"
         :key=   "k"
@@ -121,8 +123,6 @@
     //-   p(v-if="app") #[strong {{ app.name }} v{{ app.version }}] - &copy; 2017 - {{ curYear }} {{ app.author }}
 
   //- toasts
-
-
 
   modal
     h2(v-if="$lodger.modal.activeDoc && $lodger.modal.firstTime && $lodger.modal.activeDoc.collection") {{ $lodger.i18n.taxonomies[$lodger.modal.activeDoc.collection.name.plural].new.title || 'hilol' }}
@@ -154,7 +154,7 @@ import devTools from 'c/dev/toolsWindow'
 
 import Package from '../package.json'
 
-const { version, name, author } = Package
+const { version, name, author, dependencies: { lodger } } = Package
 // const subName = 'default'
 
 export default Observer ({
@@ -165,8 +165,9 @@ export default Observer ({
       tema: 'a',
       app: {
         version,
-        name,
-        author
+        name: name.replace('lodger-', ''),
+        author,
+        lodgerApiV: lodger.replace('^', '')
       },
       search: {
         input: '',

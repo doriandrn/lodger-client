@@ -32,6 +32,10 @@ button(
   @shortkey=        "$emit('shortkey', $event)"
 )
   slot
+  skey(
+    v-if=  "shortkeys && shortkeys.length"
+    :keys=  "shortkeys"
+  )
   span.badge(v-if="$slots.badge")
     slot(name="badge")
 
@@ -46,6 +50,7 @@ input(
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import skey from 'c/shortkeys'
 // import tooltip from 'c/tooltip' -> tooltip is a plugin
 
 export default {
@@ -54,6 +59,9 @@ export default {
     return {
       prompted: false
     }
+  },
+  components: {
+    skey
   },
   computed: {
     _tooltip () {
@@ -357,5 +365,9 @@ button
 
   &.iconOnly:not([data-styl="unstyled"])
     background: linear-gradient(145deg, #ffffff, #dddee2);
+
+  .focuskeys
+    position static
+    margin-left 12px
 
 </style>

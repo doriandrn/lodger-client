@@ -9,7 +9,7 @@ sction#idx(
     :key=             "tax"
     :taxonomy=        "$lodger[tax]"
     :subscriberName=  "subscriberName"
-    :extra-fields=    "['counters']"
+    :extra-fields=    "['state']"
   )
     //- header(slot-scope=  "{ taxonomy, subscriber }")
     //-   h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
@@ -80,9 +80,9 @@ sction#idx(
       data-styl=       "unstyled"
     )
 
-    .actions
-      buton(size="large" icon="database" :shortkeys="['i']" @click="debug('import')") Importă bază de date
-      buton(size="large" arrow="right" @click="newUser" :shortkeys="['enter']") Începe fresh
+    .actions(v-if="!$lodger.modal.activeDoc")
+      buton(size="large" icon="database" :shortkeys="['i']" @click="debug('import')") {{ $lodger.i18n.welcome.actions.import }}
+      buton(primary size="large" arrow="right" @click="newUser" :shortkeys="['enter']") {{ $lodger.i18n.welcome.actions.newUser }}
 
 </template>
 

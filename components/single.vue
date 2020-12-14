@@ -7,7 +7,7 @@ frm#single(
   :doc=     "doc"
   :i18n=    "$lodger.i18n.taxonomies[plural]"
   :isNew=   "doc._isTemporary"
-  :refs=    "refs"
+  :refs=    "{ refs, crumbsIds: crumbsIds(true) }"
   @submit=  "submit"
 )
   slot(
@@ -141,15 +141,48 @@ export default Observer ({
       return this.doc.collection.name.plural
     },
     refs () {
+
+      try {
+
+        return [
+          ...this.breadcrumbs
+            .map(tax => this.$lodger[tax.plural].parents)
+        ].reduce((a, taxes, i) => {
+          const x = {}
+          taxes.forEach(tax => {
+
+            const { subscribers } = this.$lodger[tax.plural]
+            const taxRelId = tax.plural === tax ? tax : `${tax}Id`
+            const { selectedId } = subscribers.single || subscribers.prince
+            const item = subscribers.single.items[selectedId] || subscribers.prince.items[selectedId]
+            const pTax = this.breadcrumbs[i]
+            x[pTax] = x[pTax] || {}
+            if (item)
+              x[pTax][taxRelId] = { [taxRelId.indexOf('Id') === taxRelId.length - 2 ? '$eq' : '$in']: item._id }
+          })
+
+          return {
+            ...a,
+            ...x
+          }
+        }, {})
+      } catch (e) {
+        this.debug('QZF', e)
+      }
+
+    },
+    crumbsIds () {
       const { doc, docdata: { _id } } = this
       if (!doc)
         return
 
-      const { name } = doc.collection.schema.jsonSchema
-      return this.breadcrumbs.reduce((a, b) => ({
-        ...a,
-        [`${b}Id`]: this.docdata[`${b}Id`]
-      }), { [`${ name }Id`]: _id })
+      return (withSelf = true) => {
+        const { name } = doc.collection.schema.jsonSchema
+        return this.breadcrumbs.reduce((a, b) => ({
+          ...a,
+          [`${b}Id`]: this.docdata[`${b}Id`]
+        }), withSelf ? { [`${ name }Id`]: _id } : {})
+      }
     },
     createdAt () {
       const { _id }  = this.docdata
@@ -243,7 +276,7 @@ export default Observer ({
         z-index -1
         background rgba(black, .025)
 
-    ul.ms
+    .ms
       +above(l)
         min-width 366px
         max-height 480px
@@ -284,14 +317,14 @@ export default Observer ({
 
     [data-type="suprafata"]
       .distribuire
-        ul.ms
+        .ms
           li.selected
             .suprafata
               color black
 
     [data-type="locatari"]
       .distribuire
-        ul.ms
+        .ms
           li.selected
             .locatari
               color black
@@ -428,6 +461,17 @@ export default Observer ({
       grid-area plata
 
 [data-tax="apartament"]
+  .etaj
+    order 3
+
+  .asociatieId
+    order 0
+
+  .blocId
+    order 1
+
+  .scara
+    order 2
   fieldset.header
     .fields
       grid-template-areas:

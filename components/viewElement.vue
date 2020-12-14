@@ -33,15 +33,15 @@ span.scari(
 
 avatar(
   v-else-if=  "type === 'avatar'"
-  :seed=    "avatarSeed"
+  :seed=    "value"
   :value=   "value"
   disabled
 )
 .counters(
-  v-else-if=  "type === 'counters'"
-  v-show= "value && Object.keys(value).map(k => value[k]).filter(v => v > 0).length"
+  v-else-if=  "type === 'state'"
+  v-show= "value.counters && Object.keys(value.counters).map(k => value.counters[k]).filter(v => v > 0).length"
 )
-  span(v-for="counter, rel in value" v-if="counter > 0" :data-w="rel") {{ counter }}
+  span(v-for="counter, rel in value.counters" v-if="counter > 0" :data-w="rel") {{ counter }}
 span(
   v-else
   :class="type"
@@ -65,10 +65,6 @@ export default {
     value: {
       type: [Number, Object, Boolean, String, Array],
       default: null
-    },
-    avatarSeed: {
-      type: String,
-      default: 'drn'
     },
     formData: {
       type: Object,

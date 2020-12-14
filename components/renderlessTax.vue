@@ -12,7 +12,7 @@ div
   slot(name="fuzzInput" :taxonomy="taxonomy" :subscriber="subscriber" :disabled="disabled")
   slot(:taxonomy="taxonomy" :subscriber="subscriber" :disabled="disabled")
 
-  ul(
+  transition-group(name="flip-list" tag="ol"
     v-if=   "documents.length || taxonomy && subscriber.ids.length"
     :class= "{ fetching: subscriber.fetching, ms: subscriber.options.multipleSelect }"
   )
@@ -45,13 +45,13 @@ import { Observer } from 'mobx-vue'
 
 export default Observer({
   async fetch () {
-    const { subscriberName, debug, criteria, taxonomy, itemsExtraData } = this
+    const { subscriberName, debug, criteria, taxonomy, itemsExtraData, id } = this
     if (subscriberName === 'unsubscribed')
       return
 
     let multipleSelect = false
 
-    if (taxonomy.plural === 'apartamente' && subscriberName === 'single') {
+    if ((taxonomy.plural === id || id === 'distribuire') && subscriberName === 'single') {
       multipleSelect = true
     }
 
@@ -62,10 +62,19 @@ export default Observer({
 
     this.subscriber = taxonomy.subscribers[subscriberName]
     this.subscriber.criteria = JSON.parse(JSON.stringify(criteria))
+
+    if (this.selectedId) {
+      this.subscriber.select(this.selectedId)
+    }
   },
 
   beforeMount () {
-    this.debug('mount lol')
+    const { subscriber, criteria } = this
+    if (criteria.filter) {
+      subscriber.criteria.filter = criteria.filter
+    } else {
+      this.debug('mount filters', subscriber.criteria.filter)
+    }
     this.subscriber.criteria.limit = (this.subscriber.criteria.limit || 1000) + 1
   },
 
@@ -87,6 +96,10 @@ export default Observer({
   },
   name: 'R-Tax',
   props: {
+    id: {
+      type: String,
+      default: null
+    },
     itemsExtraData: {
       type: Object,
       default: null
@@ -98,8 +111,8 @@ export default Observer({
       type: String,
       default: 'main'
     },
-    populated: {
-      type: [Promise, Array],
+    selectedId: {
+      type: [String, Array],
       default: null
     },
     disabled: {
@@ -170,8 +183,9 @@ export default Observer({
     // },
   },
   watch: {
+    // TODO (!ids.length && required ) - required prop for field in singles
     selectedId: function  (ids, prevIds) {
-      if (!ids || this.subscriberName !== 'single')
+      if (!ids || !ids.length || this.subscriberName !== 'single')
         return
 
       this.$emit('input', ids)

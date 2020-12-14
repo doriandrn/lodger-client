@@ -83,7 +83,7 @@ ValidationProvider(
   slect(
     v-else-if=    "type === 'select' || id === 'modDistribuire' || name === 'rol'"
     :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
-    :value=       "value || $props.default",
+    :value=       "value",
     :required=    "required",
     :placeholder= "placeholder"
     @input=       "$emit('input', String(Number($event.target.value)) === $event.target.value ? Number($event.target.value) : $event.target.value)"
@@ -106,10 +106,9 @@ ValidationProvider(
     v-else-if=    "['avatar', 'userAvatar'].indexOf(type) > -1"
     :id=          "id"
     :value=       "value"
-    :seed=        "avatarSeed"
+    :seed=        "formData.name"
     :disabled=    "disabled"
   )
-
 
   scari(
     v-else-if=    "type === 'scari'",
@@ -152,11 +151,12 @@ ValidationProvider(
   )
   tax(
     v-else-if=        "id && (isRel || ['taxonomy', 'selApartamente'].indexOf(type) > -1)"
+    :id=              "id",
     :taxonomy=        "isRel || type === 'taxonomy' ? id.indexOf('Id') < -1 && id.plural === id ? $lodger[id] : $lodger[id.replace('Id', '').plural] : $lodger.apartamente"
     :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $lodger[id] : $lodger.apartamente)"
-    :criteria=        "{ filter: refs }"
-    :selectedId=       "value && typeof value === 'object' ? value.selectedId : value ? value : undefined"
-    :subscriberName=   "`single${ refs && Object.keys(refs) === 1 ? `${ refs[Object.keys(refs)[0]] }` : '' }`"
+    :criteria=        "refs ? { filter: isRel ? refs.refs[id.replace('Id', '')] : refs.crumbsIds } : undefined"
+    :selectedId=       "value && typeof value === 'object' && typeof value.length === 'undefined' ? value.selectedId : value ? value : undefined"
+    :subscriberName=   "`single${ refs && refs.crumbsIds && Object.keys(refs.crumbsIds) === 1 ? `${ refs[Object.keys(refs.crumbsIds)[0]] }` : '' }`"
     @input=           "$emit('input', $event)"
     :value=           "value"
     :disabled=        "disabled"
@@ -264,6 +264,8 @@ export default {
         value = Boolean(value)
       }
 
+      // if (type)
+
       if (type.asRxDBType === 'string' && typeof value === 'boolean')
         return ''
 
@@ -319,10 +321,10 @@ export default {
       type: String,
       default: 'NOID!'
     },
-    default: {
-      type: [Object, Number, String, Array, Boolean],
-      default: null
-    },
+    // default: {
+    //   type: [Object, Number, String, Array, Boolean],
+    //   default: null
+    // },
     name: {
       type: String,
       default () {
@@ -691,7 +693,7 @@ textarea
       opacity 0
       visibility hidden
 
-  &:not(:disabled)
+  &:not(:disabled):not(.primary):not([type="submit"])
     // border-radius 2px
     border-radius: 46px;
     // border-radius 6px

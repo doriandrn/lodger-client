@@ -1,5 +1,5 @@
 <template lang="pug">
-transition(name="modal")
+transition(:name= "$lodger.modal.firstTime? 'slide': 'modal'")
   .modal(
     v-show=     "$lodger.modal.activeDoc"
     :data-tax=  "$lodger.modal.activeDoc && $lodger.modal.activeDoc.collection ? $lodger.modal.activeDoc.collection.schema.jsonSchema.name : undefined"
@@ -243,4 +243,16 @@ lrPad = 32px
     .modal__container
       transform scale(.5, .5) translate(-50%, -50%)
       // transform: scale(1.1)
+
+.slide
+  &-enter
+    transform translate(0, 0)
+
+  &-leave-active
+    transform translate(0, 0)
+
+  &-enter
+  &-leave-active
+    .modal__container
+      transform translate(-100%, 0)
 </style>

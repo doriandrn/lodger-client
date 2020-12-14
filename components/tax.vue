@@ -1,10 +1,12 @@
 <template lang="pug">
 renderlessTax(
   v-if=             "taxonomy"
+  :id=              "id"
   :taxonomy=        "taxonomy"
   :data-tax=        "taxonomy.plural"
   :subscriberName=  "subscriberName"
   :criteria=        "criteria ? criteria : undefined"
+  :selectedId=      "selectedId"
   :itemsExtraData=  "taxonomy.plural === 'apartamente' && value ? { impartire: value } : undefined"
   @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' && typeof $event !== 'string' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
 )
@@ -65,6 +67,7 @@ renderlessTax(
   li(
     slot= "item"
     slot-scope="{ item, subscriber, taxonomy }"
+    :key=   "`${taxonomy.plural}-${item._id}`"
 
     v-if= "!(hideSelectedItem && item[subscriber.primaryPath] === subscriber.selectedId)"
     :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
@@ -76,7 +79,6 @@ renderlessTax(
       :type=  "key",
       :key=   "key",
       :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
-      :avatarSeed= "item['name']"
       :formData=  "formData"
       @click= "subscriberName !== 'single' ? subscriber.edit(item[subscriber.primaryPath]) : undefined"
     )
@@ -105,8 +107,8 @@ export default Observer({
     if (!value)
       return
 
-    if (typeof value === 'object')
-      this.criteria.filter = { '_id': { $in: Object.keys(value) } }
+    // if (typeof value === 'object')
+    //   this.criteria.filter = { '_id': { $in: Object.keys(value) } }
 
     if (selectedId) {
       const sub = this.taxonomy.subscribers[this.subscriberName]
@@ -122,6 +124,10 @@ export default Observer({
     viw
   },
   props: {
+    id: {
+      type: String,
+      default: null
+    },
     value: {
       type: [Object, Array, String],
       default: null
@@ -293,6 +299,8 @@ typeColors = config.typography.palette
 
     &.last
       > strong:first-of-type
+        position relative
+
         &:after
           content ''
           display inline-block
@@ -313,6 +321,7 @@ typeColors = config.typography.palette
         background: rgba(colors.bgs.ui, .65)
 
   ul
+  ol
     // margin 0 -8px
     // width calc(100% + 16px)
     position relative
@@ -362,7 +371,13 @@ typeColors = config.typography.palette
 
   header
     &+ul
+    &+ol
       margin-top 8px
       padding-top 8px
       border-top 1px solid rgba(black, .05)
+
+
+.flip-list-move
+  transition: transform .25s;
+
 </style>

@@ -24,7 +24,7 @@ button(
   :data-styl=       "styl",
   :data-dangerous=  "dangerous"
   :data-arrow=      "arrow"
-  :class=           "{ iconOnly, rounded }"
+  :class=           "{ iconOnly, rounded, primary }"
   @keyup.up=        "$emit('keyUp', $event)"
   tabIndex=         0
   v-tooltip=        "_tooltip"
@@ -133,6 +133,10 @@ export default {
         }
       }
     },
+    primary: {
+      type: Boolean,
+      default: false
+    },
     shortkeys: {
       type: Array,
       default: null
@@ -219,14 +223,22 @@ export default {
 // butTextColor = config.palette.primary
 butTextColor = #253a63
 
+button
+.button
+  &:not(:disabled)
+    &:not(.primary):not([data-styl="unstyled"])
+      background: #f5f7fb;
+      box-shadow:  6px 6px 12px rgba(black, .1),
+                  -6px -6px 12px #ffffff;
+
+
 input[type="submit"]
 button
 .button
   position relative
-  // background-color white
   // border: 1px solid config.palette.borders
   // border: 1px solid transparent
-  border 0
+  border 1px solid transparent
   // border-radius: config.radiuses.buttons
   color: butTextColor
   // color white
@@ -252,9 +264,6 @@ button
 
   &:not(:disabled)
     border-radius: 46px;
-    background: #f5f7fb;
-    box-shadow:  6px 6px 12px rgba(black, .1),
-                -6px -6px 12px #ffffff;
 
     &:hover
       top 1px
@@ -368,6 +377,18 @@ button
 
   .focuskeys
     position static
-    margin-left 12px
+    margin-left 20px
 
+
+input[type="submit"]
+button.primary
+.button.primary
+  background-color: config.palette.primary
+  color white
+  border-color rgba(white,.5)
+  box-shadow:  6px 6px 12px rgba(config.palette.primary, .52),
+                -6px -6px 12px #ffffff;
+
+  &:after
+    background-color white !important
 </style>

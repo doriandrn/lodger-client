@@ -18,7 +18,6 @@ ValidationObserver(v-slot="{ passes }")
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
           :required =     "form.schema.required.indexOf(id) > -1"
-          :default=       "field.default"
           :options=       "field.options"
           :min=           "field.min"
           :max=           "field.max",
@@ -32,17 +31,19 @@ ValidationObserver(v-slot="{ passes }")
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
           :disabled=      "((field.freezed || field.final) && !$lodger.modal.activeDoc._isTemporary) || !editing"
-          :avatarSeed=    "value['name'] || $data['name']"
           :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime' && !editing"
 
-          :value=     "$data[id] !== undefined ? $data[id] : value && value[id] !== undefined ? value[id] : form.fields[id].default"
           @input=     "updField(id, $event)"
+          :value=     "typeof $data[id] !== 'function' ? $data[id] : undefined"
 
-          :refs=        "$lodger.taxonomies.indexOf(id) > -1 || $lodger.taxonomies.indexOf(id.replace('Id', '').plural) > -1 || field._type === 'selApartamente' ? refs : undefined"
+          :refs=        "refs"
           :isNew=       "isNew"
-          :formData=    "filteredData"
+          :formData=    "$data"
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
+          //- :value=     "$data[id] !== undefined ? $data[id] : value && value[id] !== undefined ? value[id] : typeof form.fields[id].default === 'function' ? form.fields[id].default() : form.fields[id].default"
+          //- :default=       "typeof field.default === 'function' ? field.default($lodger, filteredData) : field.default"
+          //- :refs=        "$lodger.taxonomies.indexOf(id) > -1 || $lodger.taxonomies.indexOf(id.replace('Id', '').plural) > -1 || field._type === 'selApartamente' ? refs.refs[id.replace('Id', '')] : refs"
 
         attachments.attachments(
           v-if=         "doc && withAttachments"
@@ -59,7 +60,7 @@ ValidationObserver(v-slot="{ passes }")
         type= "submit",
         icon= "plus-circle"
         size= "xl"
-        :disabled = "!Object.keys(value).length && !Object.keys(filteredData).length"
+        :disabled = "!Object.keys(value).length && !Object.keys($data).length"
       ) {{ submitText }}
 </template>
 
@@ -98,13 +99,27 @@ extend("length", {
 export default Observer ({
   name: 'F0rm',
 
+  async fetch () {
+    const { $data, debug, value, fields, form: { fieldsIds } } = this
+    debug('wtf', fieldsIds)
+    const boom = await fieldsIds.filter(k => ['createdAt', 'updatedAt'].indexOf(k) < 0)
+      .reduce((a, b) => ({
+        ...a,
+        [b]: typeof fields[b].default === 'function' ?
+              fields[b].default(this.$lodger, $data) :
+              fields[b].default
+      }), {})
+    debug(boom)
+    Object.assign(this.$data, boom)
+  },
+
   data () {
     const { debug, doc, form: { fields, fieldsIds, plural, schema: { attachments } }, isNew, value } = this
     if (!fields) throw new Error('No form supplied')
     const data = {
-      fetched: false
+      _id: value._id
     }
-    fieldsIds.concat(['_id', '_rev']).forEach(k => data[k] = value[k] || fields[k] && fields[k].default)
+    // fieldsIds.concat(['_id', '_rev']).forEach(k => data[k] = data[k] || value[k])
 
     // default for sume
     if (fieldsIds.indexOf('suma') > -1 && data.suma === undefined)
@@ -130,16 +145,12 @@ export default Observer ({
     fields () {
       return this.form.fields
     },
-    filteredData () {
-      const { $data, value, fields, form: { fieldsIds } } = this
-      const data = {}
-      Object
-        .keys(this.$data)
-        .filter(k => fieldsIds.concat(['_id', '_rev']).indexOf(k) > -1 && (value[k] !== undefined || $data[k] !== undefined))
-        .map(k => data[k] = $data[k] || fields[k] && fields[k].default)
+    // filteredData () {
 
-      return data
-    },
+
+    //     // .map(k => $data[k] || fields[k] && fields[k].default)
+    //     // .map(k => typeof k === 'function' ? k(this.$lodger, this.$data) : k)
+    // },
 
     withAttachments () {
       return !!this.form.schema.attachments
@@ -149,7 +160,7 @@ export default Observer ({
       if (this.form.plural !== 'cheltuieli')
         return {}
 
-      const { apartamente } = this.$lodger
+      const { apartamente, mainSubName } = this.$lodger
       const { items } = apartamente.subscribers.single
 
       return Object.keys(this.distribuire)
@@ -158,7 +169,7 @@ export default Observer ({
           [b]: apartamente.form.fieldsIds
             .reduce((x, y) => ({
               ...x,
-              [y]: items[b]._doc._data[y]
+              [y]: items[b]._doc ? items[b]._doc._data[y] : apartamente.subscribers[mainSubName].items[b]._doc._data[y]
             }), {})
         }), {})
     },
@@ -271,7 +282,7 @@ export default Observer ({
     }
   },
   watch: {
-    filteredData: function (newData, prev) {
+    $data: function (newData, prev) {
       if (
         this.form.plural !== 'cheltuieli' ||
         ! this.isNew ||
@@ -308,9 +319,15 @@ export default Observer ({
     },
     async validation () {
       this.$children[0].validate().then(ok => {
-        this.debug(this.filteredData, 'o')
-        if (ok)
-          this.$emit('submit', this.filteredData)
+        if (!ok)
+          return
+
+        const { $data, form: { opts: { captureTimestamp }}, $lodger: { freshDates } } = this
+        this.$emit('submit', captureTimestamp ?
+          Object.assign({}, { ...$data }, { ...freshDates() }) :
+          { ...$data }
+        )
+          // this.$emit('submit', Object.keys(this.filteredData).reduce((a, b) => ({ ...a, [b]: typeof this.filteredData[b] === 'function' ? this.filteredData[b]() : this.filteredData[b]}), {}))
       })
     }
   }

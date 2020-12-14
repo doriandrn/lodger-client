@@ -16,7 +16,7 @@
 
       .right
         field(
-          v-if= "$lodger.activeUserId"
+          v-if=     "$lodger.activeUserId"
           type=     "search"
           size=     "small"
           id=       "search"
@@ -98,18 +98,18 @@
 
 
   main
-
     nuxt(:nuxt-child-key="activePage")
     dev-tools(v-if="env === 'development'" style="display:none")
 
   footr
     logo(:tooltip=  "`${ app.name } v${ app.version }<br/>api v${ app.lodgerApiV }<br/><br/> &copy; 2017 - ${ curYear } ${ app.author }`")
-    span.update(v-if="$lodger.state.hasUpdate") O noua actualizare este disponibila
-      a.go Descarca si reporneste
+    span.update(v-if="$lodger.state.hasUpdate") {{ $lodger.i18n.updates.available }}
+      a.go {{ $lodger.i18n.updates.action }}
 
-    span(v-if= "$lodger.activeUserId") Curs valutar actualizat
+    span(v-if= "$lodger.activeUserId") {{ $lodger.i18n.updates.currencyRates }}
       date-time(:date-time-i-s-o= "$lodger.state.rates.timestamp" live-update ago)
-      button(icon="" @click="$lodger.updateRates()" data-styl="unstyled") Actualizeaza
+      button(icon="" @click="$lodger.updateRates()" data-styl="unstyled") {{ $lodger.i18n.update }}
+
     nav(v-if= "$lodger.activeUserId")
       buton(
         v-for=  "v, k in extraLinks"
@@ -186,7 +186,7 @@ export default Observer ({
     const { $lodger: { utilizatori, mainSubName, modal } } = this
     await utilizatori.subscribe(mainSubName, { autoSelectOnCRUD: true })
     const sub = utilizatori.subscribers[mainSubName]
-    await sub.updates
+    // await sub.updates
   },
 
   methods: {
@@ -303,6 +303,12 @@ footerHeight = 36px
     > *
       margin 10px
 
+      +above(l)
+        margin 16px
+
+      +above(xl)
+        margin 20px
+
   > footer
     user-select none
     position absolute
@@ -327,6 +333,9 @@ footerHeight = 36px
 
       &:hover
         opacity 1
+
+      &:first-child:last-child
+        margin 0 auto
 
     p
     h3

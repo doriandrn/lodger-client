@@ -80,21 +80,31 @@
           toggleText= ""
           icon-only
         )
-          //- :toggleText= "$lodger.i18n.taxonomies.utilizatori.switch"
           viw(
             v-for=        "t, i in ['avatar', 'name']"
             :type=        "t"
             :key=         "i"
-            :value=       "$lodger.utilizatori.subscribers.prince.items[$lodger.activeUserId][t]"
-            :avatarSeed=  "$lodger.utilizatori.subscribers.prince.items[$lodger.activeUserId].name"
+            :value=       "$lodger.utilizatori.subscribers[$lodger.mainSubName].items[$lodger.activeUserId][t]"
+            :avatarSeed=  "$lodger.utilizatori.subscribers[$lodger.mainSubName].items[$lodger.activeUserId].name"
             slot=          "beforeText"
           )
+          ul
+            li
+              a Profilul meu
 
-          tax(
-            :taxonomy=        "$lodger.utilizatori"
-            :subscriberName=  "$lodger.mainSubName"
-            hideSelectedItem
-          )
+            li
+              a(@click= "$lodger.utilizatori.subscribers[$lodger.mainSubName].select($lodger.activeUserId)") Logout
+
+            li
+              a Comuta utilizator:
+              //- :toggleText= "$lodger.i18n.taxonomies.utilizatori.switch"
+
+
+              tax(
+                :taxonomy=        "$lodger.utilizatori"
+                :subscriberName=  "$lodger.mainSubName"
+                hideSelectedItem
+              )
 
 
   main

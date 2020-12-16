@@ -21,6 +21,13 @@ export default {
       return avatars.create(this.seed)
     }
   },
+  watch: {
+    placeholder: function (v) {
+      if (!v.length || this.disabled)
+        return
+      this.$emit('input', v)
+    }
+  },
   props: {
     id: {
       type: String,

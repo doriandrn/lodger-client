@@ -38,7 +38,7 @@ avatar(
   disabled
 )
 .counters(
-  v-else-if=  "type === 'state'"
+  v-else-if=  "type === 'state' && value && value.counters"
   v-show= "value.counters && Object.keys(value.counters).map(k => value.counters[k]).filter(v => v > 0).length"
 )
   span(v-for="counter, rel in value.counters" v-if="counter > 0" :data-w="rel") {{ counter }}

@@ -17,7 +17,7 @@ button(
   type=             "button"
   @click=           "handleClick"
   :disabled=        "disabled"
-  :aria-label=      "$slots.default[0].text",
+  :aria-label=      "$slots.default && $slots.default[0].text",
   :data-icon=       "icon",
   :data-size=       "size",
   :data-tip=        "!!tooltip"

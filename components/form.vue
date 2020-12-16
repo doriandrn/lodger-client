@@ -100,42 +100,59 @@ export default Observer ({
   name: 'F0rm',
 
   async fetch () {
-    const { $data, debug, value, fields, form: { fieldsIds } } = this
-    debug('wtf', fieldsIds)
-    const boom = await fieldsIds.filter(k => ['createdAt', 'updatedAt'].indexOf(k) < 0)
-      .reduce((a, b) => ({
-        ...a,
-        [b]: typeof fields[b].default === 'function' ?
-              fields[b].default(this.$lodger, $data) :
-              fields[b].default
-      }), {})
-    debug(boom)
-    Object.assign(this.$data, boom)
+    const { debug, value, fields, form: { fieldsIds } } = this
+
+    const data = (await Promise.all(
+      fieldsIds
+        .filter(k => ['createdAt', 'updatedAt'].indexOf(k) < 0)
+        .map(async b => ({ [b]: value[b] || (typeof fields[b].default === 'function' ?
+              await fields[b].default(this.$lodger, value) :
+              fields[b].default) }))
+    )).reduce((a, b) => ({ ...a, ...b }), {})
+
+    Object.assign(this.$data, data)
   },
 
   data () {
     const { debug, doc, form: { fields, fieldsIds, plural, schema: { attachments } }, isNew, value } = this
-    if (!fields) throw new Error('No form supplied')
-    const data = {
-      _id: value._id
-    }
-    // fieldsIds.concat(['_id', '_rev']).forEach(k => data[k] = data[k] || value[k])
+    if (!fields)
+      throw new Error('No form supplied')
 
-    // default for sume
-    if (fieldsIds.indexOf('suma') > -1 && data.suma === undefined)
-      data.suma = {
-        value: 0,
-        moneda: this.$lodger.displayCurrency
-      }
+    const data =
+      fieldsIds
+        .concat(['_id', '_rev'])
+        .reduce((a, b) => ({ ...a, [b]: undefined }), {})
 
-    if (fieldsIds.indexOf('snapshotsApartamente') > -1 && data.snapshotsApartamente === undefined)
-      data.snapshotsApartamente = {}
-
-    if (attachments !== undefined && doc && !data.attachments && !isNew) {
-      data.attachments = doc.allAttachments()
-    }
+    // if (attachments !== undefined && doc && !data.attachments && !isNew) {
+    //   data.attachments = doc.allAttachments()
+    // }
 
     return { ...data }
+  },
+
+  mounted () {
+    if (this.form.name !== 'cheltuiala' || !this.isNew)
+      return
+
+    this._unwatch = this.$watch(
+      () => ({
+        suma: this.suma,
+        distribuire: this.distribuire,
+        modDistribuire: this.modDistribuire
+      }),
+      function (newData, prev) {
+        const { distribuire } = newData || prev
+        if (!newData.suma || Object.keys(distribuire || {}).length < 1)
+          return
+
+        Object.assign(this.distribuire, this.distrChelt)
+        Object.assign(this.snapshotsApartamente, this.snapshotsAps)
+      })
+  },
+
+  destroyed () {
+    if (this._unwatch && typeof this._unwatch === 'function')
+      this._unwatch()
   },
 
   computed: {
@@ -145,12 +162,6 @@ export default Observer ({
     fields () {
       return this.form.fields
     },
-    // filteredData () {
-
-
-    //     // .map(k => $data[k] || fields[k] && fields[k].default)
-    //     // .map(k => typeof k === 'function' ? k(this.$lodger, this.$data) : k)
-    // },
 
     withAttachments () {
       return !!this.form.schema.attachments
@@ -281,22 +292,7 @@ export default Observer ({
       default: null
     }
   },
-  watch: {
-    $data: function (newData, prev) {
-      if (
-        this.form.plural !== 'cheltuieli' ||
-        ! this.isNew ||
-        ! newData.suma
-      )
-        return
 
-      if (Object.keys(newData.distribuire).length < 1)
-        return
-
-      Object.assign(this.$data.distribuire, this.distrChelt)
-      Object.assign(this.$data.snapshotsApartamente, this.snapshotsAps)
-    }
-  },
   methods: {
     updField (id, e) {
       const { isNew, editing, $data, doc, debug } = this

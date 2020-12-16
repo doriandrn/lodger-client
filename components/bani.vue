@@ -103,7 +103,7 @@ export default Observer ({
       if (!this.valoare)
         return 0
 
-      return this.valoare.value ? Number(this.valoare.value) || 0 : this.valoare
+      return this.valoare.value !== undefined ? Number(this.valoare.value) || 0 : this.valoare
     },
     moneda () {
       return this.monedaCustom && this.monedaCustom > 0 ?

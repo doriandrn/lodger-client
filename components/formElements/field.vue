@@ -105,8 +105,11 @@ ValidationProvider(
   avatar(
     v-else-if=    "['avatar', 'userAvatar'].indexOf(type) > -1"
     :id=          "id"
-    :value=       "value"
     :seed=        "formData.name"
+
+    :value=       "value"
+    @input=       "$emit('input', $event)"
+
     :disabled=    "disabled"
   )
 
@@ -154,7 +157,7 @@ ValidationProvider(
     :id=              "id",
     :taxonomy=        "isRel || type === 'taxonomy' ? id.indexOf('Id') < -1 && id.plural === id ? $lodger[id] : $lodger[id.replace('Id', '').plural] : $lodger.apartamente"
     :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $lodger[id] : $lodger.apartamente)"
-    :criteria=        "refs ? { filter: isRel ? refs.refs[id.replace('Id', '')] : refs.crumbsIds } : undefined"
+    :criteria=        "refs ? { limit: isRel ? isNew && !disabled ? 1000 : 1 : undefined,filter: isRel ? refs.refs[id.replace('Id', '')] : Object.keys(refs.crumbsIds).reduce((a,b)=> ({ ...a, [b]: { [b.indexOf('Id') === b.length - 2 ? '$eq': '$in']: refs.crumbsIds[b] } }), {}) } : undefined"
     :selectedId=       "value && typeof value === 'object' && typeof value.length === 'undefined' ? value.selectedId : value ? value : undefined"
     :subscriberName=   "`single${ refs && refs.crumbsIds && Object.keys(refs.crumbsIds) === 1 ? `${ refs[Object.keys(refs.crumbsIds)[0]] }` : '' }`"
     @input=           "$emit('input', $event)"

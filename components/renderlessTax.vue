@@ -45,9 +45,11 @@ import { Observer } from 'mobx-vue'
 
 export default Observer({
   async fetch () {
-    const { subscriberName, debug, criteria, taxonomy, itemsExtraData, id } = this
+    const { subscriberName, debug, criteria, taxonomy, itemsExtraData, id, selectedId } = this
     if (subscriberName === 'unsubscribed')
       return
+
+    debug('fetching', subscriberName, taxonomy.plural, this.selectedId, criteria)
 
     let multipleSelect = false
 
@@ -55,27 +57,31 @@ export default Observer({
       multipleSelect = true
     }
 
-    await taxonomy.subscribe(subscriberName, { criteria: JSON.parse(JSON.stringify(criteria)), multipleSelect })
-
     if (!taxonomy.subscribers[subscriberName])
-      throw new Error(`Subscriber "${ subscriberName }" does not exist`)
+      await taxonomy.subscribe(subscriberName, { criteria: JSON.parse(JSON.stringify(criteria)), multipleSelect })
 
-    this.subscriber = taxonomy.subscribers[subscriberName]
-    this.subscriber.criteria = JSON.parse(JSON.stringify(criteria))
+    // throw new Error(`Subscriber "${ subscriberName }" does not exist`)
 
-    if (this.selectedId) {
-      this.subscriber.select(this.selectedId)
-    }
+    const sub = this.subscriber = taxonomy.subscribers[subscriberName]
+
+    // if (selectedId) {
+    //   debug('selecting shit', taxonomy.plural, selectedId)
+    //   sub.selectedId = selectedId
+    //   sub.select(selectedId)
+    // }
+    sub.criteria = JSON.parse(JSON.stringify(criteria))
   },
 
-  beforeMount () {
-    const { subscriber, criteria } = this
+  created () {
+    const { subscriber, criteria, selectedId, debug } = this
+    // debug('CM', subscriber, selectedId, criteria)
     if (criteria.filter) {
       subscriber.criteria.filter = criteria.filter
     } else {
       this.debug('mount filters', subscriber.criteria.filter)
     }
-    this.subscriber.criteria.limit = (this.subscriber.criteria.limit || 1000) + 1
+    if (criteria.limit !== undefined)
+      this.subscriber.criteria.limit = criteria.limit
   },
 
   data () {
@@ -154,9 +160,9 @@ export default Observer({
     split
   },
   computed: {
-    selectedId () {
-      return this.subscriber.selectedId
-    },
+    // selectedId () {
+    //   return this.subscriber.selectedId
+    // },
     activeId () {
       return this.subscriber.activeId
     },
@@ -183,11 +189,23 @@ export default Observer({
     // },
   },
   watch: {
-    // TODO (!ids.length && required ) - required prop for field in singles
-    selectedId: function  (ids, prevIds) {
-      if (!ids || !ids.length || this.subscriberName !== 'single')
+    selectedId: function (ids) {
+      if (!ids || this.subscriberName !== 'single')
         return
 
+      if (this.subscriber.selectedId !== ids) {
+        this.subscriber.select(ids)
+      }
+      // this.$emit('input', ids)
+    },
+    // TODO (!ids.length && required ) - required prop for field in singles
+    'subscriber.selectedId': function  (ids, prevIds) {
+      if (!ids || this.subscriberName !== 'single')
+        return
+
+      // if (this.subscriber.selectedId !== ids) {
+      //   this.subscriber.select(ids)
+      // }
       this.$emit('input', ids)
     }
   },

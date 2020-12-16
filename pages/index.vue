@@ -67,7 +67,7 @@ sction#idx(
   //- .widget(slot="sidebar")
   //-   h3 latest actions
 
-  section.welcome(v-if="!$lodger.activeUserId")
+  section.welcome(v-if="!$lodger.activeUserId && !$lodger.utilizatori.subscribers[$lodger.mainSubName].ids.length")
     h1 {{ $lodger.i18n.welcome.title }}
     p.intro {{ $lodger.i18n.welcome.intro }}
 
@@ -83,6 +83,14 @@ sction#idx(
     .actions(v-if="!$lodger.modal.activeDoc")
       buton(size="large" icon="database" :shortkeys="['i']" @click="debug('import')") {{ $lodger.i18n.welcome.actions.import }}
       buton(primary size="large" arrow="right" @click="newUser" :shortkeys="['enter']") {{ $lodger.i18n.welcome.actions.newUser }}
+
+  section.users(v-if="!$lodger.activeUserId && $lodger.utilizatori.subscribers[$lodger.mainSubName].ids.length")
+    p user select
+    list(
+      :taxonomy=        "$lodger.utilizatori"
+      :subscriberName=  "subscriberName"
+      :extra-fields=    "['state']"
+    )
 
 </template>
 

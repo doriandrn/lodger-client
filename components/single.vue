@@ -237,25 +237,33 @@ export default Observer ({
     .fields
       grid-template-areas:
         "avatar avatar name name name name"\
-        "avatar avatar rol rol . ."\
+        "avatar avatar pin rol rol ."\
         "contact contact . . . ."\
         "metaL metaL . . metaR metaR"
 
-    [data-type="userAvatar"]
+    .codPIN
+      grid-area pin
+
+    .avatar
       grid-area avatar
 
       img
         size 100%
 
-    [data-type="fullName"]
+    .name
       grid-area name
       align-self flex-end
 
-    [data-type="contactFields"]
+    .contact
       grid-area contact
 
-    [data-type="number"]
+    .rol
       grid-area rol
+
+  form
+    &.isNew
+      .rol
+        display none
 
 [data-tax=  "cheltuiala"]
   .snapshotsApartamente
@@ -448,10 +456,13 @@ export default Observer ({
   fieldset.header
     .fields
       grid-template-areas:
-        "nr proiect proiect proiect plata plata"\
+        "nr deLa deLa deLa plata plata"\
         ". altele altele . plata plata"
 
-    [data-type]
+    .apartamentId
+      grid-area deLa
+
+    .cheltuieli
       grid-area altele
 
     [data-type="number"]

@@ -30,6 +30,11 @@ export default async ({ app, store, isDev }, inject) => {
   }
   lodger.teme = teme
 
+  lodger.state.io = {
+    preparingDBexport: false,
+    exportDBlink: ''
+  }
+
   inject('lodger', lodger)
   inject('Lodger', Lodger)
 

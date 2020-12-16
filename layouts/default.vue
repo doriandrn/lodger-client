@@ -41,7 +41,7 @@
           :toggleKeys=  "['ctrl', '/']"
           iconOnly
         )
-          form.form
+          form.form(name="preferences")
             fieldset
               legend {{ $lodger.i18n.forms.preferences.fieldsets[0] }}
 
@@ -73,6 +73,18 @@
                 v-model=    "$lodger.state.appPreferences.display.hotkeys"
                 :label=     "$lodger.i18n.forms.preferences.fields.shortKeys"
               )
+
+            fieldset
+              legend db
+
+              p {{ io.exportDBlink }} {{ io.exportDBlink.length }}
+              buton(
+                type=     "link"
+                @click=   "debug('fml'); !io.exportDBlink.length ? exportDB() : undefined"
+                download=  "ldgexport.ldgdb"
+                :href=    "io.exportDBlink"
+                :value=   "io.exportDBlink ? 'save' : undefined"
+              ) {{ io.exportDBlink.length ? 'descarca' : 'exporta' }}
 
 
         dropdown.u(
@@ -193,13 +205,25 @@ export default Observer ({
   },
 
   async beforeCreate () {
-    const { $lodger: { utilizatori, mainSubName, modal } } = this
+    const { $lodger: { utilizatori, mainSubName, modal, state: { io } } } = this
     await utilizatori.subscribe(mainSubName, { autoSelectOnCRUD: true })
     const sub = utilizatori.subscribers[mainSubName]
     // await sub.updates
+    this.$lodger.on('dbUpdated', () => {
+      io.exportDBlink = ''
+    })
   },
 
   methods: {
+    exportDB () {
+      const { state: { io } } = this.$lodger
+      io.preparingDBexport = true
+      this.$lodger.export().then(data => {
+        const jsonBlob = new Blob([JSON.stringify(data.data)], { type: 'application/javascript;charset=utf-8' });
+        io.exportDBlink = window.URL.createObjectURL(jsonBlob)
+        io.preparingDBexport = false
+      })
+    },
     Search (input) {
       this.debug('searching', input)
       this.search.input = input
@@ -226,6 +250,9 @@ export default Observer ({
     },
     env () {
       return process.env.NODE_ENV
+    },
+    io () {
+      return this.$lodger.state.io
     }
   },
   beforeDestroy () {

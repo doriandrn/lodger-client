@@ -46,6 +46,16 @@ input(
   :data-size=   "size",
   :disabled=    "disabled"
 )
+
+a.button(
+  v-else-if=    "type === 'link'"
+  :data-icon=   "icon"
+  :title=      "$slots.default[0].text",
+  :data-arrow=      "arrow"
+  :tabIndex=    "tabIndex"
+  @click=           "handleClick"
+)
+  slot
 </template>
 
 <script>

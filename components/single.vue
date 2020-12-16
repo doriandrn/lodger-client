@@ -150,15 +150,21 @@ export default Observer ({
         ].reduce((a, taxes, i) => {
           const x = {}
           taxes.forEach(tax => {
-
-            const { subscribers } = this.$lodger[tax.plural]
+            const { subscribers, data } = this.$lodger[tax.plural]
             const taxRelId = tax.plural === tax ? tax : `${tax}Id`
             const { selectedId } = subscribers.single || subscribers.prince
-            const item = subscribers.single.items[selectedId] || subscribers.prince.items[selectedId]
+            // const multiple = typeof selectedId === 'object' && selectedId.length
+
+            // const items = multiple ? selectedId.map(id => ) : data[selectedId]
             const pTax = this.breadcrumbs[i]
+
+            // if (!item) {
+            //   this.debug('Did not find item for refs in single', selectedId)
+            // }
             x[pTax] = x[pTax] || {}
-            if (item)
-              x[pTax][taxRelId] = { [taxRelId.indexOf('Id') === taxRelId.length - 2 ? '$eq' : '$in']: item._id }
+            x[pTax][taxRelId] = {
+              [taxRelId.indexOf('Id') === taxRelId.length - 2 ? '$eq' : '$in']: selectedId
+            }
           })
 
           return {

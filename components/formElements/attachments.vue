@@ -37,8 +37,9 @@ export default {
         files.forEach(file => {
           const { name, type, size } = file
           const reader = new FileReader()
-          reader.addEventListener('load', e => {
+          reader.addEventListener('load', (e) => {
             const buffer = new Buffer(new Uint8Array(e.target.result))
+            // this.setState({ file: reader.result })
             this.$emit('input', {
               buffer,
               name,
@@ -46,7 +47,8 @@ export default {
               // size
             })
           })
-          reader.readAsArrayBuffer(file)
+          // reader.readAsArrayBuffer(file)
+          reader.readAsDataURL(file)
         })
       }
     })

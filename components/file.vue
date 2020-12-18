@@ -14,7 +14,7 @@ li(:data-fp= "name")
       type= "link"
       icon= "download"
       styl= "unstyled"
-    )
+    ) dl
     buton(
       icon= "trash"
       styl= "unstyled"

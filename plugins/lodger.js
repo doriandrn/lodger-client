@@ -32,7 +32,8 @@ export default async ({ app, store, isDev }, inject) => {
 
   lodger.state.io = {
     preparingDBexport: false,
-    exportDBlink: ''
+    exportDBlink: '',
+    filename: 'lodgerdb-export.ldb'
   }
 
   inject('lodger', lodger)

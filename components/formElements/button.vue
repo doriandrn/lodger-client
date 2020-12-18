@@ -52,6 +52,7 @@ a.button(
   :data-icon=   "icon"
   :title=      "$slots.default[0].text",
   :data-arrow=      "arrow"
+  :data-styl=       "styl",
   :tabIndex=    "tabIndex"
   @click=           "handleClick"
 )

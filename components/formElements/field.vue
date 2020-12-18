@@ -14,7 +14,7 @@ ValidationProvider(
   :tabIndex=    "type === 'checkbox' ? 0 : null"
 )
   input(
-    v-if=         "['modDistribuire', 'attachments'].indexOf(id) < 0 && ['$', 'taxonomy','radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
+    v-if=         "['modDistribuire'].indexOf(id) < 0 && ['$', 'attachments', 'taxonomy','radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
     :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
@@ -67,6 +67,11 @@ ValidationProvider(
     :value=     "value"
     :min=       "0"
     :max=       "100"
+  )
+  attachments(
+    v-else-if=     "type === 'attachments'"
+    :value=       "value"
+    @input=       "$emit('input', { id: $event.name, data: $event.buffer, type: $event.type })"
   )
   buton(
     v-else-if=    "type === 'button'"
@@ -147,19 +152,19 @@ ValidationProvider(
     @input=         "$emit('input', $event)"
   )
 
-  servicii(
-    v-else-if=        "type === 'taxonomy' && id === 'servicii'"
-    @input=           "$emit('input', $event)"
-    :value=           "value"
-    :servicii=        "$lodger.servicii.subscribers[$lodger.mainSubName].items"
-    :disabled=        "disabled"
-  )
+  //- servicii(
+  //-   v-else-if=        "type === 'taxonomy' && id === 'servicii'"
+  //-   @input=           "$emit('input', $event)"
+  //-   :value=           "value"
+  //-   :servicii=        "$lodger.servicii.subscribers[$lodger.mainSubName].items"
+  //-   :disabled=        "disabled"
+  //- )
   tax(
     v-else-if=        "id && (isRel || ['taxonomy', 'selApartamente'].indexOf(type) > -1)"
     :id=              "id",
-    :taxonomy=        "isRel || type === 'taxonomy' ? id.indexOf('Id') < -1 && id.plural === id ? $lodger[id] : $lodger[id.replace('Id', '').plural] : $lodger.apartamente"
+    :taxonomy=        "$lodger[schemaRef.plural]"
     :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $lodger[id] : $lodger.apartamente)"
-    :criteria=        "refs ? { limit: isRel ? isNew && !disabled ? 1000 : 1 : undefined,filter: isRel ? refs.refs[id.replace('Id', '')] : Object.keys(refs.crumbsIds).reduce((a,b)=> ({ ...a, [b]: { [b.indexOf('Id') === b.length - 2 ? '$eq': '$in']: b.indexOf('Id') === b.length - 2 ? refs.crumbsIds[b] : [refs.crumbsIds[b]] } }), {}) } : undefined"
+    :criteria=        "refs && schemaRef !== 'furnizori' ? { limit: isRel ? isNew && !disabled ? 1000 : 100 : undefined,filter: isRel ? refs.refs[id.replace('Id', '')] : Object.keys(refs.crumbsIds).reduce((a,b)=> ({ ...a, [b]: { [b.indexOf('Id') === b.length - 2 ? '$eq': '$in']: b.indexOf('Id') === b.length - 2 ? refs.crumbsIds[b] : [refs.crumbsIds[b]] } }), {}) } : undefined"
     :selectedId=       "value && typeof value === 'object' && typeof value.length === 'undefined' ? value.selectedId : value ? value : undefined"
     :subscriberName=   "`single${ refs && refs.crumbsIds && Object.keys(refs.crumbsIds) === 1 ? `${ refs[Object.keys(refs.crumbsIds)[0]] }` : '' }`"
     @input=           "$emit('input', $event)"
@@ -219,7 +224,7 @@ import radios from 'form/radioGroup'
 import scari from 'form/scari'
 import multi from 'form/presets/multi'
 import contact from 'form/contact'
-
+import attachments from 'form/attachments'
 
 import contoare from 'form/contoare'
 import selApartamente from 'form/selApartamente'
@@ -335,6 +340,10 @@ export default {
       default () {
         return this.id
       }
+    },
+    schemaRef: {
+      type: String,
+      default: null
     },
     rules: {
       type: [Object, String],
@@ -488,6 +497,7 @@ export default {
   components: {
     altslect,
     apartament,
+    attachments,
     avatar,
     bani,
     buton,
@@ -513,6 +523,9 @@ export default {
 
   methods: {
     taxPreviewFields ($tax) {
+      if (!$tax)
+        return
+
       const { form: { previewFields } } = $tax
       switch (this.type) {
         case 'taxonomy':
@@ -740,12 +753,28 @@ textarea
 
 
 [data-type="rel"]
+  ol
+    display flex
+    flex-flow column nowrap
+  li
+    order 1
+    &.selected
+      order 0
+
   a
     text-decoration underline
     cursor pointer
 
     &+label
       color #1a1a1a
+
+
+.form:not(.isNew)
+  [data-type="rel"]
+    li
+      &:not(.selected)
+        display none
+
 
 input[type="number"]
   width 80px

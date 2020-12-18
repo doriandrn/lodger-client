@@ -13,7 +13,7 @@ ValidationObserver(v-slot="{ passes }")
           :id=            "id"
           :class=         "id"
 
-          :type=      "$lodger.taxonomies.indexOf(id) > -1 ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
+          :type=          "form.schema.properties[id].ref ? 'taxonomy' : (form.schema.properties[id]._type || 'string')"
           :label=         "typeof field.label === 'function' ? field.label(i18n.fields) : ''"
           :placeholder=   "field._type === 'bani' ? '0.00' : field.placeholder"
           :focus=         "field.focus"
@@ -36,6 +36,7 @@ ValidationObserver(v-slot="{ passes }")
           @input=     "updField(id, $event)"
           :value=     "typeof $data[id] !== 'function' ? $data[id] : undefined"
 
+          :schemaRef=         "form.schema.properties[id].ref || id.replace('Id', '').replace('distribuire', 'apartamente')"
           :refs=        "refs"
           :isNew=       "isNew"
           :formData=    "$data"
@@ -45,11 +46,14 @@ ValidationObserver(v-slot="{ passes }")
           //- :default=       "typeof field.default === 'function' ? field.default($lodger, filteredData) : field.default"
           //- :refs=        "$lodger.taxonomies.indexOf(id) > -1 || $lodger.taxonomies.indexOf(id.replace('Id', '').plural) > -1 || field._type === 'selApartamente' ? refs.refs[id.replace('Id', '')] : refs"
 
-        attachments.attachments(
+        field.attachments(
           v-if=         "doc && withAttachments"
+          type=         "attachments"
+          :label=       "$lodger.i18n.taxonomies.cheltuieli.fields.attachments"
           :value=       "doc.allAttachments()"
-          @input=       "debug($event); doc.putAttachment({ id: $event.name, data: $event.buffer, type: $event.type })"
+          @input=       "doc.putAttachment($event, true)"
         )
+
 
       slot(name="headerEnd")
 
@@ -67,7 +71,7 @@ ValidationObserver(v-slot="{ passes }")
 <script>
 import buton from 'form/button'
 import field from 'form/field'
-import attachments from 'form/attachments'
+
 
 import split from 'c/split'
 import drop from 'c/dropdown'
@@ -100,14 +104,16 @@ export default Observer ({
   name: 'F0rm',
 
   async fetch () {
-    const { debug, value, fields, form: { fieldsIds } } = this
-
+    const { debug, value, fields, form: { fieldsIds, internalFields } } = this
+    const _fields = { ...fields, ...internalFields }
+    debug('_f', _fields)
     const data = (await Promise.all(
       fieldsIds
-        .filter(k => ['createdAt', 'updatedAt'].indexOf(k) < 0)
-        .map(async b => ({ [b]: value[b] || (typeof fields[b].default === 'function' ?
-              await fields[b].default(this.$lodger, value) :
-              fields[b].default) }))
+        .concat(['_id', '_rev', 'state'])
+        // .filter(k => ['createdAt', 'updatedAt'].indexOf(k) < 0)
+        .map(async b => ({ [b]: value[b] || _fields[b] && _fields[b] && (typeof _fields[b].default === 'function' ?
+              await _fields[b].default(this.$lodger, value) :
+              _fields[b].default) }))
     )).reduce((a, b) => ({ ...a, ...b }), {})
 
     Object.assign(this.$data, data)
@@ -180,7 +186,7 @@ export default Observer ({
           [b]: apartamente.form.fieldsIds
             .reduce((x, y) => ({
               ...x,
-              [y]: items[b]._doc ? items[b]._doc._data[y] : apartamente.subscribers[mainSubName].items[b]._doc._data[y]
+              [y]: items[b]._doc ? items[b]._doc._data[y] : apartamente.data[b]._doc._data[y]
             }), {})
         }), {})
     },
@@ -234,7 +240,6 @@ export default Observer ({
     }
   },
   components: {
-    attachments,
     buton,
     drop,
     split,

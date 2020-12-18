@@ -222,6 +222,7 @@ export default Observer ({
         const jsonBlob = new Blob([JSON.stringify(data.data)], { type: 'application/javascript;charset=utf-8' });
         io.exportDBlink = window.URL.createObjectURL(jsonBlob)
         io.preparingDBexport = false
+        io.filename = `${ data.filename }.${ data.extension }`
       })
     },
     Search (input) {

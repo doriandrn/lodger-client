@@ -2,13 +2,21 @@
 div(:class="status")
   h4(v-if="!value || value.length < 1") {{ $lodger.i18n.dropFiles }}
   ul(v-else)
-    li(v-for="file in value") {{ file.name }}
+    file(
+      v-for=  "file, i in value"
+      :key=   "`att-${i}`"
+      :value= "file"
+    )
 </template>
 
 <script>
 import dragdrop from 'drag-drop'
+import file from 'c/file'
 
 export default {
+  components: {
+    file
+  },
   data () {
     return {
       status: null
@@ -53,6 +61,22 @@ export default {
 </script>
 
 <style lang="stylus">
+@require '~styles/config'
+palette = config.palette
+typeColors = config.typography.palette
+
+fileName()
+  white-space nowrap
+  font-size 12px
+  color: typeColors.headings
+
+ribbon()
+  padding 0 4px
+  background white
+  border-radius 5px
+  color: typeColors.headings
+  border: 1px solid palette.borders
+
 .attachments
   min-height 80px
   display flex
@@ -61,13 +85,51 @@ export default {
   text-align center
   border 2px dashed transparent
 
+  .name
+    fileName()
+    margin-top 8px
+
+  .meta
+    font-size 10px
+    color: typeColors.meta
+
+  ul
+    display flex
+    flex-flow row wrap
+    overflow visible
+    width 100%
+    padding 12px
+
+    li
+      flex 0 0 100px
+      display flex
+      flex-flow column nowrap
+      margin 0 4px
+      padding 8px !important
+      position relative
+      align-items center
+      justify-content center
+      overflow visible
+      background transparent
+
+      &:after
+        content: attr(data-fp)
+        fileName()
+        ribbon()
+        position absolute
+        bottom -30px
+        z-index 33
+        opacity 0
+        transition all .25s ease
+
+      &:hover
+        &:after
+          opacity 1
+
+
   &.enter
     border-color yellow
   &.over
     border-color green
-
-  &.leave
-    border-color blue
-    background-color white
 
 </style>

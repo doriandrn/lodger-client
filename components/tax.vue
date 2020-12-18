@@ -11,7 +11,7 @@ renderlessTax(
   @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' && typeof $event !== 'string' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
 )
   field(
-    v-if= "fuzzy"
+    v-if= "fuzzy && !disabled"
     slot= "fuzzInput"
     slot-scope=  "{ taxonomy, subscriber }"
     :id=  "`search-${taxonomy.plural}`"

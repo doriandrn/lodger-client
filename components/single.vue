@@ -141,6 +141,7 @@ export default Observer ({
       return this.doc.collection.name.plural
     },
     refs () {
+      const { form: { fieldsIds }} = this
 
       try {
 
@@ -152,8 +153,11 @@ export default Observer ({
           taxes.forEach(tax => {
             const { subscribers, data } = this.$lodger[tax.plural]
             const taxRelId = tax.plural === tax ? tax : `${tax}Id`
-            const { selectedId } = subscribers.single || subscribers.prince
-            // const multiple = typeof selectedId === 'object' && selectedId.length
+
+            // outside taxes not includeed in the form for no conflicts
+            const { selectedId } = fieldsIds.indexOf(taxRelId) > -1 ?
+              subscribers.single :
+              subscribers.prince
 
             // const items = multiple ? selectedId.map(id => ) : data[selectedId]
             const pTax = this.breadcrumbs[i]
@@ -163,7 +167,7 @@ export default Observer ({
             // }
             x[pTax] = x[pTax] || {}
             x[pTax][taxRelId] = {
-              [taxRelId.indexOf('Id') === taxRelId.length - 2 ? '$eq' : '$in']: selectedId
+              [taxRelId.indexOf('Id') === taxRelId.length - 2 ? '$eq' : '$in']: typeof selectedId === 'string' && taxRelId.indexOf('Id') < 0 ? [selectedId] : selectedId
             }
           })
 

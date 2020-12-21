@@ -49,13 +49,20 @@ export default Observer({
     if (subscriberName === 'unsubscribed')
       return
 
-    debug('fetching', subscriberName, taxonomy.plural, this.selectedId, criteria)
 
     let multipleSelect = false
 
-    if ((taxonomy.plural === id || id === 'distribuire') && subscriberName === 'single') {
-      multipleSelect = true
+    if (id) {
+      debug('!!!id', id)
+      if ((id.indexOf('Id') < 0 || id === 'distribuire') && subscriberName.indexOf('single') === 0) {
+        multipleSelect = true
+      }
+    } else {
+      debug('no id!!!', taxonomy.plural)
     }
+
+    debug('fetching', subscriberName, taxonomy.plural, this.selectedId, criteria)
+    // debug(`FETCHING FOR SUB "${subscriberName}", TAX: ${taxonomy.plural}, selId: ${this.selectedId}, criteria: ${criteria}, MS: ${multipleSelect}, id: ${id}`)
 
     if (!taxonomy.subscribers[subscriberName])
       await taxonomy.subscribe(subscriberName, { criteria: JSON.parse(JSON.stringify(criteria)), multipleSelect })
@@ -63,13 +70,18 @@ export default Observer({
     // throw new Error(`Subscriber "${ subscriberName }" does not exist`)
 
     const sub = this.subscriber = taxonomy.subscribers[subscriberName]
-
-    // if (selectedId) {
-    //   debug('selecting shit', taxonomy.plural, selectedId)
-    //   sub.selectedId = selectedId
-    //   sub.select(selectedId)
-    // }
     sub.criteria = JSON.parse(JSON.stringify(criteria))
+    // if (typeof selectedId !== 'undefined' && selectedId !== null) {
+
+    //   debug('selecting shit', taxonomy, selectedId)
+    //   sub.selectedId = selectedId
+    // } else {
+    //   debug('wtf selecteedIdd', selectedId)
+    // }
+    // //   //  && selectedId !== sub.selectedId
+    // //   subscriber.selectedId = selectedId
+    // //   // sub.select(selectedId)
+    // // }
   },
 
   created () {
@@ -190,22 +202,37 @@ export default Observer({
   },
   watch: {
     selectedId: function (ids) {
-      if (!ids || this.subscriberName !== 'single')
+      if (this.subscriberName.indexOf('single') < 0)
         return
 
-      if (this.subscriber.selectedId !== ids) {
-        this.subscriber.select(ids)
-      }
+      if (ids !== null)
+        this.subscriber.selectedId = ids
+
+      // console.info('II', this.subscriberName, ids, this.subscriber)
+
+      // if (typeof ids === 'string' && ids.length && ids !== this.subscriber.selectedId)
+      //   this.subscriber.select(ids)
+      // if (this.subscriber.selectedId !== ids) {
+      //   if (typeof ids === 'object') {
+      //     if (ids !== null && ids.length) {
+      //       ids.map(id => {
+      //         this.subscriber.select(id)
+      //       })
+      //     }
+      //   } else
+      //     this.subscriber.select(ids)
+      // }
       // this.$emit('input', ids)
     },
     // TODO (!ids.length && required ) - required prop for field in singles
     'subscriber.selectedId': function  (ids, prevIds) {
-      if (!ids || this.subscriberName !== 'single')
+      if (this.subscriberName.indexOf('single') < 0)
         return
 
       // if (this.subscriber.selectedId !== ids) {
       //   this.subscriber.select(ids)
       // }
+      if (typeof ids === 'string' || (typeof ids === 'object' && typeof ids.length !== 'undefined' ))
       this.$emit('input', ids)
     }
   },

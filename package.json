@@ -54,7 +54,7 @@
     "electron-serve": "^1.0.0",
     "fuzzysort": "^1.1.4",
     "human-size": "^1.1.0",
-    "lodger": "^0.0.266",
+    "lodger": "^0.0.269",
     "mobx": "^5.9.4",
     "mobx-utils": "^5.6.1",
     "mobx-vue": "^2.0.11",
@@ -66,7 +66,6 @@
     "rxdb": "^9.11.0",
     "vue-awesome-swiper": "^4.1.1",
     "vue-clickaway": "^2.2.2",
-    "vue-select": "^3.10.8",
     "vue-tel-input": "^4.4.2",
     "vuex-toast": "^0.1.3"
   },
@@ -87,7 +86,7 @@
     "babel-loader": "^8.2.2",
     "electron": "^10.2.0",
     "electron-builder": "^22.9.1",
-    "eslint": "^7.15.0",
+    "eslint": "^7.16.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^7.3.0",
@@ -109,7 +108,7 @@
     "stream-browserify": "^3.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^4.3.1",
-    "swiper": "^6.4.1",
+    "swiper": "^6.4.5",
     "ts-loader": "^8.0.12",
     "typescript": "^4.1.3",
     "v-tooltip": "^2.0.0-rc.33",
@@ -121,7 +120,7 @@
     "vue-server-renderer": "^2.6.12",
     "vue-shortkey": "^3.1.7",
     "vue-template-compiler": "^2.6.12",
-    "vue2-filters": "^0.11.0",
+    "vue2-filters": "^0.11.1",
     "vuex": "^3.6.0",
     "vuex-class": "^0.3.2"
   }

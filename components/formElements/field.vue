@@ -164,9 +164,9 @@ ValidationProvider(
     :id=              "id",
     :taxonomy=        "$lodger[schemaRef.plural]"
     :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $lodger[id] : $lodger.apartamente)"
-    :criteria=        "refs && schemaRef !== 'furnizori' ? { limit: isRel ? isNew && !disabled ? 1000 : 100 : undefined,filter: isRel ? refs.refs[id.replace('Id', '')] : Object.keys(refs.crumbsIds).reduce((a,b)=> ({ ...a, [b]: { [b.indexOf('Id') === b.length - 2 ? '$eq': '$in']: b.indexOf('Id') === b.length - 2 ? refs.crumbsIds[b] : [refs.crumbsIds[b]] } }), {}) } : undefined"
+    :criteria=        "refs && schemaRef !== 'furnizori' ? { limit: isRel ? isNew && !disabled ? 1000 : 100 : undefined,filter: isRel ? refs.refs[id.replace('Id', '')] : Object.keys(refs.crumbsIds).reduce((a,b)=> ({ ...a, [b]: b.indexOf('.') ? refs.crumbsIds[b] : { [b.indexOf('Id') === b.length - 2 ? '$eq': '$in']: b.indexOf('Id') === b.length - 2 ? refs.crumbsIds[b] : [refs.crumbsIds[b]] } }), {}) } : undefined"
     :selectedId=       "value && typeof value === 'object' && typeof value.length === 'undefined' ? value.selectedId : value ? value : undefined"
-    :subscriberName=   "`single${ refs && refs.crumbsIds && Object.keys(refs.crumbsIds) === 1 ? `${ refs[Object.keys(refs.crumbsIds)[0]] }` : '' }`"
+    :subscriberName=   "`single-${$attrs.formName}`"
     @input=           "$emit('input', $event)"
     :value=           "value"
     :disabled=        "disabled"
@@ -250,7 +250,7 @@ import { ValidationProvider, extend } from 'vee-validate';
 // extend('required', {
 //   ...required,
 //   message: 'This field is required'
-// });
+// });f
 
 export default {
   mixins: [ clickaway ],

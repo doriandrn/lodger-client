@@ -14,7 +14,7 @@ li(:data-fp= "name")
       type= "link"
       icon= "download"
       styl= "unstyled"
-    ) dl
+    ) {{ $lodger.i18n.download }}
     buton(
       icon= "trash"
       styl= "unstyled"
@@ -114,11 +114,20 @@ li[data-fp]
     border-radius 5px
     opacity 0
     visibility: hidden
+    margin 0
+
+    *
+      margin 0
 
     > :first-child
       flex-basis 80%
       display flex
       flex-flow column nowrap
+
+      &:before
+        margin 0
+        size 20px
+        mask-size 20px
 
 
     > :nth-child(2)

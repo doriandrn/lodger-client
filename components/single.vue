@@ -1,13 +1,15 @@
 <template lang="pug">
 frm#single(
   v-if=     "doc.collection"
-  :form=    "$lodger[plural].form"
+  :form=    "form"
+  :key=     "form.name"
   :value =  "docdata"
   :editing= "editing"
   :doc=     "doc"
   :i18n=    "$lodger.i18n.taxonomies[plural]"
   :isNew=   "doc._isTemporary"
-  :refs=    "{ refs, crumbsIds: crumbsIds(true) }"
+  :refs=    "{ refs, crumbsIds: crumbsIds(['cheltuieli', 'incasari'].indexOf(plural) < 0) }"
+  :customTaxFilters= "customFilters"
   @submit=  "submit"
 )
   slot(
@@ -32,6 +34,11 @@ import { Observer } from 'mobx-vue'
 import { reaction, when } from 'mobx'
 
 let disposer
+const customFilters = {
+  incasare: {
+    cheltuieli_apartamentId: apId => ({ [`distribuire.${apId}`]: { $exists: true } })
+  }
+}
 
 export default Observer ({
   name: 'Single',
@@ -141,10 +148,9 @@ export default Observer ({
       return this.doc.collection.name.plural
     },
     refs () {
-      const { form: { fieldsIds }} = this
+      const { form: { fieldsIds }, $lodger: { mainSubName, state, taxonomies }, debug } = this
 
       try {
-
         return [
           ...this.breadcrumbs
             .map(tax => this.$lodger[tax.plural].parents)
@@ -153,14 +159,22 @@ export default Observer ({
           taxes.forEach(tax => {
             const { subscribers, data } = this.$lodger[tax.plural]
             const taxRelId = tax.plural === tax ? tax : `${tax}Id`
-
-            // outside taxes not includeed in the form for no conflicts
-            const { selectedId } = fieldsIds.indexOf(taxRelId) > -1 ?
-              subscribers.single :
-              subscribers.prince
-
-            // const items = multiple ? selectedId.map(id => ) : data[selectedId]
             const pTax = this.breadcrumbs[i]
+
+            const subPath = `single-${this.form.name}-${taxonomies.indexOf(tax.plural)}`
+            // debug('subPath', subPath)
+            const sub = state.subs[subPath]
+            if (!sub) {
+              debug('Using main sub instead of single', subPath, tax, pTax)
+            }
+            const mainSub = `${mainSubName}-${taxonomies.indexOf(tax.plural)}`
+            // outside taxes not includeed in the form for no conflicts
+            const selectedId = sub && typeof sub.selectedId !== 'undefined' ?
+              sub.selectedId :
+              state.subs[mainSub].selectedId
+
+            // debug('sele', this.form.name, tax, pTax, mainSub, selectedId)
+            // const items = multiple ? selectedId.map(id => ) : data[selectedId]
 
             // if (!item) {
             //   this.debug('Did not find item for refs in single', selectedId)
@@ -177,12 +191,17 @@ export default Observer ({
           }
         }, {})
       } catch (e) {
-        this.debug('QZF', e)
+        this.debug('SINGLE REFS ERR', e)
       }
 
     },
     crumbsIds () {
-      const { doc, docdata: { _id } } = this
+      const {
+        doc,
+        docdata: { _id },
+        form
+      } = this
+
       if (!doc)
         return
 
@@ -193,6 +212,9 @@ export default Observer ({
           [`${b}Id`]: this.docdata[`${b}Id`]
         }), withSelf ? { [`${ name }Id`]: _id } : {})
       }
+    },
+    customFilters () {
+      return customFilters[this.form.name]
     },
     createdAt () {
       const { _id }  = this.docdata

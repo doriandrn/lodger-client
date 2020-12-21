@@ -25,9 +25,10 @@ renderlessTax(
   )
 
     h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
-      small(v-if="taxonomy.totals")
-        span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }}
-        span {{ taxonomy.totals }}
+      small
+        //- span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }}
+        span {{ subscriber.ids.length }}
+        span(v-if="taxonomy.totals") {{ taxonomy.totals }}
 
     .vm(v-if= "viewModes.length > 1")
       p {{ viewModes[1] }}
@@ -57,7 +58,7 @@ renderlessTax(
     ) +
 
     p.selControls(v-if=  "!disabled && subscriber.options.multipleSelect")
-      span {{ subscriber.selectedId.length || $lodger.i18n.sel.zeroM }} {{ $lodger.i18n.sel[`selected${subscriber.selectedId.length > 1 ? 's' : ''}`] }}
+      span {{ (subscriber.selectedId && subscriber.selectedId.length) || $lodger.i18n.sel.zeroM }} {{ $lodger.i18n.sel[`selected${subscriber.selectedId && subscriber.selectedId.length > 1 ? 's' : ''}`] }}
       a.all(
         :data-icon= "subscriber.ids.length === subscriber.selectedId.length ? 'deselAll' : 'selAll'"
         :class=     "subscriber.ids.length !== subscriber.selectedId.length ? 'sel' : 'desel'"

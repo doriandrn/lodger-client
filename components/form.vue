@@ -9,7 +9,7 @@ ValidationObserver(v-slot="{ passes }")
       .fields
         field(
           v-for=          "field, id in Object.keys(fields).filter(field => i === 'main' ? typeof fields[field].fieldset === 'undefined' && field.indexOf('At') !== field.length - 2 : Number(fields[field].fieldset) === Object.keys(fieldsets).indexOf(i)).reduce((a, b) => ({...a, [b]: fields[b]}),{})"
-          :key=           "`${field._type}-${id}`"
+          :key=           "`${form.name}-${id}`"
           :id=            "id"
           :class=         "id"
 
@@ -37,9 +37,10 @@ ValidationObserver(v-slot="{ passes }")
           :value=     "typeof $data[id] !== 'function' ? $data[id] : undefined"
 
           :schemaRef=         "form.schema.properties[id].ref || id.replace('Id', '').replace('distribuire', 'apartamente')"
-          :refs=        "refs"
+          :refs=        "refsWithCustomFilters(id)"
           :isNew=       "isNew"
           :formData=    "$data"
+          :formName=    "form.name"
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
           //- :value=     "$data[id] !== undefined ? $data[id] : value && value[id] !== undefined ? value[id] : typeof form.fields[id].default === 'function' ? form.fields[id].default() : form.fields[id].default"
@@ -71,10 +72,6 @@ ValidationObserver(v-slot="{ passes }")
 <script>
 import buton from 'form/button'
 import field from 'form/field'
-
-
-import split from 'c/split'
-import drop from 'c/dropdown'
 
 import { ValidationObserver, extend } from "vee-validate"
 import { required, confirmed, length, email } from "vee-validate/dist/rules";
@@ -162,6 +159,37 @@ export default Observer ({
   },
 
   computed: {
+    refsWithCustomFilters () {
+      return fieldId => {
+        const { refs, customTaxFilters } = this
+        const o = { ...refs }
+        if (!customTaxFilters)
+          return o
+
+        Object.keys(customTaxFilters).forEach(filter => {
+          const f = filter.split('_')
+          const dis = f[0]
+          const crumbId = f[1]
+
+          if (dis !== fieldId)
+            return
+
+          if (!o.crumbsIds[crumbId])
+            return
+
+          Object.assign(o.crumbsIds, {
+            ...customTaxFilters[filter](o.crumbsIds[crumbId])
+          })
+          delete o.crumbsIds[crumbId]
+        })
+
+        // hacky shit, move elsewhere! todo!
+        if (fieldId === 'cheltuieli')
+          delete o.crumbsIds.blocId
+
+        return o
+      }
+    },
     fieldsets () {
       return Object.assign({}, { main: 'Cap', ...this.form.fieldsets })
     },
@@ -218,7 +246,7 @@ export default Observer ({
         asociatieId
       } = this
 
-      const sub = subscribers.single
+      const sub = subscribers[`single-apartament`]
       const { items, ids } = sub
       const idsApsSel = Object.keys(distribuire)
 
@@ -241,8 +269,6 @@ export default Observer ({
   },
   components: {
     buton,
-    drop,
-    split,
     field,
     ValidationObserver
   },
@@ -293,6 +319,10 @@ export default Observer ({
     },
 
     refs: {
+      type: Object,
+      default: null
+    },
+    customTaxFilters: {
       type: Object,
       default: null
     }

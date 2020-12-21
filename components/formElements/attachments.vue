@@ -87,6 +87,9 @@ ribbon()
   text-align center
   border 2px dashed transparent
 
+  &.value
+    align-items flex-start
+
   .name
     fileName()
     margin-top 8px

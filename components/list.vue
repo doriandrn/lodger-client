@@ -176,7 +176,7 @@ export default {
   },
   computed: {
     ids () { return Object.keys(this.items || {}) },
-    // referencesIds () { return this.$lodger.activeReferencesIds(this.references) },
+    // referencesIds () { return this.$l.activeReferencesIds(this.references) },
     allReferencesHaveValues () {
       const { referencesIds } = this
       let HV = true
@@ -264,7 +264,7 @@ export default {
 
 
   // get referencesIds () {
-  //   const reffies = this.$lodger.activeReferencesIds(this.references)
+  //   const reffies = this.$l.activeReferencesIds(this.references)
   //   if (!reffies) return
   //   if (!this.criteriu) return reffies
   //   const { criteriu } = this

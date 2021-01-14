@@ -1,11 +1,13 @@
 import { date } from 'faker'
+import Vue from 'vue'
 import { Lodger } from 'lodger'
+import { computed } from 'mobx'
 import { deepObserve } from 'mobx-utils'
 import objectPath from 'object-path'
 
 const teme = ['default', 'clean', 'neumorph']
 
-export default async ({ app, store, isDev }, inject) => {
+export default async ({ app, isDev }, inject) => {
   let savedState
   try {
     const _savedState = isDev ? {} : JSON.parse(localStorage.getItem('state'))
@@ -36,8 +38,11 @@ export default async ({ app, store, isDev }, inject) => {
     filename: 'lodgerdb-export.ldb'
   }
 
-  inject('lodger', lodger)
-  inject('Lodger', Lodger)
+  inject('l', lodger)
+  inject('L', Lodger)
+
+  if (isDev)
+    window.$l = lodger
 
   deepObserve(lodger.appState, (change, path) => {
     const prevState = JSON.parse(localStorage.getItem('state')) || {}

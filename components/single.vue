@@ -6,7 +6,7 @@ frm#single(
   :value =  "docdata"
   :editing= "editing"
   :doc=     "doc"
-  :i18n=    "$lodger.i18n.taxonomies[plural]"
+  :i18n=    "$l.i18n.taxonomies[plural]"
   :isNew=   "doc._isTemporary"
   :refs=    "{ refs, crumbsIds: crumbsIds(['cheltuieli', 'incasari'].indexOf(plural) < 0) }"
   :customTaxFilters= "customFilters"
@@ -18,9 +18,9 @@ frm#single(
   )
 
   blocuri.struct(
-    v-if=       "plural && plural === 'asociatii' && $lodger.blocuri.subscribers.single"
+    v-if=       "plural && plural === 'asociatii' && $l.blocuri.subscribers.single"
     layout=     "interactiv"
-    :blocuri=   "doc._isTemporary ? null : $lodger.blocuri.subscribers.single.items"
+    :blocuri=   "doc._isTemporary ? null : $l.blocuri.subscribers.single.items"
   )
 </template>
 
@@ -42,11 +42,58 @@ const customFilters = {
 
 export default Observer ({
   name: 'Single',
+
+  async fetch () {
+    const { plural, docdata, $l, taxonomy, debug } = this
+    const $tax = $l[taxonomy]
+    const { subscribers, refTaxes } = $tax
+    const id = docdata._id
+
+    const subStatePrefix  = `${taxonomy}${id ? `+${id}` : ''}`
+    // debug(`${taxonomy} subStatePrefix`, subStatePrefix)
+
+    if (taxonomy === 'cheltuieli') {
+      refTaxes.push('apartamente')
+    }
+
+    await Promise.all(
+      refTaxes.map(async tax => {
+        const desc = `${ subStatePrefix }-${tax}` // sub desc
+        debug('!!! SSDT', desc)
+        const $tax = $l[tax]
+        try {
+          await $tax.subscribe(desc)
+          debug('subscribed', tax, desc, subscribers)
+          const sub = $tax.subscribers[desc]
+          debug('sub', sub)
+          this.subs[desc] = sub
+        } catch (e) {
+          debug('Could not subscribe on ', tax, e)
+        }
+      })
+    )
+
+
+    // if (plural === 'asociatii') {
+    //   const criteria = { filter: { asociatieId: id }, limit: 0 }
+    //   const sub = this.$l.blocuri.subscribers.single
+
+    //   if (sub) {
+    //     sub.criteria = criteria
+    //   } else {
+    //     this.$l.blocuri.subscribe('single', { criteria })
+    //     this.extraSubs.push['blocuri']
+    //   }
+    // }
+
+    this.fetched = true
+    return true
+  },
   data () {
     return {
       fetched: false,
       _sub: null,
-      extraSubs: []
+      subs: {}
     }
   },
   props: {
@@ -62,17 +109,21 @@ export default Observer ({
   },
   methods: {
     async submit (e) {
-      const { $lodger, doc, taxonomy, debug, _sub } = this
-      const { modal, mainSubName } = $lodger
+      const { $l, doc, taxonomy, debug, _sub } = this
+      const { modal, mainSubName } = $l
 
       if (!doc._isTemporary)
         return
 
       Object.assign(doc, e)
 
-      await doc.save(e);
-      modal.closeable = true
-      await modal.close()
+      try {
+        await doc.save(e);
+        modal.closeable = true
+        await modal.close()
+      } catch (err) {
+        console.error('Could not save doc', e, err)
+      }
 
 
       // if (modal.firstTime) {
@@ -91,79 +142,84 @@ export default Observer ({
     }
   },
 
-  created () {
-    const { $lodger, taxonomy, debug } = this
-    const { modal, mainSubName } = $lodger
-    const _sub = this._sub = $lodger[taxonomy].subscribers[mainSubName]
-    const { firstTime } = modal
+  // created () {
+  //   const { $l, taxonomy, debug } = this
+  //   const { modal, mainSubName } = $l
+  //   const _sub = this._sub = $l[taxonomy].subscribers[mainSubName]
+  //   const { firstTime } = modal
 
-    if (firstTime) {
-      disposer = when(() => _sub.ids.length > 0, () => {
-        debug('fired')
-        _sub.select(_sub.ids[0])
-        modal.firstTime = false
-      }, { fireImmediately: true })
-    }
-  },
-  async fetch () {
-    const { plural, fetched, docdata } = this
-    if (fetched) return
-    const id = docdata._id
-
-    if (plural === 'asociatii') {
-      const criteria = { filter: { asociatieId: id }, limit: 0 }
-      const sub = this.$lodger.blocuri.subscribers.single
-
-      if (sub) {
-        sub.criteria = criteria
-      } else {
-        this.$lodger.blocuri.subscribe('single', { criteria })
-        this.extraSubs.push['blocuri']
-      }
-    }
-
-    this.fetched = true
-    return true
-  },
+  //   if (firstTime) {
+  //     disposer = when(() => _sub.ids.length > 0, () => {
+  //       debug('fired')
+  //       _sub.select(_sub.ids[0])
+  //       modal.firstTime = false
+  //     }, { fireImmediately: true })
+  //   }
+  // },
 
   beforeDestroy () {
-    const { extraSubs, debug, taxonomy } = this
-    this.fetched = false
-    if (extraSubs.length) {
-      extraSubs.map(sub => { this.$lodger[sub].subscribers.single.kill(); delete this.$lodger[sub].subscribers.single })
-    }
-    if (disposer) {
-      setTimeout(() => {
-        debug('Cancelled -single- disposer', taxonomy )
-        disposer()
-      }, 2500);
-    }
+    const { debug, subs } = this
+    if (!subs.length)
+      return
+
+    debug('destroying', subs)
+
+    subs.filter(sub => sub !== undefined)
+      .forEach(sub => sub.kill())
+    debug('destroyed')
   },
+
+
+  // beforeDestroy () {
+  //   const { extraSubs, debug, taxonomy } = this
+  //   this.fetched = false
+  //   if (extraSubs.length) {
+  //     extraSubs.map(sub => { this.$l[sub].subscribers.single.kill(); delete this.$l[sub].subscribers.single })
+  //   }
+  //   if (disposer) {
+  //     setTimeout(() => {
+  //       debug('Cancelled -single- disposer', taxonomy )
+  //       disposer()
+  //     }, 2500);
+  //   }
+  // },
 
   computed: {
     docdata () {
       return this.doc._data
     },
+    subsIds () {
+      return Object.keys(this.subs)
+    },
     plural () {
       return this.doc.collection.name.plural
     },
     refs () {
-      const { form: { fieldsIds }, $lodger: { mainSubName, state, taxonomies }, debug } = this
+      const {
+        form: { fieldsIds },
+        $l: { mainSubName, state, taxonomies, $taxonomies },
+        debug,
+        subsIds
+      } = this
 
       try {
         return [
           ...this.breadcrumbs
-            .map(tax => this.$lodger[tax.plural].parents)
+            .map(tax => $taxonomies[tax.plural].parents)
         ].reduce((a, taxes, i) => {
           const x = {}
+
           taxes.forEach(tax => {
-            const { subscribers, data } = this.$lodger[tax.plural]
+            const { subscribers, data } = $taxonomies[tax.plural]
             const taxRelId = tax.plural === tax ? tax : `${tax}Id`
             const pTax = this.breadcrumbs[i]
+            // debug('subsIds', subsIds)
+            const sub = subsIds.filter(id => id.split('-')[1].indexOf(tax.plural) > -1)
+            // debug('SUBSUBSUBSUBSU', sub)
 
-            const subPath = `single-${this.form.name}-${taxonomies.indexOf(tax.plural)}`
+            // const subPath = `single-${this.form.name}-${taxonomies.indexOf(tax.plural)}`
             // debug('subPath', subPath)
-            const sub = state.subs[subPath]
+            // const sub = state.subs[subPath]
             if (!sub) {
               debug('Using main sub instead of single', subPath, tax, pTax)
             }
@@ -225,13 +281,13 @@ export default Observer ({
       return this.doc.collection.name.plural
     },
     form () {
-      return this.$lodger[this.taxonomy].form
+      return this.$l[this.taxonomy].form
     },
     schema () {
       return this.form.schema
     },
     breadcrumbs () {
-      const $tax = this.$lodger[this.taxonomy]
+      const $tax = this.$l[this.taxonomy]
       const { parents, form: { fields } } = $tax
 
       if (!parents || !parents.length) return []

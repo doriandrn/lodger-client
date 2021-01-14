@@ -3,13 +3,13 @@
   .load(v-if= "fetching")
 
   section(v-else-if=  "Object.keys(results).filter(tax => results[tax].length > 0).length < 1")
-    p {{ $lodger.i18n.search.noResults }}
+    p {{ $l.i18n.search.noResults }}
 
   section(
     v-for=  "tax in Object.keys(results)"
     v-if=   "results[tax].length > 0"
   )
-    h4 {{ $lodger.i18n.taxonomies[tax.plural] ? $lodger.i18n.taxonomies[tax.plural].plural : tax.plural }}
+    h4 {{ $l.i18n.taxonomies[tax.plural] ? $l.i18n.taxonomies[tax.plural].plural : tax.plural }}
     ul
       li(
         v-for=    "res, i in results[tax]"

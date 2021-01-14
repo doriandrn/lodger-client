@@ -1,10 +1,10 @@
 <template lang="pug">
-p.crumbs(v-if="Object.keys($lodger.crumbs).length")
+p.crumbs(v-if="Object.keys($l.crumbs).length")
   a(
-    v-for=      "crumb, tax in $lodger.crumbs"
-    v-if=       "$lodger[tax] && $lodger[tax].subscribers[$lodger.mainSubName] && $lodger[tax].subscribers[$lodger.mainSubName].items[crumb._id]"
+    v-for=      "crumb, tax in $l.crumbs"
+    v-if=       "$l[tax] && $l[tax].subscribers[$l.mainSubName] && $l[tax].subscribers[$l.mainSubName].items[crumb._id]"
     :data-tax=  "tax"
-  ) {{ $lodger[tax].subscribers[$lodger.mainSubName].items[crumb._id]['name' || 'id' || 'denumire' || 'proprietar'] }}
+  ) {{ $l[tax].subscribers[$l.mainSubName].items[crumb._id]['name' || 'id' || 'denumire' || 'proprietar'] }}
 </template>
 
 <script>

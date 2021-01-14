@@ -4,9 +4,7 @@ renderlessTax(
   :id=              "id"
   :taxonomy=        "taxonomy"
   :data-tax=        "taxonomy.plural"
-  :subscriberName=  "subscriberName"
-  :criteria=        "criteria ? criteria : undefined"
-  :selectedId=      "selectedId"
+  :subscriber=      "subscriber"
   :itemsExtraData=  "taxonomy.plural === 'apartamente' && value ? { impartire: value } : undefined"
   @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' && typeof $event !== 'string' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
 )
@@ -24,10 +22,10 @@ renderlessTax(
     slot-scope=  "{ taxonomy, subscriber }"
   )
 
-    h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
+    h3 {{ $l.i18n.taxonomies[taxonomy.plural] ? $l.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
       small
         //- span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }}
-        span {{ subscriber.ids.length }}
+        span(v-if="subscriber.ids.length") {{ subscriber.ids.length }}
         span(v-if="taxonomy.totals") {{ taxonomy.totals }}
 
     .vm(v-if= "viewModes.length > 1")
@@ -36,9 +34,9 @@ renderlessTax(
     field.sort(
       v-if=           "sortable && subscriber && subscriber.criteria && taxonomy.form.schema.indexes.length && subscriber.ids.length > 1"
       type=           "select"
-      :label=         "$lodger.i18n.sort.placeholder"
+      :label=         "$l.i18n.sort.placeholder"
 
-      :placeholder=   "$lodger.i18n.sort.placeholder"
+      :placeholder=   "$l.i18n.sort.placeholder"
       :id=            "`sort-${ subscriber.name }-${ taxonomy.plural }`"
       :options=       "taxonomy.sortOptions"
 
@@ -50,19 +48,19 @@ renderlessTax(
     )
 
     button.new(
-      v-if=         "!disabled && subscriberName !== 'single'"
+      v-if=         "!disabled && subscriberName.indexOf('single') < 0"
       type=         "button"
       :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < taxonomy.parents.length)"
-      @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
-      @click=       "!disabled ? $lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds }) : undefined"
+      @click.shift= "devPut"
+      @click=       "!disabled ? $l.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds }) : undefined"
     ) +
 
     p.selControls(v-if=  "!disabled && subscriber.options.multipleSelect")
-      span {{ (subscriber.selectedId && subscriber.selectedId.length) || $lodger.i18n.sel.zeroM }} {{ $lodger.i18n.sel[`selected${subscriber.selectedId && subscriber.selectedId.length > 1 ? 's' : ''}`] }}
+      span {{ (subscriber.selectedId && subscriber.selectedId.length) || $l.i18n.sel.zeroM }} {{ $l.i18n.sel[`selected${subscriber.selectedId && subscriber.selectedId.length > 1 ? 's' : ''}`] }}
       a.all(
         :data-icon= "subscriber.ids.length === subscriber.selectedId.length ? 'deselAll' : 'selAll'"
         :class=     "subscriber.ids.length !== subscriber.selectedId.length ? 'sel' : 'desel'"
-        v-tooltip=  "$lodger.i18n.sel[`${subscriber.ids.length === subscriber.selectedId.length ? 'de' : ''}selectAll`]"
+        v-tooltip=  "$l.i18n.sel[`${subscriber.ids.length === subscriber.selectedId.length ? 'de' : ''}selectAll`]"
         @click=     "subscriber.selectedId.length < subscriber.ids.length ? subscriber.select(subscriber.ids.filter(id => subscriber.selectedId.indexOf(id) < 0)) : subscriber.select(subscriber.ids)")
 
   li(
@@ -101,6 +99,9 @@ export default Observer({
       return this.previewFields
         .concat(this.extraFields)
         .filter(f => f && f.indexOf('Id') !== f.length - 2)
+    },
+    subscriber () {
+      return this.taxonomy.subscribers[this.subscriberName]
     }
   },
   fetch () {
@@ -119,7 +120,26 @@ export default Observer({
         debug('N-am gasit sub', this.subscriberName, selectedId)
     }
   },
-  methods: { go },
+  methods: {
+    go,
+    async devPut () {
+      const { taxonomy, subscriberName } = this
+      const { subscribers, form: { fakeData, defaults } } = taxonomy
+      const { refsIds } = subscribers[subscriberName]
+      const _defaults = await defaults(refsIds)
+
+      taxonomy.put(
+        Object.assign({},
+          fakeData,
+          _defaults,
+          { ...refsIds },
+          _defaults.balanta ?
+            { balanta: fakeData.balanta } :
+            {}
+        )
+      )
+    }
+  },
   components: {
     renderlessTax,
     viw

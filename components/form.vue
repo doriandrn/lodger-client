@@ -30,7 +30,7 @@ ValidationObserver(v-slot="{ passes }")
           :freezed=       "field.freezed"
           :transform=     "field.oninput && field.oninput.transform ? field.oninput.transform : null"
           :rules=         "field.v || null"
-          :disabled=      "((field.freezed || field.final) && !$lodger.modal.activeDoc._isTemporary) || !editing"
+          :disabled=      "((field.freezed || field.final) && !$l.modal.activeDoc._isTemporary) || !editing"
           :hideLabel=     "(!isNew && !editing) || form.schema.properties[id]._type === 'userAvatar' || field._type === 'dateTime' && !editing"
 
           @input=     "updField(id, $event)"
@@ -43,18 +43,15 @@ ValidationObserver(v-slot="{ passes }")
           :formName=    "form.name"
           :textLengthLimit= "field.v && field.v.indexOf('max:') > -1 ? 32 : null"
         )
-          //- :value=     "$data[id] !== undefined ? $data[id] : value && value[id] !== undefined ? value[id] : typeof form.fields[id].default === 'function' ? form.fields[id].default() : form.fields[id].default"
-          //- :default=       "typeof field.default === 'function' ? field.default($lodger, filteredData) : field.default"
-          //- :refs=        "$lodger.taxonomies.indexOf(id) > -1 || $lodger.taxonomies.indexOf(id.replace('Id', '').plural) > -1 || field._type === 'selApartamente' ? refs.refs[id.replace('Id', '')] : refs"
 
         field.attachments(
           v-if=         "doc && withAttachments"
           type=         "attachments"
-          :label=       "$lodger.i18n.taxonomies.cheltuieli.fields.attachments"
+          :key=         "`${i}-attachments`"
+          :label=       "$l.i18n.taxonomies.cheltuieli.fields.attachments"
           :value=       "doc.allAttachments()"
           @input=       "doc.putAttachment($event, true)"
         )
-
 
       slot(name="headerEnd")
 
@@ -101,19 +98,20 @@ export default Observer ({
   name: 'F0rm',
 
   async fetch () {
-    const { debug, value, fields, form: { fieldsIds, internalFields } } = this
+    const { debug, value, fields, form: { name, fieldsIds, internalFields, defaults } } = this
     const _fields = { ...fields, ...internalFields }
-    debug('_f', _fields)
-    const data = (await Promise.all(
+
+    const values = (await Promise.all(
       fieldsIds
         .concat(['_id', '_rev', 'state'])
-        // .filter(k => ['createdAt', 'updatedAt'].indexOf(k) < 0)
-        .map(async b => ({ [b]: value[b] || _fields[b] && _fields[b] && (typeof _fields[b].default === 'function' ?
-              await _fields[b].default(this.$lodger, value) :
-              _fields[b].default) }))
+        .filter(k => ['createdAt', 'updatedAt'].indexOf(k) < 0 && value[k] !== undefined && value[k] !== null)
+        .map(async b => ({ [b]: value[b] }))
     )).reduce((a, b) => ({ ...a, ...b }), {})
 
-    Object.assign(this.$data, data)
+    const _defaults = await defaults(values)
+    debug('defs', name, _defaults)
+
+    Object.assign(this.$data, _defaults, values)
   },
 
   data () {
@@ -137,19 +135,35 @@ export default Observer ({
     if (this.form.name !== 'cheltuiala' || !this.isNew)
       return
 
+    const {
+      debug,
+      $l: {
+        cheltuieli: {
+          distribuie,
+          ssAps
+        }
+      }
+    } = this
+
     this._unwatch = this.$watch(
       () => ({
         suma: this.suma,
-        distribuire: this.distribuire,
         modDistribuire: this.modDistribuire
       }),
       function (newData, prev) {
-        const { distribuire } = newData || prev
-        if (!newData.suma || Object.keys(distribuire || {}).length < 1)
+        const { suma, modDistribuire } = newData || prev
+        const { distribuire } = this
+        const ids = Object.keys(distribuire || {})
+
+        debug('ND', newData)
+
+        if (!suma || !ids.length)
           return
 
-        Object.assign(this.distribuire, this.distrChelt)
-        Object.assign(this.snapshotsApartamente, this.snapshotsAps)
+        const valoare = suma ? suma.value || 0 : 0
+
+        this.distribuire = distribuie(valoare, ids, modDistribuire)
+        this.snapshotsApartamente = ssAps(ids)
       })
   },
 
@@ -159,6 +173,9 @@ export default Observer ({
   },
 
   computed: {
+    id () {
+
+    },
     refsWithCustomFilters () {
       return fieldId => {
         const { refs, customTaxFilters } = this
@@ -199,72 +216,6 @@ export default Observer ({
 
     withAttachments () {
       return !!this.form.schema.attachments
-    },
-
-    snapshotsAps () {
-      if (this.form.plural !== 'cheltuieli')
-        return {}
-
-      const { apartamente, mainSubName } = this.$lodger
-      const { items } = apartamente.subscribers.single
-
-      return Object.keys(this.distribuire)
-        .reduce((a, b) => ({
-          ...a,
-          [b]: apartamente.form.fieldsIds
-            .reduce((x, y) => ({
-              ...x,
-              [y]: items[b]._doc ? items[b]._doc._data[y] : apartamente.data[b]._doc._data[y]
-            }), {})
-        }), {})
-    },
-
-    distrChelt () {
-      if (
-        this.form.plural !== 'cheltuieli' ||
-        ! this.suma
-      )
-        return
-
-      const {
-        $lodger: {
-          convert,
-          displayCurrency,
-          apartamente: {
-            subscribers
-          }
-        },
-        fields,
-        debug,
-
-        modDistribuire,
-        suma: {
-          value,
-          moneda
-        },
-        distribuire,
-        asociatieId
-      } = this
-
-      const sub = subscribers[`single-apartament`]
-      const { items, ids } = sub
-      const idsApsSel = Object.keys(distribuire)
-
-      // if (ids.length < idsApsSel.length)
-      //   throw new Error('Something went wrong')
-
-      if (!value)
-        return
-
-      const modDistribuireType = fields.modDistribuire.options[modDistribuire]
-      const allUnits = idsApsSel.reduce((a, b) => a + items[b][modDistribuireType], 0)
-      // const cpu = displayCurrency === moneda ?
-      //   value / allUnits :
-      //   convert.call(this.$lodger, value, moneda) / allUnits
-      const cpu = value / allUnits
-
-      // const percentage = 100 / allUnits
-      return idsApsSel.reduce((a, b) => ({ ...a, [b]: items[b][modDistribuireType] * cpu }), {})
     }
   },
   components: {
@@ -353,7 +304,7 @@ export default Observer ({
         if (!ok)
           return
 
-        const { $data, form: { opts: { captureTimestamp }}, $lodger: { freshDates } } = this
+        const { $data, form: { opts: { captureTimestamp }}, $l: { freshDates } } = this
         this.$emit('submit', captureTimestamp ?
           Object.assign({}, { ...$data }, { ...freshDates() }) :
           { ...$data }

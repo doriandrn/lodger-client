@@ -28,7 +28,7 @@ export default Observer({
   // 	// moment.locale(this.$store.state.locale)
   // },
   created () {
-    dayjs.locale(this.$lodger.locale)
+    dayjs.locale(this.$l.locale)
     if (!this.liveUpdate) return
 
     if (this.ago)

@@ -2,13 +2,13 @@
 field.currency(
   type=       "select"
   :id=        "id"
-  :label=     "$lodger.i18n.forms.preferences.fields.currency"
+  :label=     "$l.i18n.forms.preferences.fields.currency"
   :hideLabel= "hideLabel"
 
-  :options=   "$Lodger.currencyList"
+  :options=   "$L.currencyList"
   :value=     "value"
   :style=     "symbolsNames"
-  :optGrpLabels=    "$lodger.i18n.forms.preferences.currencies"
+  :optGrpLabels=    "$l.i18n.forms.preferences.currencies"
   @input=     "$emit('input', Number($event))"
 )
 </template>
@@ -21,7 +21,7 @@ export default {
   computed: {
     symbolsNames () {
       const symNames = {}
-      const list = this.$Lodger.currencyList
+      const list = this.$L.currencyList
       Object.keys(list).forEach(e => {
         Object.keys(list[e]).forEach(id => {
           const d = list[e][id]

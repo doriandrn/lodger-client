@@ -1,16 +1,16 @@
 <template lang="pug">
-.bani(v-if="moneda && base && $lodger.rates[base] && $lodger.rates[moneda]")
+.bani(v-if="moneda && base && $l.rates[base] && $l.rates[moneda]")
   span(v-if="showBoth")
     input(
       v-if=         "!disabled"
       type=         "number"
       :value=       "disabled ? null : suma || 0"
-      :step=        "$lodger.isCrypto(moneda) ? 0.000000001 : 0.01"
+      :step=        "$l.isCrypto(moneda) ? 0.000000001 : 0.01"
       :disabled=    "disabled"
-      :placeholder= "disabled ? this.$lodger.format(suma, moneda) : $lodger.isCrypto(moneda) ? '0,00000000' : '0,00'"
+      :placeholder= "disabled ? this.$l.format(suma, moneda) : $l.isCrypto(moneda) ? '0,00000000' : '0,00'"
       @input=      "change($event, true)"
     )
-    span(v-else) {{ $lodger.format(suma, moneda) }}
+    span(v-else) {{ $l.format(suma, moneda) }}
 
     currency-select(
       v-if=     "schimbaMoneda && !disabled"
@@ -21,20 +21,20 @@
     currency-sign(
       v-if=       "!schimbaMoneda"
       :moneda=    "moneda"
-      :isCrypto=  "$lodger.isCrypto(moneda)"
+      :isCrypto=  "$l.isCrypto(moneda)"
     )
 
   span.conv(
     :class= "{ neg }"
     v-if="moneda === base && !showBoth || moneda !== base"
-  ) {{ base !== moneda ? '~ ' : '' }}{{ $lodger.format($lodger.convert(suma, moneda)) }}
+  ) {{ base !== moneda ? '~ ' : '' }}{{ $l.format($l.convert(suma, moneda)) }}
     currency-sign(
-      :moneda= "$lodger.displayCurrency"
-      :isCrypto="$lodger.isCrypto()"
+      :moneda= "$l.displayCurrency"
+      :isCrypto="$l.isCrypto()"
     )
 
   div(v-if="!disabled")
-    a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $lodger.i18n.changeCurrency }}
+    a(@click=  "schimbaMoneda = !schimbaMoneda") {{ $l.i18n.changeCurrency }}
 </template>
 
 <script>
@@ -88,7 +88,7 @@ export default Observer ({
     base: {
       type: Number,
       default () {
-        return Number(this.$lodger.displayCurrency)
+        return Number(this.$l.displayCurrency)
       }
     }
   },
@@ -97,7 +97,7 @@ export default Observer ({
       return 2781
     },
     rates () {
-      return this.$lodger.rates
+      return this.$l.rates
     },
     suma () {
       if (!this.valoare)
@@ -110,7 +110,7 @@ export default Observer ({
         this.monedaCustom :
         Number(this.valoare && this.valoare.moneda ?
           this.valoare.moneda :
-          this.$lodger.displayCurrency
+          this.$l.displayCurrency
         )
     },
     neg () {

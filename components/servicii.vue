@@ -8,7 +8,7 @@ ul.servicii(:class="{ disabled }")
     @keydown.enter=     "toggleServiciu(serviciu.denumire)"
     @keydown.space=     "toggleServiciu(serviciu.denumire)"
     tabIndex=           0
-    v-tooltip=          "$lodger.i18n.taxonomies.servicii.predefinite[serviciu.denumire]"
+    v-tooltip=          "$l.i18n.taxonomies.servicii.predefinite[serviciu.denumire]"
   )
     //- span.nume {{ modificabil(serviciu.denumire) ? serviciu.denumire : $t(`serviciu.nume.${serviciu.denumire}`) }}
     //- .serviciu__actiuni(v-if="modificabil(serviciu.denumire)")

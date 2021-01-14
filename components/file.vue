@@ -14,12 +14,12 @@ li(:data-fp= "name")
       type= "link"
       icon= "download"
       styl= "unstyled"
-    ) {{ $lodger.i18n.download }}
+    ) {{ $l.i18n.download }}
     buton(
       icon= "trash"
       styl= "unstyled"
       @click= "value.remove()"
-    ) {{ $lodger.i18n.trash }}
+    ) {{ $l.i18n.trash }}
 </template>
 
 <script>

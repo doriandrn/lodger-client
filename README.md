@@ -2,9 +2,9 @@
 
 ![Build & Release](https://github.com/doriandrn/lodger-client/workflows/Build%20&%20Release/badge.svg)
 
-__O aplicație simplă și ușor de utilizat pentru administrarea imobilelor, menită să vină în ajutorul oricui dorește a deveni / este administrator de asociații de locatari / proprietari;__
+__O aplicație simplă, ușor de utilizat pentru administrarea imobilelor, menită să vină în ajutorul oricui dorește a deveni / este administrator de asociații de locatari / proprietari;__
 
-- complet transparentă din punct de vedere financiar tuturor utilizatorilor;
+- complet transparentă din punct de vedere financiar tuturor (utilizatorilor și locatarilor);
 - intuitivă;
 - [accesibilă](https://material.io/design/usability/accessibility.html#);
 - oferă un mod eficient de a comunica cu locatarii și de a le înțelege mai bine nevoile și îngrijorările acestora;
@@ -36,9 +36,7 @@ Te rugăm să consulți [codul nostru de conduită](./COD_DE_CONDUITĂ.md) înai
 
 Acest loc este rezervat celor ce doresc să ne ajute / să contribuie la dezvoltarea aplicației.
 
-## Pentru dezvoltatori
-
-### Unde suntem și unde vrem să ajungem
+<!-- ### Unde suntem și unde vrem să ajungem
 
 Procesul ales ne reprezintă
 
@@ -49,21 +47,11 @@ Procesul ales ne reprezintă
 
 - din pasiunea noastră pentru tehnologie & cod;
 - din dorința de a învăța să dezovoltăm o aplicație bazată pe o arhitectură complexă folosind tehnologii noi / inovative, de a evolua profesional ca dezvoltatori
-- avem oportunitatea de a-i scăpa pe administratori de overehad-ul de zi cu zi folsind aplicații greu de utilizat sau facând mii de calcule.
+- avem oportunitatea de a-i scăpa pe administratori de overehad-ul de zi cu zi folsind aplicații greu de utilizat sau facând mii de calcule. -->
 
 Credem în simplitate și este principalul lucru de care ținem cont când definim experiența pe care vrem s-o oferim utilizatorului (administratorului / locatarului).
 
-### Procesul
-
-În favoarea
-
 ### Workflow
-
-Câteva chestii de care ținem cont:
 
 - *Inclusive Design* (aplicația este accesibilă oricui) => Teste in browser cu extensia "aXe" pentru Chrome pe fiecare paginăș
 - *Mobile-First* Aplicația e dezvoltată pe principiul mobile-first.
-
-For detailed explanation on how front-end things work, checkout the .
-
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).

@@ -1,6 +1,6 @@
 <template lang="pug">
 div(:class="status")
-  h4(v-if="!value || value.length < 1") {{ $lodger.i18n.dropFiles }}
+  h4(v-if="!value || value.length < 1") {{ $l.i18n.dropFiles }}
   ul(v-else)
     file(
       v-for=  "file, i in value"

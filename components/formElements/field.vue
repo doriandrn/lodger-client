@@ -15,7 +15,12 @@ ValidationProvider(
 )
   input(
     v-if=         "['modDistribuire'].indexOf(id) < 0 && ['$', 'attachments', 'taxonomy','radios', 'textarea', 'checkboxes', 'scari', 'userAvatar', 'select', 'altselect', disabled ? 'dateTime' : 'asd'].indexOf(type) < 0 && ['string', 'number'].indexOf(String(type).asRxDBType) > -1 && !isRel && name !== 'rol'",
-    :type=        "type.asRxDBType === 'string' && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
+
+    :type=        "(type.asRxDBType === 'string' || type === 'numeric') && ['searchbox', 'checkbox', 'search', 'email'].indexOf(type) < 0 ? 'text' : (type === 'dateTime' && !disabled ? 'datetime-local' : type)",
+
+    :inputmode =  "type === 'numeric' ? 'numeric' : undefined"
+    :pattern =    "type === 'numeric' ? '[0-9]*' : undefined"
+
     :placeholder= "placeholder",
     :autocomplete="autocomplete ? 'on' : 'off'",
     :autosuggest= "autosuggest"
@@ -50,7 +55,7 @@ ValidationProvider(
   bani(
     v-else-if=  "['suma', 'bani', 'balanta', '$'].indexOf(type) > -1"
     :valoare=   "value"
-    :base=      "Number($lodger.displayCurrency)"
+    :base=      "Number($l.displayCurrency)"
     @input=       "$emit('input', $event)"
     :disabled=    "disabled"
     showBoth
@@ -89,7 +94,7 @@ ValidationProvider(
   )
   slect(
     v-else-if=    "type === 'select' || id === 'modDistribuire' || name === 'rol'"
-    :options=     "name === 'rol' ? $lodger.i18n.roluri : options"
+    :options=     "name === 'rol' ? $l.i18n.roluri : options"
     :value=       "value",
     :required=    "required",
     :placeholder= "placeholder"
@@ -156,19 +161,22 @@ ValidationProvider(
   //-   v-else-if=        "type === 'taxonomy' && id === 'servicii'"
   //-   @input=           "$emit('input', $event)"
   //-   :value=           "value"
-  //-   :servicii=        "$lodger.servicii.subscribers[$lodger.mainSubName].items"
+  //-   :servicii=        "$l.servicii.subscribers[$l.mainSubName].items"
   //-   :disabled=        "disabled"
   //- )
   tax(
     v-else-if=        "id && (isRel || ['taxonomy', 'selApartamente'].indexOf(type) > -1)"
     :id=              "id",
-    :taxonomy=        "$lodger[schemaRef.plural]"
-    :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $lodger[id] : $lodger.apartamente)"
+    :taxonomy=        "$l[schemaRef.plural]"
+    :previewFields=   "taxPreviewFields(type === 'taxonomy' ? $l[id] : $l.apartamente)"
     :criteria=        "refs && schemaRef !== 'furnizori' ? { limit: isRel ? isNew && !disabled ? 1000 : 100 : undefined,filter: isRel ? refs.refs[id.replace('Id', '')] : Object.keys(refs.crumbsIds).reduce((a,b)=> ({ ...a, [b]: b.indexOf('.') ? refs.crumbsIds[b] : { [b.indexOf('Id') === b.length - 2 ? '$eq': '$in']: b.indexOf('Id') === b.length - 2 ? refs.crumbsIds[b] : [refs.crumbsIds[b]] } }), {}) } : undefined"
     :selectedId=       "value && typeof value === 'object' && typeof value.length === 'undefined' ? value.selectedId : value ? value : undefined"
-    :subscriberName=   "`single-${$attrs.formName}`"
-    @input=           "$emit('input', $event)"
+
+    :subscriberName=   "`${$attrs.formName}`"
+
+    @input=           "handleInput"
     :value=           "value"
+
     :disabled=        "disabled"
     :formData=        "formData"
     :fuzzy=           "isRel"
@@ -180,14 +188,14 @@ ValidationProvider(
     //-   :taxonomy =   "id.replace('Id', '').plural"
     //- )
     //-   p lol
-    //- :criteria=        "{ filter: type === 'selApartamente' ? refs : { [`${ $lodger[id].name }Id`]: { '$eq': formData._id }}}"
+    //- :criteria=        "{ filter: type === 'selApartamente' ? refs : { [`${ $l[id].name }Id`]: { '$eq': formData._id }}}"
     //- :populated= "value || []"
     //- div(slot="item" slot-scope="{ item }") {{ item.name }}
     //- button.new(@click="") +
 
   multi(
     v-else-if= "type === 'contactFields'"
-    :fields= "{ tip: { type: 'select', options: {tel: $lodger.i18n.taxonomies.utilizatori.fields.tel, email: '', social: ''} }, val: {} }"
+    :fields= "{ tip: { type: 'select', options: {tel: $l.i18n.taxonomies.utilizatori.fields.tel, email: '', social: ''} }, val: {} }"
   )
 
   div(v-else) {{ type }} UNSUPOORTED YET
@@ -262,7 +270,7 @@ export default {
       return this.id.indexOf('Id') === this.id.length - 2
     },
     val () {
-      const { type, searchTaxonomy, selected, debug, id } = this
+      const { type, searchTaxonomy, debug, id } = this
       let { value } = this
 
       // a weird reset
@@ -274,8 +282,6 @@ export default {
         value = Boolean(value)
       }
 
-      // if (type)
-
       if (type.asRxDBType === 'string' && typeof value === 'boolean')
         return ''
 
@@ -283,26 +289,18 @@ export default {
         return new Date(new Date(value).getTime()).toISOString().substring(0, (new Date(new Date(value).getTime()).toISOString().indexOf("T")|0) + 6|0)
       }
 
-      // if (type === 'select' && id.indexOf('currency') > -1) {
-      //   value = Number(value)
-      // }
-
-      if (value && selected && selected._id) {
-        if (searchTaxonomy === 'apartamente') return selected.proprietar
-        if (searchTaxonomy === 'furnizori') return selected.nume
-      }
       return value
     },
 
-    selected () {
-      const { type, value, searchTaxonomy } = this
-      if (type !== 'search' || !value) return
+    // selected () {
+    //   const { type, value, searchTaxonomy } = this
+    //   if (type !== 'search' || !value) return
 
-      const tax = this[searchTaxonomy]
-      if (!tax || typeof value !== 'string') return
+    //   const tax = this[searchTaxonomy]
+    //   if (!tax || typeof value !== 'string') return
 
-      return tax[value] || { _id: null }
-    },
+    //   return tax[value] || { _id: null }
+    // },
 
 
     taxes () {
@@ -439,11 +437,6 @@ export default {
       type: Boolean,
       default: false
     },
-    searchTaxonomy: {
-      type: String,
-      default: null
-    },
-
     disabled: {
       type: [Boolean, Array, Object],
       default: null
@@ -472,10 +465,6 @@ export default {
     v: {
       type: String,
       default: ''
-    },
-    avatarSeed: {
-      type: String,
-      default: 'drn'
     },
     refs: {
       type: Object,
@@ -540,31 +529,31 @@ export default {
     /**
      * Metode doar pentru search
      */
-    selecteaza (e) {
-      const { id, tax } = e
-      if (id) {
-        this.$emit('input', id)
-        this.clearResults()
-        this.debug('tax', tax)
-        return
-      }
-      const {
-        results,
-        indexRezultatSelectat,
-        debug,
-        type,
-        searchTaxonomy
-      } = this
-      if (type !== 'search') return
-      e.preventDefault()
+    // selecteaza (e) {
+    //   const { id, tax } = e
+    //   if (id) {
+    //     this.$emit('input', id)
+    //     this.clearResults()
+    //     this.debug('tax', tax)
+    //     return
+    //   }
+    //   const {
+    //     results,
+    //     indexRezultatSelectat,
+    //     debug,
+    //     type,
+    //     searchTaxonomy
+    //   } = this
+    //   if (type !== 'search') return
+    //   e.preventDefault()
 
-      let taxResults = searchTaxonomy ? results[searchTaxonomy] : null
-      if (!taxResults) return
+    //   let taxResults = searchTaxonomy ? results[searchTaxonomy] : null
+    //   if (!taxResults) return
 
-      const rezultat = taxResults[indexRezultatSelectat]
-      this.$emit('input', rezultat.id)
-      this.clearResults()
-    },
+    //   const rezultat = taxResults[indexRezultatSelectat]
+    //   this.$emit('input', rezultat.id)
+    //   this.clearResults()
+    // },
 
 
     // handleClick (e) {
@@ -585,8 +574,24 @@ export default {
     // },
 
     handleInput (e) {
-      let { value, type } = e.target
-      const { search, transform, debug, $options: { filters } } = this
+      const { target } = e
+      const {
+        $l,
+        formData,
+        search,
+        transform,
+        debug,
+        $options: { filters }
+      } = this
+
+      // if (!e.target)
+      //   value = e
+
+      let value = target && target.value !== undefined ? target.value : e
+      const { type } = this
+
+      debug(type, value)
+
       switch (type) {
         case 'checkbox':
           return
@@ -605,6 +610,10 @@ export default {
 
         case 'text':
           value = transformOnInput(transform, value, filters, debug)
+          break
+
+        case 'selApartamente':
+          value = $l.cheltuieli.distribuie(formData.suma ? formData.suma.value || 0 : 0, e, formData.modDistribuire)
           break
       }
 
@@ -712,13 +721,15 @@ textarea
       visibility hidden
 
   &:not(:disabled):not(.primary):not([type="submit"])
-    // border-radius 2px
     border-radius: 46px;
-    // border-radius 6px
-    background: #f5f7fb;
-    box-shadow inset 2px 2px 3px rgba(black, .1), inset -3px -3px 6px white
-    // box-shadow: inset 6px 6px 12px #d0d2d5,
-    //             inset -6px -6px 12px #ffffff;
+
+    &:hover
+    &:focus
+    &:active
+      background: #f5f7fb;
+      box-shadow inset 2px 2px 3px rgba(black, .1), inset -3px -3px 6px white
+      // box-shadow: inset 6px 6px 12px #d0d2d5,
+      //             inset -6px -6px 12px #ffffff;
 
   &.disabled
   &:disabled
@@ -1092,6 +1103,12 @@ input[name="nr"]
 
     .value
       font-size 0
+      opacity .5
+      transition opacity .2s ease
+
+      &:hover
+        opacity .75
+
       &:before
         content ''
         display inline-block
@@ -1102,6 +1119,10 @@ input[name="nr"]
         background-repeat no-repeat
         background-size 16px
         background-position 50% 1px
+
+    &.focused
+      .value
+        opacity 1
 
   [role="group"]
     display flex

@@ -3,25 +3,15 @@
   headr
     .inner
       crumbs
-      //- nav(data-orientation="horizontal")
-      //-   ul(v-if=   "administreazaCelPutinOAsociatie")
-      //-     li(
-      //-       v-for="item, url in $lodger.i18n.nav"
-      //-     )
-      //-       nuxt-link(:to="url") {{ item }}
-
-      //-   ul(v-else)
-      //-     li
-      //-       nuxt-link(to="/dashboard") {{ navInitializare }}
 
       .right
         field(
-          v-if=     "$lodger.activeUserId"
+          v-if=     "$l.activeUserId"
           type=     "search"
           size=     "small"
           id=       "search"
-          :label=        "$lodger.i18n.search.do"
-          :placeholder=  "$lodger.i18n.search.do"
+          :label=        "$l.i18n.search.do"
+          :placeholder=  "$l.i18n.search.do"
           @input=   "Search($event)"
           :value=   "search.input"
           :focusShortkeys= "['ctrl', 'k']"
@@ -34,50 +24,51 @@
           )
 
         dropdown(
-          v-if= "$lodger.activeUserId"
+          v-if= "$l.activeUserId"
           icon=   "settings"
           :arrow= "false"
-          :toggleText=  "$lodger.i18n.forms.preferences.title"
+          :toggleText=  "$l.i18n.forms.preferences.title"
           :toggleKeys=  "['ctrl', '/']"
           iconOnly
         )
           form.form(name="preferences")
             fieldset
-              legend {{ $lodger.i18n.forms.preferences.fieldsets[0] }}
+              legend {{ $l.i18n.forms.preferences.fieldsets[0] }}
 
               currencies(
                 id=         "displayCurrency"
-                :value=     "Number($lodger.displayCurrency)"
-                @input=     "$lodger.displayCurrency = Number($event)"
-                :data-sym=  "$lodger.displayCurrency"
+                :value=     "Number($l.displayCurrency)"
+                @input=     "$l.displayCurrency = Number($event)"
+                :data-sym=  "$l.displayCurrency"
               )
 
               field(
                 type=       "select"
                 id=         "lang"
-                :label=     "$lodger.i18n.forms.preferences.fields.lang"
-                :options=   "$lodger.supportedLangs"
-                v-model=    "$lodger.locale"
+                :label=     "$l.i18n.forms.preferences.fields.lang"
+                :options=   "$l.supportedLangs"
+                v-model=    "$l.locale"
               )
 
               field(
+                v-if=       "env === 'development'"
                 type=       "select"
                 id=         "tema"
-                :options =  "$lodger.teme"
-                v-model=    "$lodger.state.appPreferences.display.tema"
+                :options =  "$l.teme"
+                v-model=    "$l.state.appPreferences.display.tema"
               )
 
               field(
                 id=         "hokeys"
                 type=       "checkbox"
-                v-model=    "$lodger.state.appPreferences.display.hotkeys"
-                :label=     "$lodger.i18n.forms.preferences.fields.shortKeys"
+                v-model=    "$l.state.appPreferences.display.hotkeys"
+                :label=     "$l.i18n.forms.preferences.fields.shortKeys"
               )
 
             fieldset
               legend db
 
-              p {{ io.exportDBlink }} {{ io.exportDBlink.length }}
+              //- p {{ io.exportDBlink }} {{ io.exportDBlink.length }}
               buton(
                 type=     "link"
                 @click=   "debug('fml'); !io.exportDBlink.length ? exportDB() : undefined"
@@ -88,7 +79,7 @@
 
 
         dropdown.u(
-          v-if= "$lodger.activeUserId"
+          v-if= "$l.activeUserId"
           toggleText= ""
           icon-only
         )
@@ -96,8 +87,8 @@
             v-for=        "t, i in ['avatar', 'name']"
             :type=        "t"
             :key=         "i"
-            :value=       "$lodger.utilizatori.subscribers[$lodger.mainSubName].items[$lodger.activeUserId][t]"
-            :avatarSeed=  "$lodger.utilizatori.subscribers[$lodger.mainSubName].items[$lodger.activeUserId].name"
+            :value=       "$l.utilizatori.subscribers[$l.mainSubName].items[$l.activeUserId][t]"
+            :avatarSeed=  "$l.utilizatori.subscribers[$l.mainSubName].items[$l.activeUserId].name"
             slot=          "beforeText"
           )
           ul
@@ -105,16 +96,16 @@
               a Profilul meu
 
             li
-              a(@click= "$lodger.utilizatori.subscribers[$lodger.mainSubName].select($lodger.activeUserId)") Logout
+              a(@click= "$l.utilizatori.subscribers[$l.mainSubName].select($l.activeUserId)") Logout
 
             li
               a Comuta utilizator:
-              //- :toggleText= "$lodger.i18n.taxonomies.utilizatori.switch"
+              //- :toggleText= "$l.i18n.taxonomies.utilizatori.switch"
 
 
               tax(
-                :taxonomy=        "$lodger.utilizatori"
-                :subscriberName=  "$lodger.mainSubName"
+                :taxonomy=        "$l.utilizatori"
+                :subscriberName=  "$l.mainSubName"
                 hideSelectedItem
               )
 
@@ -125,21 +116,21 @@
 
   footr
     logo(:tooltip=  "`${ app.name } v${ app.version }<br/>api v${ app.lodgerApiV }<br/><br/> &copy; 2017 - ${ curYear } ${ app.author }`")
-    span.update(v-if="$lodger.state.hasUpdate") {{ $lodger.i18n.updates.available }}
-      a.go {{ $lodger.i18n.updates.action }}
+    span.update(v-if="$l.state.hasUpdate") {{ $l.i18n.updates.available }}
+      a.go {{ $l.i18n.updates.action }}
 
-    span(v-if= "$lodger.activeUserId") {{ $lodger.i18n.updates.currencyRates }}
-      date-time(:date-time-i-s-o= "$lodger.state.rates.timestamp" live-update ago)
-      button(icon="" @click="$lodger.updateRates()" data-styl="unstyled") {{ $lodger.i18n.update }}
+    span(v-if= "$l.activeUserId") {{ $l.i18n.updates.currencyRates }}
+      date-time(:date-time-i-s-o= "$l.state.rates.timestamp" live-update ago)
+      button(icon="" @click="$l.updateRates()" data-styl="unstyled") {{ $l.i18n.update }}
 
-    nav(v-if= "$lodger.activeUserId")
+    nav(v-if= "$l.activeUserId")
       buton(
         v-for=  "v, k in extraLinks"
         :key=   "k"
         :icon=  "v"
         styl= "unstyled"
         icon-only
-      ) {{ $lodger.i18n.footer.links[k] }}
+      ) {{ $l.i18n.footer.links[k] }}
 
     //- .copyright
     //-   p(v-if="app") #[strong {{ app.name }} v{{ app.version }}] - &copy; 2017 - {{ curYear }} {{ app.author }}
@@ -147,7 +138,7 @@
   //- toasts
 
   modal
-    h2(v-if="$lodger.modal.activeDoc && $lodger.modal.firstTime && $lodger.modal.activeDoc.collection") {{ $lodger.i18n.taxonomies[$lodger.modal.activeDoc.collection.name.plural].new.title || 'hilol' }}
+
 </template>
 
 <script>
@@ -182,7 +173,7 @@ const { version, name, author, dependencies: { lodger } } = Package
 export default Observer ({
   data () {
     const results = {}
-    this.$lodger.taxonomies.map(t => results[t] = [])
+    this.$l.taxonomies.map(t => results[t] = [])
     return {
       tema: 'a',
       app: {
@@ -205,20 +196,25 @@ export default Observer ({
   },
 
   async beforeCreate () {
-    const { $lodger: { utilizatori, mainSubName, modal, state: { io } } } = this
-    await utilizatori.subscribe(mainSubName, { autoSelectOnCRUD: true })
-    const sub = utilizatori.subscribers[mainSubName]
-    // await sub.updates
-    this.$lodger.on('dbUpdated', () => {
+    const { $l } = this
+    const { taxonomies, mainSubName, modal, state: { io } } = $l
+    taxonomies.map(tax => {
+      const $tax = $l[tax]
+      $tax.subscribe(mainSubName)
+    })
+    // await utilizatori.subscribe(mainSubName, { autoSelectOnCRUD: true })
+    // const sub = utilizatori.subscribers[mainSubName]
+    // // await sub.updates
+    this.$l.on('dbUpdated', () => {
       io.exportDBlink = ''
     })
   },
 
   methods: {
     exportDB () {
-      const { state: { io } } = this.$lodger
+      const { state: { io } } = this.$l
       io.preparingDBexport = true
-      this.$lodger.export().then(data => {
+      this.$l.export().then(data => {
         const jsonBlob = new Blob([JSON.stringify(data.data)], { type: 'application/javascript;charset=utf-8' });
         io.exportDBlink = window.URL.createObjectURL(jsonBlob)
         io.preparingDBexport = false
@@ -229,8 +225,8 @@ export default Observer ({
       this.debug('searching', input)
       this.search.input = input
       this.search.fetching = true
-      this.$lodger.taxonomies.map(tax => {
-        Promise.resolve(this.$lodger[tax].collection.search(input)).then(results => {
+      this.$l.taxonomies.map(tax => {
+        Promise.resolve(this.$l[tax].collection.search(input)).then(results => {
           this.search.results[tax] = results
           this.search.fetching = false
         })
@@ -242,9 +238,6 @@ export default Observer ({
     activePage () {
       return this.$route.fullPath
     },
-    administreazaCelPutinOAsociatie () {
-      return true
-    },
     curYear () {
       const d = new Date()
       return d.getFullYear()
@@ -253,7 +246,7 @@ export default Observer ({
       return process.env.NODE_ENV
     },
     io () {
-      return this.$lodger.state.io
+      return this.$l.state.io
     }
   },
   beforeDestroy () {

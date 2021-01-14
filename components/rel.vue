@@ -2,7 +2,7 @@
 .rel(v-if="doc")
   a(
     v-if=     "disabled"
-    @click=   "$lodger.modal.activeDoc = doc"
+    @click=   "$l.modal.activeDoc = doc"
   ) {{ doc.name }}
 </template>
 
@@ -14,7 +14,7 @@ export default {
     }
   },
   async fetch () {
-    this.doc = await this.$lodger[this.taxonomy].collection.findOne(this.value).exec()
+    this.doc = await this.$l[this.taxonomy].collection.findOne(this.value).exec()
   },
   props: {
     value: {

@@ -24,7 +24,7 @@ button(
   :data-styl=       "styl",
   :data-dangerous=  "dangerous"
   :data-arrow=      "arrow"
-  :class=           "{ iconOnly, rounded, primary }"
+  :class=           "{ iconOnly, rounded, primary, secondary }"
   @keyup.up=        "$emit('keyUp', $event)"
   tabIndex=         0
   v-tooltip=        "_tooltip"
@@ -148,6 +148,10 @@ export default {
       type: Boolean,
       default: false
     },
+    secondary: {
+      type: Boolean,
+      default: false
+    },
     shortkeys: {
       type: Array,
       default: null
@@ -236,12 +240,11 @@ butTextColor = #253a63
 
 button
 .button
-  &:not(:disabled)
-    &:not(.primary):not([data-styl="unstyled"])
-      background: #f5f7fb;
+  &.secondary
+    &:not(:disabled)
+      background: linear-gradient(145deg, #ffffff, #dddee2);
       box-shadow:  6px 6px 12px rgba(black, .1),
                   -6px -6px 12px #ffffff;
-
 
 input[type="submit"]
 button
@@ -252,6 +255,7 @@ button
   border 1px solid transparent
   // border-radius: config.radiuses.buttons
   color: butTextColor
+  background: #f5f7fb
   // color white
   cursor pointer
   transition all .15s ease-in-out
@@ -382,9 +386,6 @@ button
 
   &.rounded
     border-radius 50%
-
-  &.iconOnly:not([data-styl="unstyled"])
-    background: linear-gradient(145deg, #ffffff, #dddee2);
 
   .focuskeys
     position static

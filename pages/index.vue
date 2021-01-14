@@ -3,91 +3,36 @@ sction#idx(
   boxes
 )
   list(
-    v-show=           "$lodger.activeUserId"
-    v-for=            "tax in $lodger.taxonomies.filter(t => t !== 'utilizatori')"
-    v-if=             "!$lodger[tax].parents || $lodger[tax].parents && $lodger[tax].form.schema.required.filter(p => $lodger[tax].parents.indexOf(taxAsPlural(p)) > -1)"
+    v-show=           "$l.activeUserId"
+    v-for=            "tax in $l.taxonomies.filter(t => t !== 'utilizatori')"
+    v-if=             "!$l[tax].parents || $l[tax].parents && $l[tax].form.schema.required.filter(p => $l[tax].parents.indexOf(taxAsPlural(p)) > -1)"
     :key=             "tax"
-    :taxonomy=        "$lodger[tax]"
+    :taxonomy=        "$l[tax]"
     :subscriberName=  "subscriberName"
     :extra-fields=    "['state']"
   )
-    //- header(slot-scope=  "{ taxonomy, subscriber }")
-    //-   h3 {{ $lodger.i18n.taxonomies[taxonomy.plural] ? $lodger.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
-    //-     small(v-if="taxonomy.totals") #[span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }} /] {{ taxonomy.totals }}
 
-    //-   //- field.sort(
-    //-   //-   v-if=           "subscriber && subscriber.criteria && subscriber.criteria.sort && taxonomy.form.schema.indexes.length && subscriber.ids.length > 1"
-    //-   //-   type=           "select"
-    //-   //-   :label=         "$lodger.i18n.sort.placeholder"
-
-    //-   //-   :placeholder=   "$lodger.i18n.sort.placeholder"
-    //-   //-   :id=            "`sort-${ subscriber.name }-${ tax }`"
-    //-   //-   :options=       "taxonomy.sortOptions"
-
-    //-   //-   @input=         "subscriber.criteria.sort = { [$event.split('-')[0]] : $event.split('-')[1] }"
-    //-   //-   :value=         "Object.keys(subscriber.criteria.sort).length > 0 ? `${Object.keys(subscriber.criteria.sort)[0]}-${subscriber.criteria.sort[Object.keys(subscriber.criteria.sort)[0]]}` : null"
-
-    //-   //-   required=       true
-    //-   //-   hide-label
-    //-   //- )
-    //-     //- .extra(v-if="value" slot-scope= "{ value }")
-    //-     //-   span {{ value.split('-')[0] }}
-    //-     //-   button(data-icon="x" v-tooltip="`clear`" @click="subscriber.criteria.sort[value.split('-')[0]] = undefined; delete subscriber.criteria.sort[value.split('-')[0]]")
-
-      //- button.new(
-      //-   :disabled=    "$lodger[tax].parents && $lodger[tax].parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < $lodger[tax].parents.length)"
-      //-   @click.shift= "taxonomy.put(Object.assign({}, taxonomy.form.fakeData, { ...subscriber.refsIds }))"
-      //-   @click=       "$lodger.modal.activeDoc = taxonomy.collection.newDocument({ ...subscriber.refsIds })"
-      //- ) +
-
-    //-   //- p(v-if="subscriber.refsIds") {{ subscriber.refsIds }}
-    //-   //- p(v-if="subscriber.criteria") {{ subscriber.criteria.filter || 'no filters' }}
-
-    //- li(
-    //-   slot= "item"
-    //-   slot-scope="{ item, subscriber, taxonomy }"
-
-    //-   :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
-    //-   @click= "subscriber.select(item[subscriber.primaryPath])"
-    //- )
-    //-   viw(
-    //-     v-for=  "key, i in [ ...taxonomy.form.previewFields.filter(f => f.indexOf('Id') !== f.length - 2), 'counters' ]"
-    //-     :type=  "key",
-    //-     :key=   "key",
-    //-     :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
-    //-     :avatarSeed= "item['name']"
-    //-     @click= "subscriber.edit(item[subscriber.primaryPath])"
-    //-   )
-
-  //- .stats(slot="sidebar")
-  //-   h3 stats
-
-  //-   h4 Ultimele 30 de zile
-
-  //- .widget(slot="sidebar")
-  //-   h3 latest actions
-
-  section.welcome(v-if="!$lodger.activeUserId && !$lodger.utilizatori.subscribers[$lodger.mainSubName].ids.length")
-    h1 {{ $lodger.i18n.welcome.title }}
-    p.intro {{ $lodger.i18n.welcome.intro }}
+  section.welcome(v-if="!$l.activeUserId && !$l.utilizatori.subscribers[$l.mainSubName].ids.length")
+    h1 {{ $l.i18n.welcome.title }}
+    p.intro {{ $l.i18n.welcome.intro }}
 
     field.lang(
       type=       "select"
       id=         "lang-intro"
-      :label=     "$lodger.i18n.forms.preferences.fields.lang"
-      :options=   "$lodger.supportedLangs"
-      v-model=    "$lodger.locale"
+      :label=     "$l.i18n.forms.preferences.fields.lang"
+      :options=   "$l.supportedLangs"
+      v-model=    "$l.locale"
       data-styl=       "unstyled"
     )
 
-    .actions(v-if="!$lodger.modal.activeDoc")
-      buton(size="large" icon="database" :shortkeys="['i']" @click="debug('import')") {{ $lodger.i18n.welcome.actions.import }}
-      buton(primary size="large" arrow="right" @click="newUser" :shortkeys="['enter']") {{ $lodger.i18n.welcome.actions.newUser }}
+    .actions(v-if="!$l.modal.activeDoc")
+      buton(size="large" icon="database" :shortkeys="['i']" @click="debug('import')") {{ $l.i18n.welcome.actions.import }}
+      buton(primary size="large" arrow="right" @click="newUser" :shortkeys="['enter']") {{ $l.i18n.welcome.actions.newUser }}
 
-  section.users(v-if="!$lodger.activeUserId && $lodger.utilizatori.subscribers[$lodger.mainSubName].ids.length")
+  section.users(v-if="!$l.activeUserId && $l.utilizatori.subscribers[$l.mainSubName].ids.length")
     p user select
     list(
-      :taxonomy=        "$lodger.utilizatori"
+      :taxonomy=        "$l.utilizatori"
       :subscriberName=  "subscriberName"
       :extra-fields=    "['state']"
     )
@@ -115,7 +60,7 @@ export default Observer({
       link: [
         {
           rel: "stylesheet",
-          href: `/${ this.$lodger.teme[this.tema] }.css`
+          href: `/${ this.$l.teme[this.tema] }.css`
         }
       ]
     };
@@ -123,12 +68,12 @@ export default Observer({
 
   data () {
     return {
-      tema: this.$lodger.state.appPreferences.display.tema
+      tema: this.$l.state.appPreferences.display.tema
     }
   },
 
   created () {
-    const { display } = this.$lodger.state.appPreferences
+    const { display } = this.$l.state.appPreferences
     display.tema = display.tema || 0
     reaction(() => display.tema, (t) => {
       this.tema = t
@@ -137,7 +82,7 @@ export default Observer({
 
   computed: {
     subscriberName () {
-      return this.$lodger.mainSubName
+      return this.$l.mainSubName
     },
     taxAsPlural () {
       return p => p.indexOf('Id') === p.length - 2 ? p.replace('Id').plural : p
@@ -145,7 +90,7 @@ export default Observer({
   },
   methods: {
     newUser () {
-      const { $lodger: { utilizatori, mainSubName, modal } } = this
+      const { $l: { utilizatori, mainSubName, modal } } = this
       const sub = utilizatori.subscribers[mainSubName]
       if (sub.ids.length)
         return

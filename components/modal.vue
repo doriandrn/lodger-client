@@ -1,34 +1,40 @@
 <template lang="pug">
-transition(:name= "$lodger.modal.firstTime? 'slide': 'modal'")
+transition(
+  :name=  "modal.firstTime ? 'slide': 'modal'"
+)
   .modal(
-    v-show=     "$lodger.modal.activeDoc"
-    :data-tax=  "$lodger.modal.activeDoc && $lodger.modal.activeDoc.collection ? $lodger.modal.activeDoc.collection.schema.jsonSchema.name : undefined"
-    :class=     "{ 'hasFooter': $slots.footer, overflow, editing: editing || $lodger.modal.activeDoc && $lodger.modal.activeDoc._isTemporary }"
-    v-focus=    "editing && $lodger.modal.activeDoc"
-  )
-    .backdrop(@click="inchide")
+    v-show=     "activeDoc"
+    :data-tax=  "activeDoc && collection ? jsonSchema.name : undefined"
+    :class=     "{ 'hasFooter': $slots.footer, overflow, editing: editing || activeDoc && activeDoc._isTemporary }"
+    v-focus=    "editing && activeDoc"
+  ) #[.backdrop(@click="inchide")]
+
 
     slot(name="beforeContainer")
+
     .container
       main.content
         slot
-        single(
-          v-if= "$lodger.modal.activeDoc && $lodger.modal.activeDoc.collection"
-          :doc= "$lodger.modal.activeDoc"
-          :editing= "editing || $lodger.modal.activeDoc._isTemporary"
-        )
-          buton.trash(
-            v-if=     "!$lodger.modal.activeDoc._isTemporary && editing"
-            icon=    "trash"
-            @click=   "trash"
-            icon-only
-          ) {{ $lodger.i18n.trash }}
-          buton.lock(
-            v-if=     "!$lodger.modal.activeDoc._isTemporary"
-            :icon=    "editing ? 'lock' : 'unlock'"
-            @click=   "editing = !editing"
-            icon-only
-          ) {{ $lodger.i18n.edit }}
+          h2(v-if="activeDoc && modal.firstTime && collection") {{ title }}
+          single(
+            v-if= "activeDoc && collection"
+            :doc= "activeDoc"
+            :editing= "editing || activeDoc._isTemporary"
+          )
+            buton.trash(
+              v-if=     "!activeDoc._isTemporary && editing"
+              icon=     "trash"
+              @click=   "trash"
+              icon-only
+            ) {{ $l.i18n.trash }}
+
+            buton.lock(
+              v-if=     "!activeDoc._isTemporary"
+              :icon=    "editing ? 'lock' : 'unlock'"
+              @click=   "editing = !editing "
+              icon-only
+            ) {{ $l.i18n.edit }}
+
     slot(name="afterContainer")
 </template>
 
@@ -39,6 +45,46 @@ import buton from 'form/button'
 
 export default Observer({
   name: 'Modal',
+  computed: {
+    modal: {
+      cache: false,
+      get () {
+        return this.$l.modal
+      }
+    },
+    activeDoc: {
+      cache: false,
+      get () {
+        return this.modal.activeDoc
+      }
+    },
+    collection: {
+      cache: false,
+      get () {
+        return this.activeDoc.collection
+      }
+    },
+    jsonSchema: {
+      cache: false,
+      get () {
+        return this.collection.schema.jsonSchema
+      }
+    },
+    title: {
+      cache: false,
+      get () {
+        const { $l: { i18n: { taxonomies } }, collection: { name } } = this
+        try {
+          return taxonomies[name].new.title
+        } catch (e) {
+          // console.error(e)
+        }
+        finally {
+          return 'hilol'
+        }
+      }
+    }
+  },
   data () {
     return {
       editing: false
@@ -61,16 +107,16 @@ export default Observer({
   },
   methods: {
     async trash () {
-      const { activeDoc } = this.$lodger.modal
+      const { activeDoc } = this.$l.modal
       const { _id, collection: { name } } = activeDoc
 
       const tax = name.plural
-      const $tax = this.$lodger[tax]
+      const $tax = this.$l[tax]
 
       let string = ``
 
       if ($tax.children) {
-        const taxesWithDocs = await Promise.all($tax.children.map(async childTax => await this.$lodger[childTax].collection.findOne().exec() ))
+        const taxesWithDocs = await Promise.all($tax.children.map(async childTax => await this.$l[childTax].collection.findOne().exec() ))
 
         string += `${taxesWithDocs.join('\n')}`
 
@@ -84,7 +130,7 @@ export default Observer({
     },
     inchide () {
       this.editing = false
-      this.$lodger.modal.close()
+      this.$l.modal.close()
     }
   },
   props: {
@@ -227,6 +273,7 @@ lrPad = 32px
 
   h2
     max-width 100%
+    user-select none
 
   footer
     lost-utility clearfix

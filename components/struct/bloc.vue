@@ -25,8 +25,8 @@
         ol.etaje
           li(v-for="i in range(0, Number(scara.etaje || 0)+1)")
             buton(
-              v-if=       "$lodger.apartamente.subscribers.single"
-              v-for=      "ap in Object.values($lodger.apartamente.subscribers.single.items).filter(ap => ap.scara === iScara && ap.etaj === i)",
+              v-if=       "$l.apartamente.subscribers.single"
+              v-for=      "ap in Object.values($l.apartamente.subscribers.single.items).filter(ap => ap.scara === iScara && ap.etaj === i)",
               :key=       "ap._id"
               data-for=   "ap"
               @keyUp=     "debug('butonsus')"
@@ -62,12 +62,12 @@ export default {
     // const { id } = this
     // const criteria = { filter: { blocId: id }, limit: 0 }
 
-    // const sub = this.$lodger.apartamente.subscribers.single
+    // const sub = this.$l.apartamente.subscribers.single
 
     // if (sub) {
     //   sub.criteria = criteria
     // } else {
-    //   this.$lodger.apartamente.subscribe('single', { criteria })
+    //   this.$l.apartamente.subscribe('single', { criteria })
     // }
   },
   props: {

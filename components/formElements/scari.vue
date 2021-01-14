@@ -7,7 +7,7 @@ ul.scari.zebra
     field.scari__id(
       :id=          "`id-${i}`",
       type=         "text"
-      :label=          "$lodger.i18n.taxonomies.scari.fields.name",
+      :label=          "$l.i18n.taxonomies.scari.fields.name",
       v-model=      "scara.id"
       :required=    "true",
       @input=       "$emit('input', scari)"
@@ -32,7 +32,7 @@ ul.scari.zebra
     field(
       :id=            "`lift-${i}`",
       type=           "checkbox",
-      :label=          "$lodger.i18n.taxonomies.scari.fields.lift",
+      :label=          "$l.i18n.taxonomies.scari.fields.lift",
       v-model.bool=   "scara.lift",
       :checked=       "scara.lift"
       @input=         "$emit('input', scari)"
@@ -42,7 +42,7 @@ ul.scari.zebra
     field(
       :id=            "`mansarda-${i}`",
       type=           "checkbox",
-      :label=          "$lodger.i18n.taxonomies.scari.fields.mansarda",
+      :label=          "$l.i18n.taxonomies.scari.fields.mansarda",
       v-model.bool=   "scara.mansarda",
       :checked=       "scara.mansarda"
       @input=         "$emit('input', scari)"

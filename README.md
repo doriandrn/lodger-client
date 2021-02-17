@@ -4,6 +4,7 @@
 
 __O aplicație simplă, ușor de utilizat pentru administrarea imobilelor, menită să vină în ajutorul oricui dorește a deveni / este administrator de asociații de locatari / proprietari;__
 
+
 - complet transparentă din punct de vedere financiar tuturor (utilizatorilor și locatarilor);
 - intuitivă;
 - [accesibilă](https://material.io/design/usability/accessibility.html#);

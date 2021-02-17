@@ -226,8 +226,15 @@ export default Observer ({
       this.search.input = input
       this.search.fetching = true
       this.$l.taxonomies.map(tax => {
-        Promise.resolve(this.$l[tax].collection.search(input)).then(results => {
-          this.search.results[tax] = results
+        const { collection } = this.$l[tax]
+        collection.search(input).then(results => {
+          console.info(results)
+          const { RESULT, RESULT_LENGTH } = results
+          if (RESULT_LENGTH < 1) {
+            this.search.fetching = false
+            return
+          }
+          this.search.results[tax] = RESULT
           this.search.fetching = false
         })
       })

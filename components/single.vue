@@ -353,6 +353,27 @@ export default Observer ({
       .rol
         display none
 
+[data-tax=  "bloc"]
+  fieldset.header
+    .fields
+      grid-template-areas:
+        "scari scari scari refs refs refs"\
+        "scari scari scari id adresa adresa"\
+        "scari scari scari . adresa adresa"\
+
+
+      .name
+        grid-area id
+
+      .adresa
+        grid-area adresa
+
+      .scari
+        grid-area scari
+
+      [data-type="rel"]
+        grid-area refs
+
 [data-tax=  "cheltuiala"]
   .snapshotsApartamente
     display none

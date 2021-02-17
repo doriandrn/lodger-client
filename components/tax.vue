@@ -21,7 +21,6 @@ renderlessTax(
     v-if=       "!fuzzy"
     slot-scope=  "{ taxonomy, subscriber }"
   )
-
     h3 {{ $l.i18n.taxonomies[taxonomy.plural] ? $l.i18n.taxonomies[taxonomy.plural].plural : taxonomy.plural }}
       small
         //- span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }}
@@ -101,7 +100,20 @@ export default Observer({
         .filter(f => f && f.indexOf('Id') !== f.length - 2)
     },
     subscriber () {
-      return this.taxonomy.subscribers[this.subscriberName]
+      const { taxonomy: { subscribers }, _subscriberName } = this
+      console.log('subs', subscribers)
+      console.log('sname', _subscriberName)
+
+      return subscribers[_subscriberName] ||
+        subscribers[Object.keys(subscribers)[0]] ||
+        subscribers.prince
+    },
+    _subscriberName () {
+      const { subscriberName, $l: { $taxonomies } } = this
+      const { plural } = subscriberName
+      const $tax = $taxonomies[plural]
+      // const id =
+      return `${this.subscriberName.plural}-${this.taxonomy.plural}`
     }
   },
   fetch () {
@@ -349,6 +361,7 @@ typeColors = config.typography.palette
     padding 0
     max-height 300px
     overflow auto
+    scrollbar-width: none
     position relative
 
     &.ms

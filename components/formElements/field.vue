@@ -173,6 +173,7 @@ ValidationProvider(
     :selectedId=       "value && typeof value === 'object' && typeof value.length === 'undefined' ? value.selectedId : value ? value : undefined"
 
     :subscriberName=   "`${$attrs.formName}`"
+    :parentTaxonomyName= "`${$attrs.formName.plural}`"
 
     @input=           "handleInput"
     :value=           "value"

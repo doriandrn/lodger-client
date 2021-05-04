@@ -1,12 +1,12 @@
 <template lang="pug">
 renderlessTax(
-  v-if=             "taxonomy"
+  v-if=             "taxonomy && taxonomy.subscribers"
   :id=              "id"
   :taxonomy=        "taxonomy"
   :data-tax=        "taxonomy.plural"
   :subscriber=      "subscriber"
   :itemsExtraData=  "taxonomy.plural === 'apartamente' && value ? { impartire: value } : undefined"
-  @input=           "$emit('input', taxonomy.plural === 'apartamente' && subscriberName === 'single' && typeof $event !== 'string' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
+  @input=           "$emit('input', taxonomy.plural === 'apartamente' && parentTaxonomyName === 'single' && typeof $event !== 'string' ? $event.reduce((a, b) => ({ ...a, [b]: value && value[b] ? value[b] : undefined }), {}) : $event)"
 )
   field(
     v-if= "fuzzy && !disabled"
@@ -17,6 +17,7 @@ renderlessTax(
     @input= "debug($event, go($event, Object.values(subscriber.items).map(v => ({ _id: v._id, [previewFields[0]]: v[previewFields[0]] })), { key: previewFields[0] }))"
     hide-label
   )
+  
   header(
     v-if=       "!fuzzy"
     slot-scope=  "{ taxonomy, subscriber }"
@@ -26,6 +27,8 @@ renderlessTax(
         //- span(v-if="subscriber.ids.length !== taxonomy.totals") {{ subscriber.ids.length }}
         span(v-if="subscriber.ids.length") {{ subscriber.ids.length }}
         span(v-if="taxonomy.totals") {{ taxonomy.totals }}
+
+    small  parent: {{ parentTaxonomyName ? parentTaxonomyName : 'no parent' }} - this: {{ taxonomy.plural }}
 
     .vm(v-if= "viewModes.length > 1")
       p {{ viewModes[1] }}
@@ -47,7 +50,7 @@ renderlessTax(
     )
 
     button.new(
-      v-if=         "!disabled && subscriberName.indexOf('single') < 0"
+      v-if=         "!disabled && parentTaxonomyName.indexOf('single') < 0"
       type=         "button"
       :disabled=    "taxonomy.parents && taxonomy.parents.length && (!subscriber.refsIds || subscriber.refsIds && Object.values(subscriber.refsIds).filter(v=>v).length < taxonomy.parents.length)"
       @click.shift= "devPut"
@@ -68,7 +71,7 @@ renderlessTax(
     :key=   "`${taxonomy.plural}-${item._id}`"
 
     v-if= "!(hideSelectedItem && item[subscriber.primaryPath] === subscriber.selectedId)"
-    :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: taxonomy && String(taxonomy.subscribers[subscriberName].selectedId).indexOf(item[subscriber.primaryPath]) > -1 }"
+    :class= "{ last: taxonomy && item[subscriber.primaryPath] === taxonomy.lastItems[0], selected: subscriber.selectedId && subscriber.selectedId.indexOf(item[subscriber.primaryPath]) > -1 }"
 
     @click= "!disabled ? subscriber.select(item[subscriber.primaryPath]) : undefined"
   )
@@ -78,7 +81,7 @@ renderlessTax(
       :key=   "key",
       :value= "['suma', 'balanta'].indexOf(key) > -1 ? { suma: item[key], moneda: item.moneda } : item[key]"
       :formData=  "formData"
-      @click= "subscriberName !== 'single' ? subscriber.edit(item[subscriber.primaryPath]) : undefined"
+      @click= "parentTaxonomyName === 'prince' ? subscriber.edit(item[subscriber.primaryPath]) : undefined"
     )
 p(v-else)  invalid tax
 </template>
@@ -90,9 +93,6 @@ import { Observer } from 'mobx-vue'
 import { go } from 'fuzzysort'
 
 export default Observer({
-  beforeCreate () {
-    this.$options.components.field = require('form/field').default
-  },
   computed: {
     displayFields () {
       return this.previewFields
@@ -100,44 +100,63 @@ export default Observer({
         .filter(f => f && f.indexOf('Id') !== f.length - 2)
     },
     subscriber () {
-      const { taxonomy: { subscribers }, _subscriberName } = this
+      const { taxonomy: { subscribers }, subscriberName } = this
       console.log('subs', subscribers)
-      console.log('sname', _subscriberName)
+      console.log('sname', subscriberName)
 
-      return subscribers[_subscriberName] ||
+      return subscribers[subscriberName] ||
         subscribers[Object.keys(subscribers)[0]] ||
         subscribers.prince
     },
-    _subscriberName () {
-      const { subscriberName, $l: { $taxonomies } } = this
-      const { plural } = subscriberName
+    subscriberName () {
+      const { parentTaxonomyName, $l: { $taxonomies } } = this
+      const { plural } = parentTaxonomyName
       const $tax = $taxonomies[plural]
       // const id =
-      return `${this.subscriberName.plural}-${this.taxonomy.plural}`
+      return this.parentTaxonomyName !== 'prince' ?
+        `${this.parentTaxonomyName.plural}-${this.taxonomy.plural}` :
+        'prince'
     }
   },
+  activated () {
+    this.$fetch()
+  },
   fetch () {
-    const { value, selectedId, debug } = this
+    const { debug } = this
+    const isCalledByActivated = this._props && typeof this._props.value !== 'undefined'
+    let { subscriberName, value, taxonomy: { subscribers } } = isCalledByActivated ? this._props : this
+    const subscriber = isCalledByActivated ? subscribers[subscriberName] : this.subscriber
+    // value = value || subscriber.selectedId
+    debug('fetchin for', value, this, { ...this._props }, this._props.value, subscriber)
     if (!value)
       return
 
-    // if (typeof value === 'object')
-    //   this.criteria.filter = { '_id': { $in: Object.keys(value) } }
 
-    if (selectedId) {
-      const sub = this.taxonomy.subscribers[this.subscriberName]
+    if (typeof value === 'object')
+      this.criteria.filter = { '_id': { $in: Object.keys(value) } }
+
+    if (value) {
+      const sub = subscriber
       if (sub) {
-        sub.selectedId = selectedId
+        debug('fetch sub', sub)
+        if (sub.selectedId.length === 0) {
+          sub.selectedId = value
+          debug('updated sub selected', value)
+        }
       } else
-        debug('N-am gasit sub', this.subscriberName, selectedId)
+        debug('N-am gasit sub', this.parentTaxonomyName, value)
     }
+  },
+  beforeCreate () {
+    this.$options.components.field = require('form/field').default
+    
   },
   methods: {
     go,
     async devPut () {
-      const { taxonomy, subscriberName } = this
+      const { taxonomy, parentTaxonomyName } = this
       const { subscribers, form: { fakeData, defaults } } = taxonomy
-      const { refsIds } = subscribers[subscriberName]
+      const { refsIds } = subscribers[parentTaxonomyName]
       const _defaults = await defaults(refsIds)
 
       taxonomy.put(
@@ -195,9 +214,9 @@ export default Observer({
       type: Array,
       default: null
     },
-    subscriberName: {
+    parentTaxonomyName: {
       type: String,
-      default: 'TaxWithNoSubName'
+      default: 'prince'
     },
     hideSelectedItem: {
       type: Boolean,
@@ -205,10 +224,6 @@ export default Observer({
     },
     formData: {
       type: Object,
-      default: null
-    },
-    selectedId: {
-      type: [String, Array],
       default: null
     },
     fuzzy: {
@@ -287,8 +302,9 @@ typeColors = config.typography.palette
     align-items center
     position relative
     overflow hidden
-    padding 11px 12px
+    padding 4px 12px
     width 100%
+    line-height 20px
     border-radius 4px
     // margin -4px
     margin 4px 0
@@ -298,7 +314,7 @@ typeColors = config.typography.palette
       margin 4px
 
     +above(l)
-      padding 16px 20px
+      padding 8px 16px
       border-radius 6px
 
     .ap__nr

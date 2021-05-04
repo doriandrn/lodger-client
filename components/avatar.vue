@@ -55,6 +55,7 @@ export default {
 <style lang="stylus">
 .avatar
   position relative
+  size 100%
 
   &:not(.disabled)
     cursor pointer
@@ -64,6 +65,7 @@ export default {
     height auto
     min-width 32px
     min-height 32px
+    margin 0 auto
 
   input[type="file"]
     position absolute

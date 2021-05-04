@@ -99,6 +99,13 @@ export default Observer({
         .concat(this.extraFields)
         .filter(f => f && f.indexOf('Id') !== f.length - 2)
     },
+    name () {
+      return this.taxonomy.collection.name
+    },
+    parentSub () {
+      const { $l, name } = this
+      return $l[name.plural].subscribers.prince
+    },
     subscriber () {
       const { taxonomy: { subscribers }, subscriberName } = this
       console.log('subs', subscribers)
@@ -122,11 +129,16 @@ export default Observer({
     this.$fetch()
   },
   fetch () {
-    const { debug } = this
+    const { debug, subscriberName, $attrs, parentSub} = this
     const isCalledByActivated = this._props && typeof this._props.value !== 'undefined'
-    let { subscriberName, value, taxonomy: { subscribers } } = isCalledByActivated ? this._props : this
+    let { value, taxonomy: { subscribers } } = isCalledByActivated ? this._props : this
     const subscriber = isCalledByActivated ? subscribers[subscriberName] : this.subscriber
-    // value = value || subscriber.selectedId
+    // const { selectedId } = subscriber
+    value = value || parentSub.selectedId
+    debug('============================')
+    debug('fetch', subscriberName, subscriber)
+    debug('subscribers', subscribers)
+    debug('parentSub', parentSub)
     debug('fetchin for', value, this, { ...this._props }, this._props.value, subscriber)
     if (!value)
       return
@@ -138,11 +150,8 @@ export default Observer({
     if (value) {
       const sub = subscriber
       if (sub) {
-        debug('fetch sub', sub)
-        if (sub.selectedId.length === 0) {
-          sub.selectedId = value
-          debug('updated sub selected', value)
-        }
+        sub.selectedId = value
+        debug('updated sub selected', value)
       } else
         debug('N-am gasit sub', this.parentTaxonomyName, value)
     }

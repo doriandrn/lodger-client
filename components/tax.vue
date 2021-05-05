@@ -28,7 +28,7 @@ renderlessTax(
         span(v-if="subscriber.ids.length") {{ subscriber.ids.length }}
         span(v-if="taxonomy.totals") {{ taxonomy.totals }}
 
-    small  parent: {{ parentTaxonomyName ? parentTaxonomyName : 'no parent' }} - this: {{ taxonomy.plural }}
+    
 
     .vm(v-if= "viewModes.length > 1")
       p {{ viewModes[1] }}

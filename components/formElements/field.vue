@@ -792,9 +792,10 @@ input[type="number"]
   width 80px
 
   &:disabled
-    &::-webkit-outer-spin-button
-    &::-webkit-inner-spin-button
-      appearance none
+  &::-webkit-outer-spin-button
+  &::-webkit-inner-spin-button
+    appearance none
+    -moz-appearance none
 
 input[type="radio"]
   &+label

@@ -173,7 +173,7 @@ ValidationProvider(
     :selectedId=       "value && typeof value === 'object' && typeof value.length === 'undefined' ? value.selectedId : value ? value : undefined"
 
     :subscriberName=   "`${$attrs.formName}`"
-    :parentTaxonomyName= "`${$attrs.formName.plural}`"
+    :parentTaxonomyName= "isNew && !val ? `${$attrs.formName.plural}` : `${$attrs.formName}+${val}`"
 
     @input=           "handleInput"
     :value=           "value"
@@ -956,6 +956,8 @@ span[data-type]
   display flex
   flex-flow column-reverse nowrap
   justify-content flex-end
+  position relative
+  z-index 5
 
   // &.final
   //   label
@@ -993,12 +995,21 @@ span[data-type]
       opacity 0
       visibility hidden
 
+  &+ol
+    position absolute
+    width 100%
+    max-width 100%
+
+    > li
+      margin 2px 0
+
 
 span[data-type="userAvatar"]
   margin 0 auto
 
 span[data-type="select"]
   letter-spacing 0
+  position static
 
 bigBalanta()
   font-size 20px

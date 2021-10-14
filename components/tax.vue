@@ -121,8 +121,11 @@ export default Observer({
       const $tax = $taxonomies[plural]
       // const id =
       return this.parentTaxonomyName !== 'prince' ?
-        `${this.parentTaxonomyName.plural}-${this.taxonomy.plural}` :
+        `${this.parentTaxonomyName}-${this.taxonomy.plural}` :
         'prince'
+    },
+    items () {
+      return this.subscriber.items
     }
   },
   activated () {
@@ -314,6 +317,7 @@ typeColors = config.typography.palette
     padding 4px 12px
     width 100%
     line-height 20px
+    min-height 40px
     border-radius 4px
     // margin -4px
     margin 4px 0

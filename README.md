@@ -1,6 +1,6 @@
 # Lodger
 
-[English version]((https://github.com/doriandrn/lodger-client/README_EN.md)
+[English version](https://github.com/doriandrn/lodger-client/README_EN.md)
 
 ![Build & Release](https://github.com/doriandrn/lodger-client/workflows/Build%20&%20Release/badge.svg) [![Gitter](https://badges.gitter.im/lodger-ro/community.svg)](https://gitter.im/lodger-ro/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 

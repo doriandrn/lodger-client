@@ -63,7 +63,7 @@
     "object-path": "^0.11.5",
     "postcss-styl": "^0.7.2",
     "rxcollection-subscriber": "^1.0.18",
-    "rxdb": "^9.15.0",
+    "rxdb": "^15.0.0",
     "vue-awesome-swiper": "^4.1.1",
     "vue-clickaway": "^2.2.2",
     "vue-tel-input": "^4.4.2",
